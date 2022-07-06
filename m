@@ -2,185 +2,82 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DFDC43334
-	for <linux-sgx@archiver.kernel.org>; Tue,  5 Jul 2022 18:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F364C43334
+	for <linux-sgx@archiver.kernel.org>; Wed,  6 Jul 2022 17:17:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232565AbiGESi5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 5 Jul 2022 14:38:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44182 "EHLO
+        id S232950AbiGFRRS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 6 Jul 2022 13:17:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232444AbiGESi4 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 5 Jul 2022 14:38:56 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEF6A1EED0;
-        Tue,  5 Jul 2022 11:38:55 -0700 (PDT)
+        with ESMTP id S233705AbiGFRRR (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 6 Jul 2022 13:17:17 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EE2F2A737;
+        Wed,  6 Jul 2022 10:17:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657046335; x=1688582335;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=bp/6skjaHsxhHpW9+rU5zrpeFxQXZKGs9YnkmuQGVP8=;
-  b=YFmK8QzleZ2+Oj7ovd/cL6offmnX+u8cWdJpPg+m+8iHxCkL141O8WOx
-   ScjTSGPwHk92+vAXVKGs5NznqhHalQGVW8DW34n+xrxpy63azkJCnT+Pb
-   xda5G34m9iEiiSxr9RgjxXuN7E45PNVCbnoVX4phrU96jzZ9QnYg9yXJK
-   UOYWR1onRyXYvqaZsrBUh7/sY9PGEPOxun3xgyAuguewG9NgqAsIxK7Wc
-   X1NtUXLRJ2Xz6cv3tnBG5M5rhLtOp5eLXoqhvjPIENxlm8K/iJtdMqJNc
-   tp/LQZbCdxKpbu+qSQ+DMxwbZPfxYkF3vOGoOqLETzqLAfuq6jl5oRkZ2
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10399"; a="284173882"
-X-IronPort-AV: E=Sophos;i="5.92,247,1650956400"; 
-   d="scan'208";a="284173882"
+  t=1657127831; x=1688663831;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=k/GJ1Ocu6NSTbZWVHRMDXxNhqdLrEsXDfyhMdsiS/Fk=;
+  b=BDxWCV0EK4dz8dFSd90CjRwejnvf4mqYI5mhhMHVU40Ht7BI0+JmowO4
+   30mWzAjWt4PcgVZ0zlJTHwlbrpMPCzVn5kEzTt7LEGs+FShaTrc/Dr1P3
+   7G739puc/lylZTUmKK9T3rNq6YcvdGOOQmroBLHxpk4zvPxPD1Jnh5dAT
+   PoR3XoOWc+F6dgm/1dAnMbU+W2sm9DHCymWscMMvp6PtqQRMUCzumb8u8
+   7qfCbLdeADErd0gIFVPudS8W8MMwX9Ee50BEJiynWWf9/YZDtl0/xRUad
+   PS1HwjoYXVZGZEo5gZxWOSathufC8KzPQfitrTQWic3sf2CZQyTMMPaqO
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10400"; a="370134896"
+X-IronPort-AV: E=Sophos;i="5.92,250,1650956400"; 
+   d="scan'208";a="370134896"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 11:38:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,247,1650956400"; 
-   d="scan'208";a="619965099"
-Received: from viggo.jf.intel.com (HELO ray2.sr71.net) ([10.54.77.144])
-  by orsmga008.jf.intel.com with ESMTP; 05 Jul 2022 11:38:55 -0700
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-sgx@vger.kernel.org
-Subject: [PATCH] x86/sgx: Allow enclaves to use Asynchrounous Exit Notification
-Date:   Tue,  5 Jul 2022 11:36:48 -0700
-Message-Id: <20220705183648.3739111-1-dave.hansen@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 10:17:10 -0700
+X-IronPort-AV: E=Sophos;i="5.92,250,1650956400"; 
+   d="scan'208";a="620415107"
+Received: from tjsteven-mobl3.amr.corp.intel.com (HELO [10.255.228.25]) ([10.255.228.25])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 10:17:10 -0700
+Message-ID: <2a2411f0-60a9-cf7d-b34d-b1756ad499a5@intel.com>
+Date:   Wed, 6 Jul 2022 10:15:05 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 04/22] x86/sgx: fix kernel-doc markups
+Content-Language: en-US
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        x86@kernel.org
+References: <cover.1656409369.git.mchehab@kernel.org>
+ <49f0900ca467867917182a4428b731e55608ca67.1656409369.git.mchehab@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <49f0900ca467867917182a4428b731e55608ca67.1656409369.git.mchehab@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Short Version:
+On 6/28/22 02:46, Mauro Carvalho Chehab wrote:
+> + * @rdi:	snapshot of DI register at enclave exit
+> + * @rsi:	snapshot of SI register at enclave exit
+> + * @rdx:	snapshot of DX register at enclave exit
+> + * @rsp:	snapshot of SP register at enclave exit
+> + * @r8:		snapshot of R8 register at enclave exit
+> + * @r9:		snapshot of R9 register at enclave exit
 
-Allow enclaves to use the new Asynchronous EXit (AEX)
-notification mechanism.  This mechanism lets enclaves run a
-handler after an AEX event.  These handlers can run mitigations
-for things like SGX-Step[1].
+The 'DX register' really is different than RDX.
 
-AEX Notify will be made available both on upcoming processors and
-on some older processors through microcode updates.
+These should all have the full register names, like:
 
-Long Version:
+	snapshot of RSP register at enclave exit
 
-== SGX Attribute Background ==
+With that fixed:
 
-The SGX architecture includes a list of SGX "attributes".  These
-attributes ensure consistency and transparency around specific
-enclave features.
-
-As a simple example, the "DEBUG" attribute allows an enclave to
-be debugged, but also destroys virtually all of SGX security.
-Using attributes, enclaves can know that they are being debugged.
-Attributes also affect enclave attestation so an enclave can, for
-instance, be denied access to secrets while it is being debugged.
-
-The kernel keeps a list of known attributes and will only
-initialize enclaves that use a known set of attributes.  This
-kernel policy eliminates the chance that a new SGX attribute
-could cause undesired effects.
-
-For example, imagine a new attribute was added called
-"PROVISIONKEY2" that provided similar functionality to
-"PROVISIIONKEY".  A kernel policy that allowed indiscriminate use
-of unknown attributes and thus PROVISIONKEY2 would undermine the
-existing kernel policy which limits use of PROVISIONKEY enclaves.
-
-== AEX Notify Background ==
-
-"Intel Architecture Instruction Set Extensions and Future
-Features - Version 45" is out[2].  There is a new chapter:
-
-	Asynchronous Enclave Exit Notify and the EDECCSSA User Leaf Function.
-
-Enclaves exit can be either synchronous and consensual (EEXIT for
-instance) or asynchronous (on an interrupt or fault).  The
-asynchronous ones can evidently be exploited to single step
-enclaves[1], on top of which other naughty things can be built.
-
-AEX Notify will be made available both on upcoming processors and
-on some older processors through microcode updates.
-
-== The Problem ==
-
-These attacks are currently entirely opaque to the enclave since
-the hardware does the save/restore under the covers. The
-Asynchronous Enclave Exit Notify (AEX Notify) mechanism provides
-enclaves an ability to detect and mitigate potential exposure to
-these kinds of attacks.
-
-== The Solution ==
-
-Define the new attribute value for AEX Notification.  Ensure the
-attribute is cleared from the list reserved attributes which
-allows it to be used in enclaves.
-
-I just built this and ran it to make sure there were no obvious
-regressions since I do not have the hardware to test it handy.
-Tested-by's would be much appreciated.
-
-1. https://github.com/jovanbulck/sgx-step
-2. https://cdrdv2.intel.com/v1/dl/getContent/671368?explicitVersion=true
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-sgx@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/x86/include/asm/sgx.h | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 3f9334ef67cd..f7328d8efd83 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -110,17 +110,28 @@ enum sgx_miscselect {
-  * %SGX_ATTR_EINITTOKENKEY:	Allow to use token signing key that is used to
-  *				sign cryptographic tokens that can be passed to
-  *				EINIT as an authorization to run an enclave.
-+ * %SGX_ATTR_ASYNC_EXIT_NOTIFY:	Allow enclaves to be notified after an
-+ *				asynchronous exit has occurred.
-  */
- enum sgx_attribute {
--	SGX_ATTR_INIT		= BIT(0),
--	SGX_ATTR_DEBUG		= BIT(1),
--	SGX_ATTR_MODE64BIT	= BIT(2),
--	SGX_ATTR_PROVISIONKEY	= BIT(4),
--	SGX_ATTR_EINITTOKENKEY	= BIT(5),
--	SGX_ATTR_KSS		= BIT(7),
-+	SGX_ATTR_INIT		   = BIT(0),
-+	SGX_ATTR_DEBUG		   = BIT(1),
-+	SGX_ATTR_MODE64BIT	   = BIT(2),
-+				  /* BIT(3) is reserved */
-+	SGX_ATTR_PROVISIONKEY	   = BIT(4),
-+	SGX_ATTR_EINITTOKENKEY	   = BIT(5),
-+				  /* BIT(6) is for CET */
-+	SGX_ATTR_KSS		   = BIT(7),
-+				  /* BIT(8) is reserved */
-+				  /* BIT(9) is reserved */
-+	SGX_ATTR_ASYNC_EXIT_NOTIFY = BIT(10),
- };
- 
--#define SGX_ATTR_RESERVED_MASK	(BIT_ULL(3) | BIT_ULL(6) | GENMASK_ULL(63, 8))
-+#define SGX_ATTR_RESERVED_MASK	(BIT_ULL(3) | \
-+				 BIT_ULL(6) | \
-+				 BIT_ULL(8) | \
-+				 BIT_ULL(9) | \
-+				 GENMASK_ULL(63, 11))
- 
- /**
-  * struct sgx_secs - SGX Enclave Control Structure (SECS)
--- 
-2.34.1
-
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
