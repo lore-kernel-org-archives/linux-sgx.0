@@ -2,82 +2,96 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F364C43334
-	for <linux-sgx@archiver.kernel.org>; Wed,  6 Jul 2022 17:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00903C433EF
+	for <linux-sgx@archiver.kernel.org>; Fri,  8 Jul 2022 16:22:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232950AbiGFRRS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 6 Jul 2022 13:17:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39336 "EHLO
+        id S238999AbiGHQWC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 8 Jul 2022 12:22:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233705AbiGFRRR (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 6 Jul 2022 13:17:17 -0400
+        with ESMTP id S238980AbiGHQWA (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 8 Jul 2022 12:22:00 -0400
 Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EE2F2A737;
-        Wed,  6 Jul 2022 10:17:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 486971A056;
+        Fri,  8 Jul 2022 09:21:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657127831; x=1688663831;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=k/GJ1Ocu6NSTbZWVHRMDXxNhqdLrEsXDfyhMdsiS/Fk=;
-  b=BDxWCV0EK4dz8dFSd90CjRwejnvf4mqYI5mhhMHVU40Ht7BI0+JmowO4
-   30mWzAjWt4PcgVZ0zlJTHwlbrpMPCzVn5kEzTt7LEGs+FShaTrc/Dr1P3
-   7G739puc/lylZTUmKK9T3rNq6YcvdGOOQmroBLHxpk4zvPxPD1Jnh5dAT
-   PoR3XoOWc+F6dgm/1dAnMbU+W2sm9DHCymWscMMvp6PtqQRMUCzumb8u8
-   7qfCbLdeADErd0gIFVPudS8W8MMwX9Ee50BEJiynWWf9/YZDtl0/xRUad
-   PS1HwjoYXVZGZEo5gZxWOSathufC8KzPQfitrTQWic3sf2CZQyTMMPaqO
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10400"; a="370134896"
-X-IronPort-AV: E=Sophos;i="5.92,250,1650956400"; 
-   d="scan'208";a="370134896"
+  t=1657297317; x=1688833317;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TLktB3DWhGcfA3dzlR4wAGKKP4dbQc5qRQzQxykmlpk=;
+  b=L7ag4MZrpPHGU1My4nC8dAq933g15zYpIrqkB8LuvQgTiCsGrEyqP0e2
+   zO74eQcrpfuEhV298sK7oTTNPJQBRBlBcnrR47qW/m5+NCTIClMjdSrup
+   5cp7d//egU+/q5gj6Jl0QwcOrgcWPOrjD/UoE/dog5+6Xicrw1Js3UsjE
+   BiPLz5WQG37pdRFBTVQnACx0UqOAoWdwZd+L3FVnGzZcUn2wdKR18JnQr
+   diPbiO+OjU/+orv5p4vCHewOamHXnnGdmhMyTbQsNzb3Nl+oPTYrf9HUA
+   sbjMSCReiliOeTbCsxBAlM4fJ+5Mnz8008a7rK/cazsVtvcNLdzSBgvPd
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10402"; a="370629427"
+X-IronPort-AV: E=Sophos;i="5.92,256,1650956400"; 
+   d="scan'208";a="370629427"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 10:17:10 -0700
-X-IronPort-AV: E=Sophos;i="5.92,250,1650956400"; 
-   d="scan'208";a="620415107"
-Received: from tjsteven-mobl3.amr.corp.intel.com (HELO [10.255.228.25]) ([10.255.228.25])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 10:17:10 -0700
-Message-ID: <2a2411f0-60a9-cf7d-b34d-b1756ad499a5@intel.com>
-Date:   Wed, 6 Jul 2022 10:15:05 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 04/22] x86/sgx: fix kernel-doc markups
-Content-Language: en-US
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2022 09:21:33 -0700
+X-IronPort-AV: E=Sophos;i="5.92,256,1650956400"; 
+   d="scan'208";a="621275732"
+Received: from kcaccard-mobl.amr.corp.intel.com (HELO kcaccard-mobl1.jf.intel.com) ([10.212.147.154])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2022 09:21:32 -0700
+From:   Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     linux-sgx@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-References: <cover.1656409369.git.mchehab@kernel.org>
- <49f0900ca467867917182a4428b731e55608ca67.1656409369.git.mchehab@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <49f0900ca467867917182a4428b731e55608ca67.1656409369.git.mchehab@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Sean Christopherson <seanjc@google.com>
+Subject: [PATCH] x86/sgx: Drop 'page_index' from sgx_backing
+Date:   Fri,  8 Jul 2022 09:21:24 -0700
+Message-Id: <20220708162124.8442-1-kristen@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 6/28/22 02:46, Mauro Carvalho Chehab wrote:
-> + * @rdi:	snapshot of DI register at enclave exit
-> + * @rsi:	snapshot of SI register at enclave exit
-> + * @rdx:	snapshot of DX register at enclave exit
-> + * @rsp:	snapshot of SP register at enclave exit
-> + * @r8:		snapshot of R8 register at enclave exit
-> + * @r9:		snapshot of R9 register at enclave exit
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-The 'DX register' really is different than RDX.
+Storing the 'page_index' value in the sgx_backing struct is
+dead code and no longer needed.
 
-These should all have the full register names, like:
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+Cc: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 1 -
+ arch/x86/kernel/cpu/sgx/encl.h | 1 -
+ 2 files changed, 2 deletions(-)
 
-	snapshot of RSP register at enclave exit
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 19876ebfb504..fa93586a536c 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -735,7 +735,6 @@ static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 		return PTR_ERR(pcmd);
+ 	}
+ 
+-	backing->page_index = page_index;
+ 	backing->contents = contents;
+ 	backing->pcmd = pcmd;
+ 	backing->pcmd_offset = page_pcmd_off & (PAGE_SIZE - 1);
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index 332ef3568267..eeb1a53ddf48 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -78,7 +78,6 @@ struct sgx_va_page {
+ };
+ 
+ struct sgx_backing {
+-	pgoff_t page_index;
+ 	struct page *contents;
+ 	struct page *pcmd;
+ 	unsigned long pcmd_offset;
+-- 
+2.20.1
 
-With that fixed:
-
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
