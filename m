@@ -2,129 +2,154 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7A5C433EF
-	for <linux-sgx@archiver.kernel.org>; Sat,  9 Jul 2022 10:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BE9CCA483
+	for <linux-sgx@archiver.kernel.org>; Sat,  9 Jul 2022 10:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbiGIKHl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 9 Jul 2022 06:07:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60932 "EHLO
+        id S229803AbiGIKHv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 9 Jul 2022 06:07:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiGIKHk (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 9 Jul 2022 06:07:40 -0400
+        with ESMTP id S229723AbiGIKHo (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 9 Jul 2022 06:07:44 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77CF04AD50;
-        Sat,  9 Jul 2022 03:07:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 509CF4B4B8;
+        Sat,  9 Jul 2022 03:07:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0427A60DFF;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E898E60E84;
         Sat,  9 Jul 2022 10:07:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 578BDC341C7;
-        Sat,  9 Jul 2022 10:07:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EAE2C341C7;
+        Sat,  9 Jul 2022 10:07:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657361258;
-        bh=A54g7vRsszk0/l1GimW6ZYYbGXwakZHP+vpX+YjS5YU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=txfkeUHyqV+qQ6KQYrH+fXWNG3C3QN3k0OAtb3RKcZVk6lMKvW0ABrV1yszCa/UIJ
-         FRRTUilsYdnjPl2B8X7TUYojG/LM/xdPyAh96e11W78xKuROGnEiXhFxSMgbY9QFbK
-         gbq+Jr9Dce5Df+H0SBnizRlyR1KOOUopauc+1lLeGOrESWVh8AkZ1a9MKZGq3KodQN
-         zb2tGYZERy3TVuVZUIzWzDjAgG0GaadwiGQ+tuvPngarizdFrN5iwv6xdBmFej0F7q
-         viidYSXkPY7JgyY9Wl966tkwcnMc4PVR8b9KaYUmgluyPfvba/PZAVR08bc51+Ni8p
-         AMwRQbzEYM67A==
+        s=k20201202; t=1657361259;
+        bh=KJtmXylkYfBUCP9nKw3ANSOdLovVVTpFPXktiDmYhX8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LnWbmh+eLrmzEUuOUtwt1Zk7RPhAHxviv/xN1zz17DDCm7ZZ2jcjIeAUW4KTxMXed
+         KM6hlnyvwgcE/ucoKBLNi3lTI0HLQorkZBQKDriJ83QapG5TazYrBSO0s5jpBgI518
+         zjHSfekRlLlgNoH4pC8Bvx7SWcUhuyyANeCxHX9hJfkXhijte2QxQFmBhEqOt4NAki
+         WRxJiBGp9FbjYtPunI+ANm5ybjHbUrO7XEI2HfTHJrTDCbiOpxKJM0muKF/npo2L8i
+         8btVRvA0c3zQa7eBwzLXG2Hotce3pbtGp96wKaC+VQwn/aYfgAwZb7CnJrfDBP08B6
+         LAxmYYMrturXw==
 Received: from mchehab by mail.kernel.org with local (Exim 4.95)
         (envelope-from <mchehab@kernel.org>)
-        id 1oA7N9-004EGi-GN;
+        id 1oA7N9-004EGQ-BD;
         Sat, 09 Jul 2022 11:07:35 +0100
 From:   Mauro Carvalho Chehab <mchehab@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Alex Shi <alexs@kernel.org>,
+        Alexander Potapenko <glider@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
         Borislav Petkov <bp@alien8.de>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Dumazet <edumazet@google.com>,
         Ingo Molnar <mingo@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <seanjc@google.com>,
+        Jakub Kicinski <kuba@kernel.org>, Leo Yan <leo.yan@linaro.org>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Marco Elver <elver@google.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Max Staudt <max@enpas.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        x86@kernel.org
-Subject: [PATCH v3 06/21] x86/sgx: fix kernel-doc markups
-Date:   Sat,  9 Jul 2022 11:07:19 +0100
-Message-Id: <9f0f8f41c2544c34371ca003814aadd24b5698c3.1657360984.git.mchehab@kernel.org>
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Yanteng Si <siyanteng@loongson.cn>, coresight@lists.linaro.org,
+        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
+        kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-cachefs@redhat.com,
+        linux-can@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mm@kvack.org, linux-pci@vger.kernel.org,
+        linux-sgx@vger.kernel.org, netdev@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v3 00/21] Update Documentation/ cross references and fix issues
+Date:   Sat,  9 Jul 2022 11:07:13 +0100
+Message-Id: <cover.1657360984.git.mchehab@kernel.org>
 X-Mailer: git-send-email 2.36.1
-In-Reply-To: <cover.1657360984.git.mchehab@kernel.org>
-References: <cover.1657360984.git.mchehab@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-There are a couple typos there, violating kernel-doc syntax.
+This series fix almost all fixable issues when building the html docs at
+linux-next (next-20220608):
 
-Also, on a function typedef, the register snapshots aren't
-documented.
+- Address some broken cross-references;
+- Fix kernel-doc warnings;
+- Fix bad tags on ReST files.
 
-This should fix those warnings:
+With this series applied, plus other pending patches that should hopefully
+be merged in time for the next merge window, htmldocs build will produce
+just 4 warnings with Sphinx 2.4.4.
 
-	arch/x86/include/uapi/asm/sgx.h:19: warning: Enum value 'SGX_PAGE_MEASURE' not described in enum 'sgx_page_flags'
-	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'rdi' not described in 'sgx_enclave_user_handler_t'
-	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'rsi' not described in 'sgx_enclave_user_handler_t'
-	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'rdx' not described in 'sgx_enclave_user_handler_t'
-	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'rsp' not described in 'sgx_enclave_user_handler_t'
-	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'r8' not described in 'sgx_enclave_user_handler_t'
-	arch/x86/include/uapi/asm/sgx.h:97: warning: Function parameter or member 'r9' not described in 'sgx_enclave_user_handler_t'
-	arch/x86/include/uapi/asm/sgx.h:124: warning: Function parameter or member 'reserved' not described in 'sgx_enclave_run'
+Sphinx >=3 will produce some extra false-positive warnings due to conflicts
+between structs and functions sharing the same name. Hopefully this will
+be fixed either on a new Sphinx 5.x version or Sphinx 6.0.
 
-Fixes: 3fa97bf00126 ("Documentation/x86: Document SGX kernel architecture")
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
----
+Mauro Carvalho Chehab (21):
+  docs: networking: update netdevices.rst reference
+  docs: update vmalloced-kernel-stacks.rst reference
+  docs: update vmemmap_dedup.rst reference
+  docs: zh_CN: page_migration: fix reference to mm index.rst
+  dt-bindings: arm: update arm,coresight-cpu-debug.yaml reference
+  x86/sgx: fix kernel-doc markups
+  fscache: fix kernel-doc documentation
+  fs: namei: address some kernel-doc issues
+  drm/scheduler: fix a kernel-doc warning
+  drm/scheduler: add a missing kernel-doc parameter
+  kfence: fix a kernel-doc parameter
+  genalloc: add a description for start_addr parameter
+  textsearch: document list inside struct ts_ops
+  dcache: fix a kernel-doc warning
+  docs: ext4: blockmap.rst: fix a broken table
+  docs: PCI: pci-vntb-function.rst: Properly include ascii artwork
+  docs: PCI: pci-vntb-howto.rst: fix a title markup
+  docs: virt: kvm: fix a title markup at api.rst
+  docs: ABI: sysfs-bus-nvdimm
+  docs: leds: index.rst: add leds-qcom-lpg to it
+  Documentation: coresight: fix binding wildcards
 
-To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
-See [PATCH v3 00/21] at: https://lore.kernel.org/all/cover.1657360984.git.mchehab@kernel.org/
+ Documentation/ABI/testing/sysfs-bus-nvdimm             |  2 ++
+ Documentation/PCI/endpoint/pci-vntb-function.rst       |  2 +-
+ Documentation/PCI/endpoint/pci-vntb-howto.rst          |  2 +-
+ Documentation/filesystems/ext4/blockmap.rst            |  2 +-
+ Documentation/leds/index.rst                           |  1 +
+ Documentation/trace/coresight/coresight-cpu-debug.rst  |  2 +-
+ Documentation/trace/coresight/coresight.rst            |  2 +-
+ Documentation/translations/zh_CN/mm/page_migration.rst |  2 +-
+ .../translations/zh_CN/mm/vmalloced-kernel-stacks.rst  |  2 +-
+ Documentation/virt/kvm/api.rst                         |  6 +++---
+ arch/x86/include/uapi/asm/sgx.h                        | 10 ++++++++--
+ drivers/gpu/drm/scheduler/sched_main.c                 |  1 +
+ drivers/net/can/can327.c                               |  2 +-
+ fs/namei.c                                             |  3 +++
+ include/drm/gpu_scheduler.h                            |  1 +
+ include/linux/dcache.h                                 |  2 +-
+ include/linux/fscache.h                                |  4 ++--
+ include/linux/genalloc.h                               |  1 +
+ include/linux/kfence.h                                 |  1 +
+ include/linux/textsearch.h                             |  1 +
+ mm/hugetlb_vmemmap.h                                   |  2 +-
+ 21 files changed, 34 insertions(+), 17 deletions(-)
 
- arch/x86/include/uapi/asm/sgx.h | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index f4b81587e90b..6306bcaaf67a 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -10,7 +10,7 @@
- 
- /**
-  * enum sgx_page_flags - page control flags
-- * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
-+ * @SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
-  *			ENCLS[EEXTEND] operations.
-  */
- enum sgx_page_flags {
-@@ -81,6 +81,12 @@ struct sgx_enclave_run;
- /**
-  * typedef sgx_enclave_user_handler_t - Exit handler function accepted by
-  *					__vdso_sgx_enter_enclave()
-+ * @rdi:	snapshot of RDI register at enclave exit
-+ * @rsi:	snapshot of RSI register at enclave exit
-+ * @rdx:	snapshot of RDX register at enclave exit
-+ * @rsp:	snapshot of RSP register at enclave exit
-+ * @r8:		snapshot of R8 register at enclave exit
-+ * @r9:		snapshot of R9 register at enclave exit
-  * @run:	The run instance given by the caller
-  *
-  * The register parameters contain the snapshot of their values at enclave
-@@ -104,7 +110,7 @@ typedef int (*sgx_enclave_user_handler_t)(long rdi, long rsi, long rdx,
-  * @exception_addr:		The address that triggered the exception
-  * @user_handler:		User provided callback run on exception
-  * @user_data:			Data passed to the user handler
-- * @reserved			Reserved for future extensions
-+ * @reserved:			Reserved for future extensions
-  *
-  * If @user_handler is provided, the handler will be invoked on all return paths
-  * of the normal flow.  The user handler may transfer control, e.g. via a
 -- 
 2.36.1
+
 
