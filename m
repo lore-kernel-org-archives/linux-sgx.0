@@ -2,154 +2,187 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BE9CCA483
-	for <linux-sgx@archiver.kernel.org>; Sat,  9 Jul 2022 10:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB4AC433EF
+	for <linux-sgx@archiver.kernel.org>; Mon, 11 Jul 2022 02:34:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229803AbiGIKHv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 9 Jul 2022 06:07:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32840 "EHLO
+        id S229502AbiGKCe4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 10 Jul 2022 22:34:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229723AbiGIKHo (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 9 Jul 2022 06:07:44 -0400
+        with ESMTP id S229463AbiGKCe4 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 10 Jul 2022 22:34:56 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 509CF4B4B8;
-        Sat,  9 Jul 2022 03:07:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19EBADF36;
+        Sun, 10 Jul 2022 19:34:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E898E60E84;
-        Sat,  9 Jul 2022 10:07:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EAE2C341C7;
-        Sat,  9 Jul 2022 10:07:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A56156104F;
+        Mon, 11 Jul 2022 02:34:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE78C3411E;
+        Mon, 11 Jul 2022 02:34:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657361259;
-        bh=KJtmXylkYfBUCP9nKw3ANSOdLovVVTpFPXktiDmYhX8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LnWbmh+eLrmzEUuOUtwt1Zk7RPhAHxviv/xN1zz17DDCm7ZZ2jcjIeAUW4KTxMXed
-         KM6hlnyvwgcE/ucoKBLNi3lTI0HLQorkZBQKDriJ83QapG5TazYrBSO0s5jpBgI518
-         zjHSfekRlLlgNoH4pC8Bvx7SWcUhuyyANeCxHX9hJfkXhijte2QxQFmBhEqOt4NAki
-         WRxJiBGp9FbjYtPunI+ANm5ybjHbUrO7XEI2HfTHJrTDCbiOpxKJM0muKF/npo2L8i
-         8btVRvA0c3zQa7eBwzLXG2Hotce3pbtGp96wKaC+VQwn/aYfgAwZb7CnJrfDBP08B6
-         LAxmYYMrturXw==
-Received: from mchehab by mail.kernel.org with local (Exim 4.95)
-        (envelope-from <mchehab@kernel.org>)
-        id 1oA7N9-004EGQ-BD;
-        Sat, 09 Jul 2022 11:07:35 +0100
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Alex Shi <alexs@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Leo Yan <leo.yan@linaro.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Marco Elver <elver@google.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Max Staudt <max@enpas.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        s=k20201202; t=1657506894;
+        bh=weipIFQYReWTUKQ8HLFhld62fDRiI13OW1xTRijDdlE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=j6FbwByUpFESDiGzaDrNYqm2RcQpwk9FVw8jxE5+A8VoS9lD7eyIlI1LBjK+I/PAU
+         HXwlADcf5kF45Ve8uBbcBw+IY6XLgMz6xbXrrVRG1tBee0PEnK6E3jNRRK7iyau3yC
+         LPvQkTUatnKbZersHliHs8GsvdLDMJFwcu2KIP61TzNKi6eJhyUBGJIMsWo6zyysXL
+         indIlQHCWZwgGTsvwSX0sQux7mgfuqfhpej7qIP9W+2CaFWIu0ulllAIunT6GUcWoQ
+         HlA4yP6E5XbBefmxAMl8bVW7Jy6KOthJcXSMYmsNkc+ZMKTfVDvr17tlH5ozcZ2arp
+         /jXD1v853XDRg==
+Date:   Mon, 11 Jul 2022 05:34:48 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Yanteng Si <siyanteng@loongson.cn>, coresight@lists.linaro.org,
-        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
-        kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-cachefs@redhat.com,
-        linux-can@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mm@kvack.org, linux-pci@vger.kernel.org,
-        linux-sgx@vger.kernel.org, netdev@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v3 00/21] Update Documentation/ cross references and fix issues
-Date:   Sat,  9 Jul 2022 11:07:13 +0100
-Message-Id: <cover.1657360984.git.mchehab@kernel.org>
-X-Mailer: git-send-email 2.36.1
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-sgx@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: Allow enclaves to use Asynchrounous Exit
+ Notification
+Message-ID: <YsuMK0JIYqqjtVdk@kernel.org>
+References: <20220705183648.3739111-1-dave.hansen@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220705183648.3739111-1-dave.hansen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-This series fix almost all fixable issues when building the html docs at
-linux-next (next-20220608):
+On Tue, Jul 05, 2022 at 11:36:48AM -0700, Dave Hansen wrote:
+> Short Version:
+> 
+> Allow enclaves to use the new Asynchronous EXit (AEX)
+> notification mechanism.  This mechanism lets enclaves run a
+> handler after an AEX event.  These handlers can run mitigations
+> for things like SGX-Step[1].
+> 
+> AEX Notify will be made available both on upcoming processors and
+> on some older processors through microcode updates.
+> 
+> Long Version:
+> 
+> == SGX Attribute Background ==
+> 
+> The SGX architecture includes a list of SGX "attributes".  These
+> attributes ensure consistency and transparency around specific
+> enclave features.
+> 
+> As a simple example, the "DEBUG" attribute allows an enclave to
+> be debugged, but also destroys virtually all of SGX security.
+> Using attributes, enclaves can know that they are being debugged.
+> Attributes also affect enclave attestation so an enclave can, for
+> instance, be denied access to secrets while it is being debugged.
+> 
+> The kernel keeps a list of known attributes and will only
+> initialize enclaves that use a known set of attributes.  This
+> kernel policy eliminates the chance that a new SGX attribute
+> could cause undesired effects.
+> 
+> For example, imagine a new attribute was added called
+> "PROVISIONKEY2" that provided similar functionality to
+> "PROVISIIONKEY".  A kernel policy that allowed indiscriminate use
+> of unknown attributes and thus PROVISIONKEY2 would undermine the
+> existing kernel policy which limits use of PROVISIONKEY enclaves.
+> 
+> == AEX Notify Background ==
+> 
+> "Intel Architecture Instruction Set Extensions and Future
+> Features - Version 45" is out[2].  There is a new chapter:
+> 
+> 	Asynchronous Enclave Exit Notify and the EDECCSSA User Leaf Function.
+> 
+> Enclaves exit can be either synchronous and consensual (EEXIT for
+> instance) or asynchronous (on an interrupt or fault).  The
+> asynchronous ones can evidently be exploited to single step
+> enclaves[1], on top of which other naughty things can be built.
+> 
+> AEX Notify will be made available both on upcoming processors and
+> on some older processors through microcode updates.
+> 
+> == The Problem ==
+> 
+> These attacks are currently entirely opaque to the enclave since
+> the hardware does the save/restore under the covers. The
+> Asynchronous Enclave Exit Notify (AEX Notify) mechanism provides
+> enclaves an ability to detect and mitigate potential exposure to
+> these kinds of attacks.
+> 
+> == The Solution ==
+> 
+> Define the new attribute value for AEX Notification.  Ensure the
+> attribute is cleared from the list reserved attributes which
+> allows it to be used in enclaves.
+> 
+> I just built this and ran it to make sure there were no obvious
+> regressions since I do not have the hardware to test it handy.
+> Tested-by's would be much appreciated.
 
-- Address some broken cross-references;
-- Fix kernel-doc warnings;
-- Fix bad tags on ReST files.
+Is this available on recent ucode updates e.g. for Icelake
+or Geminilake?
 
-With this series applied, plus other pending patches that should hopefully
-be merged in time for the next merge window, htmldocs build will produce
-just 4 warnings with Sphinx 2.4.4.
+> 
+> 1. https://github.com/jovanbulck/sgx-step
+> 2. https://cdrdv2.intel.com/v1/dl/getContent/671368?explicitVersion=true
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: x86@kernel.org
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: linux-sgx@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/x86/include/asm/sgx.h | 25 ++++++++++++++++++-------
+>  1 file changed, 18 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+> index 3f9334ef67cd..f7328d8efd83 100644
+> --- a/arch/x86/include/asm/sgx.h
+> +++ b/arch/x86/include/asm/sgx.h
+> @@ -110,17 +110,28 @@ enum sgx_miscselect {
+>   * %SGX_ATTR_EINITTOKENKEY:	Allow to use token signing key that is used to
+>   *				sign cryptographic tokens that can be passed to
+>   *				EINIT as an authorization to run an enclave.
+> + * %SGX_ATTR_ASYNC_EXIT_NOTIFY:	Allow enclaves to be notified after an
+> + *				asynchronous exit has occurred.
+>   */
+>  enum sgx_attribute {
+> -	SGX_ATTR_INIT		= BIT(0),
+> -	SGX_ATTR_DEBUG		= BIT(1),
+> -	SGX_ATTR_MODE64BIT	= BIT(2),
+> -	SGX_ATTR_PROVISIONKEY	= BIT(4),
+> -	SGX_ATTR_EINITTOKENKEY	= BIT(5),
+> -	SGX_ATTR_KSS		= BIT(7),
+> +	SGX_ATTR_INIT		   = BIT(0),
+> +	SGX_ATTR_DEBUG		   = BIT(1),
+> +	SGX_ATTR_MODE64BIT	   = BIT(2),
+> +				  /* BIT(3) is reserved */
+> +	SGX_ATTR_PROVISIONKEY	   = BIT(4),
+> +	SGX_ATTR_EINITTOKENKEY	   = BIT(5),
+> +				  /* BIT(6) is for CET */
+> +	SGX_ATTR_KSS		   = BIT(7),
+> +				  /* BIT(8) is reserved */
+> +				  /* BIT(9) is reserved */
+> +	SGX_ATTR_ASYNC_EXIT_NOTIFY = BIT(10),
+>  };
+>  
+> -#define SGX_ATTR_RESERVED_MASK	(BIT_ULL(3) | BIT_ULL(6) | GENMASK_ULL(63, 8))
+> +#define SGX_ATTR_RESERVED_MASK	(BIT_ULL(3) | \
+> +				 BIT_ULL(6) | \
+> +				 BIT_ULL(8) | \
+> +				 BIT_ULL(9) | \
+> +				 GENMASK_ULL(63, 11))
+>  
+>  /**
+>   * struct sgx_secs - SGX Enclave Control Structure (SECS)
+> -- 
+> 2.34.1
+> 
 
-Sphinx >=3 will produce some extra false-positive warnings due to conflicts
-between structs and functions sharing the same name. Hopefully this will
-be fixed either on a new Sphinx 5.x version or Sphinx 6.0.
-
-Mauro Carvalho Chehab (21):
-  docs: networking: update netdevices.rst reference
-  docs: update vmalloced-kernel-stacks.rst reference
-  docs: update vmemmap_dedup.rst reference
-  docs: zh_CN: page_migration: fix reference to mm index.rst
-  dt-bindings: arm: update arm,coresight-cpu-debug.yaml reference
-  x86/sgx: fix kernel-doc markups
-  fscache: fix kernel-doc documentation
-  fs: namei: address some kernel-doc issues
-  drm/scheduler: fix a kernel-doc warning
-  drm/scheduler: add a missing kernel-doc parameter
-  kfence: fix a kernel-doc parameter
-  genalloc: add a description for start_addr parameter
-  textsearch: document list inside struct ts_ops
-  dcache: fix a kernel-doc warning
-  docs: ext4: blockmap.rst: fix a broken table
-  docs: PCI: pci-vntb-function.rst: Properly include ascii artwork
-  docs: PCI: pci-vntb-howto.rst: fix a title markup
-  docs: virt: kvm: fix a title markup at api.rst
-  docs: ABI: sysfs-bus-nvdimm
-  docs: leds: index.rst: add leds-qcom-lpg to it
-  Documentation: coresight: fix binding wildcards
-
- Documentation/ABI/testing/sysfs-bus-nvdimm             |  2 ++
- Documentation/PCI/endpoint/pci-vntb-function.rst       |  2 +-
- Documentation/PCI/endpoint/pci-vntb-howto.rst          |  2 +-
- Documentation/filesystems/ext4/blockmap.rst            |  2 +-
- Documentation/leds/index.rst                           |  1 +
- Documentation/trace/coresight/coresight-cpu-debug.rst  |  2 +-
- Documentation/trace/coresight/coresight.rst            |  2 +-
- Documentation/translations/zh_CN/mm/page_migration.rst |  2 +-
- .../translations/zh_CN/mm/vmalloced-kernel-stacks.rst  |  2 +-
- Documentation/virt/kvm/api.rst                         |  6 +++---
- arch/x86/include/uapi/asm/sgx.h                        | 10 ++++++++--
- drivers/gpu/drm/scheduler/sched_main.c                 |  1 +
- drivers/net/can/can327.c                               |  2 +-
- fs/namei.c                                             |  3 +++
- include/drm/gpu_scheduler.h                            |  1 +
- include/linux/dcache.h                                 |  2 +-
- include/linux/fscache.h                                |  4 ++--
- include/linux/genalloc.h                               |  1 +
- include/linux/kfence.h                                 |  1 +
- include/linux/textsearch.h                             |  1 +
- mm/hugetlb_vmemmap.h                                   |  2 +-
- 21 files changed, 34 insertions(+), 17 deletions(-)
-
--- 
-2.36.1
-
-
+BR, Jarkko
