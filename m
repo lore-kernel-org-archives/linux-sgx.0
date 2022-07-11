@@ -2,99 +2,136 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B4ABC43334
-	for <linux-sgx@archiver.kernel.org>; Mon, 11 Jul 2022 02:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3EFC43334
+	for <linux-sgx@archiver.kernel.org>; Mon, 11 Jul 2022 11:22:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbiGKCfy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 10 Jul 2022 22:35:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40256 "EHLO
+        id S231171AbiGKLWW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 11 Jul 2022 07:22:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbiGKCfy (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 10 Jul 2022 22:35:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C63ADF36;
-        Sun, 10 Jul 2022 19:35:53 -0700 (PDT)
+        with ESMTP id S231175AbiGKLVy (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 11 Jul 2022 07:21:54 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98C6B97A23;
+        Mon, 11 Jul 2022 03:46:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2739261047;
-        Mon, 11 Jul 2022 02:35:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32143C341C8;
-        Mon, 11 Jul 2022 02:35:52 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id F129BCE1019;
+        Mon, 11 Jul 2022 10:46:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B147AC34115;
+        Mon, 11 Jul 2022 10:46:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657506952;
-        bh=U5JfLaTDMJDWXhQ3M7TBmA+YrHYx+pIWdYRWiHn/62s=;
+        s=k20201202; t=1657536394;
+        bh=JwzvluCbjKHIwByWKYCylSImU+uaO2xsuE5ZVQxhsNI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hl+so+OY8l+S8nfO4wI8BzRze5s1P2/8/PTp6XOeZqE9XLTP4AECUZXa2huTZ93WB
-         KdXuF3v6WSDpbmNyb07syhNqQs5OholW21GjAYrpKACjyTFgMgxEICwOhpGqtKN/Y6
-         O1vI3six+4rbZDVkKe3vV2HntEQbmsoxYs4h5vIPBbr0Gz8bX/ay3DBupMUgOMeupN
-         TozBVqmT5KXJTP1dKMKKhgA8og6Q5KE0glP1xolHo9Cj9EttyrkBzdkBc8KlTnaEd3
-         AdWX0aSZxXQOaMHM2tIGtlxLvotsLp4RaS474tXLjS7mI2EB536uFr6XFoOxX0Sz5D
-         54Y3xamP6+8sQ==
-Date:   Mon, 11 Jul 2022 05:35:47 +0300
+        b=USE9QiW13JHBxOl2Xr6E1hdWhCKo/XfzImc4fk9hXdfu/I8CsaSgETr5PcqNS6SGM
+         97UHrpFIYW3SsvLumVSrbwmQUuVxbewr9fDPZYxnSgCAcVvPI8Ek5hzzImmMWU4KM8
+         3fTC933e21fqm4ZDpntUIht4afbn3pxzAa6Xdm7tIUYw5G9UdXUVd3BNa8L/2DM8PK
+         FZeOyXJwQBp3EB8sv88PUWTLyFdZxMWgLF7WVOE37iW+VTqgocceLAxgIDoBndTvNL
+         dp3ASlZ+buGhuMrZgqo6heX/dXgYIZVtpCOInsI3ZIIsZn7hOf4ai9T1r5ey5GoYe8
+         Vifgb2mDpAj1A==
+Date:   Mon, 11 Jul 2022 13:46:31 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH] x86/sgx: Drop 'page_index' from sgx_backingf
-Message-ID: <YsuMgzDtBP82bz5m@kernel.org>
-References: <20220708162124.8442-1-kristen@linux.intel.com>
+        linux-sgx@vger.kernel.org, Harald Hoyer <harald@profian.com>,
+        Nathaniel McCallum <nathaniel@profian.com>
+Subject: Re: [PATCH] x86/sgx: Allow enclaves to use Asynchrounous Exit
+ Notification
+Message-ID: <Ysv/h31LvLUaXKj5@kernel.org>
+References: <20220705183648.3739111-1-dave.hansen@linux.intel.com>
+ <YsuMK0JIYqqjtVdk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220708162124.8442-1-kristen@linux.intel.com>
+In-Reply-To: <YsuMK0JIYqqjtVdk@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jul 08, 2022 at 09:21:24AM -0700, Kristen Carlson Accardi wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Mon, Jul 11, 2022 at 05:34:48AM +0300, Jarkko Sakkinen wrote:
+> On Tue, Jul 05, 2022 at 11:36:48AM -0700, Dave Hansen wrote:
+> > Short Version:
+> > 
+> > Allow enclaves to use the new Asynchronous EXit (AEX)
+> > notification mechanism.  This mechanism lets enclaves run a
+> > handler after an AEX event.  These handlers can run mitigations
+> > for things like SGX-Step[1].
+> > 
+> > AEX Notify will be made available both on upcoming processors and
+> > on some older processors through microcode updates.
+> > 
+> > Long Version:
+> > 
+> > == SGX Attribute Background ==
+> > 
+> > The SGX architecture includes a list of SGX "attributes".  These
+> > attributes ensure consistency and transparency around specific
+> > enclave features.
+> > 
+> > As a simple example, the "DEBUG" attribute allows an enclave to
+> > be debugged, but also destroys virtually all of SGX security.
+> > Using attributes, enclaves can know that they are being debugged.
+> > Attributes also affect enclave attestation so an enclave can, for
+> > instance, be denied access to secrets while it is being debugged.
+> > 
+> > The kernel keeps a list of known attributes and will only
+> > initialize enclaves that use a known set of attributes.  This
+> > kernel policy eliminates the chance that a new SGX attribute
+> > could cause undesired effects.
+> > 
+> > For example, imagine a new attribute was added called
+> > "PROVISIONKEY2" that provided similar functionality to
+> > "PROVISIIONKEY".  A kernel policy that allowed indiscriminate use
+> > of unknown attributes and thus PROVISIONKEY2 would undermine the
+> > existing kernel policy which limits use of PROVISIONKEY enclaves.
+> > 
+> > == AEX Notify Background ==
+> > 
+> > "Intel Architecture Instruction Set Extensions and Future
+> > Features - Version 45" is out[2].  There is a new chapter:
+> > 
+> > 	Asynchronous Enclave Exit Notify and the EDECCSSA User Leaf Function.
+> > 
+> > Enclaves exit can be either synchronous and consensual (EEXIT for
+> > instance) or asynchronous (on an interrupt or fault).  The
+> > asynchronous ones can evidently be exploited to single step
+> > enclaves[1], on top of which other naughty things can be built.
+> > 
+> > AEX Notify will be made available both on upcoming processors and
+> > on some older processors through microcode updates.
+> > 
+> > == The Problem ==
+> > 
+> > These attacks are currently entirely opaque to the enclave since
+> > the hardware does the save/restore under the covers. The
+> > Asynchronous Enclave Exit Notify (AEX Notify) mechanism provides
+> > enclaves an ability to detect and mitigate potential exposure to
+> > these kinds of attacks.
+> > 
+> > == The Solution ==
+> > 
+> > Define the new attribute value for AEX Notification.  Ensure the
+> > attribute is cleared from the list reserved attributes which
+> > allows it to be used in enclaves.
+> > 
+> > I just built this and ran it to make sure there were no obvious
+> > regressions since I do not have the hardware to test it handy.
+> > Tested-by's would be much appreciated.
 > 
-> Storing the 'page_index' value in the sgx_backing struct is
-> dead code and no longer needed.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> Cc: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kernel/cpu/sgx/encl.c | 1 -
->  arch/x86/kernel/cpu/sgx/encl.h | 1 -
->  2 files changed, 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> index 19876ebfb504..fa93586a536c 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -735,7 +735,6 @@ static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
->  		return PTR_ERR(pcmd);
->  	}
->  
-> -	backing->page_index = page_index;
->  	backing->contents = contents;
->  	backing->pcmd = pcmd;
->  	backing->pcmd_offset = page_pcmd_off & (PAGE_SIZE - 1);
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-> index 332ef3568267..eeb1a53ddf48 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.h
-> +++ b/arch/x86/kernel/cpu/sgx/encl.h
-> @@ -78,7 +78,6 @@ struct sgx_va_page {
->  };
->  
->  struct sgx_backing {
-> -	pgoff_t page_index;
->  	struct page *contents;
->  	struct page *pcmd;
->  	unsigned long pcmd_offset;
-> -- 
-> 2.20.1
-> 
+> Is this available on recent ucode updates e.g. for Icelake
+> or Geminilake?
 
+I mean it would not take me long to upgrade our exception handling flow
+to this. Then I can run our full test suite on it. But this will of
+course require ucode update for Icelake.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+AEX Notify will actually just simplify everything. We kind of simulate
+"AEX Notify" already with EENTER to execute in-enclave exception handler
+before doing actual ERESUME.
 
 BR, Jarkko
