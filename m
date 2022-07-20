@@ -2,75 +2,166 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C10BDC433EF
-	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jul 2022 01:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 841CCC433EF
+	for <linux-sgx@archiver.kernel.org>; Wed, 20 Jul 2022 18:21:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231806AbiGTBmV (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 19 Jul 2022 21:42:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33870 "EHLO
+        id S229517AbiGTSVq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 20 Jul 2022 14:21:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241231AbiGTBmG (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 19 Jul 2022 21:42:06 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 814BCC0C;
-        Tue, 19 Jul 2022 18:38:52 -0700 (PDT)
+        with ESMTP id S234284AbiGTSVo (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 20 Jul 2022 14:21:44 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C532A45056;
+        Wed, 20 Jul 2022 11:21:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658281132; x=1689817132;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=c2bvKt7+H9cgbwVo61T9KmcL3V0k2Kq7e6nzPbdgV7g=;
-  b=INWVmjBZLBZmzy+oyvfa1AXLqO5S8LWv8e1w35mSjxJnM/sS3iUSuQdB
-   9fvcmVVabR0X81AiOoOwFEkOY4cN0cVbLWXDPxi4IlEh5p3/nMMYnawg5
-   WCMuG84EwzwjZRPV2nrDv7J9WebnMOCrlFO7ZyhehPo5VrOk1gEmDoTY+
-   ZoAkyVwEqL5Lmta0EfQobqlByxTS2+GKPcvtR6TI90jAjIa+ptRg5Dhmt
-   MgKKiNJGhxQfXGHIVv7/eKHqANjbNkvu9ISgRJo7GIf3Zri1GfjgQoOEg
-   nmqdAspZ9rMLyS6tpK/qc7/vjiYIhmUHpMsjQa4PDx6skyqdZ4LjR1ICw
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10413"; a="284214652"
-X-IronPort-AV: E=Sophos;i="5.92,285,1650956400"; 
-   d="scan'208";a="284214652"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2022 18:38:52 -0700
-X-IronPort-AV: E=Sophos;i="5.92,285,1650956400"; 
-   d="scan'208";a="687336086"
-Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.212.16.56])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 19 Jul 2022 18:38:51 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     linux-kernel@vger.kernel.org,
-        "Dave Hansen" <dave.hansen@linux.intel.com>,
-        "Dave Hansen" <dave.hansen@intel.com>
-Cc:     "Jarkko Sakkinen" <jarkko@kernel.org>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+  t=1658341301; x=1689877301;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=u56DnQ3gyU8pGO//wLELFocqwEDuWZY33quZjb9uohM=;
+  b=Ot6ZdGm1m80cMO6POaFeg/jzwHktav6zb6iqMaykl28ESjK7DKvRY5SQ
+   34Vi4WZAjteaKVjacTGJC1Peu6Toj9kWwHGlBJXP/gRzVP4xGkzv9AYP0
+   4SWBUWpVxvClBQDM274E9RAbQlkfyHY6v1w1AEc7Pm4JvzF4RDkMK8T0y
+   tXJ6kkfy0iSgTkETca3CQoM8S6b7QttDHGUk0KM/cy78+HUSey2nC2HeE
+   96ZUd2lxVA4+AHPWgtVM7mxhiC61v9X8vizhcY/HYKD1VbRJUUPVJAFl6
+   beO2DVarJZNHv/3uIMWVYh8zCeCgoCGd2d73NkZ1JByHrS1j7pvBzXznz
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10414"; a="285617945"
+X-IronPort-AV: E=Sophos;i="5.92,287,1650956400"; 
+   d="scan'208";a="285617945"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2022 11:21:41 -0700
+X-IronPort-AV: E=Sophos;i="5.92,287,1650956400"; 
+   d="scan'208";a="656384909"
+Received: from mmeszaro-mobl1.amr.corp.intel.com (HELO kcaccard-desk.amr.corp.intel.com) ([10.209.70.215])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2022 11:21:39 -0700
+From:   Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
         linux-sgx@vger.kernel.org
-Subject: Re: [PATCH] x86/sgx: Allow enclaves to use Asynchrounous Exit
- Notification
-References: <20220705183648.3739111-1-dave.hansen@linux.intel.com>
- <op.1pasmtstwjvjmi@hhuan26-mobl1.mshome.net>
- <197bba3c-acd2-eb13-4f27-7a5e914ed2e4@intel.com>
-Date:   Tue, 19 Jul 2022 20:38:47 -0500
+Subject: [PATCH] x86/sgx: Improve comments for sgx_encl_lookup/alloc_backing()
+Date:   Wed, 20 Jul 2022 11:21:19 -0700
+Message-Id: <20220720182120.1160956-1-kristen@linux.intel.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.1pkz6xx8wjvjmi@hhuan26-mobl1.mshome.net>
-In-Reply-To: <197bba3c-acd2-eb13-4f27-7a5e914ed2e4@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 19 Jul 2022 12:54:41 -0500, Dave Hansen <dave.hansen@intel.com>  
-wrote:
+Modify the comments for sgx_encl_lookup_backing() and for
+sgx_encl_alloc_backing() to indicate that they take a reference
+which must be dropped with a call to sgx_encl_put_backing().
+Make sgx_encl_lookup_backing() static for now, and change the
+name of sgx_encl_get_backing() to __sgx_encl_get_backing() to
+make it more clear that sgx_encl_get_backing() is an internal
+function.
 
-> Oh, and, btw...  I don't have any hardware that can actually test this
-> patch.  It can't be applied until I have an actual tested-by from
-> someone with the hardware.
+Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 21 ++++++++++++++-------
+ arch/x86/kernel/cpu/sgx/encl.h |  2 --
+ 2 files changed, 14 insertions(+), 9 deletions(-)
 
-I can ask someone in our team to test and report back results with  
-Tested-by when you post updated patch.
-Thanks
-Haitao
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 19876ebfb504..325c2d59e6b4 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -12,6 +12,9 @@
+ #include "encls.h"
+ #include "sgx.h"
+ 
++static int sgx_encl_lookup_backing(struct sgx_encl *encl, unsigned long page_index,
++			    struct sgx_backing *backing);
++
+ #define PCMDS_PER_PAGE (PAGE_SIZE / sizeof(struct sgx_pcmd))
+ /*
+  * 32 PCMD entries share a PCMD page. PCMD_FIRST_MASK is used to
+@@ -706,7 +709,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
+ }
+ 
+ /**
+- * sgx_encl_get_backing() - Pin the backing storage
++ * __sgx_encl_get_backing() - Pin the backing storage
+  * @encl:	an enclave pointer
+  * @page_index:	enclave page index
+  * @backing:	data for accessing backing storage for the page
+@@ -718,7 +721,7 @@ static struct page *sgx_encl_get_backing_page(struct sgx_encl *encl,
+  *   0 on success,
+  *   -errno otherwise.
+  */
+-static int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
++static int __sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
+ 			 struct sgx_backing *backing)
+ {
+ 	pgoff_t page_pcmd_off = sgx_encl_get_backing_page_pcmd_offset(encl, page_index);
+@@ -794,7 +797,7 @@ static struct mem_cgroup *sgx_encl_get_mem_cgroup(struct sgx_encl *encl)
+ }
+ 
+ /**
+- * sgx_encl_alloc_backing() - allocate a new backing storage page
++ * sgx_encl_alloc_backing() - create a new backing storage page
+  * @encl:	an enclave pointer
+  * @page_index:	enclave page index
+  * @backing:	data for accessing backing storage for the page
+@@ -802,7 +805,9 @@ static struct mem_cgroup *sgx_encl_get_mem_cgroup(struct sgx_encl *encl)
+  * When called from ksgxd, sets the active memcg from one of the
+  * mms in the enclave's mm_list prior to any backing page allocation,
+  * in order to ensure that shmem page allocations are charged to the
+- * enclave.
++ * enclave.  Create a backing page for loading data back into an EPC page with
++ * ELDU.  This function takes a reference on a new backing page which
++ * must be dropped with a corresponding call to sgx_encl_put_backing().
+  *
+  * Return:
+  *   0 on success,
+@@ -815,7 +820,7 @@ int sgx_encl_alloc_backing(struct sgx_encl *encl, unsigned long page_index,
+ 	struct mem_cgroup *memcg = set_active_memcg(encl_memcg);
+ 	int ret;
+ 
+-	ret = sgx_encl_get_backing(encl, page_index, backing);
++	ret = __sgx_encl_get_backing(encl, page_index, backing);
+ 
+ 	set_active_memcg(memcg);
+ 	mem_cgroup_put(encl_memcg);
+@@ -833,15 +838,17 @@ int sgx_encl_alloc_backing(struct sgx_encl *encl, unsigned long page_index,
+  * It is the caller's responsibility to ensure that it is appropriate to use
+  * sgx_encl_lookup_backing() rather than sgx_encl_alloc_backing(). If lookup is
+  * not used correctly, this will cause an allocation which is not accounted for.
++ * This function takes a reference on an existing backing page which must be
++ * dropped with a corresponding call to sgx_encl_put_backing().
+  *
+  * Return:
+  *   0 on success,
+  *   -errno otherwise.
+  */
+-int sgx_encl_lookup_backing(struct sgx_encl *encl, unsigned long page_index,
++static int sgx_encl_lookup_backing(struct sgx_encl *encl, unsigned long page_index,
+ 			   struct sgx_backing *backing)
+ {
+-	return sgx_encl_get_backing(encl, page_index, backing);
++	return __sgx_encl_get_backing(encl, page_index, backing);
+ }
+ 
+ /**
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index 332ef3568267..d731ef53f815 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -106,8 +106,6 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+ bool current_is_ksgxd(void);
+ void sgx_encl_release(struct kref *ref);
+ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
+-int sgx_encl_lookup_backing(struct sgx_encl *encl, unsigned long page_index,
+-			    struct sgx_backing *backing);
+ int sgx_encl_alloc_backing(struct sgx_encl *encl, unsigned long page_index,
+ 			   struct sgx_backing *backing);
+ void sgx_encl_put_backing(struct sgx_backing *backing);
+-- 
+2.36.1
+
