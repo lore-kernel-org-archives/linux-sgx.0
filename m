@@ -2,53 +2,56 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A59C433EF
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Jul 2022 23:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 204ADC433EF
+	for <linux-sgx@archiver.kernel.org>; Fri, 22 Jul 2022 13:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231879AbiGUX1I (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 21 Jul 2022 19:27:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46400 "EHLO
+        id S229832AbiGVN02 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 22 Jul 2022 09:26:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229761AbiGUX1H (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 21 Jul 2022 19:27:07 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 519E391CD3
-        for <linux-sgx@vger.kernel.org>; Thu, 21 Jul 2022 16:27:07 -0700 (PDT)
+        with ESMTP id S229593AbiGVN01 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 22 Jul 2022 09:26:27 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5DA85F996;
+        Fri, 22 Jul 2022 06:26:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658446027; x=1689982027;
+  t=1658496386; x=1690032386;
   h=message-id:subject:from:to:cc:date:in-reply-to:
    references:content-transfer-encoding:mime-version;
-  bh=++6XaqcEaGSb4AMUImkLmaZ6fhM3o9n2PgF3Q3z2DwI=;
-  b=bLQMkY/f0Btt/uKeEbIr6KRIGZzLLueL1yvk7F+wP1Eg/unaNENMH8qU
-   BwcMdVrgohC/pz8xx6MYYv6bEu9jQAF+kB/PBzqL54EckaNJY2ZPjc28v
-   SBWnQUfnOf/YLFQQ/qY6IP80SSmRw93REobyBjSnUPaL/hrgFg6qZZ+re
-   gN3R0ojSaSQ0DLzKSnXh3gIRiryInQBabaPZolEXzq8CSpJR74dbpbV+L
-   giYgA2Qbr2XaxLtcaRA9u0YflUdnIFh8HnZ1eyzCJJA0+KHJOW7Nc+11C
-   umZrmHffhpeQcU/Wzwso/TlBnd8YtHnNdF6X+K5gC15v96vvkk2sJ8VTf
+  bh=gL17W1lezZEuItWt/uQj/CQrhmFMClKJKozgU/0ZPjI=;
+  b=Miq+JNsh6k9szRTBVMfHabRsh2YhK0gIm8JvT+55XOgHqWBQa7DDoYmf
+   ifoP2jPqGvXiBplVd8ItNBB36jTjiczh87A/ljNw/kPb1VH/ckNE+3sv1
+   3DRT0YQ+HK004wjYr9nemCRAmzgEfOqt3rv+r9AyDyQtxAuB64o9DUejv
+   Bnb7Fsedu/pZjYbp9hiP7zuHCcpXr8uzONBAXt3QyaVrL1X3bTrjKRC5B
+   rPA7RtYXvATZsKFhPJX63gpqsx0W8pMSFPFKtyqBjQFD7nmLzo2UcbJlM
+   UmGXzVp3r7jCOi+oV0BqD4os+MCdsc2Gy5TbgRIBBOUfIKG1x9NFa6fYx
    g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10415"; a="285955916"
-X-IronPort-AV: E=Sophos;i="5.93,184,1654585200"; 
-   d="scan'208";a="285955916"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2022 16:27:07 -0700
-X-IronPort-AV: E=Sophos;i="5.93,184,1654585200"; 
-   d="scan'208";a="775051110"
-Received: from refarabe-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.213.165.223])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2022 16:27:04 -0700
-Message-ID: <fa93057f417b1f630d8199381589c415a0ec710b.camel@intel.com>
-Subject: Re: [PATCH v5 1/3] x86/sgx: Repurpose the owner field as the
- virtual address of virtual EPC page
+X-IronPort-AV: E=McAfee;i="6400,9594,10415"; a="288482931"
+X-IronPort-AV: E=Sophos;i="5.93,185,1654585200"; 
+   d="scan'208";a="288482931"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2022 06:26:26 -0700
+X-IronPort-AV: E=Sophos;i="5.93,185,1654585200"; 
+   d="scan'208";a="626560798"
+Received: from lfhuarte-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.209.148.120])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2022 06:26:23 -0700
+Message-ID: <ab467244dd03b5f94bafe9068b1c02790033c18c.camel@intel.com>
+Subject: Re: [PATCH] [v2] x86/sgx: Allow enclaves to use Asynchrounous Exit
+ Notification
 From:   Kai Huang <kai.huang@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Zhiquan Li <zhiquan1.li@intel.com>, linux-sgx@vger.kernel.org,
-        tony.luck@intel.com, jarkko@kernel.org, dave.hansen@linux.intel.com
-Cc:     seanjc@google.com, fan.du@intel.com, cathy.zhang@intel.com
-Date:   Fri, 22 Jul 2022 11:27:02 +1200
-In-Reply-To: <111cc85d-0e49-ad45-84e9-1a71ce58a2ca@intel.com>
-References: <20220622093705.2891642-1-zhiquan1.li@intel.com>
-         <20220622093705.2891642-2-zhiquan1.li@intel.com>
-         <111cc85d-0e49-ad45-84e9-1a71ce58a2ca@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>, dave@sr71.net
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Sat, 23 Jul 2022 01:26:21 +1200
+In-Reply-To: <20220720191347.1343986-1-dave.hansen@linux.intel.com>
+References: <20220720191347.1343986-1-dave.hansen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
@@ -57,28 +60,84 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 2022-07-21 at 09:42 -0700, Dave Hansen wrote:
-> On 6/22/22 02:37, Zhiquan Li wrote:
-> > diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/v=
-irt.c
-> > index 6a77a14eee38..776ae5c1c032 100644
-> > --- a/arch/x86/kernel/cpu/sgx/virt.c
-> > +++ b/arch/x86/kernel/cpu/sgx/virt.c
-> > @@ -46,10 +46,12 @@ static int __sgx_vepc_fault(struct sgx_vepc *vepc,
-> >  	if (epc_page)
-> >  		return 0;
-> > =20
-> > -	epc_page =3D sgx_alloc_epc_page(vepc, false);
-> > +	epc_page =3D sgx_alloc_epc_page((void *)addr, false);
-> >  	if (IS_ERR(epc_page))
-> >  		return PTR_ERR(epc_page);
->=20
-> Was the 'vepc' value simply unused before?
+On Wed, 2022-07-20 at 12:13 -0700, Dave Hansen wrote:
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -1022,9 +1022,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_=
+array *array, u32 function)
+> =C2=A0		 * userspace.=C2=A0 ATTRIBUTES.XFRM is not adjusted as userspace =
+is
+> =C2=A0		 * expected to derive it from supported XCR0.
+> =C2=A0		 */
+> -		entry->eax &=3D SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT |
+> -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 SGX_ATTR_PROVISIONKEY | SGX_ATTR_EINIT=
+TOKENKEY |
+> -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 SGX_ATTR_KSS;
+> +		entry->eax &=3D SGX_ATTR_PRIV_MASK | SGX_ATTR_UNPRIV_MASK;
+> =C2=A0		entry->ebx &=3D 0;
+> =C2=A0		break;
+> =C2=A0	/* Intel PT */
+> --
+> 2.34.1
 
-Yes for EPC page assigned to KVM guest it was unused before this series.
+Did a quick look at the spec.  It appears ENCLU[EDECCSSA] should be used
+together with AEX-notify.  So besides advertising the new
+SGX_ATTR_ASYNC_EXIT_NOTIFY bit to the KVM guest, I think we should also
+advertise the ENCLU[EDECCSSA] support in guest's CPUID, like below (unteste=
+d)?
 
---=20
-Thanks,
--Kai
-
+diff --git a/arch/x86/include/asm/cpufeatures.h
+b/arch/x86/include/asm/cpufeatures.h
+index 6466a58b9cff..d2ebb38b31e7 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -296,6 +296,7 @@
+ #define X86_FEATURE_PER_THREAD_MBA     (11*32+ 7) /* "" Per-thread Memory
+Bandwidth Allocation */
+ #define X86_FEATURE_SGX1               (11*32+ 8) /* "" Basic SGX */
+ #define X86_FEATURE_SGX2               (11*32+ 9) /* "" SGX Enclave Dynami=
+c
+Memory Management (EDMM) */
++#define X86_FEATURE_SGX_EDECCSSA       (11*32+10) /* "" SGX EDECCSSA user =
+leaf
+function */
+=20
+ /* Intel-defined CPU features, CPUID level 0x00000007:1 (EAX), word 12 */
+ #define X86_FEATURE_AVX_VNNI           (12*32+ 4) /* AVX VNNI instructions=
+ */
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index d47222ab8e6e..121456653417 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -612,7 +612,7 @@ void kvm_set_cpu_caps(void)
+        );
+=20
+        kvm_cpu_cap_init_scattered(CPUID_12_EAX,
+-               SF(SGX1) | SF(SGX2)
++               SF(SGX1) | SF(SGX2) | SF(SGX_EDECCSSA)
+        );
+=20
+        kvm_cpu_cap_mask(CPUID_8000_0001_ECX,
+diff --git a/arch/x86/kvm/reverse_cpuid.h b/arch/x86/kvm/reverse_cpuid.h
+index a19d473d0184..4e5b8444f161 100644
+--- a/arch/x86/kvm/reverse_cpuid.h
++++ b/arch/x86/kvm/reverse_cpuid.h
+@@ -23,6 +23,7 @@ enum kvm_only_cpuid_leafs {
+ /* Intel-defined SGX sub-features, CPUID level 0x12 (EAX). */
+ #define KVM_X86_FEATURE_SGX1           KVM_X86_FEATURE(CPUID_12_EAX, 0)
+ #define KVM_X86_FEATURE_SGX2           KVM_X86_FEATURE(CPUID_12_EAX, 1)
++#define KVM_X86_FEATURE_SGX_EDECCSSA   KVM_X86_FEATURE(CPUID_12_EAX, 11)
+=20
+ struct cpuid_reg {
+        u32 function;
+@@ -78,6 +79,8 @@ static __always_inline u32 __feature_translate(int
+x86_feature)
+                return KVM_X86_FEATURE_SGX1;
+        else if (x86_feature =3D=3D X86_FEATURE_SGX2)
+                return KVM_X86_FEATURE_SGX2;
++       else if (x86_feature =3D=3D X86_FEATURE_SGX_EDECCSSA)
++               return KVM_X86_FEATURE_SGX_EDECCSSA;
+=20
+        return x86_feature;
+ }
 
