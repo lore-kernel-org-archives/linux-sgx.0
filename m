@@ -2,96 +2,151 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 763DFC433EF
-	for <linux-sgx@archiver.kernel.org>; Fri, 22 Jul 2022 18:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F209C433EF
+	for <linux-sgx@archiver.kernel.org>; Fri, 22 Jul 2022 19:00:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235459AbiGVSo2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 22 Jul 2022 14:44:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57104 "EHLO
+        id S235494AbiGVTA0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 22 Jul 2022 15:00:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232197AbiGVSo0 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 22 Jul 2022 14:44:26 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6230F87C0C
-        for <linux-sgx@vger.kernel.org>; Fri, 22 Jul 2022 11:44:25 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id b9so5152426pfp.10
-        for <linux-sgx@vger.kernel.org>; Fri, 22 Jul 2022 11:44:25 -0700 (PDT)
+        with ESMTP id S233195AbiGVTAZ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 22 Jul 2022 15:00:25 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A101C1571F
+        for <linux-sgx@vger.kernel.org>; Fri, 22 Jul 2022 12:00:23 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id w7so5266749ply.12
+        for <linux-sgx@vger.kernel.org>; Fri, 22 Jul 2022 12:00:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=VblPSJwsGw1h15CG7/mpL6Be/8K4U7PwJxhZSMHkihc=;
-        b=qhNumpqTQJ3qzrc9XWsTpk6fgatE8thCrcvMtJUbu9+dY0RYujpQeSOv7TeEWgLd5W
-         CPjC/VEoQPLT0myYm4U23K/ZeckmrTMXq7w1piLei/384vEKXk2Vy9Ddi0qsuKewT2en
-         yZcVoL2bCQoo0urx4ZXQq5vIpAqENejz2P7WwAFGOfcBRwovR7gvy2O6D7cqmQAjUHfi
-         jgmHAIZBXtnjAOKsIqCnHrvlzXvgSBTaUBR1CoKwgy5ph6panQc2W2sKEPSSHKtCTQxw
-         IsRYkVTbc1ieVlP7bZy6Z9cRYOPysEs9HKxkZ6KV0wC8+C8NMOonq9K6Weo2Zv5nbkxm
-         TYAQ==
+        bh=h0ufdNeiYqfMuypR3ZZlDpDYrErqoCi+vB/gT2XuF2g=;
+        b=WnhIOXR9V9QRJyMMWlFX0qVsle5XohtimvQASOwwvOHtCPjE0klYnneZAG7OyDWs1q
+         pvMY+63UlQDtJqO7je9qVQylPytUIIsI8yNEkGiRMFoQctbHdFYBF1KUTd2lhARS34wo
+         98/3c5h1UeO8dF0ojkGrxc2YsaqrPSkJlauMoLbeYXwlRTMeOzvotF0lD2VjDCAw1amk
+         eQDGcizrPVOuaiRUtV2U33TZquYXrsg1q3G1UmVMB5nEK8amp38kGYgEvCuMVmO94seW
+         yeymKgQqlN2G9aX/fwqKUTkGn5/Yzpp3F9ndibMUanqgJdhXEPVP+NAlkN/Kj8k1gMxh
+         2uwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=VblPSJwsGw1h15CG7/mpL6Be/8K4U7PwJxhZSMHkihc=;
-        b=VTCkRTzBEaJzZe1aeGJoQk03/FBvwBoHwQcfrpQAfAmdUWiRI69lmc2bGCDPwQbA7z
-         Hf7qxgNBqvrUxcbankdDEaw1q73zJ+80k3/vtXhwL5slfyWonb/yNal00EjSP/UaixDO
-         hY8gV5lsOiFaY4CVA6Jpqhz1CWOO3O++NBlKKt2A3cIy+RD3/oqiryBqYwdT5F8H/fDl
-         zwkWwGi0EoPhfIU1VhlHDw1pd/mkbJq34qSHBnxH+GcFm+KOlTh+5BIc2TdJiRhRvBuX
-         Opj+Bl6EMPJ+728Xf4uCk8Sif0H7B+TgpIZSXzjRx0UE74GN415tIp8LAQHgq72o7XS0
-         hCFg==
-X-Gm-Message-State: AJIora+RcTP+QxVlKwvYHPT24+jZFpaQK9JLHrk8nSgW/b7fq3DpyGQ9
-        Yqkx8yQaalMsTRir2OaJHT8fJxxD3FxWZQ==
-X-Google-Smtp-Source: AGRyM1s0DwMv4dlY7qisCxwvVoAefqQ3GmkZjGOghmvkRFMKme/kTmNBNjs1eyiBa+RVukabt0ibnQ==
-X-Received: by 2002:a63:6b0a:0:b0:40d:ffa6:85c5 with SMTP id g10-20020a636b0a000000b0040dffa685c5mr919609pgc.327.1658515464720;
-        Fri, 22 Jul 2022 11:44:24 -0700 (PDT)
+        bh=h0ufdNeiYqfMuypR3ZZlDpDYrErqoCi+vB/gT2XuF2g=;
+        b=ljfp8SYxPO8jwJzAFagwQVJWeN0UHa6fYgl/pxiD4rngZ+ABgEMYjM7FODCGfexjyU
+         mAjNabxRe1sIWqRy1SLqSfu1FM3v6gUMnwU9kvbP0cV528+Rux3vzlLcsLROWu198mJ+
+         ISLgEBFjes8dmYiT9DadyCE6PmuPTbuf+PX6f6oWP+ehnQd0366YIAXG00vsooP1xzrb
+         1u1wHYr1sTtrh567+K1y7rGwpI4TconR75enp77TkQuRqRiBf/uNn4a4l2XLnHfcGkXI
+         ZB4Rma/kH59pwTXsIKMsYPq9rXSbC27TPa7vGTwQNWKkjFN98ULxFtu3KUxS8ynp4moI
+         /GPQ==
+X-Gm-Message-State: AJIora/w9FX4kU6V3/BpgzqZCr62NfwZmN30dchrA8FKkN7Ee8tDLv9P
+        ZuppJjuzotMB5vfgpMMUQ+zxEA==
+X-Google-Smtp-Source: AGRyM1sjc41xLj6BjTeZif1moV0XCEceVJ7SCEifMIlzHmkviIGQxhRG9dW3PcyYftax1ifHKT+vIw==
+X-Received: by 2002:a17:902:ea07:b0:16c:1efb:916e with SMTP id s7-20020a170902ea0700b0016c1efb916emr914512plg.25.1658516422655;
+        Fri, 22 Jul 2022 12:00:22 -0700 (PDT)
 Received: from google.com (123.65.230.35.bc.googleusercontent.com. [35.230.65.123])
-        by smtp.gmail.com with ESMTPSA id k11-20020a170902c40b00b0016c97d59f6asm4214477plk.93.2022.07.22.11.44.22
+        by smtp.gmail.com with ESMTPSA id e16-20020a63db10000000b0041981461f5dsm3714332pgg.90.2022.07.22.12.00.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jul 2022 11:44:23 -0700 (PDT)
-Date:   Fri, 22 Jul 2022 18:44:19 +0000
+        Fri, 22 Jul 2022 12:00:21 -0700 (PDT)
+Date:   Fri, 22 Jul 2022 19:00:17 +0000
 From:   Sean Christopherson <seanjc@google.com>
 To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Kai Huang <kai.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>, dave@sr71.net,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Kai Huang <kai.huang@intel.com>,
         Haitao Huang <haitao.huang@linux.intel.com>, x86@kernel.org,
         linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] [v2] x86/sgx: Allow enclaves to use Asynchrounous Exit
  Notification
-Message-ID: <YtrwA9XtuLMoAv4M@google.com>
+Message-ID: <YtrzwbLZjc+jURDI@google.com>
 References: <20220720191347.1343986-1-dave.hansen@linux.intel.com>
- <ab467244dd03b5f94bafe9068b1c02790033c18c.camel@intel.com>
- <a82e840f-2030-7ab3-7160-f1b900ecdb7d@intel.com>
+ <YthcXSTfjoM+jjvN@google.com>
+ <00b07459-5512-b00b-636b-f35845ec369f@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a82e840f-2030-7ab3-7160-f1b900ecdb7d@intel.com>
+In-Reply-To: <00b07459-5512-b00b-636b-f35845ec369f@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jul 22, 2022, Dave Hansen wrote:
-> On 7/22/22 06:26, Kai Huang wrote:
-> > Did a quick look at the spec.  It appears ENCLU[EDECCSSA] should be used
-> > together with AEX-notify.  So besides advertising the new
-> > SGX_ATTR_ASYNC_EXIT_NOTIFY bit to the KVM guest, I think we should also
-> > advertise the ENCLU[EDECCSSA] support in guest's CPUID, like below (untested)?
+On Wed, Jul 20, 2022, Dave Hansen wrote:
+> On 7/20/22 12:49, Sean Christopherson wrote:
+> > On Wed, Jul 20, 2022, Dave Hansen wrote:
+> >> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> >> index 0c1ba6aa0765..96a73b5b4369 100644
+> >> --- a/arch/x86/kvm/cpuid.c
+> >> +++ b/arch/x86/kvm/cpuid.c
+> >> @@ -1022,9 +1022,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+> >>  		 * userspace.  ATTRIBUTES.XFRM is not adjusted as userspace is
+> >>  		 * expected to derive it from supported XCR0.
+> >>  		 */
+> >> -		entry->eax &= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT |
+> >> -			      SGX_ATTR_PROVISIONKEY | SGX_ATTR_EINITTOKENKEY |
+> >> -			      SGX_ATTR_KSS;
+> >> +		entry->eax &= SGX_ATTR_PRIV_MASK | SGX_ATTR_UNPRIV_MASK;
+> > 
+> > It may seem like a maintenance burdern, and it is to some extent, but I think it's
+> > better for KVM to have to explicitly "enable" each flag.  There is no guarantee
+> > that a new feature will not require additional KVM enabling, i.e. we want the pain
+> > of having to manually update KVM so that we get "feature X isn't virtualized"
+> > complaints and not "I upgraded my kernel and my enclaves broke" bug reports.
+> > 
+> > I don't think it's likely that attribute-based features will require additional
+> > enabling since there aren't any virtualization controls for the ENCLU side of
+> > things (ENCLU is effectively disabled by blocking ENCLS[ECREATE]), but updating
+> > KVM isn't particularly difficult so I'd rather be paranoid.
 > 
-> Sounds like a great follow-on patch!  It doesn't seem truly functionally
-> required from the spec:
+> How about something where KVM gets to keep a discrete mask, but where
+> it's at least defined next to the attributes, something like:
 > 
-> > EDECCSSA is a new Intel SGX user leaf function
-> > (ENCLU[EDECCSSA]) that can facilitate AEX notification handling...
-
-Yeah, it's enumerated separately.
-
-> If that's wrong or imprecise, I'd love to hear more about it and also
-> about how the spec will be updated.
+> /*
+>  * These attributes will be advertised to KVM guests as being
+>  * available.  This includes privileged attributes.  Only add
+>  * to this list when host-side KVM does not require additional
+>  * enabling for the attribute.
+>  */
+> #define SGX_ATTR_KVM_MASK       (SGX_ATTR_DEBUG         | \
+>                                  SGX_ATTR_MODE64BIT     | \
+>                                  SGX_ATTR_PROVISIONKEY  | \
+>                                  SGX_ATTR_EINITTOKENKEY | \
+>                                  SGX_ATTR_KSS           | \
+>                                  SGX_ATTR_ASYNC_EXIT_NOTIFY)
 > 
-> Oh, and the one-liner patch that I was promised for enabling this is
-> getting a _wee_ bit longer than one line.
+> That at least has a *chance* of someone seeing it who goes to add a new
+> attribute.
 
-Heh, fool me once... 
+Hmm, what if we enforce it in code with a compile-time assert?  That will make it
+even harder to screw things up, and it also avoids a scenario where someone
+extends SGX_ATTR_KVM_MASK without getting approval from KVM folks.  And conversely,
+KVM won't need to touch SGX files if there's ever a need to tweak KVM behavior.
+
+		/*
+		 * Index 1: SECS.ATTRIBUTES.  ATTRIBUTES are restricted a la
+		 * feature flags.  Advertise all supported flags, including
+		 * privileged attributes that require explicit opt-in from
+		 * userspace.  ATTRIBUTES.XFRM is not adjusted as userspace is
+		 * expected to derive it from supported XCR0.
+		 */
+#define KVM_SGX_ATTR_ALLOWED_MASK (SGX_ATTR_DEBUG |		\
+				   SGX_ATTR_MODE64BIT |		\
+				   SGX_ATTR_PROVISIONKEY |	\
+				   SGX_ATTR_EINITTOKENKEY |	\
+				   SGX_ATTR_KSS |		\
+				   SGX_ATTR_ASYNC_EXIT_NOTIFY)
+
+#define KVM_SGX_ATTR_DENIED_MASK (0)
+
+		/*
+		 * Assert that KVM explicitly allows or denies exposing all
+		 * features, i.e. detect attempts to add kernel support without
+		 * also updating KVM.
+		 */
+		BUILD_BUG_ON((KVM_SGX_ATTR_ALLOWED_MASK | KVM_SGX_ATTR_DENIED_MASK) !=
+			     (SGX_ATTR_PRIV_MASK | SGX_ATTR_UNPRIV_MASK));
+
+		entry->eax &= KVM_SGX_ATTR_ALLOWED_MASK;
+		entry->ebx &= 0;
+		break;
