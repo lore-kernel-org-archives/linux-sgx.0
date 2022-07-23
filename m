@@ -2,76 +2,168 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 175C5C433EF
-	for <linux-sgx@archiver.kernel.org>; Fri, 22 Jul 2022 19:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20872C43334
+	for <linux-sgx@archiver.kernel.org>; Sat, 23 Jul 2022 12:18:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235400AbiGVTOr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 22 Jul 2022 15:14:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50066 "EHLO
+        id S231381AbiGWMSz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 23 Jul 2022 08:18:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231149AbiGVTOr (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 22 Jul 2022 15:14:47 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51925A6F9F;
-        Fri, 22 Jul 2022 12:14:45 -0700 (PDT)
+        with ESMTP id S229462AbiGWMSz (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 23 Jul 2022 08:18:55 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C5F1AE50
+        for <linux-sgx@vger.kernel.org>; Sat, 23 Jul 2022 05:18:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658517285; x=1690053285;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=byfGDtmkRkASevcEx81TQf4ng/7TX7hruHD1iCw+1aE=;
-  b=gJRyAx3X+J69kA4NaBh26aap/sU8iO4YWokQT7tC2TYjYwiv5JiSvEdq
-   CP6WKkPihaEhmYYeCVHaMcIYx8WDqOX4oKs+y3JnbeQiygsCLhlNwVnpg
-   bwqVM+Fe6uZyeMYWDsR6GzLlfvw/uondmTuT1RtWreQPthQQr6JJFdamj
-   V3WwzQC4EyMWMGmzrXGEjPeos8qlgo33hJTRVQNrrZdb3fVXtG/wd2onM
-   UMwV7BVgNiUn8FbcNuJibrZCWWMHRSgVLFjSOvk63fN4v2IXp4wQiig7z
-   Ys0cLshCx/E+q6qZnXPruGeca3+WjvUI7/148GrD5mUrLOriIHDcYLkC0
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10416"; a="349089077"
-X-IronPort-AV: E=Sophos;i="5.93,186,1654585200"; 
-   d="scan'208";a="349089077"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2022 12:14:44 -0700
-X-IronPort-AV: E=Sophos;i="5.93,186,1654585200"; 
-   d="scan'208";a="926158163"
-Received: from jnoah-mobl.amr.corp.intel.com (HELO [10.209.71.211]) ([10.209.71.211])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2022 12:14:43 -0700
-Message-ID: <effbeeb0-6980-84e1-bb7e-75a279d6d834@intel.com>
-Date:   Fri, 22 Jul 2022 12:14:42 -0700
+  t=1658578734; x=1690114734;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TUmJTet/nhIHwvlZ40h6pSOgdIO9gvTK2XhQStWZpWg=;
+  b=Dxh2DR+duZQoiCTuKwLkhfloar2k41/l7JmvIw1zs5bk8PHHRXBEzcB1
+   7KluAqidDSnp+5IWFK5MAkaFZD8YIENmNFd6Esvb+wuX6j0yxdOTs+o/r
+   09o+qSerowx9gDFuCBZ3NrR/f/T5RcpsmcV9xdNJu5lmZfyCtvShWTJU2
+   1az+9W0PVK5UKoGJBHIZSDLI3idglMFFuJ4wWECBvQBmpql+qfRmw55jh
+   VB40Fcmvir/JQrMh/IU2hWePBzkOddjTetscAGuoRSjTml8qTcH440dTI
+   cD28PZYWxT0kjP4eDbTNJd+kCUEl2TZXRmpcC3mp2/SnbkNIbGEAPUp1T
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10416"; a="351461300"
+X-IronPort-AV: E=Sophos;i="5.93,188,1654585200"; 
+   d="scan'208";a="351461300"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2022 05:18:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,188,1654585200"; 
+   d="scan'208";a="596215039"
+Received: from zhiquan-linux-dev.bj.intel.com ([10.238.155.101])
+  by orsmga007.jf.intel.com with ESMTP; 23 Jul 2022 05:18:50 -0700
+From:   Zhiquan Li <zhiquan1.li@intel.com>
+To:     linux-sgx@vger.kernel.org, tony.luck@intel.com, jarkko@kernel.org,
+        dave.hansen@linux.intel.com
+Cc:     seanjc@google.com, kai.huang@intel.com, fan.du@intel.com,
+        cathy.zhang@intel.com, zhiquan1.li@intel.com
+Subject: [PATCH v6 0/3] x86/sgx: fine grained SGX MCA behavior
+Date:   Sat, 23 Jul 2022 20:23:40 +0800
+Message-Id: <20220723122343.598783-1-zhiquan1.li@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] [v2] x86/sgx: Allow enclaves to use Asynchrounous Exit
- Notification
-Content-Language: en-US
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>, dave@sr71.net,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Kai Huang <kai.huang@intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220720191347.1343986-1-dave.hansen@linux.intel.com>
- <YthcXSTfjoM+jjvN@google.com>
- <00b07459-5512-b00b-636b-f35845ec369f@intel.com>
- <YtrzwbLZjc+jURDI@google.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <YtrzwbLZjc+jURDI@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 7/22/22 12:00, Sean Christopherson wrote:
-> 		/*
-> 		 * Assert that KVM explicitly allows or denies exposing all
-> 		 * features, i.e. detect attempts to add kernel support without
-> 		 * also updating KVM.
-> 		 */
-> 		BUILD_BUG_ON((KVM_SGX_ATTR_ALLOWED_MASK | KVM_SGX_ATTR_DENIED_MASK) !=
-> 			     (SGX_ATTR_PRIV_MASK | SGX_ATTR_UNPRIV_MASK));
+V5: https://lore.kernel.org/linux-sgx/Yrf27fugD7lkyaek@kernel.org/T/#t
 
-Looks good to me.  I'll do that for the next version.  Thanks!
+Changes since V5:
+- Rename the 'owner' field as 'encl_owner' and update the references
+  as a separate patch.
+- To prevent casting the 'encl_owner' field, introduce a union with
+  another field - "vepc_vaddr".
+- Clean up the commit message of patch 02 suggested by Dave.
+- Remove patch 03 unless there is a better reason to keep it.
+- Add Reviewed-by from Jarkko.
+
+V4: https://lore.kernel.org/linux-sgx/20220608032654.1764936-1-zhiquan1.li@intel.com/T/#t
+
+Changes since V4:
+- Switch the order of the two variables at patch 02 so all of variables
+  are in reverse Christmas style.
+- Do not initialize 'ret' because it will be overridden by the return
+  value of force_sig_mceerr() unconditionally.
+- Add Co-developed-by and Signed-off-by from Cathy Zhang at patch 01.
+- Add Acked-by from Kai Huang at patch 01.
+
+V3: https://lore.kernel.org/linux-sgx/41704e5d4c03b49fcda12e695595211d950cfb08.camel@kernel.org/T/#t
+
+Changes since V3:
+- Take the definition of EPC page flag SGX_EPC_PAGE_KVM_GUEST from
+  Cathy Zhang's third patch of SGX rebootless recovery patch set but
+  discard irrelevant portion, since it might need some time to re-forge
+  and these are two different features.
+  Link: https://lore.kernel.org/linux-sgx/41704e5d4c03b49fcda12e695595211d950cfb08.camel@kernel.org/T/#m9782d23496cacecb7da07a67daa79f4b322ae170
+
+V2: https://lore.kernel.org/linux-sgx/694234d7-6a0d-e85f-f2f9-e52b4a61e1ec@intel.com/T/#t
+
+Changes since V2:
+- Repurpose the owner field as the virtual address of virtual EPC page
+- Remove struct sgx_vepc_page and relevant code.
+- Remove patch 01 as the changes are not necessary in new design.
+- Rework patch 02 suggested by Jarkko.
+- Adapt patch 03 and 04 since struct sgx_vepc_page was discarded.
+- Replace EPC page flag SGX_EPC_PAGE_IS_VEPC with
+  SGX_EPC_PAGE_KVM_GUEST as they are duplicated.
+  Link: https://lore.kernel.org/linux-sgx/eb95b32ecf3d44a695610cf7f2816785@intel.com/T/#u
+
+V1: https://lore.kernel.org/linux-sgx/443cb425-009c-2784-56f4-5e707122de76@intel.com/T/#t
+
+Changes since V1:
+- Updated cover letter and commit messages, added valuable
+  information from Jarkko, Tony and Kai's comments.
+- Added documentations for struct struct sgx_vepc and
+  struct sgx_vepc_page.
+
+Hi everyone,
+
+This series contains a few patches to fine grained SGX MCA behavior.
+
+Today, if a guest accesses an SGX EPC page with memory failure,
+the kernel behavior will kill the entire guest.  This blast
+radius is too large.  It would be idea to kill only the SGX
+application inside the guest.
+
+To fix this, send a SIGBUS to host userspace (like QEMU) which can
+follow up by injecting a #MC to the guest.
+
+However, when a page triggers a machine check, it only reports the
+PFN.  But in order to inject #MC into hypervisor, the virtual address
+is required.  The 'encl_owner' field is useless in virtualization
+case, then repurpose it as 'vepc_vaddr' - the virtual address of the
+virtual EPC page in such case so that arch_memory_failure() can easily
+retrieve it.
+
+Suppose an enclave is shared by multiple processes, when an enclave
+page triggers a machine check, the enclave will be disabled so that
+it couldn't be entered again.  Killing other processes with the same
+enclave mapped would perhaps be overkill, but they are going to find
+that the enclave is "dead" next time they try to use it.  Thanks for
+Jarkko’s head up and Tony’s clarification on this point.
+
+Unlike host enclaves, virtual EPC instance cannot be shared by multiple
+VMs. It is because how enclaves are created is totally up to the guest.
+Sharing virtual EPC instance will be very likely to unexpectedly break
+enclaves in all VMs.
+
+SGX virtual EPC driver doesn't explicitly prevent virtual EPC instance
+being shared by multiple VMs via fork(). However KVM doesn't support
+running a VM across multiple mm structures, and the de facto userspace
+hypervisor (Qemu) doesn't use fork() to create a new VM, so in practice
+this should not happen.
+
+This series is based on tip/x86/sgx.
+
+Tests:
+1. MCE injection test for SGX in VM.
+   As we expected, the application was killed and VM was alive.
+2. Kernel selftest/sgx: PASS
+3. Internal SGX stress test: PASS
+4. kmemleak test: No memory leakage detected.
+
+Much appreciate your feedback.
+
+Best Regards,
+Zhiquan
+
+Zhiquan Li (3):
+  x86/sgx: Rename the owner field of struct sgx_epc_page as encl_owner
+  x86/sgx: Introduce union with vepc_vaddr field for virtualization case
+  x86/sgx: Fine grained SGX MCA behavior for virtualization
+
+ arch/x86/kernel/cpu/sgx/main.c | 48 +++++++++++++++++++++++++---------
+ arch/x86/kernel/cpu/sgx/sgx.h  |  8 +++++-
+ arch/x86/kernel/cpu/sgx/virt.c |  4 ++-
+ 3 files changed, 46 insertions(+), 14 deletions(-)
+
+-- 
+2.25.1
+
