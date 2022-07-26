@@ -2,74 +2,176 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBEEEC00140
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jul 2022 15:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B45C00144
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Jul 2022 21:22:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233149AbiGZPgi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 26 Jul 2022 11:36:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33160 "EHLO
+        id S239069AbiGZVWK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 26 Jul 2022 17:22:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230244AbiGZPgh (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 26 Jul 2022 11:36:37 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56C2ABE38;
-        Tue, 26 Jul 2022 08:36:37 -0700 (PDT)
+        with ESMTP id S229493AbiGZVWJ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 26 Jul 2022 17:22:09 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F822E9EE;
+        Tue, 26 Jul 2022 14:22:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658849797; x=1690385797;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Xu3piJu0y2azRJqj+FwPzBL1A84NeXre+q3T4RAy0ZY=;
-  b=fCCjofHmAkiEiq/4KnBgdC9wBl9KabBy6lsOV2d2/01sfpV4UGIthfLB
-   FKYkK8tm4EscpMm42UTKmfARFEDJZpOK0bzR2c/eSYHkzvbU6Bb4z4Uus
-   a722nstdZvrphpDfzmSqNOH+/I+XvktOxTkd0ywJDCnCmSFrr0OMLEarV
-   wYoWNacvQO9ji8pNuVjAkoER+8r/PeeHCJV83yhraRHPfHytxGCNqIGMO
-   S03/BjoznbwnYY3b1JYmbxpL43UiGzeSuz1ppSwc4uDMkEzwrHiezXR74
-   FheZ7P4uwRDH0boQVsSPkaEktEhaUPkHxqqexghBGwXZKF8Q51RTe5WMd
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10420"; a="286740853"
-X-IronPort-AV: E=Sophos;i="5.93,193,1654585200"; 
-   d="scan'208";a="286740853"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2022 08:36:37 -0700
-X-IronPort-AV: E=Sophos;i="5.93,193,1654585200"; 
-   d="scan'208";a="658738803"
-Received: from mcrowelx-mobl.amr.corp.intel.com (HELO [10.255.229.9]) ([10.255.229.9])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2022 08:36:36 -0700
-Message-ID: <2950d520-c49e-e4d9-90ee-26fe1ec4fb02@intel.com>
-Date:   Tue, 26 Jul 2022 08:36:36 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
+  t=1658870528; x=1690406528;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=Mf0Cjz40R2rmi8+GawNqJLKlYo6nbTWg+KJFfTbGugQ=;
+  b=nKssvZeb4GnjiQTphy/Fo8YEr8Ar9PMNgpzxgeGrh0uGiqHoGtR0fWtL
+   uAsIbV5W+HCrT/eKGa9FvWdnTaWsE3tcnDqEP7WGQ43Bt/QxxKsMGB2ck
+   vmT55KmPEkouUg8w7wuXz2BpsrqEw1SLEWL9FKHj9/DHjV5eYTrYJ4M9l
+   livZBFBZNq0GeivUcvvjYqhxN/9opPQRWWv3FuOrD8tZPOQ9X6SHo8MoN
+   hDs8iqP0aeg4bMiNeOP//qGE9NkoPBLGjRb0EzumHH/j9KVndS1nZw/Q/
+   Ji6dSFbUUDB+o2PuuO8toCn0tw5hL5xbMtF41+aR1pNvk0hoeq+Vi9uvX
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10420"; a="313835159"
+X-IronPort-AV: E=Sophos;i="5.93,194,1654585200"; 
+   d="scan'208";a="313835159"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2022 14:21:59 -0700
+X-IronPort-AV: E=Sophos;i="5.93,194,1654585200"; 
+   d="scan'208";a="776451430"
+Received: from rgevard-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.212.32.51])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2022 14:21:56 -0700
+Message-ID: <c99078bf036b5bb175dd4c173790a90b77c6ef72.camel@intel.com>
 Subject: Re: [PATCH] [v2] x86/sgx: Allow enclaves to use Asynchrounous Exit
  Notification
-Content-Language: en-US
-To:     Kai Huang <kai.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, dave@sr71.net
+From:   Kai Huang <kai.huang@intel.com>
+To:     Haitao Huang <haitao.huang@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
 Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>, x86@kernel.org,
+        Sean Christopherson <seanjc@google.com>, x86@kernel.org,
         linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 27 Jul 2022 09:21:53 +1200
+In-Reply-To: <op.1pw6lhz8wjvjmi@hhuan26-mobl1.mshome.net>
 References: <20220720191347.1343986-1-dave.hansen@linux.intel.com>
- <ab467244dd03b5f94bafe9068b1c02790033c18c.camel@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <ab467244dd03b5f94bafe9068b1c02790033c18c.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+         <ab467244dd03b5f94bafe9068b1c02790033c18c.camel@intel.com>
+         <a82e840f-2030-7ab3-7160-f1b900ecdb7d@intel.com>
+         <06a9fef8579e880b9b031f03911739d4d902dbe0.camel@intel.com>
+         <op.1pwcs8btwjvjmi@hhuan26-mobl1.mshome.net>
+         <4c614defad8e9ce2bccce8a062600212e4978113.camel@intel.com>
+         <op.1pw6lhz8wjvjmi@hhuan26-mobl1.mshome.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 7/22/22 06:26, Kai Huang wrote:
-> Did a quick look at the spec.  It appears ENCLU[EDECCSSA] should be used
-> together with AEX-notify.  So besides advertising the new
-> SGX_ATTR_ASYNC_EXIT_NOTIFY bit to the KVM guest, I think we should also
-> advertise the ENCLU[EDECCSSA] support in guest's CPUID, like below (untested)?
+On Tue, 2022-07-26 at 10:28 -0500, Haitao Huang wrote:
+> On Tue, 26 Jul 2022 05:47:14 -0500, Kai Huang <kai.huang@intel.com> wrote=
+:
+>=20
+> > On Tue, 2022-07-26 at 00:10 -0500, Haitao Huang wrote:
+> > > On Mon, 25 Jul 2022 05:36:17 -0500, Kai Huang <kai.huang@intel.com> =
+=20
+> > > wrote:
+> > >=20
+> > > > On Fri, 2022-07-22 at 08:21 -0700, Dave Hansen wrote:
+> > > > > On 7/22/22 06:26, Kai Huang wrote:
+> > > > > > Did a quick look at the spec.  It appears ENCLU[EDECCSSA] shoul=
+d =20
+> > > be
+> > > > > used
+> > > > > > together with AEX-notify.  So besides advertising the new
+> > > > > > SGX_ATTR_ASYNC_EXIT_NOTIFY bit to the KVM guest, I think we sho=
+uld
+> > > > > also
+> > > > > > advertise the ENCLU[EDECCSSA] support in guest's CPUID, like be=
+low
+> > > > > (untested)?
+> > > > >=20
+> > > > > Sounds like a great follow-on patch!  It doesn't seem truly =20
+> > > functionally
+> > > > > required from the spec:
+> > > > >=20
+> > > > > > EDECCSSA is a new Intel SGX user leaf function
+> > > > > > (ENCLU[EDECCSSA]) that can facilitate AEX notification handling=
+...
+> > > > >=20
+> > > > > If that's wrong or imprecise, I'd love to hear more about it and =
+=20
+> > > also
+> > > > > about how the spec will be updated.
+> > > > >=20
+> > > >=20
+> > > > They are enumerated separately, but looks in practice the notify =
+=20
+> > > handler
+> > > > will
+> > > > use it to switch back to the correct/targeted CSSA to continue to r=
+un
+> > > > normally
+> > > > after handling the exit notify.  This is my understanding of the
+> > > > "facilitate"
+> > > > mean in the spec.
+> > > >=20
+> > > > Btw, in real hardware I think the two should come together, meaning=
+ no
+> > > > real
+> > > > hardware will only support one.
+> > > >=20
+> > > > Haitao, could you give us more information?
+> > > >=20
+> > > You are right. They are enumerated separately and HW should come with=
+ =20
+> > > both
+> > > or neither.
+> > > My understanding it is also possible for enclaves choose not to recei=
+ve
+> > > AEX notify
+> > > but still use EDECCSSA.
+> > >=20
+> >=20
+> > What is the use case of using EDECCSSA w/o using AEX notify? =20
+> > If I understand correctly EDECCSSA effectively switches to another =20
+> > thread (using
+> > the previous SSA, which is the context of another TCS thread if I =20
+> > understand
+> > correctly).  Won't this cause problem?
+>=20
+> No. Decrementing CSSA is equivalent to popping stack frames, not switchin=
+g =20
+> threads.
+> In some cases such as so-called "first stage" exception handling, one =
+=20
+> could pop CSSA back to the previous after resetting CPU context and stack=
+ =20
+> frame appropriate to the "second stage" or "real" exception handling =20
+> routine, then jump to the handler directly. This could improve exception =
+=20
+> handling performance by saving an EEXIT/ERESUME trip.
+>=20
+>=20
 
-Kai, would you care to send a new version of this with a proper SoB and
-changelog integrating what you've learned since posting it?  It can be
-merged along with AEX notify itself.
+Looking at the AEX-notify spec again, EDECCSSA does below:
+
+(* At this point, the instruction is guaranteed to complete *)
+CR_TCS_PA.CSSA :=3D CR_TCS_PA.CSSA - 1;
+CR_GPR_PA :=3D Physical_Address(DS:TMP_GPR);
+
+It doens't reset the RIP to CR_GPA_PA.RIP so looks yes you are right.  It o=
+nly
+"popping the stack frame" but doesn't switch thread.
+
+But the pseudo code of EDECCSSA only updates the CR_TCS_PA and CR_GPR_PA
+registers (forget about XSAVE not), but doesn't manually updating the actua=
+l CPU
+registers such as GPRs.  Are the actual CPU registers updated automatically=
+ when
+CR_xx are updated?
+
+--=20
+Thanks,
+-Kai
+
+
