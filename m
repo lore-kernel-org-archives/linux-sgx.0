@@ -2,84 +2,83 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D3CC04A68
-	for <linux-sgx@archiver.kernel.org>; Thu, 28 Jul 2022 08:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A705CC04A68
+	for <linux-sgx@archiver.kernel.org>; Thu, 28 Jul 2022 13:47:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234855AbiG1IAJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 28 Jul 2022 04:00:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49872 "EHLO
+        id S229930AbiG1NrF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 28 Jul 2022 09:47:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234371AbiG1IAI (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 28 Jul 2022 04:00:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8574D1AA;
-        Thu, 28 Jul 2022 01:00:06 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 20BC061B76;
-        Thu, 28 Jul 2022 08:00:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4E6C433B5;
-        Thu, 28 Jul 2022 08:00:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658995205;
-        bh=lFSo0dPChDzCA+CL3JRhP7qk+LmcyQGLwzN+RJydslE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aIESL2Ff9ikVd/LI/GV1EcwPfBzp/nBjn/08hdZAleADwx2KfC1cxm0x+NXTZBe8S
-         6/yC/KDct4XyRX5cFZvp4bUorbjWep5bs95h8ZKifEQ9YIUpKTPrxT/Ig9fQ5H+22A
-         beOGCTx7e1uN6fEwuTHSy6/JXVlIBBq6E8xB53l1r9VEORX5vamlfvrtsMR2pXueWp
-         QT6vxRuhb2MWP0ShpUz9YALBtPQNSg2WFZFHoMEls0F5czf1dryIgZMfRiP8Lo//vO
-         9GvA3LveK0vRNi5MX1toOba8RhEvPWWmoZqLw66aaFYrHcjX/1oSjRo6Kq50lkbL1x
-         pIB4qDFN9cIpg==
-Date:   Thu, 28 Jul 2022 11:00:02 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+        with ESMTP id S229887AbiG1NrE (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 28 Jul 2022 09:47:04 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9497161DA4;
+        Thu, 28 Jul 2022 06:47:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1659016023; x=1690552023;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CZja/uwthCUFDrIQap+P+xmHljMJZLA/BFEZZ78HIFk=;
+  b=oGDqGyQEYo1A6CB7LSc3/tQJrxRQWusJVYm9LamKG7CMt/LPzFDQHZ3N
+   U3VMyxsPX18AAX5aS7tnOz/bQu0D5BbqoxjE8EeouotREt9diLPv8Qmle
+   xSivt/V/bgLNt3rhgihKoz0Ea4juqAQa56KPu4ZQ8mngHhQYH+uief3Oj
+   vHPmUcKaH0r25ibj0OhY9vbK/IaqzA3yZAzPMs4ebm/F4gWJ3AHv9rfm1
+   BuXWG4tIfUHyDnTBajx2C1nHvxF7fD3gx0LDYX1Y91laCJGICtDb4RgTF
+   PIz9/oaSEYkbsms/TD16+oLmdnRe63MR/LsQgajRwzhM5SjJNH8/8sG3W
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10421"; a="268278650"
+X-IronPort-AV: E=Sophos;i="5.93,198,1654585200"; 
+   d="scan'208";a="268278650"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2022 06:47:01 -0700
+X-IronPort-AV: E=Sophos;i="5.93,198,1654585200"; 
+   d="scan'208";a="551313622"
+Received: from bbandar7-mobl1.amr.corp.intel.com (HELO [10.209.124.46]) ([10.209.124.46])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2022 06:47:01 -0700
+Message-ID: <fbf213f2-f118-ccfa-3faa-ec8b2182595b@intel.com>
+Date:   Thu, 28 Jul 2022 06:47:01 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] x86/sgx: Improve comments for
+ sgx_encl_lookup/alloc_backing()
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>, linux-sgx@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] selftests/sgx: Ignore OpenSSL 3.0 deprecated functions
- warning
-Message-ID: <YuJCAhfQklzVQJGh@kernel.org>
-References: <20220721194041.43970-1-kristen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220721194041.43970-1-kristen@linux.intel.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-sgx@vger.kernel.org
+References: <20220720182120.1160956-1-kristen@linux.intel.com>
+ <YuJBjq/4dALm//rf@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <YuJBjq/4dALm//rf@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Jul 21, 2022 at 12:40:40PM -0700, Kristen Carlson Accardi wrote:
-> OpenSSL 3.0 deprecates some of the functions used in the SGX
-> selftests, causing build errors on new distros. For now ignore
-> the warnings until support for the functions is no longer
-> available.
-> 
-> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> ---
->  tools/testing/selftests/sgx/sigstruct.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
-> index 50c5ab1aa6fa..bb191b70141a 100644
-> --- a/tools/testing/selftests/sgx/sigstruct.c
-> +++ b/tools/testing/selftests/sgx/sigstruct.c
-> @@ -17,6 +17,9 @@
->  #include "defines.h"
->  #include "main.h"
->  
-> +/* OpenSSL 3.0 has deprecated some functions. For now just ignore the warnings. */
+On 7/28/22 00:58, Jarkko Sakkinen wrote:
+> On Wed, Jul 20, 2022 at 11:21:19AM -0700, Kristen Carlson Accardi wrote:
+>> Modify the comments for sgx_encl_lookup_backing() and for
+>> sgx_encl_alloc_backing() to indicate that they take a reference
+>> which must be dropped with a call to sgx_encl_put_backing().
+>> Make sgx_encl_lookup_backing() static for now, and change the
+>> name of sgx_encl_get_backing() to __sgx_encl_get_backing() to
+>> make it more clear that sgx_encl_get_backing() is an internal
+>> function.
+>>
+>> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> The rename is unnecessary.
 
-Perhaps, even prefix with "FIXME:" prefix?
+Well, it was done to address some reviewer confusion:
 
-> +#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-> +
->  struct q1q2_ctx {
->  	BN_CTX *bn_ctx;
->  	BIGNUM *m;
-> -- 
-> 2.36.1
-> 
+	https://lore.kernel.org/all/YtUs3MKLzFg+rqEV@zn.tnic/
 
-BR, Jarkko
+I wouldn't call it unnecessary.  Heck, I'd argue that the one of the
+main reasons that this code leaked memory in the first place was the
+naming and lack of comments.
