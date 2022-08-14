@@ -2,195 +2,336 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9BEC00140
-	for <linux-sgx@archiver.kernel.org>; Fri, 12 Aug 2022 22:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6C7C25B06
+	for <linux-sgx@archiver.kernel.org>; Sun, 14 Aug 2022 18:06:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235252AbiHLWlg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 12 Aug 2022 18:41:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54540 "EHLO
+        id S229520AbiHNSGG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 14 Aug 2022 14:06:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230118AbiHLWlf (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 12 Aug 2022 18:41:35 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69CA26DFB4
-        for <linux-sgx@vger.kernel.org>; Fri, 12 Aug 2022 15:41:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1660344094; x=1691880094;
-  h=from:to:subject:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version;
-  bh=zIXrgW93hydxzL2Gor7WK7bOtpjskbqsNy5SMFfoKCs=;
-  b=fmYj9crPxWsUKRCqpjsd4EADitQ1ETArwwXxpl+/bBrnaG4gyy10C3Sl
-   H9XH8DgE78nyHhWXjMdazwNpsytqG/yp5uRrseuYgkatN+Ie62VAyJWB/
-   VWGMDPl9Ju79Qo3+k0h7omLN48zflwFfaU2ropUOgdLNCdZEuHyjVnbeG
-   hlz6x/YEejhgEbyAhXm8/Ad4iI6XFztW3faM4kuKQQMoVvaqOvQaNhk96
-   2AFh1Xl+kY9TvQfrCkyAaA3w9JmiEk1jiODYKWxN2Detyi01yNPhUh+D3
-   PYabS4ExBnI5DDcv7zed8yiNAPiCAtpa1FVAv6Y5ioIAjM47Rp3GDy6w0
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10437"; a="271474111"
-X-IronPort-AV: E=Sophos;i="5.93,233,1654585200"; 
-   d="scan'208";a="271474111"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2022 15:41:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,233,1654585200"; 
-   d="scan'208";a="609397448"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Aug 2022 15:41:33 -0700
-Received: from orsmsx607.amr.corp.intel.com (10.22.229.20) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Fri, 12 Aug 2022 15:41:33 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx607.amr.corp.intel.com (10.22.229.20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28 via Frontend Transport; Fri, 12 Aug 2022 15:41:33 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.106)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.28; Fri, 12 Aug 2022 15:41:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iOsaCWBzFZrxL5rQICyosajY8mcfWPb0T+QErDc1peZNow9PM+0Ghb7N6Hu4Dfx5wyJ69TDLj3t/ai05IMc4Ft6x9bVqe8jWJfH3IXo1/M4Fq4rPo27psk21M+1XTXbqKTi3kHwtB1q1DjvADvbGnUKX6JgGvKqYRST5BQmwxpS0P/l2jpKVuzeB500Ls85uQbCDDz57lDYFb7L4jgRPmKTYktAouSQra3T3ZA3qal54ZWNUN/c7fVceeVqV6+Yska4sr35uLE/CZr/QQFzl0OActHWjY9LQGWA9JWeawMY+EmQQQ9/Sot5aEU9KbnmpjlwWVgyKidde4cOeWOdxug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2oD67QVhotG8wRd+8NWCfJCgjPWlqo0ugaNY8OKpFZs=;
- b=fTJL7jEHn1NZ5pipFKIuDEn7Awx+ZhX4RH1ZV6UCpDiyB1dhuQySMJF6U/ewTHFrTGWkhhNKsFPuju1dkW3tLU9818o4y3dhuvGG9ccu9/r4gTUtA2sY73VfYJW77bMdt2oKc3XWveflN9kKuGZX7+JYFNk6H4OXcPcth8ioIlfGOVViZHufQM/yEWbE7ZOWMeg7iHP5JdwWx7RObH8+tpPUHYh0xLoRgtFlnhwNgKQVNp3k8L/rUGfvjHg6qNmsdCq6eX3rLkiSAPdLX8H26pjii/hiZ5MrHZ722vESbs5O1KnjByX5rXvYnYy/MULs6Mlu3D5RG+h+f79wOsj+/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM8PR11MB5591.namprd11.prod.outlook.com (2603:10b6:8:38::23) by
- MW4PR11MB5776.namprd11.prod.outlook.com (2603:10b6:303:183::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5525.11; Fri, 12 Aug 2022 22:41:31 +0000
-Received: from DM8PR11MB5591.namprd11.prod.outlook.com
- ([fe80::21ea:5b3b:c98a:d2ee]) by DM8PR11MB5591.namprd11.prod.outlook.com
- ([fe80::21ea:5b3b:c98a:d2ee%8]) with mapi id 15.20.5525.011; Fri, 12 Aug 2022
- 22:41:30 +0000
-From:   "Dhanraj, Vijay" <vijay.dhanraj@intel.com>
-To:     Haitao Huang <haitao.huang@linux.intel.com>,
+        with ESMTP id S229469AbiHNSGG (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 14 Aug 2022 14:06:06 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93594192A9
+        for <linux-sgx@vger.kernel.org>; Sun, 14 Aug 2022 11:06:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id F390DCE0B6A
+        for <linux-sgx@vger.kernel.org>; Sun, 14 Aug 2022 18:06:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAF92C433D6;
+        Sun, 14 Aug 2022 18:06:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660500361;
+        bh=V1vQObsQMEgZsjtAJssacp1LuVKoHp9GsOeTvD9kzq8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Oio6JHONMm40wBlmk0wvEXuRiWtSTqvUVCwlW6nOKnCpo4RGCfMkEcXQpyjBVrj09
+         va2TRI9G2OOu8fjo+tRd3RGhfrwYAD4ehufQb6isH9v3KtMxk5N1cJJSc6btE2jHmy
+         uzD1FSeFeSZxVTOtinPEjmhERFU0vc/Jq3KWva2mVcP5vN25S7k7beItoUqc9qDEng
+         Mix0v1BjgA95w49OgCYBgq7nO0ytzELldl/KsuNkfAGsXoGQs0d4fqvZwzO5mCT1cp
+         GpEhDw01L21Pd1FmBQJpv0mv+aZxwd3djw201xh+tMkJPNzC3SB6wSMQJ8aqlvb0LX
+         +2ZF6min/Q4gQ==
+Date:   Sun, 14 Aug 2022 21:05:58 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
         "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-Subject: RE: [PATCH] x86/sgx: handle VA page allocation failure for EAUG on
- PF.
-Thread-Topic: [PATCH] x86/sgx: handle VA page allocation failure for EAUG on
- PF.
-Thread-Index: AQHYrn95k7VDoB+QBEerfnWLU21GFK2r200w
-Date:   Fri, 12 Aug 2022 22:41:30 +0000
-Message-ID: <DM8PR11MB559143ADF2DD1A8053641F5AF6679@DM8PR11MB5591.namprd11.prod.outlook.com>
-References: <20220812191224.15561-1-haitao.huang@linux.intel.com>
-In-Reply-To: <20220812191224.15561-1-haitao.huang@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-dlp-version: 11.6.500.17
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5433a0e3-8770-4214-1347-08da7cb3cd1f
-x-ms-traffictypediagnostic: MW4PR11MB5776:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Uk8WmooR1aTYrA2nfTcdir7ukLb7EBCKicJlPu4rxv10+ve6GL0gZp0PjOtEsMVkFAFwMmlS+qNlrNaFKnWHtWOhwizCRu6U9BccapakLJSWalqXZEiE/ZQbqHAVhVaPvflD38O1SQoEL4rXLhsuxeoIKIgdGk2cNkFbUCcI6hVg+FeblC02GCTmUuTuPN8tXg4YZKxvTxGM861ZYrXxpox88vDjM1fuIUQm6INap5PJ4b/gX3MsQzDdb1wytUqSW9vmGHoX5GJMp6H5fo/zRw5L1CzfrvP+BS3YdaEcmCbI2F9PsuGSwCWB4viw6sBSR+QH00YEkuq49kwoS9+fLdPZvZtLUENH7SlAmkwPltZFLmwABEKIgkTsbuReFHDccqxU8ZaT/pe8ENcLh4KyBdNEewG8sfb+Vw3q5LfVt43uiRfznYWIRnonk7KXyiTB49N70+6mmrQIjD/vqvsw3ThXTnYUbhN31m+m9uueVXlXADpPvkY4zukajgskGt8PfDcp7XkcDk+3qzCR9nW3uUUDxZ7QYDb/CFtTiGdPkmZPZetzG/V3JZPU6atyiWbJW1oIHxDXP9NIxuSdIzkK/C97O4lHAM6AsILr2vZLSLIS6mlxdY2ewQF5QS09ubQqVkpZJ7q1NdXTFigc8Uu3c1dtISyWSzVGpXa/eSF3TtJK6RQoUlGuRbCuakyrcqbS3rxaBZ7IcDlVFxC6rd0qVnlVYhRQ39gSawRJGCBBCL4G5rytUtqm6CcL1y+b58xIVvOdS8bLr+Cc9tENgvNAG9RSvPvTRDQTX4Ed6Vp3NFKjZHLx4HrBO7Y774SMS+tDQ9zau6AfK+AhPMoIkwndkQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR11MB5591.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(136003)(396003)(366004)(376002)(39860400002)(346002)(41300700001)(478600001)(7696005)(966005)(83380400001)(26005)(6506007)(53546011)(52536014)(5660300002)(186003)(33656002)(2906002)(71200400001)(55016003)(9686003)(316002)(66946007)(8676002)(86362001)(66556008)(66446008)(64756008)(66476007)(76116006)(38070700005)(38100700002)(8936002)(82960400001)(122000001)(110136005);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?hJGKSPmchDI0WmnIuXu9ACY5fF0STAE8y8i9wbueADsZ3b2RU0jpdaKPUZsO?=
- =?us-ascii?Q?g8Q0TygJAcM5/aPMj8l9M9F4idgPpV0knc0D3parwIGliAtyolP60f3wKhuu?=
- =?us-ascii?Q?UgGWr6av6SiH8AgLZit7+F082VtQLogYoNe7xVk74ebg51FRK2AOHMBTrxxT?=
- =?us-ascii?Q?wHJdUL6FIK0Y9PLhW/ZvUvWOQkz4WDFuXqynU6mj4tdbTlbKvzWV2UsYP3lv?=
- =?us-ascii?Q?FWQp8aiBPdTY5a7WvpThN7LdGATnViiALv/nYUe7q+wGaHMPUdWKDKXeRgqy?=
- =?us-ascii?Q?8T6eCtn6MT0QVAh3Ym46axINER94bI+hcevZOHZZ3q5w2mzc8KsFSVpQR96o?=
- =?us-ascii?Q?Zed4z4PTSOn4NuoN4YKrnBHbiBK/lkYhv40j3VA3VEAkaaxb8GDNUvVJLHyO?=
- =?us-ascii?Q?8fr5toKHwgnn4hj2ra46EV3d0RbxrWO8+JQU48nsmvMgkTu93YS/dbDuCFTw?=
- =?us-ascii?Q?6hcNkIEw277j7/3DexoY2KPJXjuOWOzFGvLdQRozZR/zY00mQgtk1AeDcTum?=
- =?us-ascii?Q?UlOaVme0Kxg9nvMQd02iUSZIECRDRQ5Re9pdTh/AA38+tQF82QK/3rQzCoiq?=
- =?us-ascii?Q?0CHWbbli55F8+ZeO6y2fk/CciQ80WYKX6XaPuvEuMItW5YtsD06oT2i8iuCq?=
- =?us-ascii?Q?ZMKMTfjGRn9jJPYggNkX97R+iv24weQ5RDRax9uCjRSa90Cnas3NdlAjqJKy?=
- =?us-ascii?Q?Zdw77NKEX8yWtZ4dhxC6MGLldbMfFguXswSupF+uC2RSx/YP3Zw3DPdnq38V?=
- =?us-ascii?Q?9J6WJ2364dh2e3IGTgTIStfzmm8jfCQDWmVW1x9g0BhnNcj92XYBzWZJ6zfF?=
- =?us-ascii?Q?eYLLyVvJ7fa/V6JFJtclUqwfn3bTx3y9R0kAR1sWz9WkPi/FUhrwzSdXC7J5?=
- =?us-ascii?Q?3opZbF43mJ8V4HBdgejzWIAYddXM5V3bq8yNnPAe5VBvDP7HAwPv16xFV22p?=
- =?us-ascii?Q?kutABQChQGR3R3Byo8qRTReADKR+iNdmEh5yRCYBZ5YWyQNjEzSc+FFTjYFm?=
- =?us-ascii?Q?s/FYSoTOQwad+ClptFFWLF/hM/L8T0WmAo9RKN+0LRn1FUIBG8pW8clbpelX?=
- =?us-ascii?Q?LZ+BnqeG2U1N5uEVK7x3ReuYcE0KiMFkMUTRyJeAk5hNNK/kUzGQ2b1nFl+n?=
- =?us-ascii?Q?p0/NOrEyHuncvT/idE10D2FVfbPjfgm9QTyJx9IJTK+XyPXbwb4u70tSzbug?=
- =?us-ascii?Q?AkGPf73zYwrRyOyLaBBRzPygflF27t3TF2Uge5M97Ybh7oVb55JF+zz1dXcl?=
- =?us-ascii?Q?4l+SDXw0pYKFWApVWDjQh2GhvPx7Lgyg3QAx052mkVngJtVJT4MUa+Y4CyjP?=
- =?us-ascii?Q?sKQP4BYl3l85pxDdR0bOTQ66dPY1wWIR6KF+LkdLAwzAyGFEt0OjO9mT4J+A?=
- =?us-ascii?Q?htop0WHQ4eplyLxD1D+Vxlm3iDU0qSnoS65XJfKPtuU2yyVl8e4taUI0cyJA?=
- =?us-ascii?Q?0oAxy0QahIq8Ryp9jRwQ+RPNPrO+pkYKF4hpJi4bfk+tLauVTFyyJNZdzxqu?=
- =?us-ascii?Q?oJV8zsa1JmFrUs1E6EL3NfYRvpus9itu69pqbi7WpPByGQ1MJoosVsHiAAdZ?=
- =?us-ascii?Q?ciTIXB414gRcwr3qYZ9Hos4wduAlhF0w1oK3zDwh?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>
+Subject: Re: [PATCH] Add SGX selftest `augment_via_eaccept_long`
+Message-ID: <Yvk5hiQyhCXv2WId@kernel.org>
+References: <YvEryXfefz62ivEa@kernel.org>
+ <YvI6z7wgV2VQtNV7@kernel.org>
+ <YvKGxIEpdnawb0bY@kernel.org>
+ <DM8PR11MB5591108F54901FBB198E6E04F6629@DM8PR11MB5591.namprd11.prod.outlook.com>
+ <YvKskgNrTDC/e8pf@kernel.org>
+ <DM8PR11MB5591D9B8653A2CF9D9CD5A3EF6659@DM8PR11MB5591.namprd11.prod.outlook.com>
+ <YvRU29VR/bkPLzS+@kernel.org>
+ <YvRdNnvS71U+6Dq7@kernel.org>
+ <YvRgfhHFAHCvH820@kernel.org>
+ <op.1qrnu0e4wjvjmi@hhuan26-mobl1.mshome.net>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5591.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5433a0e3-8770-4214-1347-08da7cb3cd1f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2022 22:41:30.8233
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JSP2qjEeNIDPAXbRT75uOl1yEA9SnzCL5PdbwS3JAn5qaTGIz8/CyZrYh9mDx2gEH5BTrCHqgs8j9SkNJNIG5g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB5776
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <op.1qrnu0e4wjvjmi@hhuan26-mobl1.mshome.net>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Haitao,
+On Thu, Aug 11, 2022 at 09:29:42PM -0500, Haitao Huang wrote:
+> Hi Jarkko
+> 
+> On Wed, 10 Aug 2022 20:50:54 -0500, Jarkko Sakkinen <jarkko@kernel.org>
+> wrote:
+> 
+> > On Thu, Aug 11, 2022 at 04:36:57AM +0300, Jarkko Sakkinen wrote:
+> > > On Thu, Aug 11, 2022 at 04:01:15AM +0300, Jarkko Sakkinen wrote:
+> > > > On Wed, Aug 10, 2022 at 12:09:56AM +0000, Dhanraj, Vijay wrote:
+> > > > >
+> > > > >
+> > > > > > -----Original Message-----
+> > > > > > From: Jarkko Sakkinen <jarkko@kernel.org>
+> > > > > > Sent: Tuesday, August 9, 2022 11:53 AM
+> > > > > > To: Dhanraj, Vijay <vijay.dhanraj@intel.com>
+> > > > > > Cc: linux-sgx@vger.kernel.org; Chatre, Reinette
+> > > > > > <reinette.chatre@intel.com>; dave.hansen@linux.intel.com;
+> > > Huang, Haitao
+> > > > > > <haitao.huang@intel.com>
+> > > > > > Subject: Re: [PATCH] Add SGX selftest `augment_via_eaccept_long`
+> > > > > >
+> > > > > > On Tue, Aug 09, 2022 at 05:08:21PM +0000, Dhanraj, Vijay wrote:
+> > > > > > >
+> > > > > > >
+> > > > > > > > -----Original Message-----
+> > > > > > > > From: Jarkko Sakkinen <jarkko@kernel.org>
+> > > > > > > > Sent: Tuesday, August 9, 2022 9:10 AM
+> > > > > > > > To: Dhanraj, Vijay <vijay.dhanraj@intel.com>
+> > > > > > > > Cc: linux-sgx@vger.kernel.org; Chatre, Reinette
+> > > > > > > > <reinette.chatre@intel.com>; dave.hansen@linux.intel.com;
+> > > Huang,
+> > > > > > > > Haitao <haitao.huang@intel.com>
+> > > > > > > > Subject: Re: [PATCH] Add SGX selftest
+> > > `augment_via_eaccept_long`
+> > > > > > > >
+> > > > > > > > On Tue, Aug 09, 2022 at 01:45:35PM +0300, Jarkko Sakkinen
+> > > wrote:
+> > > > > > > > > On Mon, Aug 08, 2022 at 06:29:13PM +0300, Jarkko
+> > > Sakkinen wrote:
+> > > > > > > > > > On Mon, Aug 08, 2022 at 01:00:54PM +0000, Dhanraj,
+> > > Vijay wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > > -----Original Message-----
+> > > > > > > > > > > > From: Jarkko Sakkinen <jarkko@kernel.org>
+> > > > > > > > > > > > Sent: Monday, August 8, 2022 5:18 AM
+> > > > > > > > > > > > To: Dhanraj, Vijay <vijay.dhanraj@intel.com>
+> > > > > > > > > > > > Cc: linux-sgx@vger.kernel.org; Chatre, Reinette
+> > > > > > > > > > > > <reinette.chatre@intel.com>;
+> > > dave.hansen@linux.intel.com;
+> > > > > > > > > > > > Huang, Haitao <haitao.huang@intel.com>
+> > > > > > > > > > > > Subject: Re: [PATCH] Add SGX selftest
+> > > > > > > > > > > > `augment_via_eaccept_long`
+> > > > > > > > > > > >
+> > > > > > > > > > > > On Thu, Aug 04, 2022 at 01:14:56PM -0700,
+> > > > > > > > > > > > vijay.dhanraj@intel.com
+> > > > > > > > wrote:
+> > > > > > > > > > > > > From: Vijay Dhanraj <vijay.dhanraj@intel.com>
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > This commit adds a new test case which is same as
+> > > > > > > > > > > > > `augment_via_eaccept` but adds more number of
+> > > EPC pages to
+> > > > > > > > > > > > > stress test
+> > > > > > > > > > > > `EAUG` via `EACCEPT`.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Signed-off-by: Vijay Dhanraj
+> > > <vijay.dhanraj@intel.com>
+> > > > > > > > > > > > > Signed-off-by: Haitao Huang
+> > > <haitao.huang@linux.intel.com>
+> > > > > > > > > > > >
+> > > > > > > > > > > > Hey, to reproduce the original issue: does it
+> > > reproduce on
+> > > > > > > > > > > > VM or should I run baremetal kernel?
+> > > > > > > > > > > >
+> > > > > > > > > > > > BR, Jarkko
+> > > > > > > > > > >
+> > > > > > > > > > > Hi Jarkko, The issue should be reproducible on
+> > > baremetal kernel.
+> > > > > > > > > >
+> > > > > > > > > > Thanks.
+> > > > > > > > >
+> > > > > > > > > I need comment out other tests in order to make sane out
+> > > of this
+> > > > > > > > > :-)
+> > > > > > > > >
+> > > > > > > > > Mentioning this because came into realization that
+> > > stress tests
+> > > > > > > > > should be IMHO moved each to a separate binary (so that
+> > > they can
+> > > > > > > > > be run separately). Just a note (TODO) to myself.
+> > > > > > > > >
+> > > > > > > > > I'll work on this today again and *possibly* split your
+> > > test to
+> > > > > > > > > its own application to get a starting point for
+> > > forementioned.
+> > > > > > > >
+> > > > > > > > I got
+> > > > > > > >
+> > > > > > > > #  RUN           enclave.augment_via_eaccept_long ...
+> > > > > > > > # main.c:1241:augment_via_eaccept_long:test enclave:
+> > > total_size =
+> > > > > > > > 8192,
+> > > > > > > > seg->size = 8192 #
+> > > main.c:1241:augment_via_eaccept_long:test enclave:
+> > > > > > > > total_size = 12288, seg->size = 4096 #
+> > > > > > > > main.c:1241:augment_via_eaccept_long:test enclave:
+> > > total_size =
+> > > > > > > > 36864,
+> > > > > > > > seg->size = 24576 #
+> > > main.c:1241:augment_via_eaccept_long:test enclave:
+> > > > > > > > total_size = 40960, seg->size = 4096 #
+> > > > > > > > main.c:1259:augment_via_eaccept_long:mmaping pages at end of
+> > > > > > enclave...
+> > > > > > > > # main.c:1273:augment_via_eaccept_long:Entering enclave to run
+> > > > > > > > EACCEPT for each page of 8589934592 bytes may take a while ...
+> > > > > > > > #            OK  enclave.augment_via_eaccept_long
+> > > > > > > >
+> > > > > > > > The CPU used for testing was according to /proc/cpuinfo:
+> > > > > > > >
+> > > > > > > > model name      : Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz
+> > > > > > > >
+> > > > > > > > I have couple of queries:
+> > > > > > > >
+> > > > > > > > 1. Is it possible to get dmesg output?
+> > > > > > > I did check the dmesg output but couldn't find anything
+> > > related to the
+> > > > > > failure. Just the general log messages.
+> > > > > > >
+> > > > > > > > 2. Do I have to repeat the test multiple times, or does it
+> > > > > > > >    occur unconditionaly?
+> > > > > > > >
+> > > > > > > I was able to repro every time but it was a bit sporadic for
+> > > Haitao.
+> > > > > > >
+> > > > > > > > BR, Jarkko
+> > > > > > >
+> > > > > > > Also, did you set the PRMRR size to 2GB per socket in the
+> > > BIOS? The
+> > > > > > > issue is only reproduced for oversubscribed scenario. When I
+> > > set my
+> > > > > > > PRMRR to 64GB per socket, I wasn't able to repro the issue.
+> > > > > >
+> > > > > > I need to revisit this.
+> > > > > >
+> > > > > > Can you simply run test_sgx with gdb and see where it hits?
+> > > > > > HOST_CFLAGS has apparently "-g" already.
+> > > > > >
+> > > > > > > Regards, Vijay
+> > > > > >
+> > > > > > BR, Jarkko
+> > > > >
+> > > > > I am able to repro the issue when I reduce the PRMRR to
+> > > 2B/socket but not but not able to break on the assertion failure
+> > > with gdb. I also enabled debug attribute in the secs but still no
+> > > avail. Anything I am missing here?
+> > > > >
+> > > > > diff --git a/tools/testing/selftests/sgx/load.c
+> > > b/tools/testing/selftests/sgx/load.c
+> > > > > index 7de1b15c90b1..c4bccd3f5f17 100644
+> > > > > --- a/tools/testing/selftests/sgx/load.c
+> > > > > +++ b/tools/testing/selftests/sgx/load.c
+> > > > > @@ -87,7 +87,7 @@ static bool encl_ioc_create(struct encl *encl)
+> > > > >
+> > > > >         memset(secs, 0, sizeof(*secs));
+> > > > >         secs->ssa_frame_size = 1;
+> > > > > -       secs->attributes = SGX_ATTR_MODE64BIT;
+> > > > > +       secs->attributes = SGX_ATTR_MODE64BIT | SGX_ATTR_DEBUG;
+> > > > >         secs->xfrm = 3;
+> > > > >         secs->base = encl->encl_base;
+> > > > >         secs->size = encl->encl_size;
+> > > > >
+> > > > > Regards, Vijay
+> > > >
+> > > > I get also full pass with 2GB configuration (and also observed that
+> > > > kselftest runs much faster with this configuration).
+> > > >
+> > > > But I looked at sgx_alloc_epc_page() and saw this:
+> > > >
+> > > >                if (list_empty(&sgx_active_page_list))
+> > > >                         return ERR_PTR(-ENOMEM);
+> > > >
+> > > >                 if (!reclaim) {
+> > > >                         page = ERR_PTR(-EBUSY);
+> > > >                         break;
+> > > >                 }
+> > > >
+> > > > In sgx_vma_fault(), when running completely out of reclaimable
+> > > pages, this
+> > > > causes VM_FAULT_SIGBUS returned instead of VM_FAULT_NOPAGE:
+> > > >
+> > > > 	entry = sgx_encl_load_page(encl, addr, vma->vm_flags);
+> > > > 	if (IS_ERR(entry)) {
+> > > > 		mutex_unlock(&encl->lock);
+> > > >
+> > > > 		if (PTR_ERR(entry) == -EBUSY)
+> > > > 			return VM_FAULT_NOPAGE;
+> > > >
+> > > > 		return VM_FAULT_SIGBUS;
+> > > > 	}
+> > > >
+> > > > Not sure if those should be re-ordered that would keep the process
+> > > stuck up
+> > > > until there is something to reclaim. Now we use NOPAGE to address
+> > > situation
+> > > > when there is actually something to reclaim but because of locking
+> > > side of
+> > > > things we pass reclaim=false to sgx_alloc_epc_page().
+> > > >
+> > > > So this is kind of OOM behaviour how it works now instead of stalling
+> > > > processes.
+> > > 
+> > > Right, I looked at the original email at was really a page fault
+> > > that was catched. The above theory cannot possibly hold, as the
+> > > process does not exit with a bus error.
+> > > 
+> > > I looked next to sgx_encl_eaug_page(), and found this:
+> > > 
+> > >         encl_page = sgx_encl_page_alloc(encl, addr - encl->base,
+> > > secinfo_flags);
+> > >         if (IS_ERR(encl_page))
+> > >                 return VM_FAULT_OOM;
+> > > 
+> > > This is AFAIK the only code path in sgx_vma_fault() flow that
+> > > allocates non-EPC memory, and the code paths where EPC allocation
+> > > fails the result would be SIGBUS.
+> > > 
+> > > So perhaps allocation is failing here. You could pretty easily
+> > > trace allocations with bpftrace and kretprobe to see if this is
+> > > what is happening, e.g. in one terminal:
+> > > 
+> > > sudo bpftrace -e 'kr:sgx_encl_page_alloc /retval != 0/ {
+> > > printf("%d\n", retval); }'
+> > 
+> > Should be
+> > 
+> > sudo bpftrace -e 'kr:sgx_encl_page_alloc /(long)retval < 0/ {
+> > printf("%d\n", retval); }'
+> > 
+> > BR, Jarkko
+> 
+> I tried these probs and got following results when failure happens (not
+> always happen on my device).
+> 
+> sudo bpftrace -e 'kr:sgx_encl_page_alloc /(int64)retval <0 / {
+> printf("%X\n", retval); }'
+> 
+> --> lots of negative values, I believe they are valid addresses in unsigned
+> long type. So I looked up IS_ERR_VALUE macro and translated it in following
+> probes.
+> 
+> sudo bpftrace -e 'kr:sgx_encl_page_alloc /(uint64)retval >= (uint64)(-4095)/
+> { printf("%X\n", retval); }'
 
-> -----Original Message-----
-> From: Haitao Huang <haitao.huang@linux.intel.com>
-> Sent: Friday, August 12, 2022 12:12 PM
-> To: linux-sgx@vger.kernel.org; jarkko@kernel.org; Chatre, Reinette
-> <reinette.chatre@intel.com>; dave.hansen@linux.intel.com; Dhanraj, Vijay
-> <vijay.dhanraj@intel.com>
-> Subject: [PATCH] x86/sgx: handle VA page allocation failure for EAUG on P=
-F.
->=20
-> Return VM_FAULT_NOPAGE to allow the swapping thread to catch up.
->=20
-> link: https://lore.kernel.org/all/20220804201456.33418-1-
-> vijay.dhanraj@intel.com/
->=20
-> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/encl.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/enc=
-l.c
-> index 24c1bb8eb196..1f88f80c4477 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -344,8 +344,11 @@ static vm_fault_t sgx_encl_eaug_page(struct
-> vm_area_struct *vma,
->  	}
->=20
->  	va_page =3D sgx_encl_grow(encl, false);
-> -	if (IS_ERR(va_page))
-> -		goto err_out_epc;
-> +	if (IS_ERR(va_page)) {
-> +        if (PTR_ERR(va_page) =3D=3D -EBUSY)
-> +            vmret =3D  VM_FAULT_NOPAGE;
-> +        goto err_out_epc;
-> +    }
->=20
->  	if (va_page)
->  		list_add(&va_page->list, &encl->va_pages);
-> --
-> 2.25.1
+Thank you for refining the probe.
 
-After applying this patch, I don't see the allocation failure issue with `a=
-ugment_via_eaccept_long` test case. Ran the test for about ~60 times and al=
-l the time it passes.
-Tested-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
+I'll add it to my collection:
 
+https://github.com/jarkkojs/bpftrace-sgx
+
+Despite the repository name it contains probes both for
+SGX and AMD-SNP, and also TDX and ARMv9 in future once
+I have ways to test them.
+
+> 
+> --> none triggered
+> 
+> sudo bpftrace -e 'kr:sgx_alloc_epc_page /(uint64)retval >= (uint64)(-4095)/
+> { printf("%X\n", retval); }'
+> 
+> --> FFFFFFF0 printed, which I believe is -EBUSY.
+
+EBUSY should be fine, it will be retrigger the #PF handler
+through round-trip.
+
+Did you still encounter segfaults?
+
+BR, Jarkko
