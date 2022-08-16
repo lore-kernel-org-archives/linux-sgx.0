@@ -2,147 +2,170 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B014C2BB41
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Aug 2022 07:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34218C2BB41
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Aug 2022 10:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231586AbiHPH76 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Aug 2022 03:59:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59642 "EHLO
+        id S234759AbiHPKhq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Aug 2022 06:37:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231755AbiHPH7e (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Aug 2022 03:59:34 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 605061BC94C
-        for <linux-sgx@vger.kernel.org>; Mon, 15 Aug 2022 22:16:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1660627017; x=1692163017;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=OdGUlMZ+4JcCcOmxSBKM2g/x70A1B9KFo2nuO3h4hxA=;
-  b=YTJE1HpDtciTch7TDFf+/Vofd2pgD3WXKgkgSYVjWSg/OKOjs5Agk+zg
-   TQwq01iOcyl+RFB7ZQbKoyDIR0876jZ3yHX/uwdvaeyzRDIKaDjbATsAG
-   mvAcap14sREH6DGqVW6pApgK1vkQyqQLfX1HoTHUjzu6WyHcKEeWRu/52
-   HnjtQ8LTn/Oofd1Qxqltawc7dLgdDLs0IKDwV2Eh9P0sagCeJo2PkXqoC
-   sic4Ul3PfVnqXd8dmSAyr9Q7LhdYGK+HpNudf1nuXd63tT6WjMuV3QcGs
-   cpxsIWIQ/QvDrqSugAFang9bgmrmHS9D8Oh/9kiAb3JinkasttPtOl2R4
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10440"; a="318119170"
-X-IronPort-AV: E=Sophos;i="5.93,240,1654585200"; 
-   d="scan'208";a="318119170"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2022 22:16:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,240,1654585200"; 
-   d="scan'208";a="557560631"
-Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by orsmga003.jf.intel.com with ESMTP; 15 Aug 2022 22:16:56 -0700
-From:   Haitao Huang <haitao.huang@linux.intel.com>
-To:     jarkko@kernel.org
-Cc:     dave.hansen@linux.intel.com, haitao.huang@linux.intel.com,
-        linux-sgx@vger.kernel.org, reinette.chatre@intel.com
-Subject: [PATCH] selftests/sgx: retry the ioctls returned with EAGAIN
-Date:   Mon, 15 Aug 2022 22:16:56 -0700
-Message-Id: <20220816051656.3622-1-haitao.huang@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <YvlPYRvMicz9CPFQ@kernel.org>
-References: <YvlPYRvMicz9CPFQ@kernel.org>
+        with ESMTP id S234728AbiHPKgg (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Aug 2022 06:36:36 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1569873916
+        for <linux-sgx@vger.kernel.org>; Tue, 16 Aug 2022 01:46:26 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id z30-20020a05660217de00b00688bd42dc1dso417653iox.15
+        for <linux-sgx@vger.kernel.org>; Tue, 16 Aug 2022 01:46:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc;
+        bh=ahmrjH0a3Qkxw5mdXLJa7NXy27rr3wSWL9HtgfgRopE=;
+        b=EXqxzatgOwGQ/wLt1VLVoY9rkIXGX2PaHD37/ynIOfaI3ZOaYPHy7UsENIbs2H+Ua8
+         Em4LkfrFWyXJS/XKYkSDs29aW2iTLoHepBjcnATej4JUeznztAc5+dw2CH32T1Wh4Qzh
+         OxwE1nWlCKk7PBVEli3A9MM6VY1/IVCQh9QRNFI3dnYbc7Hc8MJAMUnmVzRq/orakQ1d
+         B0wPNaqqxCaBOGhi1ErunO0rPok/bvGfeimnJa3+gIRvmSFpw+b40YKqdRwO+LNoTEVw
+         kP3o0Ahc2Hy6ZUF44EDCQHH4kzpJsnmx1FvJt42L7qjlGQmIIK47kURPlduWe8m++y9u
+         ChzA==
+X-Gm-Message-State: ACgBeo2vpuqyL7S4Lgd8OylEPQa2H1nOsuszJgMZi0SNHK4R6PLFF3kS
+        F6puRuDWV9xmTZn0sPDT1Z+UTPuMhthb9bBggy2v2okwq0h4
+X-Google-Smtp-Source: AA6agR4acJ4apit9JKg5rRK8ILwimd0MgxU3eXNXYOdjDSkUqczW0DbRVp9bfUsRpHitcWwTa31XD7BxUqSoiVigG5luxR99Nn0Q
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a02:6023:0:b0:346:ac9c:5ded with SMTP id
+ i35-20020a026023000000b00346ac9c5dedmr945099jac.245.1660639585434; Tue, 16
+ Aug 2022 01:46:25 -0700 (PDT)
+Date:   Tue, 16 Aug 2022 01:46:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009700a805e657c8fa@google.com>
+Subject: [syzbot] BUG: unable to handle kernel paging request in kvm_arch_hardware_enable
+From:   syzbot <syzbot+4f6eb69074ff62a1a33b@syzkaller.appspotmail.com>
+To:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+        jarkko@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        mingo@redhat.com, pbonzini@redhat.com, seanjc@google.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-For EMODT and EREMOVE ioctls with a large range, kernel
-may not finish in one shot and return EAGAIN error code
-and count of bytes of EPC pages on that operations are
-finished successfully.
+Hello,
 
-Change the unclobbered_vdso_oversubscribed_remove test
-to rerun the ioctls in a loop, updating offset and length
-using the byte count returned in each iteration.
+syzbot found the following issue on:
 
-Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+HEAD commit:    7ebfc85e2cd7 Merge tag 'net-6.0-rc1' of git://git.kernel.o..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13d10985080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=20bc0b329895d963
+dashboard link: https://syzkaller.appspot.com/bug?extid=4f6eb69074ff62a1a33b
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1538e0b5080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112756f3080000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4f6eb69074ff62a1a33b@syzkaller.appspotmail.com
+
+BUG: unable to handle page fault for address: ffffc900039aa330
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 12000067 
+P4D 12000067 
+PUD 121c9067 
+PMD 1d46a067 
+PTE 0
+
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 3620 Comm: syz-executor254 Not tainted 5.19.0-syzkaller-13930-g7ebfc85e2cd7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:29 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:28 [inline]
+RIP: 0010:kvm_arch_hardware_enable+0x1d1/0x6d0 arch/x86/kvm/x86.c:11847
+Code: 89 5c 24 38 4c 8d 73 f0 4c 89 f7 be 04 00 00 00 e8 a4 44 cc 00 4d 89 f5 49 c1 ed 03 43 0f b6 44 3d 00 84 c0 0f 85 08 02 00 00 <41> 8b 06 ff c8 48 63 d0 4c 89 64 24 10 4c 89 e7 48 8d 74 24 60 b9
+RSP: 0018:ffffc900038dfaa0 EFLAGS: 00010082
+
+RAX: 0000000000000000 RBX: ffffc900039aa340 RCX: ffffffff8110f0c2
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffc900039aa330
+RBP: ffffc900038dfb80 R08: dffffc0000000000 R09: fffff52000735466
+R10: fffff52000735467 R11: 1ffff92000735466 R12: ffffc900039aa240
+R13: 1ffff92000735466 R14: ffffc900039aa330 R15: dffffc0000000000
+FS:  0000555555610300(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc900039aa330 CR3: 0000000076051000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ hardware_enable_nolock+0xa1/0x140 arch/x86/kvm/../../../virt/kvm/kvm_main.c:5007
+ smp_call_function_many_cond+0xebc/0x16f0 kernel/smp.c:979
+ on_each_cpu_cond_mask+0x3b/0x80 kernel/smp.c:1154
+ on_each_cpu include/linux/smp.h:71 [inline]
+ hardware_enable_all+0x77/0x120 arch/x86/kvm/../../../virt/kvm/kvm_main.c:5069
+ kvm_create_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:1202 [inline]
+ kvm_dev_ioctl_create_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:4910 [inline]
+ kvm_dev_ioctl+0x1076/0x17e0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4957
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:870 [inline]
+ __se_sys_ioctl+0xfb/0x170 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x2b/0x70 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fd926d9c049
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffce6c2e948 EFLAGS: 00000246
+ ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007fd926d9c049
+RDX: 0000000000000000 RSI: 000000000000ae01 RDI: 0000000000000003
+RBP: 00007ffce6c2e960 R08: 0000000000000002 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
+R13: 431bde82d7b634db R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+CR2: ffffc900039aa330
+---[ end trace 0000000000000000 ]---
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:29 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:28 [inline]
+RIP: 0010:kvm_arch_hardware_enable+0x1d1/0x6d0 arch/x86/kvm/x86.c:11847
+Code: 89 5c 24 38 4c 8d 73 f0 4c 89 f7 be 04 00 00 00 e8 a4 44 cc 00 4d 89 f5 49 c1 ed 03 43 0f b6 44 3d 00 84 c0 0f 85 08 02 00 00 <41> 8b 06 ff c8 48 63 d0 4c 89 64 24 10 4c 89 e7 48 8d 74 24 60 b9
+RSP: 0018:ffffc900038dfaa0 EFLAGS: 00010082
+
+RAX: 0000000000000000 RBX: ffffc900039aa340 RCX: ffffffff8110f0c2
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffc900039aa330
+RBP: ffffc900038dfb80 R08: dffffc0000000000 R09: fffff52000735466
+R10: fffff52000735467 R11: 1ffff92000735466 R12: ffffc900039aa240
+R13: 1ffff92000735466 R14: ffffc900039aa330 R15: dffffc0000000000
+FS:  0000555555610300(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc900039aa330 CR3: 0000000076051000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	89 5c 24 38          	mov    %ebx,0x38(%rsp)
+   4:	4c 8d 73 f0          	lea    -0x10(%rbx),%r14
+   8:	4c 89 f7             	mov    %r14,%rdi
+   b:	be 04 00 00 00       	mov    $0x4,%esi
+  10:	e8 a4 44 cc 00       	callq  0xcc44b9
+  15:	4d 89 f5             	mov    %r14,%r13
+  18:	49 c1 ed 03          	shr    $0x3,%r13
+  1c:	43 0f b6 44 3d 00    	movzbl 0x0(%r13,%r15,1),%eax
+  22:	84 c0                	test   %al,%al
+  24:	0f 85 08 02 00 00    	jne    0x232
+* 2a:	41 8b 06             	mov    (%r14),%eax <-- trapping instruction
+  2d:	ff c8                	dec    %eax
+  2f:	48 63 d0             	movslq %eax,%rdx
+  32:	4c 89 64 24 10       	mov    %r12,0x10(%rsp)
+  37:	4c 89 e7             	mov    %r12,%rdi
+  3a:	48 8d 74 24 60       	lea    0x60(%rsp),%rsi
+  3f:	b9                   	.byte 0xb9
+
+
 ---
- tools/testing/selftests/sgx/main.c | 39 +++++++++++++++++++++++-------
- 1 file changed, 30 insertions(+), 9 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 9820b3809c69..9c8b5868b0f3 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -391,7 +391,7 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
- 	unsigned long total_mem;
- 	int ret, errno_save;
- 	unsigned long addr;
--	unsigned long i;
-+	unsigned long i, count;
- 
- 	/*
- 	 * Create enclave with additional heap that is as big as all
-@@ -453,16 +453,27 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
- 	modt_ioc.offset = heap->offset;
- 	modt_ioc.length = heap->size;
- 	modt_ioc.page_type = SGX_PAGE_TYPE_TRIM;
--
-+	count = 0;
- 	TH_LOG("Changing type of %zd bytes to trimmed may take a while ...",
- 	       heap->size);
--	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
--	errno_save = ret == -1 ? errno : 0;
-+	do {
-+		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
-+		errno_save = ret == -1 ? errno : 0;
-+		if (errno_save == EAGAIN) {
-+			count += modt_ioc.count;
-+			modt_ioc.offset += modt_ioc.count;
-+			modt_ioc.length -= modt_ioc.count;
-+			modt_ioc.result = 0;
-+			modt_ioc.count = 0;
-+		} else
-+			break;
-+	} while (modt_ioc.length != 0);
- 
- 	EXPECT_EQ(ret, 0);
- 	EXPECT_EQ(errno_save, 0);
- 	EXPECT_EQ(modt_ioc.result, 0);
--	EXPECT_EQ(modt_ioc.count, heap->size);
-+	count += modt_ioc.count;
-+	EXPECT_EQ(count, heap->size);
- 
- 	/* EACCEPT all removed pages. */
- 	addr = self->encl.encl_base + heap->offset;
-@@ -490,15 +501,25 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
- 
- 	remove_ioc.offset = heap->offset;
- 	remove_ioc.length = heap->size;
--
-+	count = 0;
- 	TH_LOG("Removing %zd bytes from enclave may take a while ...",
- 	       heap->size);
--	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
--	errno_save = ret == -1 ? errno : 0;
-+	do {
-+		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
-+		errno_save = ret == -1 ? errno : 0;
-+		if (errno_save == EAGAIN) {
-+			count += remove_ioc.count;
-+			remove_ioc.offset += remove_ioc.count;
-+			remove_ioc.length -= remove_ioc.count;
-+			remove_ioc.count = 0;
-+		} else
-+			break;
-+	} while (remove_ioc.length != 0);
- 
- 	EXPECT_EQ(ret, 0);
- 	EXPECT_EQ(errno_save, 0);
--	EXPECT_EQ(remove_ioc.count, heap->size);
-+	count += remove_ioc.count;
-+	EXPECT_EQ(count, heap->size);
- }
- 
- TEST_F(enclave, clobbered_vdso)
--- 
-2.25.1
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
