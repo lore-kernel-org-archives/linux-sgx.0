@@ -2,119 +2,147 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD7FC25B0F
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Aug 2022 05:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B014C2BB41
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Aug 2022 07:59:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231454AbiHPFwE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Aug 2022 01:52:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51910 "EHLO
+        id S231586AbiHPH76 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Aug 2022 03:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232000AbiHPFvm (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Aug 2022 01:51:42 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15A957F0BE
-        for <linux-sgx@vger.kernel.org>; Mon, 15 Aug 2022 15:52:02 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id i77so3505061ioa.7
-        for <linux-sgx@vger.kernel.org>; Mon, 15 Aug 2022 15:52:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc;
-        bh=3dmOD03BwYXBud0lxKQcHHjg16Ss2/ECnEAwc3JbiOU=;
-        b=NAyapcRJQGYTxs+U6LVEuGjzxrPfHm8EZ0ZM5HppHmscYE94CPP1HuwLjttVJY68Wo
-         ygzyarPH1oN10pyr3e3R2XQ03uwuJlnJ8Q5/JNuoK1PlpmItwg5bw7b8/Vv2i4IffBRE
-         cTGzAcOlwRbvcJDUro83ybc2zBGXjo6TklaY0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc;
-        bh=3dmOD03BwYXBud0lxKQcHHjg16Ss2/ECnEAwc3JbiOU=;
-        b=pn5QLPmaPkQLFIqNixNU8dpYfM/5oynQKwp6dgJDdsza+xAtDYhHQdLjeCxS50usdp
-         3gPsIoVzNNyqgB00tpCbMh7gp58ZlQGH1/hj8qphZhg9vig+urwGIVW05v5pzUv9pMIj
-         pamNgOFRsr+eQEfsz1vZcKLNOANwnmbAfhTPQ6oeoDJkKBnuf/Y2RQEsdoBk6yUc68ee
-         a8612uh/hgDxtFfQ2wQYNGFK6AdfC1NS/Gn4ONmD1IB13ey0aIAym1uZymFANGspIQg9
-         nOVvFw2ukGuTdo3I/lxb4VUbXw+6p9aVWnomVCm1B0naDl+FuLNzf09kkzuMVmkX+jI1
-         LyTg==
-X-Gm-Message-State: ACgBeo0Zqx8pY4ILeP9W3Pxc8KQmb0gRxA1p8FutPIVSs9qbEbyDs7Ak
-        Whm7sSiSpW2D7DHQF9/C8wxVKiiS1a1s3A==
-X-Google-Smtp-Source: AA6agR6UARi1oa+pE1di/e0n6PH8IX32F67Nis5Cu6bmxz46ZQ+1wfihHxQcWCedvvZE3s0pCXX1/A==
-X-Received: by 2002:a05:6602:148b:b0:657:c59b:f336 with SMTP id a11-20020a056602148b00b00657c59bf336mr7470342iow.141.1660603921283;
-        Mon, 15 Aug 2022 15:52:01 -0700 (PDT)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id q55-20020a056638347700b00343617e8368sm3720770jav.99.2022.08.15.15.51.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Aug 2022 15:52:00 -0700 (PDT)
-Subject: Re: [PATCH v2] selftests/sgx: Ignore OpenSSL 3.0 deprecated functions
- warning
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>, linux-sgx@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <20220812180714.566257-1-kristen@linux.intel.com>
- <YvlLYtbmAM2Hrtds@kernel.org>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <deb34fb5-3620-a817-341e-b6ef601201c6@linuxfoundation.org>
-Date:   Mon, 15 Aug 2022 16:51:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        with ESMTP id S231755AbiHPH7e (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Aug 2022 03:59:34 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 605061BC94C
+        for <linux-sgx@vger.kernel.org>; Mon, 15 Aug 2022 22:16:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1660627017; x=1692163017;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=OdGUlMZ+4JcCcOmxSBKM2g/x70A1B9KFo2nuO3h4hxA=;
+  b=YTJE1HpDtciTch7TDFf+/Vofd2pgD3WXKgkgSYVjWSg/OKOjs5Agk+zg
+   TQwq01iOcyl+RFB7ZQbKoyDIR0876jZ3yHX/uwdvaeyzRDIKaDjbATsAG
+   mvAcap14sREH6DGqVW6pApgK1vkQyqQLfX1HoTHUjzu6WyHcKEeWRu/52
+   HnjtQ8LTn/Oofd1Qxqltawc7dLgdDLs0IKDwV2Eh9P0sagCeJo2PkXqoC
+   sic4Ul3PfVnqXd8dmSAyr9Q7LhdYGK+HpNudf1nuXd63tT6WjMuV3QcGs
+   cpxsIWIQ/QvDrqSugAFang9bgmrmHS9D8Oh/9kiAb3JinkasttPtOl2R4
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10440"; a="318119170"
+X-IronPort-AV: E=Sophos;i="5.93,240,1654585200"; 
+   d="scan'208";a="318119170"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2022 22:16:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,240,1654585200"; 
+   d="scan'208";a="557560631"
+Received: from b4969161e530.jf.intel.com ([10.165.56.46])
+  by orsmga003.jf.intel.com with ESMTP; 15 Aug 2022 22:16:56 -0700
+From:   Haitao Huang <haitao.huang@linux.intel.com>
+To:     jarkko@kernel.org
+Cc:     dave.hansen@linux.intel.com, haitao.huang@linux.intel.com,
+        linux-sgx@vger.kernel.org, reinette.chatre@intel.com
+Subject: [PATCH] selftests/sgx: retry the ioctls returned with EAGAIN
+Date:   Mon, 15 Aug 2022 22:16:56 -0700
+Message-Id: <20220816051656.3622-1-haitao.huang@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <YvlPYRvMicz9CPFQ@kernel.org>
+References: <YvlPYRvMicz9CPFQ@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <YvlLYtbmAM2Hrtds@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 8/14/22 1:22 PM, Jarkko Sakkinen wrote:
-> On Fri, Aug 12, 2022 at 11:07:13AM -0700, Kristen Carlson Accardi wrote:
->> OpenSSL 3.0 deprecates some of the functions used in the SGX
->> selftests, causing build errors on new distros. For now ignore
->> the warnings until support for the functions is no longer
->> available and mark FIXME so that it can be clear this should
->> be removed at some point.
->>
->> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
->> ---
->>   tools/testing/selftests/sgx/sigstruct.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
->> index 50c5ab1aa6fa..a07896a46364 100644
->> --- a/tools/testing/selftests/sgx/sigstruct.c
->> +++ b/tools/testing/selftests/sgx/sigstruct.c
->> @@ -17,6 +17,12 @@
->>   #include "defines.h"
->>   #include "main.h"
->>   
->> +/*
->> + * FIXME: OpenSSL 3.0 has deprecated some functions. For now just ignore
->> + * the warnings.
->> + */
->> +#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
->> +
->>   struct q1q2_ctx {
->>   	BN_CTX *bn_ctx;
->>   	BIGNUM *m;
->> -- 
->> 2.36.1
->>
-> 
-> Thank you.
-> 
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> 
-> BR, Jarkko
-> 
+For EMODT and EREMOVE ioctls with a large range, kernel
+may not finish in one shot and return EAGAIN error code
+and count of bytes of EPC pages on that operations are
+finished successfully.
 
-Thank you both.
+Change the unclobbered_vdso_oversubscribed_remove test
+to rerun the ioctls in a loop, updating offset and length
+using the byte count returned in each iteration.
 
-Applied for rc2/3
+Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ tools/testing/selftests/sgx/main.c | 39 +++++++++++++++++++++++-------
+ 1 file changed, 30 insertions(+), 9 deletions(-)
 
-thanks,
--- Shuah
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index 9820b3809c69..9c8b5868b0f3 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -391,7 +391,7 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
+ 	unsigned long total_mem;
+ 	int ret, errno_save;
+ 	unsigned long addr;
+-	unsigned long i;
++	unsigned long i, count;
+ 
+ 	/*
+ 	 * Create enclave with additional heap that is as big as all
+@@ -453,16 +453,27 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
+ 	modt_ioc.offset = heap->offset;
+ 	modt_ioc.length = heap->size;
+ 	modt_ioc.page_type = SGX_PAGE_TYPE_TRIM;
+-
++	count = 0;
+ 	TH_LOG("Changing type of %zd bytes to trimmed may take a while ...",
+ 	       heap->size);
+-	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
+-	errno_save = ret == -1 ? errno : 0;
++	do {
++		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
++		errno_save = ret == -1 ? errno : 0;
++		if (errno_save == EAGAIN) {
++			count += modt_ioc.count;
++			modt_ioc.offset += modt_ioc.count;
++			modt_ioc.length -= modt_ioc.count;
++			modt_ioc.result = 0;
++			modt_ioc.count = 0;
++		} else
++			break;
++	} while (modt_ioc.length != 0);
+ 
+ 	EXPECT_EQ(ret, 0);
+ 	EXPECT_EQ(errno_save, 0);
+ 	EXPECT_EQ(modt_ioc.result, 0);
+-	EXPECT_EQ(modt_ioc.count, heap->size);
++	count += modt_ioc.count;
++	EXPECT_EQ(count, heap->size);
+ 
+ 	/* EACCEPT all removed pages. */
+ 	addr = self->encl.encl_base + heap->offset;
+@@ -490,15 +501,25 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
+ 
+ 	remove_ioc.offset = heap->offset;
+ 	remove_ioc.length = heap->size;
+-
++	count = 0;
+ 	TH_LOG("Removing %zd bytes from enclave may take a while ...",
+ 	       heap->size);
+-	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
+-	errno_save = ret == -1 ? errno : 0;
++	do {
++		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
++		errno_save = ret == -1 ? errno : 0;
++		if (errno_save == EAGAIN) {
++			count += remove_ioc.count;
++			remove_ioc.offset += remove_ioc.count;
++			remove_ioc.length -= remove_ioc.count;
++			remove_ioc.count = 0;
++		} else
++			break;
++	} while (remove_ioc.length != 0);
+ 
+ 	EXPECT_EQ(ret, 0);
+ 	EXPECT_EQ(errno_save, 0);
+-	EXPECT_EQ(remove_ioc.count, heap->size);
++	count += remove_ioc.count;
++	EXPECT_EQ(count, heap->size);
+ }
+ 
+ TEST_F(enclave, clobbered_vdso)
+-- 
+2.25.1
+
