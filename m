@@ -2,170 +2,88 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34218C2BB41
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Aug 2022 10:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6A6C2BB41
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Aug 2022 14:07:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234759AbiHPKhq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Aug 2022 06:37:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58196 "EHLO
+        id S231528AbiHPOHY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Aug 2022 10:07:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234728AbiHPKgg (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Aug 2022 06:36:36 -0400
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1569873916
-        for <linux-sgx@vger.kernel.org>; Tue, 16 Aug 2022 01:46:26 -0700 (PDT)
-Received: by mail-io1-f69.google.com with SMTP id z30-20020a05660217de00b00688bd42dc1dso417653iox.15
-        for <linux-sgx@vger.kernel.org>; Tue, 16 Aug 2022 01:46:26 -0700 (PDT)
+        with ESMTP id S235894AbiHPOEk (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Aug 2022 10:04:40 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D76986BD5D
+        for <linux-sgx@vger.kernel.org>; Tue, 16 Aug 2022 07:04:22 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id q19so9428190pfg.8
+        for <linux-sgx@vger.kernel.org>; Tue, 16 Aug 2022 07:04:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=1GWQeJ3mO/AwsS1RxKEoiTmjiFwoCENhO2G+S4wDDKU=;
+        b=MXLWq8Ly9rTmRDyZNuNR3g8mJjeH9dgKfanuaq5Dl7nKAuhvDg5Di203a1rl6HAb+T
+         YlWob7XvmiC+vEXV5h0DLNEKpm3HCbMOLbktEzqOagm4T+BV29L94RAjxQy+JAhR7ZpC
+         LXT06avUI68wlEHazjn12U/Uhs1ARBLVUwM/Ql4kDcht82pw7Dcmi+ztzDW4iCaytcUV
+         nVZN4x8VXjiTgZp/viODvNKL35oVvxR7cBnmX/FXo/Kc+B+gBvP3J6LLMu0IgbS4JlHA
+         HyxKdVLgtKE+SHCJdGluZH6jwewFbU10TpkYWSJbkph9tS3ZkEjiLPhQXQk1FrRxB6G5
+         Z0mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc;
-        bh=ahmrjH0a3Qkxw5mdXLJa7NXy27rr3wSWL9HtgfgRopE=;
-        b=EXqxzatgOwGQ/wLt1VLVoY9rkIXGX2PaHD37/ynIOfaI3ZOaYPHy7UsENIbs2H+Ua8
-         Em4LkfrFWyXJS/XKYkSDs29aW2iTLoHepBjcnATej4JUeznztAc5+dw2CH32T1Wh4Qzh
-         OxwE1nWlCKk7PBVEli3A9MM6VY1/IVCQh9QRNFI3dnYbc7Hc8MJAMUnmVzRq/orakQ1d
-         B0wPNaqqxCaBOGhi1ErunO0rPok/bvGfeimnJa3+gIRvmSFpw+b40YKqdRwO+LNoTEVw
-         kP3o0Ahc2Hy6ZUF44EDCQHH4kzpJsnmx1FvJt42L7qjlGQmIIK47kURPlduWe8m++y9u
-         ChzA==
-X-Gm-Message-State: ACgBeo2vpuqyL7S4Lgd8OylEPQa2H1nOsuszJgMZi0SNHK4R6PLFF3kS
-        F6puRuDWV9xmTZn0sPDT1Z+UTPuMhthb9bBggy2v2okwq0h4
-X-Google-Smtp-Source: AA6agR4acJ4apit9JKg5rRK8ILwimd0MgxU3eXNXYOdjDSkUqczW0DbRVp9bfUsRpHitcWwTa31XD7BxUqSoiVigG5luxR99Nn0Q
-MIME-Version: 1.0
-X-Received: by 2002:a02:6023:0:b0:346:ac9c:5ded with SMTP id
- i35-20020a026023000000b00346ac9c5dedmr945099jac.245.1660639585434; Tue, 16
- Aug 2022 01:46:25 -0700 (PDT)
-Date:   Tue, 16 Aug 2022 01:46:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009700a805e657c8fa@google.com>
-Subject: [syzbot] BUG: unable to handle kernel paging request in kvm_arch_hardware_enable
-From:   syzbot <syzbot+4f6eb69074ff62a1a33b@syzkaller.appspotmail.com>
-To:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=1GWQeJ3mO/AwsS1RxKEoiTmjiFwoCENhO2G+S4wDDKU=;
+        b=MUEa/7R/kPGZWOKyqmkf65YaAuUmHK8Pq7b+MReibLvg9ZRyaxPxNHnUOXbqloB2wK
+         p/Q8DCcoixYgidA2QWqt14RUXnI0xnz9o/B0Pss3+QyW4DiYEYcepUTzqv+YcqIw91uV
+         974DICJvneHfc+drbTSM+zDfqqJGsZcjYAdTHpvU0qo2XzLgEjEaGEvbnPopgbTCLeTv
+         sc8zrzIXJhkpvnnDs5ONzGtbtiMgBBgENLHj0AKX6Bdsn9/hwQma3tizK4wfyBmE41lv
+         rPjj63As9HnewUiW7Qxh8YSHsUP76tvu0gGFw2YT4nDmK71nqj2TNgpiKrIl0mBK/ixb
+         TMeQ==
+X-Gm-Message-State: ACgBeo0HnYK2lkwAkU8F98j8Wn89CcQ0VmgOUUckF+114c+4+b2RCFl3
+        goXypUx+KRc8T/D3tq97IarqOw==
+X-Google-Smtp-Source: AA6agR7kLxy5v183YsULCWmOt3IC2ihIF8QYtRU7rFOfEhilKXIu3tcncvsozFV2ULPP1Ik7IBGQUQ==
+X-Received: by 2002:a05:6a00:13a7:b0:52e:3139:f895 with SMTP id t39-20020a056a0013a700b0052e3139f895mr20812990pfg.43.1660658662199;
+        Tue, 16 Aug 2022 07:04:22 -0700 (PDT)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id e15-20020a170902784f00b0016f1c1f50f4sm9109452pln.235.2022.08.16.07.04.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Aug 2022 07:04:21 -0700 (PDT)
+Date:   Tue, 16 Aug 2022 14:04:18 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     syzbot <syzbot+4f6eb69074ff62a1a33b@syzkaller.appspotmail.com>
+Cc:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
         jarkko@kernel.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com, seanjc@google.com,
+        mingo@redhat.com, pbonzini@redhat.com,
         syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [syzbot] BUG: unable to handle kernel paging request in
+ kvm_arch_hardware_enable
+Message-ID: <Yvuj4ugWYpthUwhj@google.com>
+References: <0000000000009700a805e657c8fa@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000009700a805e657c8fa@google.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hello,
+On Tue, Aug 16, 2022, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    7ebfc85e2cd7 Merge tag 'net-6.0-rc1' of git://git.kernel.o..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=13d10985080000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=20bc0b329895d963
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4f6eb69074ff62a1a33b
+> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1538e0b5080000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112756f3080000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+4f6eb69074ff62a1a33b@syzkaller.appspotmail.com
 
-syzbot found the following issue on:
+Fix posted[*], apparently the sybot id changes when bugs get forwarded upstream.
 
-HEAD commit:    7ebfc85e2cd7 Merge tag 'net-6.0-rc1' of git://git.kernel.o..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13d10985080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=20bc0b329895d963
-dashboard link: https://syzkaller.appspot.com/bug?extid=4f6eb69074ff62a1a33b
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1538e0b5080000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112756f3080000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4f6eb69074ff62a1a33b@syzkaller.appspotmail.com
-
-BUG: unable to handle page fault for address: ffffc900039aa330
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 12000067 
-P4D 12000067 
-PUD 121c9067 
-PMD 1d46a067 
-PTE 0
-
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 3620 Comm: syz-executor254 Not tainted 5.19.0-syzkaller-13930-g7ebfc85e2cd7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:29 [inline]
-RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:28 [inline]
-RIP: 0010:kvm_arch_hardware_enable+0x1d1/0x6d0 arch/x86/kvm/x86.c:11847
-Code: 89 5c 24 38 4c 8d 73 f0 4c 89 f7 be 04 00 00 00 e8 a4 44 cc 00 4d 89 f5 49 c1 ed 03 43 0f b6 44 3d 00 84 c0 0f 85 08 02 00 00 <41> 8b 06 ff c8 48 63 d0 4c 89 64 24 10 4c 89 e7 48 8d 74 24 60 b9
-RSP: 0018:ffffc900038dfaa0 EFLAGS: 00010082
-
-RAX: 0000000000000000 RBX: ffffc900039aa340 RCX: ffffffff8110f0c2
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffc900039aa330
-RBP: ffffc900038dfb80 R08: dffffc0000000000 R09: fffff52000735466
-R10: fffff52000735467 R11: 1ffff92000735466 R12: ffffc900039aa240
-R13: 1ffff92000735466 R14: ffffc900039aa330 R15: dffffc0000000000
-FS:  0000555555610300(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc900039aa330 CR3: 0000000076051000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- hardware_enable_nolock+0xa1/0x140 arch/x86/kvm/../../../virt/kvm/kvm_main.c:5007
- smp_call_function_many_cond+0xebc/0x16f0 kernel/smp.c:979
- on_each_cpu_cond_mask+0x3b/0x80 kernel/smp.c:1154
- on_each_cpu include/linux/smp.h:71 [inline]
- hardware_enable_all+0x77/0x120 arch/x86/kvm/../../../virt/kvm/kvm_main.c:5069
- kvm_create_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:1202 [inline]
- kvm_dev_ioctl_create_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:4910 [inline]
- kvm_dev_ioctl+0x1076/0x17e0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4957
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl+0xfb/0x170 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x2b/0x70 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fd926d9c049
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffce6c2e948 EFLAGS: 00000246
- ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007fd926d9c049
-RDX: 0000000000000000 RSI: 000000000000ae01 RDI: 0000000000000003
-RBP: 00007ffce6c2e960 R08: 0000000000000002 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-R13: 431bde82d7b634db R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
-CR2: ffffc900039aa330
----[ end trace 0000000000000000 ]---
-RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:29 [inline]
-RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:28 [inline]
-RIP: 0010:kvm_arch_hardware_enable+0x1d1/0x6d0 arch/x86/kvm/x86.c:11847
-Code: 89 5c 24 38 4c 8d 73 f0 4c 89 f7 be 04 00 00 00 e8 a4 44 cc 00 4d 89 f5 49 c1 ed 03 43 0f b6 44 3d 00 84 c0 0f 85 08 02 00 00 <41> 8b 06 ff c8 48 63 d0 4c 89 64 24 10 4c 89 e7 48 8d 74 24 60 b9
-RSP: 0018:ffffc900038dfaa0 EFLAGS: 00010082
-
-RAX: 0000000000000000 RBX: ffffc900039aa340 RCX: ffffffff8110f0c2
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffc900039aa330
-RBP: ffffc900038dfb80 R08: dffffc0000000000 R09: fffff52000735466
-R10: fffff52000735467 R11: 1ffff92000735466 R12: ffffc900039aa240
-R13: 1ffff92000735466 R14: ffffc900039aa330 R15: dffffc0000000000
-FS:  0000555555610300(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc900039aa330 CR3: 0000000076051000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	89 5c 24 38          	mov    %ebx,0x38(%rsp)
-   4:	4c 8d 73 f0          	lea    -0x10(%rbx),%r14
-   8:	4c 89 f7             	mov    %r14,%rdi
-   b:	be 04 00 00 00       	mov    $0x4,%esi
-  10:	e8 a4 44 cc 00       	callq  0xcc44b9
-  15:	4d 89 f5             	mov    %r14,%r13
-  18:	49 c1 ed 03          	shr    $0x3,%r13
-  1c:	43 0f b6 44 3d 00    	movzbl 0x0(%r13,%r15,1),%eax
-  22:	84 c0                	test   %al,%al
-  24:	0f 85 08 02 00 00    	jne    0x232
-* 2a:	41 8b 06             	mov    (%r14),%eax <-- trapping instruction
-  2d:	ff c8                	dec    %eax
-  2f:	48 63 d0             	movslq %eax,%rdx
-  32:	4c 89 64 24 10       	mov    %r12,0x10(%rsp)
-  37:	4c 89 e7             	mov    %r12,%rdi
-  3a:	48 8d 74 24 60       	lea    0x60(%rsp),%rsi
-  3f:	b9                   	.byte 0xb9
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+[*] https://lore.kernel.org/all/20220816053937.2477106-2-seanjc@google.com
