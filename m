@@ -2,88 +2,72 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6A6C2BB41
-	for <linux-sgx@archiver.kernel.org>; Tue, 16 Aug 2022 14:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27045C25B0E
+	for <linux-sgx@archiver.kernel.org>; Tue, 16 Aug 2022 14:24:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231528AbiHPOHY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 16 Aug 2022 10:07:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35842 "EHLO
+        id S234267AbiHPOY0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 16 Aug 2022 10:24:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235894AbiHPOEk (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Aug 2022 10:04:40 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D76986BD5D
-        for <linux-sgx@vger.kernel.org>; Tue, 16 Aug 2022 07:04:22 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id q19so9428190pfg.8
-        for <linux-sgx@vger.kernel.org>; Tue, 16 Aug 2022 07:04:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=1GWQeJ3mO/AwsS1RxKEoiTmjiFwoCENhO2G+S4wDDKU=;
-        b=MXLWq8Ly9rTmRDyZNuNR3g8mJjeH9dgKfanuaq5Dl7nKAuhvDg5Di203a1rl6HAb+T
-         YlWob7XvmiC+vEXV5h0DLNEKpm3HCbMOLbktEzqOagm4T+BV29L94RAjxQy+JAhR7ZpC
-         LXT06avUI68wlEHazjn12U/Uhs1ARBLVUwM/Ql4kDcht82pw7Dcmi+ztzDW4iCaytcUV
-         nVZN4x8VXjiTgZp/viODvNKL35oVvxR7cBnmX/FXo/Kc+B+gBvP3J6LLMu0IgbS4JlHA
-         HyxKdVLgtKE+SHCJdGluZH6jwewFbU10TpkYWSJbkph9tS3ZkEjiLPhQXQk1FrRxB6G5
-         Z0mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=1GWQeJ3mO/AwsS1RxKEoiTmjiFwoCENhO2G+S4wDDKU=;
-        b=MUEa/7R/kPGZWOKyqmkf65YaAuUmHK8Pq7b+MReibLvg9ZRyaxPxNHnUOXbqloB2wK
-         p/Q8DCcoixYgidA2QWqt14RUXnI0xnz9o/B0Pss3+QyW4DiYEYcepUTzqv+YcqIw91uV
-         974DICJvneHfc+drbTSM+zDfqqJGsZcjYAdTHpvU0qo2XzLgEjEaGEvbnPopgbTCLeTv
-         sc8zrzIXJhkpvnnDs5ONzGtbtiMgBBgENLHj0AKX6Bdsn9/hwQma3tizK4wfyBmE41lv
-         rPjj63As9HnewUiW7Qxh8YSHsUP76tvu0gGFw2YT4nDmK71nqj2TNgpiKrIl0mBK/ixb
-         TMeQ==
-X-Gm-Message-State: ACgBeo0HnYK2lkwAkU8F98j8Wn89CcQ0VmgOUUckF+114c+4+b2RCFl3
-        goXypUx+KRc8T/D3tq97IarqOw==
-X-Google-Smtp-Source: AA6agR7kLxy5v183YsULCWmOt3IC2ihIF8QYtRU7rFOfEhilKXIu3tcncvsozFV2ULPP1Ik7IBGQUQ==
-X-Received: by 2002:a05:6a00:13a7:b0:52e:3139:f895 with SMTP id t39-20020a056a0013a700b0052e3139f895mr20812990pfg.43.1660658662199;
-        Tue, 16 Aug 2022 07:04:22 -0700 (PDT)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id e15-20020a170902784f00b0016f1c1f50f4sm9109452pln.235.2022.08.16.07.04.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Aug 2022 07:04:21 -0700 (PDT)
-Date:   Tue, 16 Aug 2022 14:04:18 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     syzbot <syzbot+4f6eb69074ff62a1a33b@syzkaller.appspotmail.com>
-Cc:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-        jarkko@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Subject: Re: [syzbot] BUG: unable to handle kernel paging request in
- kvm_arch_hardware_enable
-Message-ID: <Yvuj4ugWYpthUwhj@google.com>
-References: <0000000000009700a805e657c8fa@google.com>
+        with ESMTP id S231453AbiHPOYY (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 16 Aug 2022 10:24:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E393940BE9
+        for <linux-sgx@vger.kernel.org>; Tue, 16 Aug 2022 07:24:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 658B460FCA
+        for <linux-sgx@vger.kernel.org>; Tue, 16 Aug 2022 14:24:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6882FC433C1;
+        Tue, 16 Aug 2022 14:24:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660659862;
+        bh=opT1Iq3EguL1dZo+chn84khIbel5Ylxe+7xol1qyj8M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BAoYrktJ5DMNgdbhrLjxKL43NzFezn/Km6N2Uy0STikkQBlCFPqz42SlcvvBRO3Y4
+         aOdN57YzqqofJz5urfzBvuXIZ6eCndu+x51emLWu+Rnn/WCm9iFMOSBZa7o+hUWOgn
+         y4S1mNa8tHpgQNj1d9S1Am+FsntpJSHsSxZ3Eh5NCxcEia9mSRSQBVR+unE4+urpib
+         NQZrD5Sai4PhZcRTZugt3jUisbSyX1ku9AmRKAnd3EhQxfacTaeioWkFujQL9JyzuY
+         Yss7dbAQ01Q/lLWmY1rX8OHg+zd7J2Z9p+GvwHII8Cc4ivMIs2jk9ksa8xz8FSzgQN
+         ngaGlZhqf9j5g==
+Date:   Tue, 16 Aug 2022 17:24:19 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org, reinette.chatre@intel.com,
+        Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>
+Subject: Re: [PATCH] selftests/sgx: retry the ioctls returned with EAGAIN
+Message-ID: <Yvuok/Xd7+/kcUiR@kernel.org>
+References: <YvlPYRvMicz9CPFQ@kernel.org>
+ <20220816051656.3622-1-haitao.huang@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000009700a805e657c8fa@google.com>
+In-Reply-To: <20220816051656.3622-1-haitao.huang@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Aug 16, 2022, syzbot wrote:
-> Hello,
+On Mon, Aug 15, 2022 at 10:16:56PM -0700, Haitao Huang wrote:
+> For EMODT and EREMOVE ioctls with a large range, kernel
+> may not finish in one shot and return EAGAIN error code
+> and count of bytes of EPC pages on that operations are
+> finished successfully.
 > 
-> syzbot found the following issue on:
+> Change the unclobbered_vdso_oversubscribed_remove test
+> to rerun the ioctls in a loop, updating offset and length
+> using the byte count returned in each iteration.
 > 
-> HEAD commit:    7ebfc85e2cd7 Merge tag 'net-6.0-rc1' of git://git.kernel.o..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=13d10985080000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=20bc0b329895d963
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4f6eb69074ff62a1a33b
-> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1538e0b5080000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112756f3080000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+4f6eb69074ff62a1a33b@syzkaller.appspotmail.com
+> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Fix posted[*], apparently the sybot id changes when bugs get forwarded upstream.
+Also,
 
-[*] https://lore.kernel.org/all/20220816053937.2477106-2-seanjc@google.com
+Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+Dave, in addition to [*], these should be picked x86 tree for v6.0
+
+https://lore.kernel.org/linux-sgx/20220815233900.11225-1-jarkko@kernel.org/T/#t
+
+BR, Jarkko
