@@ -2,114 +2,153 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DBFC28D13
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 06:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0FFC28D13
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 08:08:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235123AbiHYGq0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 25 Aug 2022 02:46:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58848 "EHLO
+        id S233215AbiHYII2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 25 Aug 2022 04:08:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234292AbiHYGqZ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 02:46:25 -0400
-Received: from mx1.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C997731369;
-        Wed, 24 Aug 2022 23:46:23 -0700 (PDT)
-Received: from [192.168.0.2] (ip5f5aeca3.dynamic.kabel-deutschland.de [95.90.236.163])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        with ESMTP id S231615AbiHYII1 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 04:08:27 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58DA2A286F;
+        Thu, 25 Aug 2022 01:08:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id EF39461EA1930;
-        Thu, 25 Aug 2022 08:46:20 +0200 (CEST)
-Message-ID: <54818a03-93c0-8039-b847-d030785e725a@molgen.mpg.de>
-Date:   Thu, 25 Aug 2022 08:46:19 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: WARNING: CPU: 1 PID: 83 at arch/x86/kernel/cpu/sgx/main.c:446
- ksgxd+0x1b7/0x1d0
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0C722B8275D;
+        Thu, 25 Aug 2022 08:08:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E88BFC433C1;
+        Thu, 25 Aug 2022 08:08:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661414903;
+        bh=XfOFqfzXCa+k6af03iVwJecCGx56YZxl1KlR3f3DDwo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=k7a8g6XEzoLLalTff7jdXR7oSs5dsEF5weJVHSYu2BF1hpeWN+/X7jsgozSdbvSnB
+         ReC+X45k6PHHHFn0DipHpSjyHzMV63uAhLIw6DWFlFKgl6HKZnVKzbA1LvfAMhdRIf
+         DRdKaYfeYc9TVf1ck/xLK2sKM/blZ+3PvFrsnuNrc5rBKrcgzQKLtzyzHymL3UmPWr
+         4fsP1912cmlmoe0FtM3uFidIgLI9xE6+nt42KDeyLFHXnGfz98vIJRMCsRjWrH9HyD
+         TggA+jXNRdx+G0vYdZIlnUMDcop8C1DLzHsI7/JihiwmwfpOwq8dni2HE8WK61WHDS
+         N/5ftX8RLPYZQ==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "Chatre, Reinette" <reinette.chatre@intel.com>,
-        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <ce0b4d26-3a6e-7c5a-5f66-44cba05f9f35@molgen.mpg.de>
- <4253695b-85aa-a2fb-fbf6-718db8b6c20c@molgen.mpg.de>
- <46e3483b-a5ab-2a05-8a28-f9ea87e881c3@intel.com>
- <YwcBN+1Q7JiYC7cb@kernel.org> <YwcHnBTlobzSGgTj@kernel.org>
-Content-Language: en-US
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <YwcHnBTlobzSGgTj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT))
+Subject: [PATCH v3] x86/sgx: Do not consider unsanitized pages an error
+Date:   Thu, 25 Aug 2022 11:08:02 +0300
+Message-Id: <20220825080802.259528-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.37.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Dear Jarkko,
+If sgx_dirty_page_list ends up being non-empty, currently this triggers
+WARN_ON(), which produces a lot of noise, and can potentially crash the
+kernel, depending on the kernel command line.
 
+However, if the SGX subsystem initialization is retracted, the sanitization
+process could end up in the middle, and sgx_dirty_page_list be left
+non-empty for legit reasons.
 
-Am 25.08.22 um 07:25 schrieb Jarkko Sakkinen:
-> On Thu, Aug 25, 2022 at 07:57:30AM +0300, Jarkko Sakkinen wrote:
->> On Fri, Aug 19, 2022 at 11:28:24AM -0700, Dave Hansen wrote:
->>> On 8/19/22 09:02, Paul Menzel wrote:
->>>> On the Dell XPS 13 9370, Linux 5.18.16 prints the warning below:
->>>>
->>>> ```
->>>> [    0.000000] Linux version 5.18.0-4-amd64 (debian-kernel@lists.debian.org) (gcc-11 (Debian 11.3.0-5) 11.3.0, GNU ld (GNU Binutils for Debian) 2.38.90.20220713) #1 SMP PREEMPT_DYNAMIC Debian 5.18.16-1 (2022-08-10)
->>>> [    0.000000] Command line: BOOT_IMAGE=/vmlinuz-5.18.0-4-amd64 root=UUID=56f398e0-1e25-4fda-aa9f-611dece4b333 ro quiet
->>>> […]
->>>> [    0.000000] DMI: Dell Inc. XPS 13 9370/0RMYH9, BIOS 1.21.0 07/06/2022
->>>> […]
->>>> [    0.235418] sgx: EPC section 0x40200000-0x45f7ffff
+Replace this faulty behavior with more verbose version
+__sgx_sanitize_pages(), which can optionally print EREMOVE error code and
+the number of unsanitized pages.
 
->>> Would you be able to send the entire dmesg, along with:
->>>
->>> 	cat /proc/iomem # (as root)
->>> and
->>> 	cpuid -1 --raw
->>>
->>> I'm suspecting either a BIOS problem.  Reinette (cc'd) also thought this
->>> might be a case of the SGX initialization getting a bit too far along
->>> when it should have been disabled.
->>>
->>> We had some bugs where we didn't stop fast enough after spitting out the
->>> "SGX Launch Control is locked..." errors.
->>
->> For some reason the pages do not get properly sanitized:
->>
->> 	/* sanity check: */
->> 	WARN_ON(!list_empty(&sgx_dirty_page_list));
->>
->> EPC should be good, given that EREMOVE does not fail.
->> If SGX would be disabled, also EREMOVE should fail.
-> 
-> Sorry forgot that in no circumstances we're printing the
-> error code inside __sgx_sanitize_pages(). I wrote a quick
-> patch to address this (attached) [*].
-> 
-> Paul,
-> 
-> Any chance to try the patch out?
+Link: https://lore.kernel.org/linux-sgx/20220825051827.246698-1-jarkko@kernel.org/T/#u
+Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Fixes: 51ab30eb2ad4 ("x86/sgx: Replace section->init_laundry_list with sgx_dirty_page_list")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Yes, I am going to try it in the next days.
+Cc: Haitao Huang <haitao.huang@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>
+---
+v3:
+- Remove WARN_ON().
+- Tuned comments and the commit message a bit.
 
-> It's pretty hard to attach e.g. kprobe to grab this info. Does it
-> reproduce every single time?
-Yes, on each boot up.
+v2:
+- Replaced WARN_ON() with optional pr_info() inside
+  __sgx_sanitize_pages().
+- Rewrote the commit message.
+- Added the fixes tag.
+---
+ arch/x86/kernel/cpu/sgx/main.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-> Alternatively: what kind of workload is triggering this?
-> I do own 2020 model XPS13, which might be able to
-> reproduce the same issue.
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 515e2a5f25bb..d204520a5e26 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -50,16 +50,17 @@ static LIST_HEAD(sgx_dirty_page_list);
+  * from the input list, and made available for the page allocator. SECS pages
+  * prepending their children in the input list are left intact.
+  */
+-static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
++static void __sgx_sanitize_pages(struct list_head *dirty_page_list, bool verbose)
+ {
+ 	struct sgx_epc_page *page;
++	int dirty_count = 0;
+ 	LIST_HEAD(dirty);
+ 	int ret;
+ 
+ 	/* dirty_page_list is thread-local, no need for a lock: */
+ 	while (!list_empty(dirty_page_list)) {
+ 		if (kthread_should_stop())
+-			return;
++			break;
+ 
+ 		page = list_first_entry(dirty_page_list, struct sgx_epc_page, list);
+ 
+@@ -90,14 +91,22 @@ static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
+ 			list_del(&page->list);
+ 			sgx_free_epc_page(page);
+ 		} else {
++			if (verbose)
++				pr_err_ratelimited(EREMOVE_ERROR_MESSAGE, ret, ret);
++
+ 			/* The page is not yet clean - move to the dirty list. */
+ 			list_move_tail(&page->list, &dirty);
++			dirty_count++;
+ 		}
+ 
+ 		cond_resched();
+ 	}
+ 
+ 	list_splice(&dirty, dirty_page_list);
++
++	/* Can happen, when the initialization is retracted: */
++	if (verbose && dirty_count > 0)
++		pr_info("%d unsanitized pages\n", dirty_count);
+ }
+ 
+ static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
+@@ -394,11 +403,8 @@ static int ksgxd(void *p)
+ 	 * Sanitize pages in order to recover from kexec(). The 2nd pass is
+ 	 * required for SECS pages, whose child pages blocked EREMOVE.
+ 	 */
+-	__sgx_sanitize_pages(&sgx_dirty_page_list);
+-	__sgx_sanitize_pages(&sgx_dirty_page_list);
+-
+-	/* sanity check: */
+-	WARN_ON(!list_empty(&sgx_dirty_page_list));
++	__sgx_sanitize_pages(&sgx_dirty_page_list, false);
++	__sgx_sanitize_pages(&sgx_dirty_page_list, true);
+ 
+ 	while (!kthread_should_stop()) {
+ 		if (try_to_freeze())
+-- 
+2.37.1
 
-The Dell XPS 13 9370 is from 2018 (Intel i5-8350U), so no idea if it 
-happens with later processors.
-
-
-Kind regards,
-
-Paul
-
-
-> [*] Also: https://lore.kernel.org/linux-sgx/20220825051827.246698-1-jarkko@kernel.org/T/#u
