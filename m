@@ -2,128 +2,70 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5F7C3F6B0
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 08:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21043C64990
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 14:07:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236360AbiHYIkM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 25 Aug 2022 04:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51388 "EHLO
+        id S236307AbiHYOHr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 25 Aug 2022 10:07:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236661AbiHYIkI (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 04:40:08 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BF3765563;
-        Thu, 25 Aug 2022 01:40:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D43BFB82773;
-        Thu, 25 Aug 2022 08:40:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 131FEC433C1;
-        Thu, 25 Aug 2022 08:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661416802;
-        bh=lNnTGZ8GdjTgsDkJk7MME+0PnH6OJ5ANVdqeF2ZpX6M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rpk9szKZoev/1/wdNoQHef9nv6htYIycFhEMvE5fzScGasyxD+1hMUxA28h9FCUNb
-         WKcvDxyffN2WuOChk1WHZAsAkQT5L1wDliZ3rGYRXIxoPYQ5swBZVwi9qHaJtrWV6N
-         tkS+B+93UGgfM/hLTxy/u2tfRn/c5MKcWPrBtKV6ogL/H9xafXZK8jdL5Avv1AgXhy
-         cJVljD5THDiHzlVBTHv80sut2OAp3COMHuewWO6pA9FW3v9d7puv8nh36u/P4IygXt
-         eGV4z09e2Hjhmek2U5ItfrhOpvSNfw1xQo62s3qJnR5UX7x463qVrc6qiny+70UI3C
-         WpPQH4TuMi+zQ==
-Date:   Thu, 25 Aug 2022 11:39:55 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
+        with ESMTP id S234323AbiHYOHq (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 10:07:46 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6050171BF4;
+        Thu, 25 Aug 2022 07:07:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661436465; x=1692972465;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GST8RRmfWAoiFI+QlmkJDVyOQRsd+QkD+I7knZPLyqA=;
+  b=V2soXCRPu5I9nI29nG1c3Gn1z3hFS167iqG3HEvfEIhtMRYl51s8kT3W
+   rzcwZz2xPN7oYLo9gDCHDx9o5vj3BXQ+/k38+vBP34KY3QmHVuDCOpP+u
+   tmpNfW44kM3v03blr21sNbIy+dlibi7gf5po8x9Wp1IqsShlK6LthAQRM
+   ZgwYfL9ac8z2yH/+Qn8MQonxrky8NBbDfksztIVPfEDsnP3Mh9goxn9X9
+   omW2oiNk+BrzwuV4N124N/1ZA2/2MV49L32Go8xvZ68QrhRKlVm/SyRw6
+   7nfCZZB+t241aToUCCXA2nAd3jY6ykCo7TwQBHyogCqkgp+ODQDY0xeJw
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10450"; a="281213757"
+X-IronPort-AV: E=Sophos;i="5.93,263,1654585200"; 
+   d="scan'208";a="281213757"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2022 07:07:44 -0700
+X-IronPort-AV: E=Sophos;i="5.93,263,1654585200"; 
+   d="scan'208";a="752494103"
+Received: from rnaraya1-mobl1.amr.corp.intel.com (HELO [10.212.254.160]) ([10.212.254.160])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2022 07:07:44 -0700
+Message-ID: <c63e554e-e433-b088-280c-aa1a185ade61@intel.com>
+Date:   Thu, 25 Aug 2022 07:07:44 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v3] x86/sgx: Do not consider unsanitized pages an error
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
+Cc:     Paul Menzel <pmenzel@molgen.mpg.de>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "Chatre, Reinette" <reinette.chatre@intel.com>,
-        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: WARNING: CPU: 1 PID: 83 at arch/x86/kernel/cpu/sgx/main.c:446
- ksgxd+0x1b7/0x1d0
-Message-ID: <Ywc1W0ZlikH5UZ/v@kernel.org>
-References: <ce0b4d26-3a6e-7c5a-5f66-44cba05f9f35@molgen.mpg.de>
- <4253695b-85aa-a2fb-fbf6-718db8b6c20c@molgen.mpg.de>
- <46e3483b-a5ab-2a05-8a28-f9ea87e881c3@intel.com>
- <YwcBN+1Q7JiYC7cb@kernel.org>
- <YwcHnBTlobzSGgTj@kernel.org>
- <54818a03-93c0-8039-b847-d030785e725a@molgen.mpg.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <54818a03-93c0-8039-b847-d030785e725a@molgen.mpg.de>
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <20220825080802.259528-1-jarkko@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <20220825080802.259528-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Aug 25, 2022 at 08:46:19AM +0200, Paul Menzel wrote:
-> Dear Jarkko,
-> 
-> 
-> Am 25.08.22 um 07:25 schrieb Jarkko Sakkinen:
-> > On Thu, Aug 25, 2022 at 07:57:30AM +0300, Jarkko Sakkinen wrote:
-> > > On Fri, Aug 19, 2022 at 11:28:24AM -0700, Dave Hansen wrote:
-> > > > On 8/19/22 09:02, Paul Menzel wrote:
-> > > > > On the Dell XPS 13 9370, Linux 5.18.16 prints the warning below:
-> > > > > 
-> > > > > ```
-> > > > > [    0.000000] Linux version 5.18.0-4-amd64 (debian-kernel@lists.debian.org) (gcc-11 (Debian 11.3.0-5) 11.3.0, GNU ld (GNU Binutils for Debian) 2.38.90.20220713) #1 SMP PREEMPT_DYNAMIC Debian 5.18.16-1 (2022-08-10)
-> > > > > [    0.000000] Command line: BOOT_IMAGE=/vmlinuz-5.18.0-4-amd64 root=UUID=56f398e0-1e25-4fda-aa9f-611dece4b333 ro quiet
-> > > > > […]
-> > > > > [    0.000000] DMI: Dell Inc. XPS 13 9370/0RMYH9, BIOS 1.21.0 07/06/2022
-> > > > > […]
-> > > > > [    0.235418] sgx: EPC section 0x40200000-0x45f7ffff
-> 
-> > > > Would you be able to send the entire dmesg, along with:
-> > > > 
-> > > > 	cat /proc/iomem # (as root)
-> > > > and
-> > > > 	cpuid -1 --raw
-> > > > 
-> > > > I'm suspecting either a BIOS problem.  Reinette (cc'd) also thought this
-> > > > might be a case of the SGX initialization getting a bit too far along
-> > > > when it should have been disabled.
-> > > > 
-> > > > We had some bugs where we didn't stop fast enough after spitting out the
-> > > > "SGX Launch Control is locked..." errors.
-> > > 
-> > > For some reason the pages do not get properly sanitized:
-> > > 
-> > > 	/* sanity check: */
-> > > 	WARN_ON(!list_empty(&sgx_dirty_page_list));
-> > > 
-> > > EPC should be good, given that EREMOVE does not fail.
-> > > If SGX would be disabled, also EREMOVE should fail.
-> > 
-> > Sorry forgot that in no circumstances we're printing the
-> > error code inside __sgx_sanitize_pages(). I wrote a quick
-> > patch to address this (attached) [*].
-> > 
-> > Paul,
-> > 
-> > Any chance to try the patch out?
-> 
-> Yes, I am going to try it in the next days.
-> 
-> > It's pretty hard to attach e.g. kprobe to grab this info. Does it
-> > reproduce every single time?
-> Yes, on each boot up.
-> 
-> > Alternatively: what kind of workload is triggering this?
-> > I do own 2020 model XPS13, which might be able to
-> > reproduce the same issue.
-> 
-> The Dell XPS 13 9370 is from 2018 (Intel i5-8350U), so no idea if it happens
-> with later processors.
+On 8/25/22 01:08, Jarkko Sakkinen wrote:
+> However, if the SGX subsystem initialization is retracted, the sanitization
+> process could end up in the middle, and sgx_dirty_page_list be left
+> non-empty for legit reasons.
 
-I think this should work out, and actually fix the issue:
-
-https://lore.kernel.org/linux-sgx/20220825080802.259528-1-jarkko@kernel.org/T/#u
-
-Just to add, perhaps for some future issue, I think my laptop and yours
-are comparable because they have the SGX side pretty much the same. For
-Icelake, things are not as comparable because it uses different type of
-encryption engine in the hardware.
-
-BR, Jarkko
+What does "retraction" mean in this context?
