@@ -2,49 +2,39 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5908AECAA24
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 18:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5E1ECAA24
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 19:16:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243608AbiHYSvi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 25 Aug 2022 14:51:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54694 "EHLO
+        id S241942AbiHYTQI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 25 Aug 2022 15:16:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243548AbiHYSv3 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 14:51:29 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BBCFB72AA;
-        Thu, 25 Aug 2022 11:51:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661453480; x=1692989480;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=L3vWaTTASpx/1u0Gm5leyEzK09XuvW71io7DsaYHZTw=;
-  b=FPeyNxRr03wpHNSaO7Phkgm4inbffbEMa8m1tTZdfLjoCZl9UzXgTd5J
-   u5V2ICA/4CBQNPY4P+D4KZ/c6oxcPFnAVGAYuGfMOrpwBBjmGQNiQeW50
-   +eic6OtI6yYJUWQwJzpwDOb4WmoV1BOP6v39W2uJ66oO2DN8X393G7LR/
-   h5KPwt9wEQXtsPLAvI23ZytrbhPhONMh5TNleVNMeXJ1l4wODaLYLySmg
-   tchI3v25QjrvbOXbEJbU4ZyMq6dwzPdzNzqPMU91P0yLhXHTAzmrVBPRY
-   N6bEz3TzrQK+maoFxiqeOPGlrlY8Xm7STJ57RDMHSC++NNgBTGbCNMBmy
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10450"; a="295607478"
-X-IronPort-AV: E=Sophos;i="5.93,263,1654585200"; 
-   d="scan'208";a="295607478"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2022 11:51:19 -0700
-X-IronPort-AV: E=Sophos;i="5.93,263,1654585200"; 
-   d="scan'208";a="752600007"
-Received: from manjeets-mobl.amr.corp.intel.com (HELO [10.212.220.1]) ([10.212.220.1])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2022 11:51:18 -0700
-Message-ID: <88d0f48a-d845-b0ca-b34d-5e22ae82b047@intel.com>
-Date:   Thu, 25 Aug 2022 11:51:18 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v3] x86/sgx: Do not consider unsanitized pages an error
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
-Cc:     Paul Menzel <pmenzel@molgen.mpg.de>,
+        with ESMTP id S241530AbiHYTQI (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 15:16:08 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05372AD98B;
+        Thu, 25 Aug 2022 12:16:06 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 48563B82ACD;
+        Thu, 25 Aug 2022 19:16:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 944B0C433C1;
+        Thu, 25 Aug 2022 19:16:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661454963;
+        bh=9o9jkcrJhsVmPKja2JuTKgs1ae+5OFq2NwEcEeMlFb4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VLnkLehEDBz2KE8svdQbkRYSAkQbaXOxxoHnwLlSY6GxYPjdIRU1I4J/0tdcj9tLH
+         EOibj6d7Q+U0+E2OFzXaxbHKl4mNGDVuRFppTnWwqOideIOH+HDWlbNnSqeJSld+nD
+         AI4sW6yM3ttzP2a9UxoZiUpK3jLBuAaHp5fqWNogZhjlZRAQCBluqQe3C6OQqIEnM/
+         wbuEJvHjmoW7x0bpd/7bARwsgvNEOgyff47Epd5o30MvNb5+MIX65cO6mS4x0hBfUj
+         DStNz2We2cM9gb7poXPdJgBw0wa2y8DRXlq1XhJKgUNq8ii4DnQu/qYgJZdYsaS4Go
+         qyTEd7A+6fFIw==
+Date:   Thu, 25 Aug 2022 22:15:56 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-sgx@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
         Haitao Huang <haitao.huang@linux.intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
@@ -54,52 +44,69 @@ Cc:     Paul Menzel <pmenzel@molgen.mpg.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
         "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
         <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] x86/sgx: Do not consider unsanitized pages an error
+Message-ID: <YwfKbBog9D8bjbw8@kernel.org>
 References: <20220825080802.259528-1-jarkko@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <20220825080802.259528-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <c63e554e-e433-b088-280c-aa1a185ade61@intel.com>
+ <Ywe+Zw4NgLrwvEo7@kernel.org>
+ <9dda4484-4c81-ab86-0227-ea926178986e@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9dda4484-4c81-ab86-0227-ea926178986e@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 8/25/22 01:08, Jarkko Sakkinen wrote:
-> +	/* Can happen, when the initialization is retracted: */
-> +	if (verbose && dirty_count > 0)
-> +		pr_info("%d unsanitized pages\n", dirty_count);
->  }
->  
->  static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
-> @@ -394,11 +403,8 @@ static int ksgxd(void *p)
->  	 * Sanitize pages in order to recover from kexec(). The 2nd pass is
->  	 * required for SECS pages, whose child pages blocked EREMOVE.
->  	 */
-> -	__sgx_sanitize_pages(&sgx_dirty_page_list);
-> -	__sgx_sanitize_pages(&sgx_dirty_page_list);
-> -
-> -	/* sanity check: */
-> -	WARN_ON(!list_empty(&sgx_dirty_page_list));
-> +	__sgx_sanitize_pages(&sgx_dirty_page_list, false);
-> +	__sgx_sanitize_pages(&sgx_dirty_page_list, true);
+On Thu, Aug 25, 2022 at 11:38:00AM -0700, Dave Hansen wrote:
+> On 8/25/22 11:27, Jarkko Sakkinen wrote:
+> > On Thu, Aug 25, 2022 at 07:07:44AM -0700, Dave Hansen wrote:
+> >> On 8/25/22 01:08, Jarkko Sakkinen wrote:
+> >>> However, if the SGX subsystem initialization is retracted, the sanitization
+> >>> process could end up in the middle, and sgx_dirty_page_list be left
+> >>> non-empty for legit reasons.
+> >> What does "retraction" mean in this context?
+> > Rest of the initialization failing or features not detected (-ENODEV).
+> 
+> Can you please work on communicating better descriptions of the
+> problems?  This really isn't good enough.
 
-This is backwards, IMNHO.
+Sure, I can put more detail into this patch.
 
-Make __sgx_sanitize_pages() return the number of pages that it leaves
-dirty.
+If you speak in general about commit messages, picking the correct
+granularity is somewhat easy to fail because different people have
+different expectations on that. If denoted, I'm happy to write more
+detailed description, if the original is not granular enough.
 
-	__sgx_sanitize_pages(&sgx_dirty_page_list)
-	left_dirty = __sgx_sanitize_pages(&sgx_dirty_page_list);
-	if (left_dirty)
-		pr_warn(...);
+> I think you're talking about sgx_init().  It launches ksgxd from
+> sgx_page_reclaimer_init() which sets about sanitizing the
+> 'dirty_page_list'.  After launching ksgxd, if later actions in
+> sgx_init() (misc_register(), sgx_drv_init(), sgx_vepc_init()) fail,
+> ksgxd will be stopped prematurely.
 
-That rids us of the mystery true/false and puts the pr_warn() in a place
-that makes logical sense.  Then, let's either *not* do the
+It's a bit more complicated, as either sgx_drv_init() or sgx_vepc_init()
+can fail without premature end for ksgxd.
 
-	pr_err_ratelimited(EREMOVE_ERROR_MESSAGE, ret, ret);
+So the exact conditions for premature stop are:
 
-at all, or make it an unconditional pr_warn_ratelimited().  They're not
-going to be common and multiple messages are virtually worthless anyway.
+"In sgx_init(), if misc_register() for the provision device fails, and
+neither sgx_drv_init() nor sgx_vepc_init() succeeds, then ksgxd will be
+prematurely stopped."
 
-I actually think a common tracepoint, or out-of-line ENCLS/ENCLU
-functions that can be easily ftraced are a much better idea than a
-one-off pr_whatever().
+> This will leave pages in 'sgx_dirty_page_list' after
+> __sgx_sanitize_pages() has completed, which results in a WARN_ON().
+> 
+> The WARN_ON() is really only valid when __sgx_sanitize_pages() runs to
+> completion *and* fails to empty 'sgx_dirty_page_list'.
+
+This is correct.
+
+> Is that it?
+
+Just thinking if pr_warn() should be used if running to the completion
+and failing to empty the list. A bit more information to the klog on
+conditions, and not much extra complexity. What do you think?
+
+> If so, could you please give the changelog another go?
+
+BR, Jarkko
