@@ -2,95 +2,103 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4BCC04AA5
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 04:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44779C28D13
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 05:18:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232972AbiHYE5j (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 25 Aug 2022 00:57:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55294 "EHLO
+        id S229642AbiHYFSl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 25 Aug 2022 01:18:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229510AbiHYE5j (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 00:57:39 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72D2C9E123;
-        Wed, 24 Aug 2022 21:57:37 -0700 (PDT)
+        with ESMTP id S229577AbiHYFSl (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 01:18:41 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7666D9E69A;
+        Wed, 24 Aug 2022 22:18:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id CA943CE2550;
-        Thu, 25 Aug 2022 04:57:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D73C433D6;
-        Thu, 25 Aug 2022 04:57:33 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 23F28B826BE;
+        Thu, 25 Aug 2022 05:18:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B0D4C433C1;
+        Thu, 25 Aug 2022 05:18:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661403454;
-        bh=Pg4ZVXtnQv/FMSmoj3+68h6Hrxo+qoEdyYM3we1niEE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=t7OJ6QRqrLY9YNh/95dhZF7RAM+XW9Ck6lOrIZuAL6a2E7D5k5V3uJxfuWjYSMQV1
-         ELAUtY0h28k0mPC8Yl0s+dA4tLmKFZahiR5t/wLFjBC9r8nxUTT0PZ7TX/xodmnDCY
-         46CFeF9126ps9VlNij47FPsJDV+ovS8FpwFQUuE4i3qoMvCPc4+AIKNx+G3GilYeij
-         VDBnJMbDaU8ty4YfsohSsF+L4qmF/HltjoxDwjxYR+fdR1pVW3s3O5UBGBm8sgEenQ
-         8EWY4QEWD2+Y2vuYB0YIY8aBpWoVEFgcLH9Mqy3jv6JDyVG2aY106fh1LuElOrASe1
-         VWaGu6TOR7QVg==
-Date:   Thu, 25 Aug 2022 07:57:27 +0300
+        s=k20201202; t=1661404717;
+        bh=fxlXoI0BcD8fsY3aXrOKEQ/2X/05DBMUWFtJX8AD4Pw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Mlo8Lc6memWV3g/OVDBSFHdaKPkoXWyN5Bk6d2hIDAXVbDkLwFq/pOvdkR3zhlIn7
+         KfcK3pO48mJ5r+Tzs87UFaVg4oqRF0qT5J2zGAGeu0u+9PlRBCO+omo7ZMPtDYR6NA
+         61ndSbqHbrHG2shPJ1NhPOxwItwaCETHWnBeADsH7goCKsBYlm3ESAOF076k62DfyY
+         KzhJKdniISxznAuEIEaGgFcio2dxNSxUSl6AdTtP0r4mrnIny1ZNvcsjnaOSv4PT7Y
+         /Iba5z4cAeUKX8nNVPV0dXdmGilkG9uIQl1E9tKl6VCPjYp2N6bihAuy9eXUbCPDaT
+         0K2VijtR9H58Q==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Paul Menzel <pmenzel@molgen.mpg.de>,
+To:     linux-sgx@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "Chatre, Reinette" <reinette.chatre@intel.com>,
-        linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: WARNING: CPU: 1 PID: 83 at arch/x86/kernel/cpu/sgx/main.c:446
- ksgxd+0x1b7/0x1d0
-Message-ID: <YwcBN+1Q7JiYC7cb@kernel.org>
-References: <ce0b4d26-3a6e-7c5a-5f66-44cba05f9f35@molgen.mpg.de>
- <4253695b-85aa-a2fb-fbf6-718db8b6c20c@molgen.mpg.de>
- <46e3483b-a5ab-2a05-8a28-f9ea87e881c3@intel.com>
+        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT))
+Subject: [PATCH] x86/sgx: Print EREMOVE return value in __sgx_sanitize_pages()
+Date:   Thu, 25 Aug 2022 08:18:27 +0300
+Message-Id: <20220825051827.246698-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <46e3483b-a5ab-2a05-8a28-f9ea87e881c3@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Aug 19, 2022 at 11:28:24AM -0700, Dave Hansen wrote:
-> On 8/19/22 09:02, Paul Menzel wrote:
-> > On the Dell XPS 13 9370, Linux 5.18.16 prints the warning below:
-> > 
-> > ```
-> > [    0.000000] Linux version 5.18.0-4-amd64
-> > (debian-kernel@lists.debian.org) (gcc-11 (Debian 11.3.0-5) 11.3.0, GNU
-> > ld (GNU Binutils for Debian) 2.38.90.20220713) #1 SMP PREEMPT_DYNAMIC
-> > Debian 5.18.16-1 (2022-08-10)
-> > [    0.000000] Command line: BOOT_IMAGE=/vmlinuz-5.18.0-4-amd64
-> > root=UUID=56f398e0-1e25-4fda-aa9f-611dece4b333 ro quiet
-> > […]
-> > [    0.000000] DMI: Dell Inc. XPS 13 9370/0RMYH9, BIOS 1.21.0 07/06/2022
-> > […]
-> > [    0.235418] sgx: EPC section 0x40200000-0x45f7ffff
-> 
-> Hi Paul,
-> 
-> Would you be able to send the entire dmesg, along with:
-> 
-> 	cat /proc/iomem # (as root)
-> and
-> 	cpuid -1 --raw
-> 
-> I'm suspecting either a BIOS problem.  Reinette (cc'd) also thought this
-> might be a case of the SGX initialization getting a bit too far along
-> when it should have been disabled.
-> 
-> We had some bugs where we didn't stop fast enough after spitting out the
-> "SGX Launch Control is locked..." errors.
+In the 2nd run of __sgx_sanitize_pages() print the error
+message. All EREMOVE's should succeed. This will allow to
+provide some additional clues, if not.
 
-For some reason the pages do not get properly sanitized:
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ arch/x86/kernel/cpu/sgx/main.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-	/* sanity check: */
-	WARN_ON(!list_empty(&sgx_dirty_page_list));
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 515e2a5f25bb..33354921c59f 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -50,7 +50,7 @@ static LIST_HEAD(sgx_dirty_page_list);
+  * from the input list, and made available for the page allocator. SECS pages
+  * prepending their children in the input list are left intact.
+  */
+-static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
++static void __sgx_sanitize_pages(struct list_head *dirty_page_list, bool verbose)
+ {
+ 	struct sgx_epc_page *page;
+ 	LIST_HEAD(dirty);
+@@ -90,6 +90,9 @@ static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
+ 			list_del(&page->list);
+ 			sgx_free_epc_page(page);
+ 		} else {
++			if (verbose)
++				pr_err_ratelimited(EREMOVE_ERROR_MESSAGE, ret, ret);
++
+ 			/* The page is not yet clean - move to the dirty list. */
+ 			list_move_tail(&page->list, &dirty);
+ 		}
+@@ -394,8 +397,8 @@ static int ksgxd(void *p)
+ 	 * Sanitize pages in order to recover from kexec(). The 2nd pass is
+ 	 * required for SECS pages, whose child pages blocked EREMOVE.
+ 	 */
+-	__sgx_sanitize_pages(&sgx_dirty_page_list);
+-	__sgx_sanitize_pages(&sgx_dirty_page_list);
++	__sgx_sanitize_pages(&sgx_dirty_page_list, false);
++	__sgx_sanitize_pages(&sgx_dirty_page_list, true);
+ 
+ 	/* sanity check: */
+ 	WARN_ON(!list_empty(&sgx_dirty_page_list));
+-- 
+2.37.1
 
-EPC should be good, given that EREMOVE does not fail.
-If SGX would be disabled, also EREMOVE should fail.
-
-BR, Jarkko
