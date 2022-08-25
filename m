@@ -2,39 +2,50 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F97ECAA24
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 18:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5908AECAA24
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 18:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241862AbiHYSlR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 25 Aug 2022 14:41:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36060 "EHLO
+        id S243608AbiHYSvi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 25 Aug 2022 14:51:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242432AbiHYSlF (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 14:41:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1CD52816;
-        Thu, 25 Aug 2022 11:41:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E5A2A61CFD;
-        Thu, 25 Aug 2022 18:41:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1575C433D6;
-        Thu, 25 Aug 2022 18:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661452861;
-        bh=uwQajjEt/lB/q2LfjiOfP400hQmKms7f1EXSJQp3Mss=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H8Lhlm07SH9rferrz8fUek+lJPbtMnWP5Qlcd3aW6yLlW/671mCn8+m6RkmAopY/L
-         KYP7D/qfw06vKjHDfz6MC9l6igVYHA1YjemSkfVisgFW/tRuHkIfGES9KhZFDQ3Ih7
-         5bykHaTDdjJxqSWBz5kYs+UEiPpBozSf2M8/Bvd7qHp98sZMarwenHzsiqd0jrg07p
-         zI9wxAilFFWacezUO629/nQANZafZhor86XiyDwZ9u2vJgpl8zFkvzzOQLnqysj0uN
-         7+37ewI+O9Q0/OBorkcwf69C30pRNpJHO/kNShpgzgYULtuIQeMCVuRHZ92jRqIB4+
-         92uDPP0Lm4wLA==
-Date:   Thu, 25 Aug 2022 21:40:54 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
+        with ESMTP id S243548AbiHYSv3 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 14:51:29 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BBCFB72AA;
+        Thu, 25 Aug 2022 11:51:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661453480; x=1692989480;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=L3vWaTTASpx/1u0Gm5leyEzK09XuvW71io7DsaYHZTw=;
+  b=FPeyNxRr03wpHNSaO7Phkgm4inbffbEMa8m1tTZdfLjoCZl9UzXgTd5J
+   u5V2ICA/4CBQNPY4P+D4KZ/c6oxcPFnAVGAYuGfMOrpwBBjmGQNiQeW50
+   +eic6OtI6yYJUWQwJzpwDOb4WmoV1BOP6v39W2uJ66oO2DN8X393G7LR/
+   h5KPwt9wEQXtsPLAvI23ZytrbhPhONMh5TNleVNMeXJ1l4wODaLYLySmg
+   tchI3v25QjrvbOXbEJbU4ZyMq6dwzPdzNzqPMU91P0yLhXHTAzmrVBPRY
+   N6bEz3TzrQK+maoFxiqeOPGlrlY8Xm7STJ57RDMHSC++NNgBTGbCNMBmy
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10450"; a="295607478"
+X-IronPort-AV: E=Sophos;i="5.93,263,1654585200"; 
+   d="scan'208";a="295607478"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2022 11:51:19 -0700
+X-IronPort-AV: E=Sophos;i="5.93,263,1654585200"; 
+   d="scan'208";a="752600007"
+Received: from manjeets-mobl.amr.corp.intel.com (HELO [10.212.220.1]) ([10.212.220.1])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2022 11:51:18 -0700
+Message-ID: <88d0f48a-d845-b0ca-b34d-5e22ae82b047@intel.com>
+Date:   Thu, 25 Aug 2022 11:51:18 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v3] x86/sgx: Do not consider unsanitized pages an error
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
+Cc:     Paul Menzel <pmenzel@molgen.mpg.de>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -43,118 +54,52 @@ Cc:     linux-sgx@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
         "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] x86/sgx: Do not consider unsanitized pages an error
-Message-ID: <YwfCNtGm8SrLZEqB@kernel.org>
 References: <20220825080802.259528-1-jarkko@kernel.org>
- <op.1rgo5llowjvjmi@hhuan26-mobl1.mshome.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <op.1rgo5llowjvjmi@hhuan26-mobl1.mshome.net>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <20220825080802.259528-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Aug 25, 2022 at 09:57:11AM -0500, Haitao Huang wrote:
-> Hi Jarkko,
-> 
-> On Thu, 25 Aug 2022 03:08:02 -0500, Jarkko Sakkinen <jarkko@kernel.org>
-> wrote:
-> 
-> > If sgx_dirty_page_list ends up being non-empty, currently this triggers
-> > WARN_ON(), which produces a lot of noise, and can potentially crash the
-> > kernel, depending on the kernel command line.
-> > 
-> > However, if the SGX subsystem initialization is retracted, the
-> > sanitization
-> > process could end up in the middle, and sgx_dirty_page_list be left
-> > non-empty for legit reasons.
-> > 
-> > Replace this faulty behavior with more verbose version
-> > __sgx_sanitize_pages(), which can optionally print EREMOVE error code and
-> > the number of unsanitized pages.
-> > 
-> > Link: https://lore.kernel.org/linux-sgx/20220825051827.246698-1-jarkko@kernel.org/T/#u
-> > Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> > Fixes: 51ab30eb2ad4 ("x86/sgx: Replace section->init_laundry_list with
-> > sgx_dirty_page_list")
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > 
-> > Cc: Haitao Huang <haitao.huang@linux.intel.com>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: Reinette Chatre <reinette.chatre@intel.com>
-> > ---
-> > v3:
-> > - Remove WARN_ON().
-> > - Tuned comments and the commit message a bit.
-> > 
-> > v2:
-> > - Replaced WARN_ON() with optional pr_info() inside
-> >   __sgx_sanitize_pages().
-> > - Rewrote the commit message.
-> > - Added the fixes tag.
-> > ---
-> >  arch/x86/kernel/cpu/sgx/main.c | 20 +++++++++++++-------
-> >  1 file changed, 13 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/sgx/main.c
-> > b/arch/x86/kernel/cpu/sgx/main.c
-> > index 515e2a5f25bb..d204520a5e26 100644
-> > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > @@ -50,16 +50,17 @@ static LIST_HEAD(sgx_dirty_page_list);
-> >   * from the input list, and made available for the page allocator. SECS
-> > pages
-> >   * prepending their children in the input list are left intact.
-> >   */
-> > -static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
-> > +static void __sgx_sanitize_pages(struct list_head *dirty_page_list,
-> > bool verbose)
-> >  {
-> >  	struct sgx_epc_page *page;
-> > +	int dirty_count = 0;
-> >  	LIST_HEAD(dirty);
-> >  	int ret;
-> > 	/* dirty_page_list is thread-local, no need for a lock: */
-> 
-> Just a nitpick,
-> Although it is not added in this patch, the above comment is not accurate.
-> The list is accessed one thread only: filled first in main thread, then
-> only ever accessed here.
-> 
-> IIUC, could you remove or update that comment?
+On 8/25/22 01:08, Jarkko Sakkinen wrote:
+> +	/* Can happen, when the initialization is retracted: */
+> +	if (verbose && dirty_count > 0)
+> +		pr_info("%d unsanitized pages\n", dirty_count);
+>  }
+>  
+>  static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
+> @@ -394,11 +403,8 @@ static int ksgxd(void *p)
+>  	 * Sanitize pages in order to recover from kexec(). The 2nd pass is
+>  	 * required for SECS pages, whose child pages blocked EREMOVE.
+>  	 */
+> -	__sgx_sanitize_pages(&sgx_dirty_page_list);
+> -	__sgx_sanitize_pages(&sgx_dirty_page_list);
+> -
+> -	/* sanity check: */
+> -	WARN_ON(!list_empty(&sgx_dirty_page_list));
+> +	__sgx_sanitize_pages(&sgx_dirty_page_list, false);
+> +	__sgx_sanitize_pages(&sgx_dirty_page_list, true);
 
-Well, if we cut hairs here, it's actually expectation for the
-caller, right? :-)
+This is backwards, IMNHO.
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index d204520a5e26..c6f416307812 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -49,6 +49,8 @@ static LIST_HEAD(sgx_dirty_page_list);
-  * Reset post-kexec EPC pages to the uninitialized state. The pages are removed
-  * from the input list, and made available for the page allocator. SECS pages
-  * prepending their children in the input list are left intact.
-+ *
-+ * @dirty_page_list must be thread-local, i.e. no need for a lock.
-  */
- static void __sgx_sanitize_pages(struct list_head *dirty_page_list, bool verbose)
- {
-@@ -57,7 +59,6 @@ static void __sgx_sanitize_pages(struct list_head *dirty_page_list, bool verbose
-        LIST_HEAD(dirty);
-        int ret;
+Make __sgx_sanitize_pages() return the number of pages that it leaves
+dirty.
 
--       /* dirty_page_list is thread-local, no need for a lock: */
-        while (!list_empty(dirty_page_list)) {
-                if (kthread_should_stop())
-                        break;
+	__sgx_sanitize_pages(&sgx_dirty_page_list)
+	left_dirty = __sgx_sanitize_pages(&sgx_dirty_page_list);
+	if (left_dirty)
+		pr_warn(...);
 
-> 
-> Other than that, FWIW:
-> Reviewed-by: Haitao Huang <haitao.huang@linux.intel.com>
-> Thanks
-> Haitao
+That rids us of the mystery true/false and puts the pr_warn() in a place
+that makes logical sense.  Then, let's either *not* do the
 
-Thank you.
+	pr_err_ratelimited(EREMOVE_ERROR_MESSAGE, ret, ret);
 
-BR, Jarkko
+at all, or make it an unconditional pr_warn_ratelimited().  They're not
+going to be common and multiple messages are virtually worthless anyway.
+
+I actually think a common tracepoint, or out-of-line ENCLS/ENCLU
+functions that can be easily ftraced are a much better idea than a
+one-off pr_whatever().
