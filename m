@@ -2,135 +2,144 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A43C28D13
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 14:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38566C28D13
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 15:19:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241584AbiHYO5Q (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 25 Aug 2022 10:57:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44782 "EHLO
+        id S236708AbiHYPTY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 25 Aug 2022 11:19:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241332AbiHYO5P (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 10:57:15 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 765DD72868;
-        Thu, 25 Aug 2022 07:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661439434; x=1692975434;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=AIV/1fa6hC34uyOtftiFooG6bWuzydBKflOscvVox/0=;
-  b=WP9R7XWphqdbl2jXpiA46Cqpa/Q6Zcz3Y4FwbU7bOdvkF3J2lL31kALw
-   7eYzNzV+RMccsmXE2Jd00yuqlAudZfHMmvJ3ZQN/zO+2ygvdJMh1XAhzZ
-   tVDF+H4JhaN5sktymE5M0JMkBAuYFzViRx8KeCP14hBs1wZHa/r8/MFe+
-   UoSRrLJtYHNeFM0yhsmTATOAINStB2OmQnTE/JtsyCIY3/xGoX36z9P1y
-   3SdxAg8V7eRJKJE+RgoVtw+37S1UGmpOM0SHTz4jJ6PNJHIvbhtY3H+3N
-   QUl1GX1HXAQi9u4qhBM+n7oSz3aAaR80aj3e+3+7y53YJqlhPnDLU2mBa
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10450"; a="293000440"
-X-IronPort-AV: E=Sophos;i="5.93,263,1654585200"; 
-   d="scan'208";a="293000440"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2022 07:57:13 -0700
-X-IronPort-AV: E=Sophos;i="5.93,263,1654585200"; 
-   d="scan'208";a="643279436"
-Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.212.105.25])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 25 Aug 2022 07:57:12 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     linux-sgx@vger.kernel.org, "Jarkko Sakkinen" <jarkko@kernel.org>
-Cc:     "Paul Menzel" <pmenzel@molgen.mpg.de>,
-        "Dave Hansen" <dave.hansen@linux.intel.com>,
-        "Reinette Chatre" <reinette.chatre@intel.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] x86/sgx: Do not consider unsanitized pages an error
-References: <20220825080802.259528-1-jarkko@kernel.org>
-Date:   Thu, 25 Aug 2022 09:57:11 -0500
+        with ESMTP id S235195AbiHYPTX (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 25 Aug 2022 11:19:23 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0524B8A7F
+        for <linux-sgx@vger.kernel.org>; Thu, 25 Aug 2022 08:19:22 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id jm11so18779174plb.13
+        for <linux-sgx@vger.kernel.org>; Thu, 25 Aug 2022 08:19:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=0cKABFUN+wnQcetiBFS+ZWvGWfmSSFXH2Vy7bIP70To=;
+        b=n4VTCk+hi4atd4sl9xX8mkpWnVRvlZsWhrI7z1ws5nNsnjD5c/UZmgA62xHwFEBC77
+         QH/tB5H1R5AOYoiEK7tFDt17r2gpvL1Y/ulfhtQGJ1GkwGBFB+fQX5Tm+zrr+/EhlcLE
+         C23Yyjog5FobgJ7Dj8N9uHobenLy9t7bP7TjQbOTJtu8HGF9d8LrPm15wls7xzCuZ/79
+         IOTP508EjxCfVszWalUtem+LafKgjjJ9vzKpITgkTbH8VuXCou/ccTkTotHY19aKr+F5
+         r8vKvV04QJmuZghSxWCBpuTIYro+juj2XzlNZ5r7Ehv9dyGBLf9EFNkTH7TM9nR08iJJ
+         iiuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=0cKABFUN+wnQcetiBFS+ZWvGWfmSSFXH2Vy7bIP70To=;
+        b=CbHjlfAvAZPDbV/II8A3dkpQOTrZ/4pNdLHvUHX0+4QecBS73lJog9jeBRdQC0XpzH
+         yLK1dmdlbhttufX1a86kf7RxV/9ojCQk+1cY4LTmosVaa53zAg+C+BzlrSBCENeMTqTh
+         0xb/rWcs36v1R/Qo5A3Ngvl9cJ1vdy2a8wBeLCDjR+/huI3bEVsghDIGrKqzq34Fszw6
+         LY8NmRmxLaD/fRPaAHhQGCZ2/PYcMCqzgmX28p43vZwUjSNeS+Gdfr0EQt4KF1qgeAMo
+         cK9eWF/a7Th2JjbX4Q2RCePc6RnWsqOtOasF/DUdyAjvKO+/lXo1bK1GC62FMn0uUteD
+         ROSg==
+X-Gm-Message-State: ACgBeo27Q3msaVFNjZ48QEuXm6V91FNQ2eOkXx/PhBAwm9uxU92XreST
+        jgOPvY4BWETXX58hyA5ZHPR84w==
+X-Google-Smtp-Source: AA6agR4ECS4oI+ONI4GnXK4C2r5ILO0emxVW6B//31Dq/MYub15KoTEv287azdYa76yYflAVM1Wq2g==
+X-Received: by 2002:a17:902:db11:b0:16f:342:a439 with SMTP id m17-20020a170902db1100b0016f0342a439mr4140450plx.13.1661440761992;
+        Thu, 25 Aug 2022 08:19:21 -0700 (PDT)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id o17-20020a17090a9f9100b001f51903e03fsm3636235pjp.32.2022.08.25.08.19.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Aug 2022 08:19:21 -0700 (PDT)
+Date:   Thu, 25 Aug 2022 15:19:17 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Kai Huang <kai.huang@intel.com>, dave.hansen@linux.intel.com,
+        linux-sgx@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        haitao.huang@linux.intel.com
+Subject: Re: [PATCH v2] x86/sgx: Allow exposing EDECCSSA user leaf function
+ to KVM guest
+Message-ID: <YweS9QRqaOgH7pNW@google.com>
+References: <20220818023829.1250080-1-kai.huang@intel.com>
+ <YwbrywL9S+XlPzaX@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.1rgo5llowjvjmi@hhuan26-mobl1.mshome.net>
-In-Reply-To: <20220825080802.259528-1-jarkko@kernel.org>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YwbrywL9S+XlPzaX@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Jarkko,
+On Thu, Aug 25, 2022, Jarkko Sakkinen wrote:
+> Nit: shouldn't be this be x86/kvm?
 
-On Thu, 25 Aug 2022 03:08:02 -0500, Jarkko Sakkinen <jarkko@kernel.org>  
-wrote:
+Heh, no, because x86/kvm is the scope for Linux running as a KVM guest, i.e. for
+changes to arch/x86/kernel/kvm.c.
 
-> If sgx_dirty_page_list ends up being non-empty, currently this triggers
-> WARN_ON(), which produces a lot of noise, and can potentially crash the
-> kernel, depending on the kernel command line.
->
-> However, if the SGX subsystem initialization is retracted, the  
-> sanitization
-> process could end up in the middle, and sgx_dirty_page_list be left
-> non-empty for legit reasons.
->
-> Replace this faulty behavior with more verbose version
-> __sgx_sanitize_pages(), which can optionally print EREMOVE error code and
-> the number of unsanitized pages.
->
-> Link:  
-> https://lore.kernel.org/linux-sgx/20220825051827.246698-1-jarkko@kernel.org/T/#u
-> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> Fixes: 51ab30eb2ad4 ("x86/sgx: Replace section->init_laundry_list with  
-> sgx_dirty_page_list")
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->
-> Cc: Haitao Huang <haitao.huang@linux.intel.com>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Reinette Chatre <reinette.chatre@intel.com>
-> ---
-> v3:
-> - Remove WARN_ON().
-> - Tuned comments and the commit message a bit.
->
-> v2:
-> - Replaced WARN_ON() with optional pr_info() inside
->   __sgx_sanitize_pages().
-> - Rewrote the commit message.
-> - Added the fixes tag.
-> ---
->  arch/x86/kernel/cpu/sgx/main.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c  
-> b/arch/x86/kernel/cpu/sgx/main.c
-> index 515e2a5f25bb..d204520a5e26 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -50,16 +50,17 @@ static LIST_HEAD(sgx_dirty_page_list);
->   * from the input list, and made available for the page allocator. SECS  
-> pages
->   * prepending their children in the input list are left intact.
->   */
-> -static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
-> +static void __sgx_sanitize_pages(struct list_head *dirty_page_list,  
-> bool verbose)
->  {
->  	struct sgx_epc_page *page;
-> +	int dirty_count = 0;
->  	LIST_HEAD(dirty);
->  	int ret;
-> 	/* dirty_page_list is thread-local, no need for a lock: */
+But yeah, "KVM: x86:" or maybe even "KVM: VMX:" would be preferable given that all
+of the meaningful changes are KVM specific.
 
-Just a nitpick,
-Although it is not added in this patch, the above comment is not accurate.
-The list is accessed one thread only: filled first in main thread, then
-only ever accessed here.
+> On Thu, Aug 18, 2022 at 02:38:29PM +1200, Kai Huang wrote:
+> > The new Asynchronous Exit (AEX) notification mechanism (AEX-notify)
+> > allows one enclave to receive a notification in the ERESUME after the
+> > enclave exit due to an AEX.  EDECCSSA is a new SGX user leaf function
+> > (ENCLU[EDECCSSA]) to facilitate the AEX notification handling.  The new
+> > EDECCSSA is enumerated via CPUID(EAX=0x12,ECX=0x0):EAX[11].
+> > 
+> > Besides Allowing reporting the new AEX-notify attribute to KVM guests,
+> > also allow reporting the new EDECCSSA user leaf function to KVM guests
+> > so the guest can fully utilize the AEX-notify mechanism.
+> > 
+> > Similar to existing X86_FEATURE_SGX1 and X86_FEATURE_SGX2, introduce a
+> > new scattered X86_FEATURE_SGX_EDECCSSA bit for the new EDECCSSA, and
+> > report it in KVM's supported CPUIDs so the userspace hypervisor (i.e.
+> > Qemu) can enable it for the guest.
 
-IIUC, could you remove or update that comment?
+Silly nit, but I'd prefer to leave off the "so the userspace hypervisor ... can
+enable it for the guest".  Userspace doesn't actually need to wait for KVM enabling.
+As noted below, KVM doesn't need to do anything extra, and KVM _can't_ prevent the
+guest from using EDECCSSA.
 
-Other than that, FWIW:
-Reviewed-by: Haitao Huang <haitao.huang@linux.intel.com>
-Thanks
-Haitao
+> > Note there's no additional enabling work required to allow guest to use
+> > the new EDECCSSA.  KVM is not able to trap ENCLU anyway.
+
+And maybe call out that the KVM "enabling" is not strictly necessary?  And note
+that there's a virtualization hole?  E.g.
+
+  Note, no additional KVM enabling is required to allow the guest to use
+  EDECCSSA, it's impossible to trap ENCLU (without completely preventing the
+  guest from using SGX).  Advertise EDECCSSA as supported purely so that
+  userspace doesn't need to special case EDECCSSA, i.e. doesn't need to
+  manually check host CPUID.
+
+  The inability to trap ENCLU also means that KVM can't prevent the guest
+  from using EDECCSSA, but that virtualization hole is benign as far as KVM
+  is concerned.  EDECCSSA is simply a fancy way to modify internal enclave
+  state.
+
+> > More background about how do AEX-notify and EDECCSSA work:
+> > 
+> > SGX maintains a Current State Save Area Frame (CSSA) for each enclave
+> > thread.  When AEX happens, the enclave thread context is saved to the
+> > CSSA and the CSSA is increased by 1.  For a normal ERESUME which doesn't
+> > deliver AEX notification, it restores the saved thread context from the
+> > previously saved SSA and decreases the CSSA.  If AEX-notify is enabled
+> > for one enclave, the ERESUME acts differently.  Instead of restoring the
+> > saved thread context and decreasing the CSSA, it acts like EENTER which
+> > doesn't decrease the CSSA but establishes a clean slate thread context
+> > using the CSSA for the enclave to handle the notification.  After some
+> > handling, the enclave must discard the "new-established" SSA and switch
+> > back to the previously saved SSA (upon AEX).  Otherwise, the enclave
+> > will run out of SSA space upon further AEXs and eventually fail to run.
+> > 
+> > To solve this problem, the new EDECCSSA essentially decreases the CSSA.
+> > It can be used by the enclave notification handler to switch back to the
+> > previous saved SSA when needed, i.e. after it handles the notification.
+> > 
+> > Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > ---
+> > 
+> > Hi Dave,
+> > 
+> > This patch, along with your patch to expose AEX-notify attribute bit to
+> > guest, have been tested that both AEX-notify and EDECCSSA work in the VM.
+> > Feel free to merge this patch.
+
+Dave, any objection to taking this through the KVM tree?
