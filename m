@@ -2,158 +2,193 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7531CC3F6B0
-	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 02:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21438C04AA5
+	for <linux-sgx@archiver.kernel.org>; Thu, 25 Aug 2022 03:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbiHYCMP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 24 Aug 2022 22:12:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43734 "EHLO
+        id S232424AbiHYD0R (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 24 Aug 2022 23:26:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229707AbiHYCMO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 24 Aug 2022 22:12:14 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B883E6A4A4;
-        Wed, 24 Aug 2022 19:12:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661393533; x=1692929533;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=qNMsD1Aah+is/XJ5qwJ+l8d44fqcOVrcBjytcfqINrA=;
-  b=ZQJHdXSsR8OlRwOVCA+9srDKS6MUH3QNwNU9uTo05MB0PK24qt45zTEW
-   3Wvgqe8YNDSdyqI4vScS0x8jm16bIl67j4FiUqRI34GNAPEFEPRv1iNqs
-   9jsf1MfH5eSLVlAzKgAMRh5kYuC8SCEyrN6K1GsTL/o1cOfURr9YPxjcE
-   laCZWUVWSx8Yfm+qCYncflGTRWpPO/ZosJyoiApe6Yqfb1qKB5sBHvsgh
-   urJCxjO6VKNJr4N1V1JSN9DaT2q+OqEFHWT/JXfhCUugkJDryHm7/LYcv
-   pm8K7o69x5bWcQD53eMKTgaiV5ocF2GcvnEXCbZiNIR5mz+dNZ+DXMP7J
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10449"; a="291692812"
-X-IronPort-AV: E=Sophos;i="5.93,262,1654585200"; 
-   d="scan'208";a="291692812"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2022 19:12:13 -0700
-X-IronPort-AV: E=Sophos;i="5.93,262,1654585200"; 
-   d="scan'208";a="643076996"
-Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.212.40.238])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 24 Aug 2022 19:12:12 -0700
-Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
-To:     "Dave Hansen" <dave.hansen@intel.com>,
-        "Jarkko Sakkinen" <jarkko@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        x86@kernel.org, "Reinette Chatre" <reinette.chatre@intel.com>,
-        "Paul Menzel" <pmenzel@molgen.mpg.de>
-Cc:     linux-sgx@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: WARNING: CPU: 1 PID: 83 at arch/x86/kernel/cpu/sgx/main.c:446
- ksgxd+0x1b7/0x1d0
-References: <ce0b4d26-3a6e-7c5a-5f66-44cba05f9f35@molgen.mpg.de>
- <4253695b-85aa-a2fb-fbf6-718db8b6c20c@molgen.mpg.de>
- <46e3483b-a5ab-2a05-8a28-f9ea87e881c3@intel.com>
- <04c9d5fa-5861-bbc3-3e2f-e18a73866645@molgen.mpg.de>
- <63a60042-4a4a-3bc3-5fa1-4495d80cc06c@molgen.mpg.de>
-Date:   Wed, 24 Aug 2022 21:12:06 -0500
+        with ESMTP id S232455AbiHYD0Q (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 24 Aug 2022 23:26:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1716C4457B;
+        Wed, 24 Aug 2022 20:26:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7D929B8270E;
+        Thu, 25 Aug 2022 03:26:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C467CC433D7;
+        Thu, 25 Aug 2022 03:26:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661397970;
+        bh=HeGNOJgM0wQLZmYpzMTvdEblf3M4r8hfez5I7qQKTDQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uthsah3ggUqLBgSf7Xsaj2CfVpPYTpEHcQvSDZ9Nmn6I5tdmWTlcxKjE+u5jbkOy+
+         Gk8Mw3na2LDv1j2hLxOqDIpOdN7ZAgJLskTF5/9ywYma0iEV/x/m9qEF2b5YIuehtP
+         Ts8jjnQpZOdVosgU44gHYAbGtRKvSuGfjpivMu+k4nS56UllmHIS8geuuq7HKbLrzp
+         3aUIq3n7/m521YAT5WzhiarPXsWZl6CSQJF1rl3Og+KyhZsgpkvW8xl/Be9o+JhPEb
+         vOqCxbzJ7nqprSVl2Pdl3r61eB2ghcuGBsFlc9DeL1BKH+7fdvT8oqI7dMgEohE/H4
+         HZqEMnoPdLftA==
+Date:   Thu, 25 Aug 2022 06:26:03 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        seanjc@google.com, pbonzini@redhat.com,
+        haitao.huang@linux.intel.com
+Subject: Re: [PATCH v2] x86/sgx: Allow exposing EDECCSSA user leaf function
+ to KVM guest
+Message-ID: <YwbrywL9S+XlPzaX@kernel.org>
+References: <20220818023829.1250080-1-kai.huang@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: Quoted-Printable
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.1rfpqgjrwjvjmi@hhuan26-mobl1.mshome.net>
-In-Reply-To: <63a60042-4a4a-3bc3-5fa1-4495d80cc06c@molgen.mpg.de>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220818023829.1250080-1-kai.huang@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Paul
+Nit: shouldn't be this be x86/kvm?
 
-On Tue, 23 Aug 2022 08:48:52 -0500, Paul Menzel <pmenzel@molgen.mpg.de> =
- =
+On Thu, Aug 18, 2022 at 02:38:29PM +1200, Kai Huang wrote:
+> The new Asynchronous Exit (AEX) notification mechanism (AEX-notify)
+> allows one enclave to receive a notification in the ERESUME after the
+> enclave exit due to an AEX.  EDECCSSA is a new SGX user leaf function
+> (ENCLU[EDECCSSA]) to facilitate the AEX notification handling.  The new
+> EDECCSSA is enumerated via CPUID(EAX=0x12,ECX=0x0):EAX[11].
+> 
+> Besides Allowing reporting the new AEX-notify attribute to KVM guests,
+> also allow reporting the new EDECCSSA user leaf function to KVM guests
+> so the guest can fully utilize the AEX-notify mechanism.
+> 
+> Similar to existing X86_FEATURE_SGX1 and X86_FEATURE_SGX2, introduce a
+> new scattered X86_FEATURE_SGX_EDECCSSA bit for the new EDECCSSA, and
+> report it in KVM's supported CPUIDs so the userspace hypervisor (i.e.
+> Qemu) can enable it for the guest.
+> 
+> Note there's no additional enabling work required to allow guest to use
+> the new EDECCSSA.  KVM is not able to trap ENCLU anyway.
+> 
+> More background about how do AEX-notify and EDECCSSA work:
+> 
+> SGX maintains a Current State Save Area Frame (CSSA) for each enclave
+> thread.  When AEX happens, the enclave thread context is saved to the
+> CSSA and the CSSA is increased by 1.  For a normal ERESUME which doesn't
+> deliver AEX notification, it restores the saved thread context from the
+> previously saved SSA and decreases the CSSA.  If AEX-notify is enabled
+> for one enclave, the ERESUME acts differently.  Instead of restoring the
+> saved thread context and decreasing the CSSA, it acts like EENTER which
+> doesn't decrease the CSSA but establishes a clean slate thread context
+> using the CSSA for the enclave to handle the notification.  After some
+> handling, the enclave must discard the "new-established" SSA and switch
+> back to the previously saved SSA (upon AEX).  Otherwise, the enclave
+> will run out of SSA space upon further AEXs and eventually fail to run.
+> 
+> To solve this problem, the new EDECCSSA essentially decreases the CSSA.
+> It can be used by the enclave notification handler to switch back to the
+> previous saved SSA when needed, i.e. after it handles the notification.
+> 
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> ---
+> 
+> Hi Dave,
+> 
+> This patch, along with your patch to expose AEX-notify attribute bit to
+> guest, have been tested that both AEX-notify and EDECCSSA work in the VM.
+> Feel free to merge this patch.
+> 
+> v1->v2:
+> 
+>  - Rebase to latest tip/x86/sgx
+>  - Add scattered X86_FEATURE_SGX_EDECCSSA bit CPUID handling
+>  - Add X86_FEATURE_SGX_EDECCSSA to cpuid dependency table.
+>  - Slightly changed commit message.
+> 
+> ---
+>  arch/x86/include/asm/cpufeatures.h | 1 +
+>  arch/x86/kernel/cpu/cpuid-deps.c   | 1 +
+>  arch/x86/kernel/cpu/scattered.c    | 1 +
+>  arch/x86/kvm/cpuid.c               | 2 +-
+>  arch/x86/kvm/reverse_cpuid.h       | 3 +++
+>  5 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index 235dc85c91c3..ccdd35adae9e 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -304,6 +304,7 @@
+>  #define X86_FEATURE_UNRET		(11*32+15) /* "" AMD BTB untrain return */
+>  #define X86_FEATURE_USE_IBPB_FW		(11*32+16) /* "" Use IBPB during runtime firmware calls */
+>  #define X86_FEATURE_RSB_VMEXIT_LITE	(11*32+17) /* "" Fill RSB on VM exit when EIBRS is enabled */
+> +#define X86_FEATURE_SGX_EDECCSSA	(11*32+18) /* "" SGX EDECCSSA user leaf function */
+>  
+>  /* Intel-defined CPU features, CPUID level 0x00000007:1 (EAX), word 12 */
+>  #define X86_FEATURE_AVX_VNNI		(12*32+ 4) /* AVX VNNI instructions */
+> diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+> index c881bcafba7d..d95221117129 100644
+> --- a/arch/x86/kernel/cpu/cpuid-deps.c
+> +++ b/arch/x86/kernel/cpu/cpuid-deps.c
+> @@ -75,6 +75,7 @@ static const struct cpuid_dep cpuid_deps[] = {
+>  	{ X86_FEATURE_SGX_LC,			X86_FEATURE_SGX	      },
+>  	{ X86_FEATURE_SGX1,			X86_FEATURE_SGX       },
+>  	{ X86_FEATURE_SGX2,			X86_FEATURE_SGX1      },
+> +	{ X86_FEATURE_SGX_EDECCSSA,		X86_FEATURE_SGX1      },
+>  	{ X86_FEATURE_XFD,			X86_FEATURE_XSAVES    },
+>  	{ X86_FEATURE_XFD,			X86_FEATURE_XGETBV1   },
+>  	{ X86_FEATURE_AMX_TILE,			X86_FEATURE_XFD       },
+> diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
+> index fd44b54c90d5..0bb339857985 100644
+> --- a/arch/x86/kernel/cpu/scattered.c
+> +++ b/arch/x86/kernel/cpu/scattered.c
+> @@ -40,6 +40,7 @@ static const struct cpuid_bit cpuid_bits[] = {
+>  	{ X86_FEATURE_PER_THREAD_MBA,	CPUID_ECX,  0, 0x00000010, 3 },
+>  	{ X86_FEATURE_SGX1,		CPUID_EAX,  0, 0x00000012, 0 },
+>  	{ X86_FEATURE_SGX2,		CPUID_EAX,  1, 0x00000012, 0 },
+> +	{ X86_FEATURE_SGX_EDECCSSA,	CPUID_EAX, 11, 0x00000012, 0 },
+>  	{ X86_FEATURE_HW_PSTATE,	CPUID_EDX,  7, 0x80000007, 0 },
+>  	{ X86_FEATURE_CPB,		CPUID_EDX,  9, 0x80000007, 0 },
+>  	{ X86_FEATURE_PROC_FEEDBACK,    CPUID_EDX, 11, 0x80000007, 0 },
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 75dcf7a72605..c21b4a5dc8fa 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -644,7 +644,7 @@ void kvm_set_cpu_caps(void)
+>  	);
+>  
+>  	kvm_cpu_cap_init_scattered(CPUID_12_EAX,
+> -		SF(SGX1) | SF(SGX2)
+> +		SF(SGX1) | SF(SGX2) | SF(SGX_EDECCSSA)
+>  	);
+>  
+>  	kvm_cpu_cap_mask(CPUID_8000_0001_ECX,
+> diff --git a/arch/x86/kvm/reverse_cpuid.h b/arch/x86/kvm/reverse_cpuid.h
+> index a19d473d0184..4e5b8444f161 100644
+> --- a/arch/x86/kvm/reverse_cpuid.h
+> +++ b/arch/x86/kvm/reverse_cpuid.h
+> @@ -23,6 +23,7 @@ enum kvm_only_cpuid_leafs {
+>  /* Intel-defined SGX sub-features, CPUID level 0x12 (EAX). */
+>  #define KVM_X86_FEATURE_SGX1		KVM_X86_FEATURE(CPUID_12_EAX, 0)
+>  #define KVM_X86_FEATURE_SGX2		KVM_X86_FEATURE(CPUID_12_EAX, 1)
+> +#define KVM_X86_FEATURE_SGX_EDECCSSA	KVM_X86_FEATURE(CPUID_12_EAX, 11)
+>  
+>  struct cpuid_reg {
+>  	u32 function;
+> @@ -78,6 +79,8 @@ static __always_inline u32 __feature_translate(int x86_feature)
+>  		return KVM_X86_FEATURE_SGX1;
+>  	else if (x86_feature == X86_FEATURE_SGX2)
+>  		return KVM_X86_FEATURE_SGX2;
+> +	else if (x86_feature == X86_FEATURE_SGX_EDECCSSA)
+> +		return KVM_X86_FEATURE_SGX_EDECCSSA;
+>  
+>  	return x86_feature;
+>  }
+> 
+> base-commit: ee56a283988d739c25d2d00ffb22707cb487ab47
+> -- 
+> 2.37.1
+> 
 
-wrote:
 
-> Dear Dave,
->
->
-> Am 20.08.22 um 08:13 schrieb Paul Menzel:
->
->> Am 19.08.22 um 20:28 schrieb Dave Hansen:
->>> On 8/19/22 09:02, Paul Menzel wrote:
->>>> On the Dell XPS 13 9370, Linux 5.18.16 prints the warning below:
->>>>
->>>> ```
->>>> [    0.000000] Linux version 5.18.0-4-amd64  =
-
->>>> (debian-kernel@lists.debian.org) (gcc-11 (Debian 11.3.0-5) 11.3.0, =
- =
-
->>>> GNU ld (GNU Binutils for Debian) 2.38.90.20220713) #1 SMP  =
-
->>>> PREEMPT_DYNAMIC Debian 5.18.16-1 (2022-08-10)
->>>> [    0.000000] Command line: BOOT_IMAGE=3D/vmlinuz-5.18.0-4-amd64  =
-
->>>> root=3DUUID=3D56f398e0-1e25-4fda-aa9f-611dece4b333 ro quiet
->>>> [=E2=80=A6]
->>>> [    0.000000] DMI: Dell Inc. XPS 13 9370/0RMYH9, BIOS 1.21.0  =
-
->>>> 07/06/2022
->>>> [=E2=80=A6]
->>>> [    0.235418] sgx: EPC section 0x40200000-0x45f7ffff
->>
->>> Would you be able to send the entire dmesg, along with:
->>  The log message are attached to the first message, where I missed to=
-  =
-
->> carbon-copy linux-sgx@ [1].
->>
->>>     cat /proc/iomem # (as root)
->>> and
->>>     cpuid -1 --raw
->>  I am going to provide that next week. (Side note, Intel might have  =
-
->> some Dell XPS 9370 test machines in some QA lab.)
->
-> Please find both outputs at the end of the file.
->
-
-Could you also check output of "sudo rdmsr -x 0x3a"?
-Also was CONFIG_X86_SGX_KVM set?
-
-If CONFIG_X86_SGX_KVM is not set and bit 17 (SGX_LC) of the MSR 3A not s=
-et,
-then I think following sequence during sgx_init is possible:
-
-sgx_page_cache_init -> sgx_setup_epc_section
-                        ->put all physical EPC pages in sgx_dirty_page_l=
-ist.
-Kick off ksgxd.
-Later, sgx_drv_init returns none-zero due to this check:
-     if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
-         return -ENODEV;
-sgx_vepc_init also returns none-zero if CONFIG_X86_SGX_KVM was not set.
-
-And sgx_init will call kthread_stop(ksgxd_tsk):
-     ret =3D sgx_drv_init();
-
-     if (sgx_vepc_init() && ret)
-         goto err_provision;
-...
-err_provision:
-     misc_deregister(&sgx_dev_provision);
-
-err_kthread:
-     kthread_stop(ksgxd_tsk);
-
-
-That triggers __sgx_sanitize_pages return early due to these lines:
-     /* dirty_page_list is thread-local, no need for a lock: */
-     while (!list_empty(dirty_page_list)) {
-         if (kthread_should_stop())
-             return;
-
-And that would trigger (depends on timing?) the warning in ksgxd due to =
- =
-
-non-empty sgx_dirty_page_list
-at that moment.
-
-Thanks
-Haitao
+BR, Jarkko
