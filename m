@@ -2,146 +2,240 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFE9ECAAD4
-	for <linux-sgx@archiver.kernel.org>; Fri, 26 Aug 2022 16:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A45D1ECAAA6
+	for <linux-sgx@archiver.kernel.org>; Fri, 26 Aug 2022 17:21:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244224AbiHZQAC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 26 Aug 2022 12:00:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49752 "EHLO
+        id S233017AbiHZRVv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 26 Aug 2022 13:21:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237347AbiHZQAC (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 26 Aug 2022 12:00:02 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3A975302C
-        for <linux-sgx@vger.kernel.org>; Fri, 26 Aug 2022 09:00:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661529600; x=1693065600;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Pq7AGtHM/Zqdu02qfOzk2UfvG6jsXq7VtbL3koip22c=;
-  b=N+nVcJnYA2gipql+59sxkU+IfcMnd8JwObx61QPuBu7bijXWiN+bPTBU
-   G/HsBDh1XPd9DjivB9+WalP3b5w5qShkfNNEWiKkUz9OazjPn5tMrx3Si
-   /wagC5vWKmNqRaNFInFsRjR80MCCUMw9jkwQjO+AzumyYkXRXBP9XIzD+
-   BlWyNfNWgpN5fFRnQB5wfBkW3iYUKwagSjRx1VRCbeuuuky1SyDfoa0uX
-   wfiYkt8GPGNPYMUpPslq7Y8ac22X3OPu/e2lQNc23s3HM0RAxRdkLalIh
-   l2wRG3W5rJNvNTiwggFVQgauOs2HbYLIIknGECeguPJ7iObEKbB0CTYfW
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10451"; a="274288844"
-X-IronPort-AV: E=Sophos;i="5.93,265,1654585200"; 
-   d="scan'208";a="274288844"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2022 08:59:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,265,1654585200"; 
-   d="scan'208";a="587343024"
-Received: from zhiquan-linux-dev.bj.intel.com ([10.238.155.101])
-  by orsmga006.jf.intel.com with ESMTP; 26 Aug 2022 08:59:44 -0700
-From:   Zhiquan Li <zhiquan1.li@intel.com>
-To:     linux-sgx@vger.kernel.org, tony.luck@intel.com, jarkko@kernel.org,
-        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de
-Cc:     seanjc@google.com, kai.huang@intel.com, fan.du@intel.com,
-        cathy.zhang@intel.com, zhiquan1.li@intel.com
-Subject: [PATCH RESEND v6 3/3] x86/sgx: Fine grained SGX MCA behavior for virtualization
-Date:   Sat, 27 Aug 2022 00:05:03 +0800
-Message-Id: <20220826160503.1576966-4-zhiquan1.li@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220826160503.1576966-1-zhiquan1.li@intel.com>
-References: <20220826160503.1576966-1-zhiquan1.li@intel.com>
+        with ESMTP id S231234AbiHZRVu (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 26 Aug 2022 13:21:50 -0400
+Received: from mx1.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77E58E1902;
+        Fri, 26 Aug 2022 10:21:47 -0700 (PDT)
+Received: from [192.168.0.2] (ip5f5aea50.dynamic.kabel-deutschland.de [95.90.234.80])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 942DA61EA1932;
+        Fri, 26 Aug 2022 19:21:44 +0200 (CEST)
+Message-ID: <4645fdb3-2836-0028-dee9-7a9321f1ebf2@molgen.mpg.de>
+Date:   Fri, 26 Aug 2022 19:21:44 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH v4] x86/sgx: Do not consider unsanitized pages an error
+Content-Language: en-US
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-sgx@vger.kernel.org
+Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org
+References: <20220826014126.291156-1-jarkko@kernel.org>
+ <fd6f124d-1d7d-0e73-10bd-f7aaae45ee68@molgen.mpg.de>
+In-Reply-To: <fd6f124d-1d7d-0e73-10bd-f7aaae45ee68@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Today, if a guest accesses an SGX EPC page with memory failure,
-the kernel behavior will kill the entire guest.  This blast
-radius is too large.  It would be idea to kill only the SGX
-application inside the guest.
+Dear Jarkko,
 
-To fix this, send a SIGBUS to host userspace (like QEMU) which can
-follow up by injecting a #MC to the guest.
 
-SGX virtual EPC driver doesn't explicitly prevent virtual EPC instance
-being shared by multiple VMs via fork().  However KVM doesn't support
-running a VM across multiple mm structures, and the de facto userspace
-hypervisor (Qemu) doesn't use fork() to create a new VM, so in practice
-this should not happen.
+Am 26.08.22 um 14:51 schrieb Paul Menzel:
 
-Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Link: https://lore.kernel.org/linux-sgx/443cb425-009c-2784-56f4-5e707122de76@intel.com/T/#m1d1f4098f4fad78034e8706a60e4d79c119db407
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+[…]
 
----
-Changes since V5:
-- Use the 'vepc_vaddr' field instead of casting the 'owner' field.
-- Clean up the commit message suggested by Dave Hansen.
-  Link: https://lore.kernel.org/linux-sgx/Yrf27fugD7lkyaek@kernel.org/T/#m2ff4778948cdc9ee65f09672f1d02f8dc467247b
-- Add Reviewed-by from Jarkko.
+> Am 26.08.22 um 03:41 schrieb Jarkko Sakkinen:
+>> In sgx_init(), if misc_register() for the provision device fails, and
+>> neither sgx_drv_init() nor sgx_vepc_init() succeeds, then ksgxd will be
+>> prematurely stopped.
+>>
+>> This triggers WARN_ON() because sgx_dirty_page_list ends up being
+>> non-empty. Ultimately this can crash the kernel, depending on the kernel
+>> command line, which is not correct behavior because SGX driver is not
+>> working incorrectly.
+> 
+> Maybe paste the WARN_ON trace, so `git log` can be searched for the 
+> trace too.
+> 
+>> Print simple warning instead, and improve the output by printing the
+>> number of unsanitized pages.
+> 
+> See below, but no warning seems to be logged in my case now. (I should 
+> test Linus’ current master too.)
 
-Changes since V4:
-- Switch the order of the two variables so all of variables are in
-  reverse Christmas style.
-- Do not initialize "ret" because it will be overridden by the return
-  value of force_sig_mceerr() unconditionally.
+Just for the record, the problem still exists in Linus’ master branch:
 
-Changes since V2:
-- Retrieve virtual address from "owner" field of struct sgx_epc_page,
-  instead of struct sgx_vepc_page.
-- Replace EPC page flag SGX_EPC_PAGE_IS_VEPC with
-  SGX_EPC_PAGE_KVM_GUEST as they are duplicated.
+```
+[    0.000000] Linux version 6.0.0-rc2 (root@4beb429beb4a) (gcc (Debian 
+11.3.0-3) 11.3.0, GNU ld (GNU Binutils for Debian) 2.38) #382 SMP 
+PREEMPT_DYNAMIC Fri Aug 26 12:52:15 UTC 2022
+[    0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.0.0-rc2 
+root=UUID=56f398e0-1e25-4fda-aa9f-611dece4b333 ro quiet 
+module_blacklist=psmouse initcall_debug log_buf_len=4M cryptomgr.notests
+[…]
+[    0.268089] calling  sgx_init+0x0/0x409 @ 1
+[    0.268103] sgx: EPC section 0x40200000-0x45f7ffff
+[    0.268591] ------------[ cut here ]------------
+[    0.268592] WARNING: CPU: 6 PID: 83 at 
+arch/x86/kernel/cpu/sgx/main.c:401 ksgxd+0x1b7/0x1d0
+[    0.268598] Modules linked in:
+[    0.268600] CPU: 6 PID: 83 Comm: ksgxd Not tainted 6.0.0-rc2 #382
+[    0.268603] Hardware name: Dell Inc. XPS 13 9370/0RMYH9, BIOS 1.21.0 
+07/06/2022
+[    0.268604] RIP: 0010:ksgxd+0x1b7/0x1d0
+[    0.268607] Code: ff e9 f2 fe ff ff 48 89 df e8 75 07 0e 00 84 c0 0f 
+84 c3 fe ff ff 31 ff e8 e6 07 0e 00 84 c0 0f 85 94 fe ff ff e9 af fe ff 
+ff <0f> 0b e9 7f fe ff ff e8 dd 9c 95 00 66 66 2e 0f 1f 84 00 00 00 00
+[    0.268608] RSP: 0000:ffffb6c7404f3ed8 EFLAGS: 00010287
+[    0.268610] RAX: ffffb6c740431a10 RBX: ffff8dcd8117b400 RCX: 
+0000000000000000
+[    0.268612] RDX: 0000000080000000 RSI: ffffb6c7404319d0 RDI: 
+00000000ffffffff
+[    0.268613] RBP: ffff8dcd820a4d80 R08: ffff8dcd820a4180 R09: 
+ffff8dcd820a4180
+[    0.268614] R10: 0000000000000000 R11: 0000000000000006 R12: 
+ffffb6c74006bce0
+[    0.268615] R13: ffff8dcd80e63880 R14: ffffffffa8a60f10 R15: 
+0000000000000000
+[    0.268616] FS:  0000000000000000(0000) GS:ffff8dcf25580000(0000) 
+knlGS:0000000000000000
+[    0.268617] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.268619] CR2: 0000000000000000 CR3: 0000000213410001 CR4: 
+00000000003706e0
+[    0.268620] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 
+0000000000000000
+[    0.268621] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 
+0000000000000400
+[    0.268622] Call Trace:
+[    0.268624]  <TASK>
+[    0.268627]  ? _raw_spin_lock_irqsave+0x24/0x60
+[    0.268632]  ? _raw_spin_unlock_irqrestore+0x23/0x40
+[    0.268634]  ? __kthread_parkme+0x36/0x90
+[    0.268637]  kthread+0xe5/0x110
+[    0.268639]  ? kthread_complete_and_exit+0x20/0x20
+[    0.268642]  ret_from_fork+0x1f/0x30
+[    0.268647]  </TASK>
+[    0.268648] ---[ end trace 0000000000000000 ]---
+[    0.268694] initcall sgx_init+0x0/0x409 returned -19 after 603 usecs
+```
 
-Changes since V1:
-- Add Acked-by from Kai Huang.
-- Add Kai's excellent explanation regarding to why we no need to
-  consider that one virtual EPC be shared by two guests.
----
- arch/x86/kernel/cpu/sgx/main.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index b319bedcaf1e..b941eb587b65 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -679,6 +679,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
- 	struct sgx_epc_page *page = sgx_paddr_to_page(pfn << PAGE_SHIFT);
- 	struct sgx_epc_section *section;
- 	struct sgx_numa_node *node;
-+	void __user *vaddr;
-+	int ret;
- 
- 	/*
- 	 * mm/memory-failure.c calls this routine for all errors
-@@ -695,8 +697,26 @@ int arch_memory_failure(unsigned long pfn, int flags)
- 	 * error. The signal may help the task understand why the
- 	 * enclave is broken.
- 	 */
--	if (flags & MF_ACTION_REQUIRED)
--		force_sig(SIGBUS);
-+	if (flags & MF_ACTION_REQUIRED) {
-+		/*
-+		 * Provide extra info to the task so that it can make further
-+		 * decision but not simply kill it. This is quite useful for
-+		 * virtualization case.
-+		 */
-+		if (page->flags & SGX_EPC_PAGE_KVM_GUEST) {
-+			/*
-+			 * The 'encl_owner' field is repurposed, when allocating EPC
-+			 * page it was assigned to the virtual address of virtual EPC
-+			 * page.
-+			 */
-+			vaddr = (unsigned long)page->vepc_vaddr & PAGE_MASK;
-+			ret = force_sig_mceerr(BUS_MCEERR_AR, vaddr, PAGE_SHIFT);
-+			if (ret < 0)
-+				pr_err("Memory failure: Error sending signal to %s:%d: %d\n",
-+					current->comm, current->pid, ret);
-+		} else
-+			force_sig(SIGBUS);
-+	}
- 
- 	section = &sgx_epc_sections[page->section];
- 	node = section->node;
--- 
-2.25.1
-
+>> Link: https://lore.kernel.org/linux-sgx/20220825051827.246698-1-jarkko@kernel.org/T/#u
+>> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+>> Fixes: 51ab30eb2ad4 ("x86/sgx: Replace section->init_laundry_list with sgx_dirty_page_list")
+>> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>> ---
+>> Cc: Haitao Huang <haitao.huang@linux.intel.com>
+>> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+>> Cc: Reinette Chatre <reinette.chatre@intel.com>
+>>
+>> v4:
+>> - Explain expectations for dirty_page_list in the function header, 
+>> instead
+>>    of an inline comment.
+>> - Improve commit message to explain the conditions better.
+>> - Return the number of pages left dirty to ksgxd() and print warning 
+>> after
+>>    the 2nd call, if there are any.
+>>
+>> v3:
+>> - Remove WARN_ON().
+>> - Tuned comments and the commit message a bit.
+>>
+>> v2:
+>> - Replaced WARN_ON() with optional pr_info() inside
+>>    __sgx_sanitize_pages().
+>> - Rewrote the commit message.
+>> - Added the fixes tag.
+>> ---
+>>   arch/x86/kernel/cpu/sgx/main.c | 19 +++++++++++++------
+>>   1 file changed, 13 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/x86/kernel/cpu/sgx/main.c 
+>> b/arch/x86/kernel/cpu/sgx/main.c
+>> index 515e2a5f25bb..903100fcfce3 100644
+>> --- a/arch/x86/kernel/cpu/sgx/main.c
+>> +++ b/arch/x86/kernel/cpu/sgx/main.c
+>> @@ -49,17 +49,20 @@ static LIST_HEAD(sgx_dirty_page_list);
+>>    * Reset post-kexec EPC pages to the uninitialized state. The pages are removed
+>>    * from the input list, and made available for the page allocator. SECS pages
+>>    * prepending their children in the input list are left intact.
+>> + *
+>> + * Contents of the @dirty_page_list must be thread-local, i.e.
+>> + * not shared by multiple threads.
+>>    */
+>> -static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
+>> +static int __sgx_sanitize_pages(struct list_head *dirty_page_list)
+>>   {
+>>       struct sgx_epc_page *page;
+>> +    int left_dirty = 0;
+>>       LIST_HEAD(dirty);
+>>       int ret;
+>> -    /* dirty_page_list is thread-local, no need for a lock: */
+>>       while (!list_empty(dirty_page_list)) {
+>>           if (kthread_should_stop())
+>> -            return;
+>> +            break;
+>>           page = list_first_entry(dirty_page_list, struct 
+>> sgx_epc_page, list);
+>> @@ -92,12 +95,14 @@ static void __sgx_sanitize_pages(struct list_head 
+>> *dirty_page_list)
+>>           } else {
+>>               /* The page is not yet clean - move to the dirty list. */
+>>               list_move_tail(&page->list, &dirty);
+>> +            left_dirty++;
+>>           }
+>>           cond_resched();
+>>       }
+>>       list_splice(&dirty, dirty_page_list);
+>> +    return left_dirty;
+>>   }
+>>   static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
+>> @@ -388,6 +393,8 @@ void sgx_reclaim_direct(void)
+>>   static int ksgxd(void *p)
+>>   {
+>> +    int left_dirty;
+>> +
+>>       set_freezable();
+>>       /*
+>> @@ -395,10 +402,10 @@ static int ksgxd(void *p)
+>>        * required for SECS pages, whose child pages blocked EREMOVE.
+>>        */
+>>       __sgx_sanitize_pages(&sgx_dirty_page_list);
+>> -    __sgx_sanitize_pages(&sgx_dirty_page_list);
+>> -    /* sanity check: */
+>> -    WARN_ON(!list_empty(&sgx_dirty_page_list));
+>> +    left_dirty = __sgx_sanitize_pages(&sgx_dirty_page_list);
+>> +    if (left_dirty)
+>> +        pr_warn("%d unsanitized pages\n", left_dirty);
+>>       while (!kthread_should_stop()) {
+>>           if (try_to_freeze())
+> 
+> I tested this on top of commit 4c612826bec1 (Merge tag 'net-6.0-rc3' of 
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net) and the 
+> warning trace is gone.
+> 
+>      [    0.255192] calling  sgx_init+0x0/0x409 @ 1
+>      [    0.255207] sgx: EPC section 0x40200000-0x45f7ffff
+>      [    0.255747] initcall sgx_init+0x0/0x409 returned -19 after 552 usecs
+> 
+> (OT: If -19 suggests something failed, a message, why sgx_init() failed 
+> would be nice.)
+> 
+> Please find the whole output of `dmesg` attached.
+> 
+> 
+> Kind regards,
+> 
+> Paul
