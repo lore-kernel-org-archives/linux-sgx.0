@@ -2,145 +2,177 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE425ECAAD6
-	for <linux-sgx@archiver.kernel.org>; Fri, 26 Aug 2022 19:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F5AECAAD5
+	for <linux-sgx@archiver.kernel.org>; Sat, 27 Aug 2022 21:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244258AbiHZTl4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 26 Aug 2022 15:41:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49650 "EHLO
+        id S229464AbiH0VrK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 27 Aug 2022 17:47:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232244AbiHZTlz (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 26 Aug 2022 15:41:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 845C081685;
-        Fri, 26 Aug 2022 12:41:54 -0700 (PDT)
+        with ESMTP id S229445AbiH0VrK (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 27 Aug 2022 17:47:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A82842AD3
+        for <linux-sgx@vger.kernel.org>; Sat, 27 Aug 2022 14:47:09 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 46D35B8321C;
-        Fri, 26 Aug 2022 19:41:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CF17C433C1;
-        Fri, 26 Aug 2022 19:41:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A09EC60EAE
+        for <linux-sgx@vger.kernel.org>; Sat, 27 Aug 2022 21:47:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1FF3C433C1;
+        Sat, 27 Aug 2022 21:47:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661542911;
-        bh=IArRZaFN1D+1gYL9idbVQ+jcfSdbsGcEgrIb0exuq4Y=;
+        s=k20201202; t=1661636828;
+        bh=HPqpvcGUzE4WgNuqZdGHPzn4HWyfPKTLcDaVO1vYpwU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q3O7YcoP2ZzwBhqdDhGxMFobtuLRCxcJTF+awe9rvyNOscwZrZhyc5c9BEQuiEug0
-         cxibM2cYZPVGXZsJQBw39uNAXH0s70uWLgyi3bbyw9hNSEmnw+j1DunnaPRE1lotOp
-         +M4aEz5WaoIFr0/4OpPERmE9Je8nlGTNej7q6uN7NGa/lDCtTNGuQmwQQdrJ0CIWlc
-         IvnvBiKOvns9XjJtiv3Xmcqh9gpReOgGr6xpdOdKEeX7HnLE689/gpZucXMucD3w1s
-         f1pwon86LfT0QkLs7QoCBu7H8qSXEco7vUsy0sM45IxQ/97q8D5xknLfcFlYdqN6yP
-         1XLEKuHs63Uxg==
-Date:   Fri, 26 Aug 2022 22:41:44 +0300
+        b=Y9Ezu+t9Kg50mpaX5EJv0YRFNwxjVcALY+U/7klC/275h27fA6DnRtrWkrVoOXMYR
+         ZZZtE1RdIVNuhqWOMwJBdKYP13auRduYd4SxdqCYnkAB8StAa+ZS55ihUIC4HZcN2n
+         6d2oah1QA8i5myK2TMTvXm8ZcfkC056wgdf1PNzurVfHRnmGQGeezBkQdPlG3739hj
+         HU0F+nTOvu9pi5YLrc5SFb5AP78ED2+1WSRHNJHHECxzXYmkdHhfWLJ07dBmuKvhVD
+         oPE1p4ogdx2xEN0Q0F8kBia1eG5xHRP6F0vuBeHHCQnnIfoUNY3UlxAXobEO5qttiQ
+         jTqd6KjXvFFOQ==
+Date:   Sun, 28 Aug 2022 00:47:00 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] x86/sgx: Do not consider unsanitized pages an error
-Message-ID: <Ywkh+ChYvUW3zwfD@kernel.org>
-References: <20220826014126.291156-1-jarkko@kernel.org>
- <fd6f124d-1d7d-0e73-10bd-f7aaae45ee68@molgen.mpg.de>
- <4645fdb3-2836-0028-dee9-7a9321f1ebf2@molgen.mpg.de>
+To:     Zhiquan Li <zhiquan1.li@intel.com>
+Cc:     linux-sgx@vger.kernel.org, tony.luck@intel.com,
+        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        seanjc@google.com, kai.huang@intel.com, fan.du@intel.com,
+        cathy.zhang@intel.com
+Subject: Re: [PATCH RESEND v6 2/3] x86/sgx: Introduce union with vepc_vaddr
+ field for virtualization case
+Message-ID: <YwqQ1HRzdZNWM1VX@kernel.org>
+References: <20220826160503.1576966-1-zhiquan1.li@intel.com>
+ <20220826160503.1576966-3-zhiquan1.li@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4645fdb3-2836-0028-dee9-7a9321f1ebf2@molgen.mpg.de>
+In-Reply-To: <20220826160503.1576966-3-zhiquan1.li@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Aug 26, 2022 at 07:21:44PM +0200, Paul Menzel wrote:
-> Dear Jarkko,
+On Sat, Aug 27, 2022 at 12:05:02AM +0800, Zhiquan Li wrote:
+> When a page triggers a machine check, it only reports the PFN.  But in
+> order to inject #MC into hypervisor, the virtual address is required.
+> The 'encl_owner' field is useless in virtualization case, then
+> repurpose it as 'vepc_vaddr' - the virtual address of the virtual EPC
+> page for such case so that arch_memory_failure() can easily retrieve it.
 > 
+> Introduce a union to prevent adding a new dedicated structure to
+> track the virtual address of virtual EPC page.  And it can also prevent
+> playing the casting games while using it.
 > 
-> Am 26.08.22 um 14:51 schrieb Paul Menzel:
+> Add a new EPC page flag - SGX_EPC_PAGE_KVM_GUEST to interpret the
+> meaning of the field.
 > 
-> […]
+> Co-developed-by: Cathy Zhang <cathy.zhang@intel.com>
+> Signed-off-by: Cathy Zhang <cathy.zhang@intel.com>
+> Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
+> Acked-by: Kai Huang <kai.huang@intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 > 
-> > Am 26.08.22 um 03:41 schrieb Jarkko Sakkinen:
-> > > In sgx_init(), if misc_register() for the provision device fails, and
-> > > neither sgx_drv_init() nor sgx_vepc_init() succeeds, then ksgxd will be
-> > > prematurely stopped.
-> > > 
-> > > This triggers WARN_ON() because sgx_dirty_page_list ends up being
-> > > non-empty. Ultimately this can crash the kernel, depending on the kernel
-> > > command line, which is not correct behavior because SGX driver is not
-> > > working incorrectly.
-> > 
-> > Maybe paste the WARN_ON trace, so `git log` can be searched for the
-> > trace too.
-> > 
-> > > Print simple warning instead, and improve the output by printing the
-> > > number of unsanitized pages.
-> > 
-> > See below, but no warning seems to be logged in my case now. (I should
-> > test Linus’ current master too.)
+> ---
+> Changes since V5:
+> - To prevent casting the 'encl_owner' field, introduce a union with
+>   another field - 'vepc_vaddr', sugguested by Dave Hansen.
+> - Add Reviewed-by from Jarkko.
+>   Link: https://lore.kernel.org/linux-sgx/Yrf27fugD7lkyaek@kernel.org/T/#m379d00fc7f1d43726a42b3884637532061a8c0d1
 > 
-> Just for the record, the problem still exists in Linus’ master branch:
+> Changes since V4:
+> - Add Co-developed-by and Signed-off-by from Cathy Zhang, as she had
+>   fully discussed the flag name with Jarkko.
+>   Link: https://lore.kernel.org/all/df92395ade424401ac3c6322de568720@intel.com/
+> - Add Acked-by from Kai Huang
+>   Link: https://lore.kernel.org/linux-sgx/0676cd4e-d94b-e904-81ae-ca1c05d37070@intel.com/T/#mccfb11df30698dbd060f2b6f06383cda7f154ef3
 > 
-> ```
-> [    0.000000] Linux version 6.0.0-rc2 (root@4beb429beb4a) (gcc (Debian
-> 11.3.0-3) 11.3.0, GNU ld (GNU Binutils for Debian) 2.38) #382 SMP
-> PREEMPT_DYNAMIC Fri Aug 26 12:52:15 UTC 2022
-> [    0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.0.0-rc2
-> root=UUID=56f398e0-1e25-4fda-aa9f-611dece4b333 ro quiet
-> module_blacklist=psmouse initcall_debug log_buf_len=4M cryptomgr.notests
-> […]
-> [    0.268089] calling  sgx_init+0x0/0x409 @ 1
-> [    0.268103] sgx: EPC section 0x40200000-0x45f7ffff
-> [    0.268591] ------------[ cut here ]------------
-> [    0.268592] WARNING: CPU: 6 PID: 83 at arch/x86/kernel/cpu/sgx/main.c:401
-> ksgxd+0x1b7/0x1d0
-> [    0.268598] Modules linked in:
-> [    0.268600] CPU: 6 PID: 83 Comm: ksgxd Not tainted 6.0.0-rc2 #382
-> [    0.268603] Hardware name: Dell Inc. XPS 13 9370/0RMYH9, BIOS 1.21.0
-> 07/06/2022
-> [    0.268604] RIP: 0010:ksgxd+0x1b7/0x1d0
-> [    0.268607] Code: ff e9 f2 fe ff ff 48 89 df e8 75 07 0e 00 84 c0 0f 84
-> c3 fe ff ff 31 ff e8 e6 07 0e 00 84 c0 0f 85 94 fe ff ff e9 af fe ff ff <0f>
-> 0b e9 7f fe ff ff e8 dd 9c 95 00 66 66 2e 0f 1f 84 00 00 00 00
-> [    0.268608] RSP: 0000:ffffb6c7404f3ed8 EFLAGS: 00010287
-> [    0.268610] RAX: ffffb6c740431a10 RBX: ffff8dcd8117b400 RCX:
-> 0000000000000000
-> [    0.268612] RDX: 0000000080000000 RSI: ffffb6c7404319d0 RDI:
-> 00000000ffffffff
-> [    0.268613] RBP: ffff8dcd820a4d80 R08: ffff8dcd820a4180 R09:
-> ffff8dcd820a4180
-> [    0.268614] R10: 0000000000000000 R11: 0000000000000006 R12:
-> ffffb6c74006bce0
-> [    0.268615] R13: ffff8dcd80e63880 R14: ffffffffa8a60f10 R15:
-> 0000000000000000
-> [    0.268616] FS:  0000000000000000(0000) GS:ffff8dcf25580000(0000)
-> knlGS:0000000000000000
-> [    0.268617] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    0.268619] CR2: 0000000000000000 CR3: 0000000213410001 CR4:
-> 00000000003706e0
-> [    0.268620] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-> 0000000000000000
-> [    0.268621] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-> 0000000000000400
-> [    0.268622] Call Trace:
-> [    0.268624]  <TASK>
-> [    0.268627]  ? _raw_spin_lock_irqsave+0x24/0x60
-> [    0.268632]  ? _raw_spin_unlock_irqrestore+0x23/0x40
-> [    0.268634]  ? __kthread_parkme+0x36/0x90
-> [    0.268637]  kthread+0xe5/0x110
-> [    0.268639]  ? kthread_complete_and_exit+0x20/0x20
-> [    0.268642]  ret_from_fork+0x1f/0x30
-> [    0.268647]  </TASK>
-> [    0.268648] ---[ end trace 0000000000000000 ]---
-> [    0.268694] initcall sgx_init+0x0/0x409 returned -19 after 603 usecs
-> ```
+> Changes since V3:
+> - Take the definition of EPC page flag SGX_EPC_PAGE_KVM_GUEST from
+>   Cathy Zhang's third patch of SGX rebootless recovery patch set but
+>   discard irrelevant portion, since it might need some time to re-forge
+>   and these are two different features.
+>   Link: https://lore.kernel.org/linux-sgx/41704e5d4c03b49fcda12e695595211d950cfb08.camel@kernel.org/T/#m9782d23496cacecb7da07a67daa79f4b322ae170
 > 
-> Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> Changes since V2:
+> - Remove struct sgx_vepc_page and relevant code.
+> - Rework the patch suggested by Jarkko.
+> - Remove new EPC page flag SGX_EPC_PAGE_IS_VEPC definition as it is
+>   duplicated to SGX_EPC_PAGE_KVM_GUEST.
+>   Link: https://lore.kernel.org/linux-sgx/eb95b32ecf3d44a695610cf7f2816785@intel.com/T/#u
+> 
+> Changes since V1:
+> - Add documentation suggested by Jarkko.
+> ---
+>  arch/x86/kernel/cpu/sgx/main.c | 4 ++++
+>  arch/x86/kernel/cpu/sgx/sgx.h  | 8 +++++++-
+>  arch/x86/kernel/cpu/sgx/virt.c | 4 +++-
+>  3 files changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index 1315c69a733e..b319bedcaf1e 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -549,6 +549,10 @@ int sgx_unmark_page_reclaimable(struct sgx_epc_page *page)
+>   * Finally, wake up ksgxd when the number of pages goes below the watermark
+>   * before returning back to the caller.
+>   *
+> + * When an EPC page is assigned to KVM guest, repurpose the 'encl_owner' field
+> + * as the virtual address of virtual EPC page, since it is useless in such
+> + * scenario, so 'owner' is assigned to 'vepc_vaddr'.
+> + *
+>   * Return:
+>   *   an EPC page,
+>   *   -errno on error
+> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+> index 4d88abccd12e..d16a8baa28d4 100644
+> --- a/arch/x86/kernel/cpu/sgx/sgx.h
+> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
+> @@ -28,12 +28,18 @@
+>  
+>  /* Pages on free list */
+>  #define SGX_EPC_PAGE_IS_FREE		BIT(1)
+> +/* Pages allocated for KVM guest */
+> +#define SGX_EPC_PAGE_KVM_GUEST		BIT(2)
+>  
+>  struct sgx_epc_page {
+>  	unsigned int section;
+>  	u16 flags;
+>  	u16 poison;
+> -	struct sgx_encl_page *encl_owner;
+> +	union {
+> +		struct sgx_encl_page *encl_owner;
+> +		/* Use when SGX_EPC_PAGE_KVM_GUEST set in ->flags: */
+> +		void __user *vepc_vaddr;
 
-Thank you.
+Revisiting this, I'd tend to think that simple
+"void *owner" would be less complicated option
+than this.
+
+Thoughts?
 
 BR, Jarkko
+
+> +	};
+>  	struct list_head list;
+>  };
+>  
+> diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+> index 6a77a14eee38..776ae5c1c032 100644
+> --- a/arch/x86/kernel/cpu/sgx/virt.c
+> +++ b/arch/x86/kernel/cpu/sgx/virt.c
+> @@ -46,10 +46,12 @@ static int __sgx_vepc_fault(struct sgx_vepc *vepc,
+>  	if (epc_page)
+>  		return 0;
+>  
+> -	epc_page = sgx_alloc_epc_page(vepc, false);
+> +	epc_page = sgx_alloc_epc_page((void *)addr, false);
+>  	if (IS_ERR(epc_page))
+>  		return PTR_ERR(epc_page);
+>  
+> +	epc_page->flags |= SGX_EPC_PAGE_KVM_GUEST;
+> +
+>  	ret = xa_err(xa_store(&vepc->page_array, index, epc_page, GFP_KERNEL));
+>  	if (ret)
+>  		goto err_free;
+> -- 
+> 2.25.1
+> 
