@@ -2,189 +2,126 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E8FECAAD2
-	for <linux-sgx@archiver.kernel.org>; Tue, 30 Aug 2022 02:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 127E4ECAAD2
+	for <linux-sgx@archiver.kernel.org>; Tue, 30 Aug 2022 02:53:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229453AbiH3Cpw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 29 Aug 2022 22:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38214 "EHLO
+        id S229810AbiH3CxG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 29 Aug 2022 22:53:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiH3Cpu (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 29 Aug 2022 22:45:50 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BC36659D3;
-        Mon, 29 Aug 2022 19:45:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661827548; x=1693363548;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=0TI8jQLapdOITPsRn4jkg5RomLHydJPJ4LzrJPCvLTI=;
-  b=dN0sMA3b1PDc3u+/hv5AMp2KNzzChy+I7M6ejzyayR1h4yFsN8IMRAdl
-   ToJwLCBtg3J7T1R55mb2CXb9zV0WrpmCsfyJvsa4BZJdm+kzExoIF9Y/M
-   MtKQdm2Fm1N1cY751TaxDFbguLjEthQ30n99vT+g15TNCvOgG8drGaVy3
-   f1N3B8Nc5EfLDpdp9b2GItGjYc5I/07aXn40WN9mEpaCcE7Cq9x3niyO3
-   +x+R/YuGH7yowdvTun9m81q4NauUhuECyzVqR0CmqEuajaxpDocACvSJV
-   cabRDZz3tmxLorIbPyCtRYszRFBakYNW/XDvRUHEFBNw48I/NYVUKSMFw
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10454"; a="296338703"
-X-IronPort-AV: E=Sophos;i="5.93,274,1654585200"; 
-   d="scan'208";a="296338703"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2022 19:45:48 -0700
-X-IronPort-AV: E=Sophos;i="5.93,274,1654585200"; 
-   d="scan'208";a="939831538"
-Received: from yghanbar-mobl2.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.213.185.134])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2022 19:45:43 -0700
-From:   Kai Huang <kai.huang@intel.com>
-To:     linux-sgx@vger.kernel.org, kvm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-        seanjc@google.com, pbonzini@redhat.com, jarkko@kernel.org,
-        haitao.huang@linux.intel.com
-Subject: [PATCH v3] KVM: VMX: Allow exposing EDECCSSA user leaf function to KVM guest
-Date:   Tue, 30 Aug 2022 14:45:10 +1200
-Message-Id: <20220830024510.68973-1-kai.huang@intel.com>
-X-Mailer: git-send-email 2.37.1
+        with ESMTP id S229651AbiH3CxF (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 29 Aug 2022 22:53:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3711E7B7B5;
+        Mon, 29 Aug 2022 19:53:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C0BFE61476;
+        Tue, 30 Aug 2022 02:53:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BCEDC433C1;
+        Tue, 30 Aug 2022 02:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661827984;
+        bh=wQ5Dru6/oa9ffz6dr3xOWZsCMwvrrx/xunl61P65KnE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LsoelcCaNVQW5CRnYsiKN6Ej3YlOTb0T6DWHOzO1EaZs1BMRaqzpZTuffMk6iUkgV
+         bVTrufuqhhym9pKMjTzMoZE9PtYoumz3f3QyghxXgU3/Ar9qGrvEW6yovXlUySQzOw
+         TkjgydCnPNgeqsSsszIJysS7IvUgAQGoMHDIpcUCl6uwH01H3sNXZSCEQZtxfhkME6
+         n8H7B0aYIjFW0bpHascN9tksmosZd3icsij0SVA8g8rvt9Si2lwdgVhAvP7lLmGNS+
+         6A1lkaPcq6GV5FeVpUAmxMn0HKPHieW0kG1gpHcBTJNWMYYFaYj+1Yn92MmFDuE90R
+         oan/gLTpvPzxQ==
+Date:   Tue, 30 Aug 2022 05:52:55 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Dhanuka Warusadura <wdnuka@gmail.com>
+Cc:     dave.hansen@linux.intel.com, shuah@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/sgx: Fix OpenSSL deprecated warning for
+ ERR_get_error_line
+Message-ID: <Yw17hyrjX1AiELZG@kernel.org>
+References: <20220828061859.181061-1-wdnuka@gmail.com>
+ <Ywyt4tvHrK4r48RK@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Ywyt4tvHrK4r48RK@kernel.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The new Asynchronous Exit (AEX) notification mechanism (AEX-notify)
-allows one enclave to receive a notification in the ERESUME after the
-enclave exit due to an AEX.  EDECCSSA is a new SGX user leaf function
-(ENCLU[EDECCSSA]) to facilitate the AEX notification handling.  The new
-EDECCSSA is enumerated via CPUID(EAX=0x12,ECX=0x0):EAX[11].
+On Mon, Aug 29, 2022 at 03:15:30PM +0300, Jarkko Sakkinen wrote:
+> On Sun, Aug 28, 2022 at 11:48:59AM +0530, Dhanuka Warusadura wrote:
+> > These changes fix the "error: ‘ERR_get_error_line’ is deprecated:
+> > Since OpenSSL 3.0" warning.
+> > 
+> > Signed-off-by: Dhanuka Warusadura <wdnuka@gmail.com>
+> > ---
+> >  tools/testing/selftests/sgx/sigstruct.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
+> > index 50c5ab1aa6fa..671d9b58e274 100644
+> > --- a/tools/testing/selftests/sgx/sigstruct.c
+> > +++ b/tools/testing/selftests/sgx/sigstruct.c
+> > @@ -136,7 +136,7 @@ static bool check_crypto_errors(void)
+> >  			break;
+> >  
+> >  		had_errors = true;
+> > -		err = ERR_get_error_line(&filename, &line);
+> > +		err = ERR_peek_last_error_line(&filename, &line);
+> >  		ERR_error_string_n(err, str, sizeof(str));
+> >  		fprintf(stderr, "crypto: %s: %s:%d\n", str, filename, line);
+> >  	}
+> > -- 
+> > 2.37.2
+> > 
+> 
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Besides Allowing reporting the new AEX-notify attribute to KVM guests,
-also allow reporting the new EDECCSSA user leaf function to KVM guests
-so the guest can fully utilize the AEX-notify mechanism.
+Actually NAK.
 
-Similar to existing X86_FEATURE_SGX1 and X86_FEATURE_SGX2, introduce a
-new scattered X86_FEATURE_SGX_EDECCSSA bit for the new EDECCSSA, and
-report it in KVM's supported CPUIDs.
+This fix is not complete:
 
-Note, no additional KVM enabling is required to allow the guest to use
-EDECCSSA.  It's impossible to trap ENCLU (without completely preventing
-the guest from using SGX).  Advertise EDECCSSA as supported purely so
-that userspace doesn't need to special case EDECCSSA, i.e. doesn't need
-to manually check host CPUID.
+sigstruct.c: In function ‘get_modulus’:
+sigstruct.c:151:9: error: ‘RSA_get0_key’ is deprecated: Since OpenSSL 3.0 [-Werror=deprecated-declarations]
+  151 |         RSA_get0_key(key, &n, NULL, NULL);
+      |         ^~~~~~~~~~~~
+In file included from /usr/include/openssl/x509.h:36,
+                 from /usr/include/openssl/pem.h:23,
+                 from sigstruct.c:16:
+/usr/include/openssl/rsa.h:217:28: note: declared here
+  217 | OSSL_DEPRECATEDIN_3_0 void RSA_get0_key(const RSA *r,
+      |                            ^~~~~~~~~~~~
+sigstruct.c: In function ‘gen_sign_key’:
+sigstruct.c:168:9: error: ‘PEM_read_bio_RSAPrivateKey’ is deprecated: Since OpenSSL 3.0 [-Werror=deprecated-declaration
+]
+  168 |         key = PEM_read_bio_RSAPrivateKey(bio, NULL, NULL, NULL);
+      |         ^~~
+/usr/include/openssl/pem.h:447:1: note: declared here
+  447 | DECLARE_PEM_rw_cb_attr(OSSL_DEPRECATEDIN_3_0, RSAPrivateKey, RSA)
+      | ^~~~~~~~~~~~~~~~~~~~~~
+sigstruct.c: In function ‘encl_measure’:
+sigstruct.c:364:9: error: ‘RSA_sign’ is deprecated: Since OpenSSL 3.0 [-Werror=deprecated-declarations]
+  364 |         if (!RSA_sign(NID_sha256, digest, SHA256_DIGEST_LENGTH,
+      |         ^~
+/usr/include/openssl/rsa.h:348:27: note: declared here
+  348 | OSSL_DEPRECATEDIN_3_0 int RSA_sign(int type, const unsigned char *m,
+      |                           ^~~~~~~~
+sigstruct.c:377:9: error: ‘RSA_free’ is deprecated: Since OpenSSL 3.0 [-Werror=deprecated-declarations]
+  377 |         RSA_free(key);
+      |         ^~~~~~~~
+/usr/include/openssl/rsa.h:293:28: note: declared here
+  293 | OSSL_DEPRECATEDIN_3_0 void RSA_free(RSA *r);
+      |                            ^~~~~~~~
+sigstruct.c:382:9: error: ‘RSA_free’ is deprecated: Since OpenSSL 3.0 [-Werror=deprecated-declarations]
+  382 |         RSA_free(key);
+      |         ^~~~~~~~
+/usr/include/openssl/rsa.h:293:28: note: declared here
+  293 | OSSL_DEPRECATEDIN_3_0 void RSA_free(RSA *r);
+      |                            ^~~~~~~~
+cc1: all warnings being treated as errors
+make: *** [Makefile:39: /home/jarkko/work/linux-sgx/tools/testing/selftests/sgx/sigstruct.o] Error 1
 
-The inability to trap ENCLU also means that KVM can't prevent the guest
-from using EDECCSSA, but that virtualization hole is benign as far as
-KVM is concerned.  EDECCSSA is simply a fancy way to modify internal
-enclave state.
-
-More background about how do AEX-notify and EDECCSSA work:
-
-SGX maintains a Current State Save Area Frame (CSSA) for each enclave
-thread.  When AEX happens, the enclave thread context is saved to the
-CSSA and the CSSA is increased by 1.  For a normal ERESUME which doesn't
-deliver AEX notification, it restores the saved thread context from the
-previously saved SSA and decreases the CSSA.  If AEX-notify is enabled
-for one enclave, the ERESUME acts differently.  Instead of restoring the
-saved thread context and decreasing the CSSA, it acts like EENTER which
-doesn't decrease the CSSA but establishes a clean slate thread context
-using the CSSA for the enclave to handle the notification.  After some
-handling, the enclave must discard the "new-established" SSA and switch
-back to the previously saved SSA (upon AEX).  Otherwise, the enclave
-will run out of SSA space upon further AEXs and eventually fail to run.
-
-To solve this problem, the new EDECCSSA essentially decreases the CSSA.
-It can be used by the enclave notification handler to switch back to the
-previous saved SSA when needed, i.e. after it handles the notification.
-
-Acked-by: Sean Christopherson <seanjc@google.com>
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Kai Huang <kai.huang@intel.com>
----
-v2 -> v3:
-
- - Updated subsystem tag to "KVM: VMX:" (Sean).
- - Updated changelog (Sean).
- - Added Sean and Jarkko's Acks.
-
----
- arch/x86/include/asm/cpufeatures.h | 1 +
- arch/x86/kernel/cpu/cpuid-deps.c   | 1 +
- arch/x86/kernel/cpu/scattered.c    | 1 +
- arch/x86/kvm/cpuid.c               | 2 +-
- arch/x86/kvm/reverse_cpuid.h       | 3 +++
- 5 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 235dc85c91c3..ccdd35adae9e 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -304,6 +304,7 @@
- #define X86_FEATURE_UNRET		(11*32+15) /* "" AMD BTB untrain return */
- #define X86_FEATURE_USE_IBPB_FW		(11*32+16) /* "" Use IBPB during runtime firmware calls */
- #define X86_FEATURE_RSB_VMEXIT_LITE	(11*32+17) /* "" Fill RSB on VM exit when EIBRS is enabled */
-+#define X86_FEATURE_SGX_EDECCSSA	(11*32+18) /* "" SGX EDECCSSA user leaf function */
- 
- /* Intel-defined CPU features, CPUID level 0x00000007:1 (EAX), word 12 */
- #define X86_FEATURE_AVX_VNNI		(12*32+ 4) /* AVX VNNI instructions */
-diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-index c881bcafba7d..d95221117129 100644
---- a/arch/x86/kernel/cpu/cpuid-deps.c
-+++ b/arch/x86/kernel/cpu/cpuid-deps.c
-@@ -75,6 +75,7 @@ static const struct cpuid_dep cpuid_deps[] = {
- 	{ X86_FEATURE_SGX_LC,			X86_FEATURE_SGX	      },
- 	{ X86_FEATURE_SGX1,			X86_FEATURE_SGX       },
- 	{ X86_FEATURE_SGX2,			X86_FEATURE_SGX1      },
-+	{ X86_FEATURE_SGX_EDECCSSA,		X86_FEATURE_SGX1      },
- 	{ X86_FEATURE_XFD,			X86_FEATURE_XSAVES    },
- 	{ X86_FEATURE_XFD,			X86_FEATURE_XGETBV1   },
- 	{ X86_FEATURE_AMX_TILE,			X86_FEATURE_XFD       },
-diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
-index fd44b54c90d5..0bb339857985 100644
---- a/arch/x86/kernel/cpu/scattered.c
-+++ b/arch/x86/kernel/cpu/scattered.c
-@@ -40,6 +40,7 @@ static const struct cpuid_bit cpuid_bits[] = {
- 	{ X86_FEATURE_PER_THREAD_MBA,	CPUID_ECX,  0, 0x00000010, 3 },
- 	{ X86_FEATURE_SGX1,		CPUID_EAX,  0, 0x00000012, 0 },
- 	{ X86_FEATURE_SGX2,		CPUID_EAX,  1, 0x00000012, 0 },
-+	{ X86_FEATURE_SGX_EDECCSSA,	CPUID_EAX, 11, 0x00000012, 0 },
- 	{ X86_FEATURE_HW_PSTATE,	CPUID_EDX,  7, 0x80000007, 0 },
- 	{ X86_FEATURE_CPB,		CPUID_EDX,  9, 0x80000007, 0 },
- 	{ X86_FEATURE_PROC_FEEDBACK,    CPUID_EDX, 11, 0x80000007, 0 },
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 75dcf7a72605..c21b4a5dc8fa 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -644,7 +644,7 @@ void kvm_set_cpu_caps(void)
- 	);
- 
- 	kvm_cpu_cap_init_scattered(CPUID_12_EAX,
--		SF(SGX1) | SF(SGX2)
-+		SF(SGX1) | SF(SGX2) | SF(SGX_EDECCSSA)
- 	);
- 
- 	kvm_cpu_cap_mask(CPUID_8000_0001_ECX,
-diff --git a/arch/x86/kvm/reverse_cpuid.h b/arch/x86/kvm/reverse_cpuid.h
-index a19d473d0184..4e5b8444f161 100644
---- a/arch/x86/kvm/reverse_cpuid.h
-+++ b/arch/x86/kvm/reverse_cpuid.h
-@@ -23,6 +23,7 @@ enum kvm_only_cpuid_leafs {
- /* Intel-defined SGX sub-features, CPUID level 0x12 (EAX). */
- #define KVM_X86_FEATURE_SGX1		KVM_X86_FEATURE(CPUID_12_EAX, 0)
- #define KVM_X86_FEATURE_SGX2		KVM_X86_FEATURE(CPUID_12_EAX, 1)
-+#define KVM_X86_FEATURE_SGX_EDECCSSA	KVM_X86_FEATURE(CPUID_12_EAX, 11)
- 
- struct cpuid_reg {
- 	u32 function;
-@@ -78,6 +79,8 @@ static __always_inline u32 __feature_translate(int x86_feature)
- 		return KVM_X86_FEATURE_SGX1;
- 	else if (x86_feature == X86_FEATURE_SGX2)
- 		return KVM_X86_FEATURE_SGX2;
-+	else if (x86_feature == X86_FEATURE_SGX_EDECCSSA)
-+		return KVM_X86_FEATURE_SGX_EDECCSSA;
- 
- 	return x86_feature;
- }
-
-base-commit: ee56a283988d739c25d2d00ffb22707cb487ab47
--- 
-2.37.1
-
+BR, Jarkko
