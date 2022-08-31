@@ -2,176 +2,77 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B596ECAAD4
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 15:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD0DECAAD4
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 17:38:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231589AbiHaPSF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 31 Aug 2022 11:18:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58562 "EHLO
+        id S231940AbiHaRin (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 31 Aug 2022 13:38:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbiHaPSE (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 11:18:04 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B421AD5DD2;
-        Wed, 31 Aug 2022 08:18:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661959083; x=1693495083;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=TxLO0JiUZbqETHUngAijiycnecMsPeNwFP5Opt7eQo4=;
-  b=m28TBWYbYlLp4NMuoDXUKMmF6aUHVuEpdGz8fdFXRrp7XaTEliqGbuW0
-   Ne2BauCrI37gX9Mz5LywoJ5kNys+yKP7/ZWhowlclOnZHH2csOvzNAhjR
-   qZO+fxwDaf7T2GXRw1n0hb2tb48jsj6DUwiRG08n8JsmH/apqoww2t99k
-   BAzdBzZkQQnDGkiEKZuTGYnyCeRlu1J8SDSDJTt2cbEwewuxAgpImGUtX
-   preoJ+8VqZa4aNJKrrvKA1/SUkcxyzEHkA+d2S4rcYIW9YGRRLdiC0P2J
-   wo+rwsdKdNBfQam+Z1iLFjI6qEEzYes4Y5l8FF1zZZLo4FhGJLYJOb6dc
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10456"; a="295473519"
-X-IronPort-AV: E=Sophos;i="5.93,278,1654585200"; 
-   d="scan'208";a="295473519"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2022 08:18:02 -0700
-X-IronPort-AV: E=Sophos;i="5.93,278,1654585200"; 
-   d="scan'208";a="563066045"
-Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.212.96.122])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 31 Aug 2022 08:18:01 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "jarkko@kernel.org" <jarkko@kernel.org>,
-        "Huang, Kai" <kai.huang@intel.com>
-Cc:     "pmenzel@molgen.mpg.de" <pmenzel@molgen.mpg.de>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/6] x86/sgx: Do not consider unsanitized pages an error
-References: <20220830031206.13449-1-jarkko@kernel.org>
- <20220830031206.13449-2-jarkko@kernel.org>
- <1f43e7b9-c101-3872-bd1b-add66933b285@intel.com>
- <1b3308a364317d36ad41961ea9cfee24aa122f02.camel@intel.com>
- <Yw7EX5GCrEaLzpHV@kernel.org>
- <d07577c3f0b4b3fff0ce470c56f91fb634653703.camel@intel.com>
- <Yw7LJa7eRG+WZ0wv@kernel.org>
- <c3c085d69311ed759bff5bb325a2c182d423f91f.camel@intel.com>
- <Yw7OEh7QP8tb7BR1@kernel.org>
- <a91f65ad5c392b6e34f07bc6d3f35c89a76a98db.camel@intel.com>
-Date:   Wed, 31 Aug 2022 10:18:00 -0500
+        with ESMTP id S231583AbiHaRil (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 13:38:41 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A3EC419BC
+        for <linux-sgx@vger.kernel.org>; Wed, 31 Aug 2022 10:38:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BB35A61B18
+        for <linux-sgx@vger.kernel.org>; Wed, 31 Aug 2022 17:38:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 990FCC433D7;
+        Wed, 31 Aug 2022 17:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661967519;
+        bh=gxtxa12tkzovKZU2AjzqUr7NU47JZ39aGvQFCayaDKg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TXLOcFNccl3Z7Dk+/ULk+sX5CZP2MbwLEhBtBHz0ZZNIbwy9fA8euqv7MoI8SHz/W
+         kYZED/LvSvvC4JfnamEzR/nMZ52xuAHYEBIfKufkh30nVtBYg3bHwXeelYQVi/93MJ
+         m1erQRsXnt0H07gseCtQsnKWF/Mz/CqAUJeyaEJfmQ7jum1EempZneRJonyJvER/Z3
+         9cZOOzWRg4FCCxSRrhvovLPBIDhrwvRcwpROJ5AK2gh0yLn6Cd5BnU/GdUPgJU2SaX
+         S2qHLmL3hkrMszh/Hp0DltLgXa0kHd5pZ/1VWoqOnozpyCHVB9UBbwdJuC7P5kC0VT
+         YSAnavUx3SiZw==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-sgx@vger.kernel.org
+Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
+        Vijay Dhanraj <vijay.dhanraj@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Subject: [PATCH v2 0/6] x86/sgx: A collection of tests and fixes
+Date:   Wed, 31 Aug 2022 20:38:23 +0300
+Message-Id: <20220831173829.126661-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.1rrt4aecwjvjmi@hhuan26-mobl1.mshome.net>
-In-Reply-To: <a91f65ad5c392b6e34f07bc6d3f35c89a76a98db.camel@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Kai
-On Tue, 30 Aug 2022 22:17:08 -0500, Huang, Kai <kai.huang@intel.com> wrote:
+Haitao Huang (2):
+  x86/sgx: Handle VA page allocation failure for EAUG on PF.
+  selftests/sgx: retry the ioctls returned with EAGAIN
 
-> On Wed, 2022-08-31 at 05:57 +0300, jarkko@kernel.org wrote:
->> On Wed, Aug 31, 2022 at 02:55:52AM +0000, Huang, Kai wrote:
->> > On Wed, 2022-08-31 at 05:44 +0300, jarkko@kernel.org wrote:
->> > > On Wed, Aug 31, 2022 at 02:35:53AM +0000, Huang, Kai wrote:
->> > > > On Wed, 2022-08-31 at 05:15 +0300, jarkko@kernel.org wrote:
->> > > > > On Wed, Aug 31, 2022 at 01:27:58AM +0000, Huang, Kai wrote:
->> > > > > > On Tue, 2022-08-30 at 15:54 -0700, Reinette Chatre wrote:
->> > > > > > > Hi Jarkko,
->> > > > > > >
->> > > > > > > On 8/29/2022 8:12 PM, Jarkko Sakkinen wrote:
->> > > > > > > > In sgx_init(), if misc_register() for the provision  
->> device fails, and
->> > > > > > > > neither sgx_drv_init() nor sgx_vepc_init() succeeds, then  
->> ksgxd will be
->> > > > > > > > prematurely stopped.
->> > > > > > >
->> > > > > > > I do not think misc_register() is required to fail for the  
->> scenario to
->> > > > > > > be triggered (rather use "or" than "and"?). Perhaps just
->> > > > > > > "In sgx_init(), if a failure is encountered after ksgxd is  
->> started
->> > > > > > > (via sgx_page_reclaimer_init()) ...".
->> > > > > >
->> > > > > > IMHO "a failure" might be too vague.  For instance, failure  
->> to sgx_drv_init()
->> > > > > > won't immediately result in ksgxd to stop prematurally.  As  
->> long as KVM SGX can
->> > > > > > be initialized successfully, sgx_init() still returns 0.
->> > > > > >
->> > > > > > Btw I was thinking whether we should move  
->> sgx_page_reclaimer_init() to the end
->> > > > > > of sgx_init(), after we make sure at least one of the driver  
->> and the KVM SGX is
->> > > > > > initialized successfully.  Then the code change in this patch  
->> won't be necessary
->> > > > > > if I understand correctly.  AFAICT there's no good reason to  
->> start the ksgxd at
->> > > > > > early stage before we are sure either the driver or KVM SGX  
->> will work.
->> > > > >
->> > > > > I would focus fixing the existing flow rather than reinventing  
->> the flow.
->> > > > >
->> > > > > It can be made to work, and therefore it is IMHO correct action  
->> to take.
->> > > >
->> > > > From another perspective, the *existing flow* is the reason which  
->> causes this
->> > > > bug.  A real fix is to fix the flow itself.
->> > >
->> > > Any existing flow in part of the kernel can have a bug. That
->> > > does not mean that switching flow would be proper way to fix
->> > > a bug.
->> > >
->> > > BR, Jarkko
->> >
->> > Yes but I think this is only true when the flow is reasonable.  If  
->> the flow
->> > itself isn't reasonable, we should fix the flow (given it's easy to  
->> fix AFAICT).
->> >
->> > Anyway, let us also hear from others.
->>
->> The flow can be made to work without issues, which in the
->> context of a bug fix is exactly what a bug fix should do.
->> Not more or less.
->
-> No. To me the flow itself is buggy.  There's no reason to start ksgxd()  
-> before
-> at least SGX driver is initialized to work.
->
+Jarkko Sakkinen (2):
+  x86/sgx: Do not consider unsanitized pages an error
+  selftests/sgx: Add a bpftrace script for tracking allocation errors
 
-Will it cause racing if we expose dev nodes to user space before
-ksgxd is started and sensitization done?
+Kristen Carlson Accardi (1):
+  selftests/sgx: Ignore OpenSSL 3.0 deprecated functions warning
 
-> Patching the buggy flow is more like a workaround, but isn't a real fix.
->
->>
->> You don't gain any measurable value for the user with this
->> switch idea.
->
-> There is actual gain by moving sgx_page_reclaimer_init() to  
-> sgx_drv_init(), or
-> only calling sgx_page_reclaimer_init() when sgx_drv_init() returns  
-> success:
->
-> If somehow sgx_drv_init() fails to initialize, ksgxd() won't run.
->
-> Currently, if SGX driver fails to initialize but virtual EPC initializes
-> successfully, ksgxd() still runs. However it achieves nothing but only  
-> wastes
-> CPU cycles.
->
->
+Vijay Dhanraj (1):
+  selftests/sgx: Add SGX selftest augment_via_eaccept_long
 
-You still need ksgxd for sanitizing (at least) and swapping (potentially)
-even if only virtual EPC initializes.
+ arch/x86/kernel/cpu/sgx/encl.c             |   5 +-
+ arch/x86/kernel/cpu/sgx/main.c             |  42 ++++-
+ tools/testing/selftests/sgx/alloc-error.bt |   9 +
+ tools/testing/selftests/sgx/load.c         |   5 +-
+ tools/testing/selftests/sgx/main.c         | 185 ++++++++++++++++++---
+ tools/testing/selftests/sgx/main.h         |   3 +-
+ tools/testing/selftests/sgx/sigstruct.c    |   6 +
+ 7 files changed, 218 insertions(+), 37 deletions(-)
+ create mode 100644 tools/testing/selftests/sgx/alloc-error.bt
 
-Thanks
-Haitao
+-- 
+2.37.2
+
