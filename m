@@ -2,82 +2,66 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624A7ECAAD3
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 17:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E0C0ECAAD3
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 17:44:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232058AbiHaRjQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 31 Aug 2022 13:39:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46998 "EHLO
+        id S229510AbiHaRoC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 31 Aug 2022 13:44:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231984AbiHaRjE (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 13:39:04 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E73CD2B35;
-        Wed, 31 Aug 2022 10:39:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5F23AB8220A;
-        Wed, 31 Aug 2022 17:39:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCD46C433C1;
-        Wed, 31 Aug 2022 17:38:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661967539;
-        bh=sWEr2xMf9c7ybMRCB7FvcjLwjU8c0HJfCMDxZvDmsi4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hKOF7i2CshRktPzeGXQwfSNA4H3HLA2mer2CnxVIJhQunFzZuaf0PO3W7onzBsAfR
-         YpQMKnOqABfenu8nfZyRuAjLt6xmYs8CBqsUXKdYGaI7QGeOcN+vI0JHg8/rzMNnT9
-         2gvuJnD2blULZZCCMPQEzPiWqIa02mvUnd+uE36C0HcOC5ExzTtAvXOuOPcvmElh5W
-         cyMwpDoqq06AohcnYM72QSQp0yiszyHi8eP0B9qlNJkFnWIyC6ujvKoMeknBak0j2N
-         h8OLnBeOSIHDlL0JZ14E14sYq2wTb4waF+lQcFOL6UJtpresw+YBAcGz0RqjvTg8+Z
-         eIPPt+47ljMig==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org
+        with ESMTP id S232294AbiHaRnm (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 13:43:42 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D982DEB44
+        for <linux-sgx@vger.kernel.org>; Wed, 31 Aug 2022 10:43:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661967787; x=1693503787;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Ojx0rhFh2bK04ktBnZhbYB4RuYkmWpO2q7XzhuYQxVY=;
+  b=LZlfCwpar2UyF/4+6DGw524HUexO2APQEEDd9pt17g+cTnZUkLr5s5II
+   R2Lk+H+ZIIff4C0iq4hw4x//YkVAAqJK0aTTVFktQMhm2NF+Z6FVg4e+T
+   Pf5OibhQVx+m7MfiuFt8W7Dt2CHPlCvBiFnZDJNExqXm8KEG1SCiIlGM0
+   hb3C8HYuMVFa/qR9X0sr3asJubx0mz4jct8r1bYnlMfUFLj2tuASE7ph1
+   KyfHA6GEU2pQ38m5XQ7RY0DFH1R0XtSK+8ICZ6BRJbYMYRBUHPwu2NsgZ
+   kQWi3fSutMDMqOUNYlaZwnWiMiAcwHSatmNVNxihEK0Z6PnqqCCc/vWGe
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10456"; a="296787390"
+X-IronPort-AV: E=Sophos;i="5.93,278,1654585200"; 
+   d="scan'208";a="296787390"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2022 10:43:06 -0700
+X-IronPort-AV: E=Sophos;i="5.93,278,1654585200"; 
+   d="scan'208";a="738183298"
+Received: from aametzl-mobl.amr.corp.intel.com (HELO [10.251.3.56]) ([10.251.3.56])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2022 10:43:05 -0700
+Message-ID: <cfa17cdd-796e-be75-d371-9dea9c2876e8@intel.com>
+Date:   Wed, 31 Aug 2022 10:43:05 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2 0/6] x86/sgx: A collection of tests and fixes
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
 Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
         Vijay Dhanraj <vijay.dhanraj@intel.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH v2 6/6] selftests/sgx: Add a bpftrace script for tracking allocation errors
-Date:   Wed, 31 Aug 2022 20:38:29 +0300
-Message-Id: <20220831173829.126661-7-jarkko@kernel.org>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220831173829.126661-1-jarkko@kernel.org>
+        Paul Menzel <pmenzel@molgen.mpg.de>
 References: <20220831173829.126661-1-jarkko@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <20220831173829.126661-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v2:
-* Added comments.
----
- tools/testing/selftests/sgx/alloc-error.bt | 9 +++++++++
- 1 file changed, 9 insertions(+)
- create mode 100644 tools/testing/selftests/sgx/alloc-error.bt
+Jarkko,
 
-diff --git a/tools/testing/selftests/sgx/alloc-error.bt b/tools/testing/selftests/sgx/alloc-error.bt
-new file mode 100644
-index 000000000000..0cc8b2e41852
---- /dev/null
-+++ b/tools/testing/selftests/sgx/alloc-error.bt
-@@ -0,0 +1,9 @@
-+/* EPC allocation */
-+kr:sgx_alloc_epc_page /(uint64)retval >= (uint64)(-4095)/ {
-+		 printf("sgx_alloc_epc_page: retval=%d\n", (int64)retval);
-+}
-+
-+/* kzalloc for struct sgx_encl_page */
-+kr:sgx_encl_page_alloc /(uint64)retval >= (uint64)(-4095)/ {
-+		 printf("sgx_encl_page_alloc: retval=%d\n", (int64)retval);
-+}
--- 
-2.37.2
+What is your expectations of this series?  There's nothing in the cover
+letter.
 
+Do you think all of this is urgent material that needs to go to Linus
+for 6.0?  Or is it all 6.1 material?
