@@ -2,149 +2,176 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB63ECAAD1
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 06:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B596ECAAD4
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 15:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230354AbiHaGjq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 31 Aug 2022 02:39:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35810 "EHLO
+        id S231589AbiHaPSF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 31 Aug 2022 11:18:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230361AbiHaGjb (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 02:39:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14235BE4C5;
-        Tue, 30 Aug 2022 23:39:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 50CAA61662;
-        Wed, 31 Aug 2022 06:39:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31386C433D6;
-        Wed, 31 Aug 2022 06:39:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661927962;
-        bh=0j1TZFU3wRwvcEdOj3ffsesLckkpCIBHnhXRNCyuF7A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=De4XeRyuI6UvL8VuhBaRTNKiG2uSI4fvhDoyr8nvE0T77G1LpcIyzb7D+jMS1gZgQ
-         2eoU1VfZ/b+2KGx9VL3fgiB4dy7NIp/iQpzUWnHiNpB8sR2Kom1UvPWzVeFbJLt5Nv
-         IxTW6wpcMTG09GVS9/sOEVkUKCEvxNrKhDpUMMrTs2/cthD3ev2eH1jxroMpbZO5lF
-         3pBN1GIkWe5ionUvfrFV4MaYUrOhlizpN2FpQGi5JKKrStQU/yheWXsEA9wRCjSu9t
-         YQMWjppI3SNkbeV4BrSqjkI46xJZQb4TDgTIabw4woo/lsrYsWtuECOhNxrknype0K
-         1Y4Go4OO8m1tQ==
-Date:   Wed, 31 Aug 2022 09:39:17 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dhanuka <wdnuka@gmail.com>
-Cc:     dave.hansen@linux.intel.com, shuah@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/sgx: Fix OpenSSL deprecated warning for
- ERR_get_error_line
-Message-ID: <Yw8CFRhbs8buYYnx@kernel.org>
-References: <20220828061859.181061-1-wdnuka@gmail.com>
- <Ywyt4tvHrK4r48RK@kernel.org>
- <Yw17hyrjX1AiELZG@kernel.org>
- <86e2c049-b289-8b1f-9fc2-8938abefa7d4@gmail.com>
- <Yw60DQEbmQDKka9G@kernel.org>
- <a226891f-e589-04ea-f595-fed3d1f75691@gmail.com>
+        with ESMTP id S230181AbiHaPSE (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 11:18:04 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B421AD5DD2;
+        Wed, 31 Aug 2022 08:18:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661959083; x=1693495083;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=TxLO0JiUZbqETHUngAijiycnecMsPeNwFP5Opt7eQo4=;
+  b=m28TBWYbYlLp4NMuoDXUKMmF6aUHVuEpdGz8fdFXRrp7XaTEliqGbuW0
+   Ne2BauCrI37gX9Mz5LywoJ5kNys+yKP7/ZWhowlclOnZHH2csOvzNAhjR
+   qZO+fxwDaf7T2GXRw1n0hb2tb48jsj6DUwiRG08n8JsmH/apqoww2t99k
+   BAzdBzZkQQnDGkiEKZuTGYnyCeRlu1J8SDSDJTt2cbEwewuxAgpImGUtX
+   preoJ+8VqZa4aNJKrrvKA1/SUkcxyzEHkA+d2S4rcYIW9YGRRLdiC0P2J
+   wo+rwsdKdNBfQam+Z1iLFjI6qEEzYes4Y5l8FF1zZZLo4FhGJLYJOb6dc
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10456"; a="295473519"
+X-IronPort-AV: E=Sophos;i="5.93,278,1654585200"; 
+   d="scan'208";a="295473519"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2022 08:18:02 -0700
+X-IronPort-AV: E=Sophos;i="5.93,278,1654585200"; 
+   d="scan'208";a="563066045"
+Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.212.96.122])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 31 Aug 2022 08:18:01 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "jarkko@kernel.org" <jarkko@kernel.org>,
+        "Huang, Kai" <kai.huang@intel.com>
+Cc:     "pmenzel@molgen.mpg.de" <pmenzel@molgen.mpg.de>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] x86/sgx: Do not consider unsanitized pages an error
+References: <20220830031206.13449-1-jarkko@kernel.org>
+ <20220830031206.13449-2-jarkko@kernel.org>
+ <1f43e7b9-c101-3872-bd1b-add66933b285@intel.com>
+ <1b3308a364317d36ad41961ea9cfee24aa122f02.camel@intel.com>
+ <Yw7EX5GCrEaLzpHV@kernel.org>
+ <d07577c3f0b4b3fff0ce470c56f91fb634653703.camel@intel.com>
+ <Yw7LJa7eRG+WZ0wv@kernel.org>
+ <c3c085d69311ed759bff5bb325a2c182d423f91f.camel@intel.com>
+ <Yw7OEh7QP8tb7BR1@kernel.org>
+ <a91f65ad5c392b6e34f07bc6d3f35c89a76a98db.camel@intel.com>
+Date:   Wed, 31 Aug 2022 10:18:00 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a226891f-e589-04ea-f595-fed3d1f75691@gmail.com>
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel Corp
+Message-ID: <op.1rrt4aecwjvjmi@hhuan26-mobl1.mshome.net>
+In-Reply-To: <a91f65ad5c392b6e34f07bc6d3f35c89a76a98db.camel@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 06:33:26AM +0000, Dhanuka wrote:
-> On 8/31/22 01:06, Jarkko Sakkinen wrote:
-> > On Tue, Aug 30, 2022 at 11:18:03AM +0000, Dhanuka wrote:
-> > > On 8/30/22 02:52, Jarkko Sakkinen wrote:
-> > > > On Mon, Aug 29, 2022 at 03:15:30PM +0300, Jarkko Sakkinen wrote:
-> > > > > On Sun, Aug 28, 2022 at 11:48:59AM +0530, Dhanuka Warusadura wrote:
-> > > > > > These changes fix the "error: ‘ERR_get_error_line’ is deprecated:
-> > > > > > Since OpenSSL 3.0" warning.
-> > > > > > 
-> > > > > > Signed-off-by: Dhanuka Warusadura <wdnuka@gmail.com>
-> > > > > > ---
-> > > > > >    tools/testing/selftests/sgx/sigstruct.c | 2 +-
-> > > > > >    1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > > 
-> > > > > > diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
-> > > > > > index 50c5ab1aa6fa..671d9b58e274 100644
-> > > > > > --- a/tools/testing/selftests/sgx/sigstruct.c
-> > > > > > +++ b/tools/testing/selftests/sgx/sigstruct.c
-> > > > > > @@ -136,7 +136,7 @@ static bool check_crypto_errors(void)
-> > > > > >    			break;
-> > > > > >    		had_errors = true;
-> > > > > > -		err = ERR_get_error_line(&filename, &line);
-> > > > > > +		err = ERR_peek_last_error_line(&filename, &line);
-> > > > > >    		ERR_error_string_n(err, str, sizeof(str));
-> > > > > >    		fprintf(stderr, "crypto: %s: %s:%d\n", str, filename, line);
-> > > > > >    	}
-> > > > > > -- 
-> > > > > > 2.37.2
-> > > > > > 
-> > > > > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > > Actually NAK.
-> > > > 
-> > > > This fix is not complete:
-> > > > 
-> > > > sigstruct.c: In function ‘get_modulus’:
-> > > > sigstruct.c:151:9: error: ‘RSA_get0_key’ is deprecated: Since OpenSSL 3.0 [-Werror=deprecated-declarations]
-> > > >     151 |         RSA_get0_key(key, &n, NULL, NULL);
-> > > >         |         ^~~~~~~~~~~~
-> > > > In file included from /usr/include/openssl/x509.h:36,
-> > > >                    from /usr/include/openssl/pem.h:23,
-> > > >                    from sigstruct.c:16:
-> > > > /usr/include/openssl/rsa.h:217:28: note: declared here
-> > > >     217 | OSSL_DEPRECATEDIN_3_0 void RSA_get0_key(const RSA *r,
-> > > >         |                            ^~~~~~~~~~~~
-> > > > sigstruct.c: In function ‘gen_sign_key’:
-> > > > sigstruct.c:168:9: error: ‘PEM_read_bio_RSAPrivateKey’ is deprecated: Since OpenSSL 3.0 [-Werror=deprecated-declaration
-> > > > ]
-> > > >     168 |         key = PEM_read_bio_RSAPrivateKey(bio, NULL, NULL, NULL);
-> > > >         |         ^~~
-> > > > /usr/include/openssl/pem.h:447:1: note: declared here
-> > > >     447 | DECLARE_PEM_rw_cb_attr(OSSL_DEPRECATEDIN_3_0, RSAPrivateKey, RSA)
-> > > >         | ^~~~~~~~~~~~~~~~~~~~~~
-> > > > sigstruct.c: In function ‘encl_measure’:
-> > > > sigstruct.c:364:9: error: ‘RSA_sign’ is deprecated: Since OpenSSL 3.0 [-Werror=deprecated-declarations]
-> > > >     364 |         if (!RSA_sign(NID_sha256, digest, SHA256_DIGEST_LENGTH,
-> > > >         |         ^~
-> > > > /usr/include/openssl/rsa.h:348:27: note: declared here
-> > > >     348 | OSSL_DEPRECATEDIN_3_0 int RSA_sign(int type, const unsigned char *m,
-> > > >         |                           ^~~~~~~~
-> > > > sigstruct.c:377:9: error: ‘RSA_free’ is deprecated: Since OpenSSL 3.0 [-Werror=deprecated-declarations]
-> > > >     377 |         RSA_free(key);
-> > > >         |         ^~~~~~~~
-> > > > /usr/include/openssl/rsa.h:293:28: note: declared here
-> > > >     293 | OSSL_DEPRECATEDIN_3_0 void RSA_free(RSA *r);
-> > > >         |                            ^~~~~~~~
-> > > > sigstruct.c:382:9: error: ‘RSA_free’ is deprecated: Since OpenSSL 3.0 [-Werror=deprecated-declarations]
-> > > >     382 |         RSA_free(key);
-> > > >         |         ^~~~~~~~
-> > > > /usr/include/openssl/rsa.h:293:28: note: declared here
-> > > >     293 | OSSL_DEPRECATEDIN_3_0 void RSA_free(RSA *r);
-> > > >         |                            ^~~~~~~~
-> > > > cc1: all warnings being treated as errors
-> > > > make: *** [Makefile:39: /home/jarkko/work/linux-sgx/tools/testing/selftests/sgx/sigstruct.o] Error 1
-> > > > 
-> > > > BR, Jarkko
-> > > Thanks for the review.
-> > > 
-> > > But, my intention was to just fix the `ERR_get_error_line` deprecated
-> > > warning (as mentioned in the commit header) and not all the OpenSSL
-> > > deprecated warnings found in `sigstruct.c`
-> > > 
-> > > Do I need to fix all these OpenSSL deprecated warnings in `sigstruct.c` in
-> > > order to get this patch merged?
-> > Yes, it is incomplete as it is.
-> > 
-> > BR, Jarkko
-> 
-> Understood. Will try to resolve the remaining deprecated warnings as well.
+Hi Kai
+On Tue, 30 Aug 2022 22:17:08 -0500, Huang, Kai <kai.huang@intel.com> wrote:
 
-Yeah, it would be way more valuable instead of dozen
-of oneline patches. Thank you.
+> On Wed, 2022-08-31 at 05:57 +0300, jarkko@kernel.org wrote:
+>> On Wed, Aug 31, 2022 at 02:55:52AM +0000, Huang, Kai wrote:
+>> > On Wed, 2022-08-31 at 05:44 +0300, jarkko@kernel.org wrote:
+>> > > On Wed, Aug 31, 2022 at 02:35:53AM +0000, Huang, Kai wrote:
+>> > > > On Wed, 2022-08-31 at 05:15 +0300, jarkko@kernel.org wrote:
+>> > > > > On Wed, Aug 31, 2022 at 01:27:58AM +0000, Huang, Kai wrote:
+>> > > > > > On Tue, 2022-08-30 at 15:54 -0700, Reinette Chatre wrote:
+>> > > > > > > Hi Jarkko,
+>> > > > > > >
+>> > > > > > > On 8/29/2022 8:12 PM, Jarkko Sakkinen wrote:
+>> > > > > > > > In sgx_init(), if misc_register() for the provision  
+>> device fails, and
+>> > > > > > > > neither sgx_drv_init() nor sgx_vepc_init() succeeds, then  
+>> ksgxd will be
+>> > > > > > > > prematurely stopped.
+>> > > > > > >
+>> > > > > > > I do not think misc_register() is required to fail for the  
+>> scenario to
+>> > > > > > > be triggered (rather use "or" than "and"?). Perhaps just
+>> > > > > > > "In sgx_init(), if a failure is encountered after ksgxd is  
+>> started
+>> > > > > > > (via sgx_page_reclaimer_init()) ...".
+>> > > > > >
+>> > > > > > IMHO "a failure" might be too vague.  For instance, failure  
+>> to sgx_drv_init()
+>> > > > > > won't immediately result in ksgxd to stop prematurally.  As  
+>> long as KVM SGX can
+>> > > > > > be initialized successfully, sgx_init() still returns 0.
+>> > > > > >
+>> > > > > > Btw I was thinking whether we should move  
+>> sgx_page_reclaimer_init() to the end
+>> > > > > > of sgx_init(), after we make sure at least one of the driver  
+>> and the KVM SGX is
+>> > > > > > initialized successfully.  Then the code change in this patch  
+>> won't be necessary
+>> > > > > > if I understand correctly.  AFAICT there's no good reason to  
+>> start the ksgxd at
+>> > > > > > early stage before we are sure either the driver or KVM SGX  
+>> will work.
+>> > > > >
+>> > > > > I would focus fixing the existing flow rather than reinventing  
+>> the flow.
+>> > > > >
+>> > > > > It can be made to work, and therefore it is IMHO correct action  
+>> to take.
+>> > > >
+>> > > > From another perspective, the *existing flow* is the reason which  
+>> causes this
+>> > > > bug.  A real fix is to fix the flow itself.
+>> > >
+>> > > Any existing flow in part of the kernel can have a bug. That
+>> > > does not mean that switching flow would be proper way to fix
+>> > > a bug.
+>> > >
+>> > > BR, Jarkko
+>> >
+>> > Yes but I think this is only true when the flow is reasonable.  If  
+>> the flow
+>> > itself isn't reasonable, we should fix the flow (given it's easy to  
+>> fix AFAICT).
+>> >
+>> > Anyway, let us also hear from others.
+>>
+>> The flow can be made to work without issues, which in the
+>> context of a bug fix is exactly what a bug fix should do.
+>> Not more or less.
+>
+> No. To me the flow itself is buggy.  There's no reason to start ksgxd()  
+> before
+> at least SGX driver is initialized to work.
+>
 
-BR, Jarkko
+Will it cause racing if we expose dev nodes to user space before
+ksgxd is started and sensitization done?
+
+> Patching the buggy flow is more like a workaround, but isn't a real fix.
+>
+>>
+>> You don't gain any measurable value for the user with this
+>> switch idea.
+>
+> There is actual gain by moving sgx_page_reclaimer_init() to  
+> sgx_drv_init(), or
+> only calling sgx_page_reclaimer_init() when sgx_drv_init() returns  
+> success:
+>
+> If somehow sgx_drv_init() fails to initialize, ksgxd() won't run.
+>
+> Currently, if SGX driver fails to initialize but virtual EPC initializes
+> successfully, ksgxd() still runs. However it achieves nothing but only  
+> wastes
+> CPU cycles.
+>
+>
+
+You still need ksgxd for sanitizing (at least) and swapping (potentially)
+even if only virtual EPC initializes.
+
+Thanks
+Haitao
