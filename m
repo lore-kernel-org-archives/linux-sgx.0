@@ -2,92 +2,104 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F93ECAAD3
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 18:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92092ECAAD3
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 18:27:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232864AbiHaSZ4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 31 Aug 2022 14:25:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58886 "EHLO
+        id S232967AbiHaS1n (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 31 Aug 2022 14:27:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232370AbiHaSZd (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 14:25:33 -0400
+        with ESMTP id S232968AbiHaS0w (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 14:26:52 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD20CE3420;
-        Wed, 31 Aug 2022 11:21:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D55D6F32E7;
+        Wed, 31 Aug 2022 11:23:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A390EB82221;
-        Wed, 31 Aug 2022 18:21:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164F7C433D6;
-        Wed, 31 Aug 2022 18:21:44 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 56E68B8220F;
+        Wed, 31 Aug 2022 18:23:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0AF3C433D6;
+        Wed, 31 Aug 2022 18:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661970105;
-        bh=VfqWYmsroNc40aDzHJP4Oz82CrPs4tYiPBQEHE7mCHs=;
+        s=k20201202; t=1661970189;
+        bh=kSSmDw1mwdTG9dsLxK81HAvFG60qGsT4znGs6QkcCK0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WhkKrb4viMn/yX3AS+kCL6vTqSDvaM30S6DwNJQRdsl1AgwGSn7rftwEZQo+5Ynf6
-         S9E8uGrAgI4b6zDOhgZOYhsg5xkRJieNMZu2nE2UNrJq1eYooyy5tY6PNfQjsCKD/g
-         9FqJ/G6gQORToNcg0qy8S/QekzXWfWMVwMYKtIwhhPigIjsdjNZCsA4ABTldm4630B
-         wTH2N3fS2y+Ir0pycP4G+PJzqhfzaZ2cLpCIfpe2xnxkXMRJ4XpusK9dsQYXX+r6w8
-         nCWO2IGvm/Q/heTwP7e6tZF9EtviuDO0gYzKLXk3XYj454/Av3rUqRlqAB1Rzx0P0b
-         4EGgG5DzxKXzQ==
-Date:   Wed, 31 Aug 2022 21:21:41 +0300
+        b=LHBXEAOjpTKGVlBV2qYPEpP+dne3VcvDQdkUp3JeUAShr7mgkn7f1TAcyvFyiqUp2
+         h7GkrMWHV5SEwhSXvAhfc0lNobsR3kOrVy3DuFvbLizRKVlStxD3OWhBQfyqd6ZfBy
+         uoRyoU2qWSPOL/CyEdMBuYRtr/0UTmzv0Q7iHeuPRDKboGO0wPYa4Xm7X1mfOvbPYc
+         nTUNkRQvg8AUXUdJKKKbb+qF1M1dbrL7mdeKivUKnMzcJ8PJ+raTU6JTuEEmyEQ7ow
+         aH5mIV8IfaSyVzOwWEJka/YSShzyawHyW9Y7SK5N8cYfmquCwDv2CpcCk5ixxx7lve
+         hc/F7c9Si6QaQ==
+Date:   Wed, 31 Aug 2022 21:23:04 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Reinette Chatre <reinette.chatre@intel.com>
 Cc:     linux-sgx@vger.kernel.org,
         Haitao Huang <haitao.huang@linux.intel.com>,
         Vijay Dhanraj <vijay.dhanraj@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/6] x86/sgx: Handle VA page allocation failure for
- EAUG on PF.
-Message-ID: <Yw+mtfFs3dvOWOv2@kernel.org>
-References: <20220831173829.126661-1-jarkko@kernel.org>
- <20220831173829.126661-4-jarkko@kernel.org>
- <20991fdc-1ae4-ef68-c6d4-12372b4e6f73@intel.com>
+        Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH 6/6] selftests/sgx: Add a bpftrace script for tracking
+ allocation errors
+Message-ID: <Yw+nCBVYfueEXVZK@kernel.org>
+References: <20220830031206.13449-1-jarkko@kernel.org>
+ <20220830031206.13449-7-jarkko@kernel.org>
+ <64498c9f-a6e1-6379-ca8e-d751fb239bec@intel.com>
+ <Yw7IZWHbHjdjMa/Y@kernel.org>
+ <218a5ae1-f74e-36e3-1137-c001d49126bb@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20991fdc-1ae4-ef68-c6d4-12372b4e6f73@intel.com>
+In-Reply-To: <218a5ae1-f74e-36e3-1137-c001d49126bb@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 11:08:33AM -0700, Reinette Chatre wrote:
+On Wed, Aug 31, 2022 at 11:10:20AM -0700, Reinette Chatre wrote:
 > Hi Jarkko,
 > 
-> On 8/31/2022 10:38 AM, Jarkko Sakkinen wrote:
-> > From: Haitao Huang <haitao.huang@linux.intel.com>
+> On 8/30/2022 7:33 PM, Jarkko Sakkinen wrote:
+> > On Tue, Aug 30, 2022 at 03:57:24PM -0700, Reinette Chatre wrote:
+> >> Hi Jarkko,
+> >>
+> >> On 8/29/2022 8:12 PM, Jarkko Sakkinen wrote:
+> >>> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> >>> ---
+> >>>  tools/testing/selftests/sgx/alloc-error.bt | 7 +++++++
+> >>>  1 file changed, 7 insertions(+)
+> >>>  create mode 100644 tools/testing/selftests/sgx/alloc-error.bt
+> >>>
+> >>> diff --git a/tools/testing/selftests/sgx/alloc-error.bt b/tools/testing/selftests/sgx/alloc-error.bt
+> >>> new file mode 100644
+> >>> index 000000000000..9268d50dea29
+> >>> --- /dev/null
+> >>> +++ b/tools/testing/selftests/sgx/alloc-error.bt
+> >>> @@ -0,0 +1,7 @@
+> >>> +kr:sgx_alloc_epc_page /(uint64)retval >= (uint64)(-4095)/ {
+> >>> +		 printf("sgx_alloc_epc_page: retval=%d\n", (int64)retval);
+> >>> +}
+> >>> +
+> >>> +kr:sgx_encl_page_alloc /(uint64)retval >= (uint64)(-4095)/ {
+> >>> +		 printf("sgx_encl_page_alloc: retval=%d\n", (int64)retval);
+> >>> +}
+> >>
+> >>
+> >> Could there be a snippet of comments in this new file to guide users
+> >> on how to use this script?
 > > 
-> > VM_FAULT_NOPAGE is expected behaviour for -EBUSY failure path, when
-> > augmenting a page, as this means that the reclaimer thread has been
-> > triggered, and the intention is just to round-trip in ring-3, and
-> > retry with a new page fault.
-> > 
-> > Fixes: 5a90d2c3f5ef ("x86/sgx: Support adding of pages to an initialized enclave")
-> > Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
-> > Tested-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
-> > Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> > v3:
-> > * Added Reinette's ack.
+> > Do not mean to be rude but I'm not sure what there is to guide but
+> > I'm open for ideas.
 > 
-> The ack came with a caveat related to a white space issue that
-> you did not fix in this version.
+> How about something like below in comments as part of the script:
+> 
+> "bpftrace script using kretprobe to trace returns of some key functions
+>  in support of tracking allocation errors."
 
-Reinette, I'm sorry but I might possibly have some sort of blind
-spot here.
-
-I looked at the diff and I could not see any issues, and did not
-run into issues with checkpath.
-
-Can you point out what exactly is the whitespace issue?
+I think comments that I put (before seeing) also
+make it clear enough (not to say that what you
+had not been a valid alternative).
 
 BR, Jarkko
