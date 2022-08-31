@@ -2,86 +2,163 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58715C3DA6B
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 18:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C309FECAAD1
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 18:34:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231231AbiHaS2y (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 31 Aug 2022 14:28:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60304 "EHLO
+        id S231315AbiHaSeF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 31 Aug 2022 14:34:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232473AbiHaS2Q (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 14:28:16 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A9FBCCC6;
-        Wed, 31 Aug 2022 11:24:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661970242; x=1693506242;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wXM2hIDhlZVfZnXfi1q7P4cdxCTlqnnAsMQBb9mpon4=;
-  b=Zh5QJFrbuzP0UEXKMISBw2lcXRy3b6nm+/VSRmVSw7PN2AZ1HNbs6ISW
-   NwzyLK44Gv8hFf5Z2R8VGqHC9kwVQaH7Xmak65Wt+a70oPyNMeIJ5Tq+u
-   O3BGmbOGno6N5s3PFEGuGFyWNsC0v+bMjHfqUk2+Pdj/IkNp7mgkO5FGO
-   QtIbXH2jx9S91M5kN6ysZfCWbmaBkU8ZltBvJEKCrX1yK1zNpX0cgEDkG
-   c/B8FG3sPt9NoQ43ag1EcRXVzySl/bj9blIkXHqD8Z1ixpKDKX0onczdL
-   ZwS56YYsZI0JFQ8ErbOuPkhTfhNDv21elm1kXhwXMshMpuv5EKt/lDAwc
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10456"; a="357232666"
-X-IronPort-AV: E=Sophos;i="5.93,278,1654585200"; 
-   d="scan'208";a="357232666"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2022 11:23:56 -0700
-X-IronPort-AV: E=Sophos;i="5.93,278,1654585200"; 
-   d="scan'208";a="612187466"
-Received: from nkrobins-mobl2.amr.corp.intel.com (HELO [10.212.220.19]) ([10.212.220.19])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2022 11:23:56 -0700
-Message-ID: <e870df49-77ed-3222-086d-ae929107f33b@intel.com>
-Date:   Wed, 31 Aug 2022 11:23:55 -0700
+        with ESMTP id S231784AbiHaSd3 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 14:33:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9747F10401C;
+        Wed, 31 Aug 2022 11:28:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ED65D61CD4;
+        Wed, 31 Aug 2022 18:28:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0491AC433D7;
+        Wed, 31 Aug 2022 18:28:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661970507;
+        bh=+ENo/svJBBC8Oy4/G43ZPL5LzEhYc0IYqehWhykl2uQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rAoVdWs61ULAlNVAt01rj/N33V4akfFULiD7EYlyIwssgT2ZKXJDGWU2EAkD8zhMH
+         1VflqdgaiooFjmthhZ/iRz0umOa+4Vnj1YsL8KOuTcC6acXmka4to+u7XSAjBx0QVB
+         UpYqVZqOmXazQw+TnhE82NS/E0UxEBtHinl144vltTzkNgQNpv1hTLUs+ZLrjO4VLw
+         f5n0qP6EtZik5PxRxhmSkYj79/t2iFWcojSxPrEfl4CAeYneblrt3NZrKQp2WNg8WU
+         E1y+EivfKecc1G7jjN9tl2GSQ0fkmRONTJnXzekju8OzR5B7M8jGmaFjMkeZd/Bgbx
+         HLu0dAuA6Nc/w==
+Date:   Wed, 31 Aug 2022 21:28:23 +0300
+From:   "jarkko@kernel.org" <jarkko@kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     "Huang, Kai" <kai.huang@intel.com>,
+        "pmenzel@molgen.mpg.de" <pmenzel@molgen.mpg.de>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] x86/sgx: Do not consider unsanitized pages an error
+Message-ID: <Yw+oR3FKlwbeOl6I@kernel.org>
+References: <20220830031206.13449-2-jarkko@kernel.org>
+ <1f43e7b9-c101-3872-bd1b-add66933b285@intel.com>
+ <1b3308a364317d36ad41961ea9cfee24aa122f02.camel@intel.com>
+ <Yw7EX5GCrEaLzpHV@kernel.org>
+ <d07577c3f0b4b3fff0ce470c56f91fb634653703.camel@intel.com>
+ <Yw7LJa7eRG+WZ0wv@kernel.org>
+ <c3c085d69311ed759bff5bb325a2c182d423f91f.camel@intel.com>
+ <Yw7OEh7QP8tb7BR1@kernel.org>
+ <a91f65ad5c392b6e34f07bc6d3f35c89a76a98db.camel@intel.com>
+ <op.1rrt4aecwjvjmi@hhuan26-mobl1.mshome.net>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 6/6] selftests/sgx: Add a bpftrace script for tracking
- allocation errors
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
-Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
-        Vijay Dhanraj <vijay.dhanraj@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-References: <20220830031206.13449-1-jarkko@kernel.org>
- <20220830031206.13449-7-jarkko@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <20220830031206.13449-7-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <op.1rrt4aecwjvjmi@hhuan26-mobl1.mshome.net>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 8/29/22 20:12, Jarkko Sakkinen wrote:
-> diff --git a/tools/testing/selftests/sgx/alloc-error.bt b/tools/testing/selftests/sgx/alloc-error.bt
-> new file mode 100644
-> index 000000000000..9268d50dea29
-> --- /dev/null
-> +++ b/tools/testing/selftests/sgx/alloc-error.bt
-> @@ -0,0 +1,7 @@
-> +kr:sgx_alloc_epc_page /(uint64)retval >= (uint64)(-4095)/ {
-> +		 printf("sgx_alloc_epc_page: retval=%d\n", (int64)retval);
-> +}
-> +
-> +kr:sgx_encl_page_alloc /(uint64)retval >= (uint64)(-4095)/ {
-> +		 printf("sgx_encl_page_alloc: retval=%d\n", (int64)retval);
-> +}
+On Wed, Aug 31, 2022 at 10:18:00AM -0500, Haitao Huang wrote:
+> Hi Kai
+> On Tue, 30 Aug 2022 22:17:08 -0500, Huang, Kai <kai.huang@intel.com> wrote:
+> 
+> > On Wed, 2022-08-31 at 05:57 +0300, jarkko@kernel.org wrote:
+> > > On Wed, Aug 31, 2022 at 02:55:52AM +0000, Huang, Kai wrote:
+> > > > On Wed, 2022-08-31 at 05:44 +0300, jarkko@kernel.org wrote:
+> > > > > On Wed, Aug 31, 2022 at 02:35:53AM +0000, Huang, Kai wrote:
+> > > > > > On Wed, 2022-08-31 at 05:15 +0300, jarkko@kernel.org wrote:
+> > > > > > > On Wed, Aug 31, 2022 at 01:27:58AM +0000, Huang, Kai wrote:
+> > > > > > > > On Tue, 2022-08-30 at 15:54 -0700, Reinette Chatre wrote:
+> > > > > > > > > Hi Jarkko,
+> > > > > > > > >
+> > > > > > > > > On 8/29/2022 8:12 PM, Jarkko Sakkinen wrote:
+> > > > > > > > > > In sgx_init(), if misc_register() for the provision
+> > > device fails, and
+> > > > > > > > > > neither sgx_drv_init() nor sgx_vepc_init() succeeds,
+> > > then ksgxd will be
+> > > > > > > > > > prematurely stopped.
+> > > > > > > > >
+> > > > > > > > > I do not think misc_register() is required to fail for
+> > > the scenario to
+> > > > > > > > > be triggered (rather use "or" than "and"?). Perhaps just
+> > > > > > > > > "In sgx_init(), if a failure is encountered after ksgxd
+> > > is started
+> > > > > > > > > (via sgx_page_reclaimer_init()) ...".
+> > > > > > > >
+> > > > > > > > IMHO "a failure" might be too vague.  For instance,
+> > > failure to sgx_drv_init()
+> > > > > > > > won't immediately result in ksgxd to stop prematurally.
+> > > As long as KVM SGX can
+> > > > > > > > be initialized successfully, sgx_init() still returns 0.
+> > > > > > > >
+> > > > > > > > Btw I was thinking whether we should move
+> > > sgx_page_reclaimer_init() to the end
+> > > > > > > > of sgx_init(), after we make sure at least one of the
+> > > driver and the KVM SGX is
+> > > > > > > > initialized successfully.  Then the code change in this
+> > > patch won't be necessary
+> > > > > > > > if I understand correctly.  AFAICT there's no good reason
+> > > to start the ksgxd at
+> > > > > > > > early stage before we are sure either the driver or KVM
+> > > SGX will work.
+> > > > > > >
+> > > > > > > I would focus fixing the existing flow rather than
+> > > reinventing the flow.
+> > > > > > >
+> > > > > > > It can be made to work, and therefore it is IMHO correct
+> > > action to take.
+> > > > > >
+> > > > > > From another perspective, the *existing flow* is the reason
+> > > which causes this
+> > > > > > bug.  A real fix is to fix the flow itself.
+> > > > >
+> > > > > Any existing flow in part of the kernel can have a bug. That
+> > > > > does not mean that switching flow would be proper way to fix
+> > > > > a bug.
+> > > > >
+> > > > > BR, Jarkko
+> > > >
+> > > > Yes but I think this is only true when the flow is reasonable.  If
+> > > the flow
+> > > > itself isn't reasonable, we should fix the flow (given it's easy
+> > > to fix AFAICT).
+> > > >
+> > > > Anyway, let us also hear from others.
+> > > 
+> > > The flow can be made to work without issues, which in the
+> > > context of a bug fix is exactly what a bug fix should do.
+> > > Not more or less.
+> > 
+> > No. To me the flow itself is buggy.  There's no reason to start ksgxd()
+> > before
+> > at least SGX driver is initialized to work.
+> > 
+> 
+> Will it cause racing if we expose dev nodes to user space before
+> ksgxd is started and sensitization done?
 
-I guess this doesn't _hurt_, but it's also not exactly the easiest way
-to get this done.  You need a whole bpf toolchain.  You could also just do:
+I'll to explain this.
 
-	perf probe 'sgx_encl_page_alloc%return $retval'
+So the point is to fix the issue at hand, and fix it locally.
 
-Even *that* can be replicated in a few scant lines of shell code echoing
-into /sys/kernel/debug/tracing.
+Changing initialization order is simply out of context. It's
+not really an argument for or against changing it
+
+We are fixing sanitization here, and only that with zero
+side-effects to any other semantics.
+
+It's dictated by the development process [*] but more
+importantly it's also just plain common sense.
+
+[*] https://www.kernel.org/doc/html/v5.19/process/submitting-patches.html#separate-your-changes
+
+BR, Jarkko
+
+
