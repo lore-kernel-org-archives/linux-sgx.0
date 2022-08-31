@@ -2,36 +2,36 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A51ECAAD3
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 18:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F884ECAAD1
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 18:45:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233111AbiHaSou (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 31 Aug 2022 14:44:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46616 "EHLO
+        id S229735AbiHaSpv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 31 Aug 2022 14:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233033AbiHaSof (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 14:44:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53B43BD5;
-        Wed, 31 Aug 2022 11:44:34 -0700 (PDT)
+        with ESMTP id S231332AbiHaSpt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 14:45:49 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A61A524099;
+        Wed, 31 Aug 2022 11:45:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D994160E89;
-        Wed, 31 Aug 2022 18:44:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8099C433D6;
-        Wed, 31 Aug 2022 18:44:32 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4DBFEB8228E;
+        Wed, 31 Aug 2022 18:45:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F29C433C1;
+        Wed, 31 Aug 2022 18:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661971473;
-        bh=bXVzGMvvGTEaLDHMeK2hMUd2osC7vq1ST9RgLI8qV5U=;
+        s=k20201202; t=1661971537;
+        bh=qAHNrcYfEDyfMgs5fBUxKc1wk7bG++KpzqG+Hbijn5s=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YfRKBl2tseu5V+P2/pvJuHp+UPI5ey31PwfQxSywuqpZGSi40WnEajFVRczC8P4zN
-         gXoHdizqUUk1IuSeLKKOVuoXEoRthT8H01oQVuH4xVglQI7HwDTHFzsYPTxXQjQMGi
-         1PTmzW4XFF/SBWsBrCRwuVo+MD5m2p8+2LMtVKtNg67gYmBDOID2KOyVaRNx0epJi0
-         ASEz6LAyypQBHuV7oPBehmEOu+KvuFSTaL4Miw428vBKGXp0x/uBpH63okNpvCFrpN
-         b2+eMsGdVpCURl7biAfJIGMDRkhxdsoY+wBfIfyF/wbs6cm0jvbKxSs5PvMIHt3MA1
-         VfHplgSNet7ww==
-Date:   Wed, 31 Aug 2022 21:44:28 +0300
+        b=ceAGAfVXt+jzwJe2rqQnjMjP3JP0l6t9eqAnw3VsOdGXcdmZFs2HNJo8L/X3FKnHK
+         oWglRtcC3I7eEGEIijdONoTQIqTOuiICb+i3PiIuMgwGTFQdnCG58wRFo3GD22cgbK
+         BIMyeGzSO99V2e+XT5Wz8g4LfrmXwMGtwAn0XykOgPVz4QPQAzHNyKjdX4F8l8R1P9
+         eUDWwpqt8ThA15MniJTKZ17MRMzhMG3/0pgJEpkKnlGVlnuQgRPdqOGq9UCYZfgsjv
+         /wPiMDYXprM2AaSUkQ54jmAHrNPtPzYSRpx0SB3YhF+c6m8Gi/enQDiLfSWbP5/msE
+         DLmZ+d4A9cyoQ==
+Date:   Wed, 31 Aug 2022 21:45:32 +0300
 From:   "jarkko@kernel.org" <jarkko@kernel.org>
 To:     Dave Hansen <dave.hansen@intel.com>
 Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
@@ -47,7 +47,7 @@ Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
         "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 1/6] x86/sgx: Do not consider unsanitized pages an error
-Message-ID: <Yw+r8zLoq3pviDIc@kernel.org>
+Message-ID: <Yw+sTOGSSor7QzPi@kernel.org>
 References: <1b3308a364317d36ad41961ea9cfee24aa122f02.camel@intel.com>
  <Yw7EX5GCrEaLzpHV@kernel.org>
  <d07577c3f0b4b3fff0ce470c56f91fb634653703.camel@intel.com>
@@ -71,31 +71,7 @@ On Wed, Aug 31, 2022 at 11:35:10AM -0700, Dave Hansen wrote:
 > 
 > Can you three please start trimming your replies?  You don't need to and
 > should not quote the entirety of your messages every time you reply.
-> 
-> On 8/31/22 11:28, jarkko@kernel.org wrote:
-> >> Will it cause racing if we expose dev nodes to user space before
-> >> ksgxd is started and sensitization done?
-> > I'll to explain this.
-> > 
-> > So the point is to fix the issue at hand, and fix it locally.
-> > 
-> > Changing initialization order is simply out of context. It's
-> > not really an argument for or against changing it
-> > 
-> > We are fixing sanitization here, and only that with zero
-> > side-effects to any other semantics.
-> > 
-> > It's dictated by the development process [*] but more
-> > importantly it's also just plain common sense.
-> 
-> Kai, I think your suggestion is reasonable.  You make a good point about
-> not needing ksgxd for vepc.
-> 
-> *But*, I think it's a bit too much for a bugfix that's headed to
-> -stable.  I'm concerned that it will have unintended side effects,
-> *especially* when there's a working, tested alternative.
 
-Yeah, I also actually *do* agree that the suggestions could
-be reasonable.
+Sure, sorry about that.
 
 BR, Jarkko
