@@ -2,77 +2,92 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BA4ECAAD1
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 18:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F93ECAAD3
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 18:25:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231739AbiHaSTb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 31 Aug 2022 14:19:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59016 "EHLO
+        id S232864AbiHaSZ4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 31 Aug 2022 14:25:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231805AbiHaSTJ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 14:19:09 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CFBD9A9CC;
-        Wed, 31 Aug 2022 11:15:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661969729; x=1693505729;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wfUhKvUcNyE2J2x0SokgiD+eOtEV7vGJq38abRIn1Sw=;
-  b=augAJ+9hXBdnzGOTypORSsDoDQeBhxyt44tAthJIQnQlnSMDaXrdpCUG
-   FmCM48zy3Oe1t4bG22ungsDZLLtgSJmJsO/MnRsp2pLq/Fc9DujsGlsm5
-   Y69KyAIafxgDC0ITMmDeThAPZrGtIry+8TUx6uea5cNBtcJMWm2T0NCg8
-   ZdiyUpso6HM8bemeiCIAlXmBZZaMW7nMKKMySb/gPVVAsCakOV895CNm4
-   Uf3dJpaukanjcdO9+eXBvIU7t0cqQC/UXa77AQ7j52a1c24p/dxkPF0v9
-   c0s4ah2dkHS0nVB0L8UrxU5WhFlJnY4djqbl+rOYWa4P1n6KaeSnZ4BQA
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10456"; a="357230366"
-X-IronPort-AV: E=Sophos;i="5.93,278,1654585200"; 
-   d="scan'208";a="357230366"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2022 11:14:03 -0700
-X-IronPort-AV: E=Sophos;i="5.93,278,1654585200"; 
-   d="scan'208";a="612184409"
-Received: from nkrobins-mobl2.amr.corp.intel.com (HELO [10.212.220.19]) ([10.212.220.19])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2022 11:14:02 -0700
-Message-ID: <709d9f58-0ae9-833a-ca54-7b50307b377e@intel.com>
-Date:   Wed, 31 Aug 2022 11:14:02 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 5/6] selftests/sgx: retry the ioctls returned with EAGAIN
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Reinette Chatre <reinette.chatre@intel.com>
+        with ESMTP id S232370AbiHaSZd (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 31 Aug 2022 14:25:33 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD20CE3420;
+        Wed, 31 Aug 2022 11:21:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A390EB82221;
+        Wed, 31 Aug 2022 18:21:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164F7C433D6;
+        Wed, 31 Aug 2022 18:21:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661970105;
+        bh=VfqWYmsroNc40aDzHJP4Oz82CrPs4tYiPBQEHE7mCHs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WhkKrb4viMn/yX3AS+kCL6vTqSDvaM30S6DwNJQRdsl1AgwGSn7rftwEZQo+5Ynf6
+         S9E8uGrAgI4b6zDOhgZOYhsg5xkRJieNMZu2nE2UNrJq1eYooyy5tY6PNfQjsCKD/g
+         9FqJ/G6gQORToNcg0qy8S/QekzXWfWMVwMYKtIwhhPigIjsdjNZCsA4ABTldm4630B
+         wTH2N3fS2y+Ir0pycP4G+PJzqhfzaZ2cLpCIfpe2xnxkXMRJ4XpusK9dsQYXX+r6w8
+         nCWO2IGvm/Q/heTwP7e6tZF9EtviuDO0gYzKLXk3XYj454/Av3rUqRlqAB1Rzx0P0b
+         4EGgG5DzxKXzQ==
+Date:   Wed, 31 Aug 2022 21:21:41 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
 Cc:     linux-sgx@vger.kernel.org,
         Haitao Huang <haitao.huang@linux.intel.com>,
         Vijay Dhanraj <vijay.dhanraj@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20220830031206.13449-1-jarkko@kernel.org>
- <20220830031206.13449-6-jarkko@kernel.org>
- <5d19be91-3aef-5cbe-6063-3ff3dbd5572b@intel.com>
- <Yw7IFcnjbfm3Xgqk@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <Yw7IFcnjbfm3Xgqk@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/6] x86/sgx: Handle VA page allocation failure for
+ EAUG on PF.
+Message-ID: <Yw+mtfFs3dvOWOv2@kernel.org>
+References: <20220831173829.126661-1-jarkko@kernel.org>
+ <20220831173829.126661-4-jarkko@kernel.org>
+ <20991fdc-1ae4-ef68-c6d4-12372b4e6f73@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20991fdc-1ae4-ef68-c6d4-12372b4e6f73@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 8/30/22 19:31, Jarkko Sakkinen wrote:
->> On 8/29/2022 8:12 PM, Jarkko Sakkinen wrote:
->>> From: Haitao Huang <haitao.huang@linux.intel.com>
->>>
->>> For EMODT and EREMOVE ioctls with a large range, kernel
->> ioctl()s?
-> Ioctl is common enough to be considered as noun and is
-> widely phrased like that in commit messages. I don't
-> see any added clarity.
+On Wed, Aug 31, 2022 at 11:08:33AM -0700, Reinette Chatre wrote:
+> Hi Jarkko,
+> 
+> On 8/31/2022 10:38 AM, Jarkko Sakkinen wrote:
+> > From: Haitao Huang <haitao.huang@linux.intel.com>
+> > 
+> > VM_FAULT_NOPAGE is expected behaviour for -EBUSY failure path, when
+> > augmenting a page, as this means that the reclaimer thread has been
+> > triggered, and the intention is just to round-trip in ring-3, and
+> > retry with a new page fault.
+> > 
+> > Fixes: 5a90d2c3f5ef ("x86/sgx: Support adding of pages to an initialized enclave")
+> > Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> > Tested-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
+> > Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > v3:
+> > * Added Reinette's ack.
+> 
+> The ack came with a caveat related to a white space issue that
+> you did not fix in this version.
 
-I definitely prefer ioctl().
+Reinette, I'm sorry but I might possibly have some sort of blind
+spot here.
+
+I looked at the diff and I could not see any issues, and did not
+run into issues with checkpath.
+
+Can you point out what exactly is the whitespace issue?
+
+BR, Jarkko
