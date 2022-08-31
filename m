@@ -2,242 +2,104 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 231DEECAAD5
-	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 02:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBDEECAAA1
+	for <linux-sgx@archiver.kernel.org>; Wed, 31 Aug 2022 02:16:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbiHaCCD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 30 Aug 2022 22:02:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46394 "EHLO
+        id S230251AbiHaCQJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 30 Aug 2022 22:16:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231829AbiHaCCC (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 30 Aug 2022 22:02:02 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEF59B2D89;
-        Tue, 30 Aug 2022 19:02:00 -0700 (PDT)
+        with ESMTP id S229589AbiHaCQI (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 30 Aug 2022 22:16:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93E8C7647E;
+        Tue, 30 Aug 2022 19:16:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 524BCB81E3D;
-        Wed, 31 Aug 2022 02:01:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 737E2C433C1;
-        Wed, 31 Aug 2022 02:01:57 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1A3666191C;
+        Wed, 31 Aug 2022 02:16:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E731FC433D6;
+        Wed, 31 Aug 2022 02:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661911318;
-        bh=j31JuO0p+zpWEN2rXk3iEcxng6r4onbgTf5IaSXeq6k=;
+        s=k20201202; t=1661912164;
+        bh=Ea0i+xlOeHCTTHU9/7iuQnw+cJvR7da0sKZ4LoOMoVc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=stg7RGi4sXE8s22G7FmFzzkoL60MHZmP0KA1a0F9L/bD7MAPrR0r7nf6M3nz27taA
-         AHLPmcrsHaSIfNLLg8i3I73aqw8ZZNULB/u1hf0dz9ysSxgDQYeACCUX/KcWkWL/U8
-         6eRELMMqAKr8lwWUHCMpYY0JyFctZRe5mkQZiLWc4oCxrjvJip7tf9prsMPcpLUiHm
-         izZFXCMXu2+kWNIFGtddFZr4jNmfFA7mX/zFbtI1dY0jgbcRXtEFWhWmmRsQQz4HGr
-         p3JTCFS8H8C3R55SEYMBDoZRkP5ZWfHypOi4N0vduRZmUsiGVTv+irIxpCDPuemRKP
-         y4VeWHNvXDCSQ==
-Date:   Wed, 31 Aug 2022 05:01:53 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Vijay Dhanraj <vijay.dhanraj@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
+        b=N+jLm4NoNJctmJuXBz9wntYcJM98EtBADyrRMxGY758hra9PXARJ9+f5lVWrG+2Oi
+         P2XXRnC+BgDsMmQSk2lKoGE4jxKWA2qiUo65g/ofPUXm1ELN51aDxRyaqVsoCYnjGa
+         BRsAWs78qawWa0lsng67pRu0OzdWbVq23VbcMH6tpVUio8BIPRKnwubJZb7hnQ9Y1K
+         zGJ88HJq1fwf3muYd1XR10ZlVCyoGJeG2XTOa3TgxGjcFX6ufL5W71HCRQQLT60rbQ
+         9hU/990wz6+PIoNDQq/dmCF64eh1Q8YdePTWjjgO0YD9B7cYcLBpmEYhrmvGtyPLD2
+         O5LAqYcPv6vQA==
+Date:   Wed, 31 Aug 2022 05:15:59 +0300
+From:   "jarkko@kernel.org" <jarkko@kernel.org>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "pmenzel@molgen.mpg.de" <pmenzel@molgen.mpg.de>,
+        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 1/6] x86/sgx: Do not consider unsanitized pages an error
-Message-ID: <Yw7BEYawb21H2u5M@kernel.org>
+Message-ID: <Yw7EX5GCrEaLzpHV@kernel.org>
 References: <20220830031206.13449-1-jarkko@kernel.org>
  <20220830031206.13449-2-jarkko@kernel.org>
  <1f43e7b9-c101-3872-bd1b-add66933b285@intel.com>
- <Yw6/iTzSdSw/Y/VO@kernel.org>
- <Yw7AXxMFIEEU7TWA@kernel.org>
+ <1b3308a364317d36ad41961ea9cfee24aa122f02.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yw7AXxMFIEEU7TWA@kernel.org>
+In-Reply-To: <1b3308a364317d36ad41961ea9cfee24aa122f02.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 04:58:58AM +0300, Jarkko Sakkinen wrote:
-> On Wed, Aug 31, 2022 at 04:55:24AM +0300, Jarkko Sakkinen wrote:
-> > On Tue, Aug 30, 2022 at 03:54:27PM -0700, Reinette Chatre wrote:
-> > > Hi Jarkko,
-> > > 
-> > > On 8/29/2022 8:12 PM, Jarkko Sakkinen wrote:
-> > > > In sgx_init(), if misc_register() for the provision device fails, and
-> > > > neither sgx_drv_init() nor sgx_vepc_init() succeeds, then ksgxd will be
-> > > > prematurely stopped.
-> > > 
-> > > I do not think misc_register() is required to fail for the scenario to
-> > > be triggered (rather use "or" than "and"?). Perhaps just
-> > > "In sgx_init(), if a failure is encountered after ksgxd is started
-> > > (via sgx_page_reclaimer_init()) ...".
+On Wed, Aug 31, 2022 at 01:27:58AM +0000, Huang, Kai wrote:
+> On Tue, 2022-08-30 at 15:54 -0700, Reinette Chatre wrote:
+> > Hi Jarkko,
 > > 
-> > This would be the fixed version of the sentence:
+> > On 8/29/2022 8:12 PM, Jarkko Sakkinen wrote:
+> > > In sgx_init(), if misc_register() for the provision device fails, and
+> > > neither sgx_drv_init() nor sgx_vepc_init() succeeds, then ksgxd will be
+> > > prematurely stopped.
 > > 
-> > "
-> > In sgx_init(), if misc_register() fails or misc_register() succeeds but
-> > neither sgx_drv_init() nor sgx_vepc_init() succeeds, then ksgxd will be
-> > prematurely stopped. This may leave some unsanitized pages, which does
-> > not matter, because SGX will be disabled for the whole power cycle.
-> > "
-> > 
-> > I want to keep the end states listed and not make it more abstract.
-> > 
-> > The second sentence addresses the remark below.
-> > 
-> > > To help the reader understand the subject of this patch it may help
-> > > to explain that prematurely stopping ksgxd may leave some
-> > > unsanitized pages, but that is not a problem since SGX cannot
-> > > be used on the platform anyway. 
-> > > 
-> > > > This triggers WARN_ON() because sgx_dirty_page_list ends up being
-> > > > non-empty, and dumps the call stack:
-> > > > 
-> > > 
-> > > Traces like below can be frowned upon. I recommend that you follow the
-> > > guidance in "Backtraces in commit mesages"(sic) in 
-> > > Documentation/process/submitting-patches.rst.
-> > > 
-> > > > [    0.268592] WARNING: CPU: 6 PID: 83 at
-> > > > arch/x86/kernel/cpu/sgx/main.c:401 ksgxd+0x1b7/0x1d0
-> > 
-> > Is this good enough? I had not actually spotted this section before but
-> > nice that it exists. Apparently has been added in 5.12.
-> > 
-> > >> > 
-> > > > Ultimately this can crash the kernel, if the following is set:
-> > > > 
-> > > > 	/proc/sys/kernel/panic_on_warn
-> > > > 
-> > > > Print a simple warning instead, and improve the output by printing the
-> > > > number of unsanitized pages, in order to provide debug informnation for
-> > > > future needs.
-> > > 
-> > > informnation -> information
-> > 
-> > +1
-> > 
-> > > 
-> > >  
-> > > ...
-> > > 
-> > > > Link: https://lore.kernel.org/linux-sgx/20220825051827.246698-1-jarkko@kernel.org/T/#u
-> > > > Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> > > > Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> > > > Fixes: 51ab30eb2ad4 ("x86/sgx: Replace section->init_laundry_list with sgx_dirty_page_list")
-> > > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > 
-> > > Should this go to stable?
-> > 
-> > I guess it should. The hard reason for this that it can panic
-> > the kernel.
-> > 
-> > > 
-> > > > 
-> > > > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> > > > index 515e2a5f25bb..903100fcfce3 100644
-> > > > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > > > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > > > @@ -49,17 +49,20 @@ static LIST_HEAD(sgx_dirty_page_list);
-> > > >   * Reset post-kexec EPC pages to the uninitialized state. The pages are removed
-> > > >   * from the input list, and made available for the page allocator. SECS pages
-> > > >   * prepending their children in the input list are left intact.
-> > > > + *
-> > > > + * Contents of the @dirty_page_list must be thread-local, i.e.
-> > > > + * not shared by multiple threads.
-> > > 
-> > > Did you intend to mention something about the needed locking here? It looks
-> > > like some information is lost during the move to the function description.
-> > 
-> > Nothing about the locking that concerns the parameter, as the
-> > sentence defines clear constraints for the caller.
-> > 
-> > > 
-> > > >   */
-> > > > -static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
-> > > > +static int __sgx_sanitize_pages(struct list_head *dirty_page_list)
-> > > >  {
-> > > >  	struct sgx_epc_page *page;
-> > > > +	int left_dirty = 0;
-> > > 
-> > > I do not know how many pages this code should be ready for but at least
-> > > this could handle more by being an unsigned int considering that it is
-> > > always positive ... maybe even unsigned long?
-> > 
-> > I would go for 'long'. More information below.
-> > 
-> > > 
-> > > >  	LIST_HEAD(dirty);
-> > > >  	int ret;
-> > > >  
-> > > > -	/* dirty_page_list is thread-local, no need for a lock: */
-> > > >  	while (!list_empty(dirty_page_list)) {
-> > > >  		if (kthread_should_stop())
-> > > > -			return;
-> > > > +			break;
-> > > >  
-> > > >  		page = list_first_entry(dirty_page_list, struct sgx_epc_page, list);
-> > > >  
-> > > > @@ -92,12 +95,14 @@ static void __sgx_sanitize_pages(struct list_head *dirty_page_list)
-> > > >  		} else {
-> > > >  			/* The page is not yet clean - move to the dirty list. */
-> > > >  			list_move_tail(&page->list, &dirty);
-> > > > +			left_dirty++;
-> > > >  		}
-> > > >  
-> > > >  		cond_resched();
-> > > >  	}
-> > > >  
-> > > >  	list_splice(&dirty, dirty_page_list);
-> > > > +	return left_dirty;
-> > > >  }
-> > > >  
-> > > >  static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
-> > > > @@ -388,6 +393,8 @@ void sgx_reclaim_direct(void)
-> > > >  
-> > > >  static int ksgxd(void *p)
-> > > >  {
-> > > > +	int left_dirty;
-> > > > +
-> > > >  	set_freezable();
-> > > >  
-> > > >  	/*
-> > > > @@ -395,10 +402,10 @@ static int ksgxd(void *p)
-> > > >  	 * required for SECS pages, whose child pages blocked EREMOVE.
-> > > >  	 */
-> > > >  	__sgx_sanitize_pages(&sgx_dirty_page_list);
-> > > > -	__sgx_sanitize_pages(&sgx_dirty_page_list);
-> > > >  
-> > > > -	/* sanity check: */
-> > > > -	WARN_ON(!list_empty(&sgx_dirty_page_list));
-> > > > +	left_dirty = __sgx_sanitize_pages(&sgx_dirty_page_list);
-> > > > +	if (left_dirty)
-> > > > +		pr_warn("%d unsanitized pages\n", left_dirty);
-> > > >  
-> > > >  	while (!kthread_should_stop()) {
-> > > >  		if (try_to_freeze())
-> > > 
-> > > 
-> > > Reinette
-> > 
-> > We need to return -ECANCELED on premature stop, and number of
-> > pages otherwise.
-> > 
-> > In premature stop, nothing should be printed, as the number
-> > is by practical means a random number. Otherwise, it is an
-> > indicator of a bug in the driver, and therefore a non-zero
-> > number should be printed pr_err(), if that happens after the
-> > second call.
+> > I do not think misc_register() is required to fail for the scenario to
+> > be triggered (rather use "or" than "and"?). Perhaps just
+> > "In sgx_init(), if a failure is encountered after ksgxd is started
+> > (via sgx_page_reclaimer_init()) ...".
 > 
-> I.e. even though we print less we get more *information* what
-> is going inside the kernel. Warning is not correct for either
-> path IMHO.
+> IMHO "a failure" might be too vague.  For instance, failure to sgx_drv_init()
+> won't immediately result in ksgxd to stop prematurally.  As long as KVM SGX can
+> be initialized successfully, sgx_init() still returns 0.
+> 
+> Btw I was thinking whether we should move sgx_page_reclaimer_init() to the end
+> of sgx_init(), after we make sure at least one of the driver and the KVM SGX is
+> initialized successfully.  Then the code change in this patch won't be necessary
+> if I understand correctly.  AFAICT there's no good reason to start the ksgxd at
+> early stage before we are sure either the driver or KVM SGX will work.
 
-Oh, sorry, I forgot one thing. The devices should be actually
-deinitialized in the error case. We do not want to leave a
-broken driver running.
+I would focus fixing the existing flow rather than reinventing the flow.
+
+It can be made to work, and therefore it is IMHO correct action to take.
+
+> Btw currently EPC pages assigned to KVM guest cannot be reclaimed, so
+> theoretically ksgxd can be moved to sgx_drv_init(), but who knows someday we
+> will decide to make KVM guest EPC pages to be able to be reclaimed. :)
+
+I'm open to changes but it is in my opinion out of context for this.
+
+> 
+> 
+> 
+> -- 
+> Thanks,
+> -Kai
+> 
+> 
 
 BR, Jarkko
