@@ -2,141 +2,177 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B12ECAAD2
-	for <linux-sgx@archiver.kernel.org>; Thu,  1 Sep 2022 22:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC67ECAAD2
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Sep 2022 22:31:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235304AbiIAWaP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 1 Sep 2022 18:30:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47928 "EHLO
+        id S235082AbiIAWbI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 1 Sep 2022 18:31:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235317AbiIAW3a (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 1 Sep 2022 18:29:30 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 843872CDEB;
-        Thu,  1 Sep 2022 15:28:13 -0700 (PDT)
+        with ESMTP id S235413AbiIAWan (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 1 Sep 2022 18:30:43 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44D6D9D
+        for <linux-sgx@vger.kernel.org>; Thu,  1 Sep 2022 15:29:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 14AEBB82967;
-        Thu,  1 Sep 2022 22:23:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409D2C433C1;
-        Thu,  1 Sep 2022 22:23:03 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 49976B8293B
+        for <linux-sgx@vger.kernel.org>; Thu,  1 Sep 2022 22:29:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1167C433D6;
+        Thu,  1 Sep 2022 22:29:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662070983;
-        bh=w57zJjChMCAF0tiCRRkMgdO5xn4agumfjbmYJSkZIB4=;
+        s=k20201202; t=1662071370;
+        bh=KQj3iNyASUtYcqldylh3JNvPEm1DfPVEBwQbarRbuKM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xl4wDJOO4pUO6SG9nTu5QZuqmYJb+F+A9EOr86gy/hpROglt1BkB64OgAS8GFxLj/
-         MHh7emmj3U89uJ3uUIZ/+WO+7ztZSlKIvZeXomrdDww4HjKegcRhFgeF8HgFutSB5J
-         9ekdknVe7ozu78vaI7DaGrvTGdTAcNjGRNjf032sexu6PgfoiKIhPDHHFEwwLguvs1
-         mT8kkhLPuI1QeChJS0m2VGNVMGPEaSsm109oCtwe9GebIEGNGtszsd77QqPpdUXeL5
-         LLZc+VaBdqLsqijaEQz3ljy7dXmp3wWOcngEh2mrc/hZXxlXFsCmOKIdQSiYp6+DPv
-         87ojfTFOrwB1w==
-Date:   Fri, 2 Sep 2022 01:22:59 +0300
+        b=H4lIGqxpeAoh4w4ueucM8f26KxEWnPwnxrTmhYeP8Ce7kSpWnA2mKer1yPhvJ6CFx
+         VRwnuvAJIx710JX1RzgxOpK/QWfcikge1tTVB0E0ya9Ux2rN3TlZ4TuPo7qGPQ68AX
+         LOcadrVbvrQjDUeAhYKTIlS5wMLJFzZl34SyJfWSgxHr4+ye+wSttiNG3EAAW/UIM7
+         4EmwLNZunqBmwZnRzffPcqrllxXMHsCc44YdZXixIZvRg8HIBKEwiS6EapMPjJr/3g
+         WNJZGWMBulurC6S8upQlzyh9mQsHZblRP4r9uaQZBi0iXBnNiGsuj79L/D4NxMl9Ak
+         v5VE125Gby9yA==
+Date:   Fri, 2 Sep 2022 01:29:25 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Vijay Dhanraj <vijay.dhanraj@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Shuah Khan <shuah@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/6] selftests/sgx: Add SGX selftest
- augment_via_eaccept_long
-Message-ID: <YxEwwzXOsCliznQJ@kernel.org>
-References: <20220831173829.126661-1-jarkko@kernel.org>
- <20220831173829.126661-5-jarkko@kernel.org>
- <d2b76530-82a2-6ac1-32ea-696e653d767d@intel.com>
+To:     Zhiquan Li <zhiquan1.li@intel.com>
+Cc:     linux-sgx@vger.kernel.org, tony.luck@intel.com,
+        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        seanjc@google.com, kai.huang@intel.com, fan.du@intel.com,
+        cathy.zhang@intel.com
+Subject: Re: [PATCH v7 0/3] x86/sgx: fine grained SGX MCA behavior
+Message-ID: <YxEyRT2SbfBdYNfm@kernel.org>
+References: <20220901003601.2048563-1-zhiquan1.li@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d2b76530-82a2-6ac1-32ea-696e653d767d@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220901003601.2048563-1-zhiquan1.li@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 01:07:35PM -0700, Reinette Chatre wrote:
-> Hi Jarkko,
+On Thu, Sep 01, 2022 at 08:35:58AM +0800, Zhiquan Li wrote:
+> V6: https://lore.kernel.org/linux-sgx/20220826160503.1576966-1-zhiquan1.li@intel.com/T/#t
 > 
-> On 8/31/2022 10:38 AM, Jarkko Sakkinen wrote:
-> > From: Vijay Dhanraj <vijay.dhanraj@intel.com>
-> > 
-> > Add a new test case which is same as augment_via_eaccept but adds a
-> > larger number of EPC pages to stress test EAUG via EACCEPT.
-> > 
-> > Signed-off-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
-> > Co-developed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> > v3:
-> > - Addressed Reinette's feedback:
-> >   https://lore.kernel.org/linux-sgx/bd5285dd-d6dd-8a46-fca9-728db5e2f369@intel.com/
-> > v2:
-> > - Addressed Reinette's feedback:
-> >   https://lore.kernel.org/linux-sgx/24bd8e42-ff4e-0090-d9e1-cd81e4807f21@intel.com/
-> > ---
-> >  tools/testing/selftests/sgx/load.c |   5 +-
-> >  tools/testing/selftests/sgx/main.c | 143 +++++++++++++++++++++++++----
-> >  tools/testing/selftests/sgx/main.h |   3 +-
+> Changes since V6:
+> - Revise the commit message of patch 01 suggested by Jarkko.
+> - Fix build warning due to type changes.
 > 
-> Is this test passing on your system? This version is missing the change to
-> mrenclave_ecreate() that causes SGX_IOC_ENCLAVE_INIT to fail when I try it out.
-
-I *did* get a pass in my test machine. Hmm... I'll check if
-the kernel tree was out-of-sync, which could be the reason.
-
-I do not compile kernel on that machine but have the kernel
-tree for running selftests. So there is a possiblity for
-a human error. Thanks for pointing this out.
-
+> V5: https://lore.kernel.org/linux-sgx/Yrf27fugD7lkyaek@kernel.org/T/#t
 > 
-> >  3 files changed, 130 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-> > index 94bdeac1cf04..47b2786d6a77 100644
-> > --- a/tools/testing/selftests/sgx/load.c
-> > +++ b/tools/testing/selftests/sgx/load.c
-> > @@ -171,7 +171,8 @@ uint64_t encl_get_entry(struct encl *encl, const char *symbol)
-> >  	return 0;
-> >  }
-> >  
-> > -bool encl_load(const char *path, struct encl *encl, unsigned long heap_size)
-> > +bool encl_load(const char *path, struct encl *encl, unsigned long heap_size,
-> > +	       unsigned long edmm_size)
-> >  {
-> >  	const char device_path[] = "/dev/sgx_enclave";
-> >  	struct encl_segment *seg;
-> > @@ -300,7 +301,7 @@ bool encl_load(const char *path, struct encl *encl, unsigned long heap_size)
-> >  
-> >  	encl->src_size = encl->segment_tbl[j].offset + encl->segment_tbl[j].size;
-> >  
-> > -	for (encl->encl_size = 4096; encl->encl_size < encl->src_size; )
-> > +	for (encl->encl_size = 4096; encl->encl_size < encl->src_size + edmm_size;)
-> >  		encl->encl_size <<= 1;
-> >  
-> >  	return true;
-> > diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-> > index 9820b3809c69..c5aa9f323745 100644
-> > --- a/tools/testing/selftests/sgx/main.c
-> > +++ b/tools/testing/selftests/sgx/main.c
-> > @@ -23,6 +23,10 @@
-> >  
-> >  static const uint64_t MAGIC = 0x1122334455667788ULL;
-> >  static const uint64_t MAGIC2 = 0x8877665544332211ULL;
-> > +/* Message-ID: <DM8PR11MB55912A7F47A84EC9913A6352F6999@DM8PR11MB5591.namprd11.prod.outlook.com> */
-> > +static const uint64_t EDMM_SIZE_LONG = 8L * 1024L * 1024L * 1024L;
-> > +static const uint64_t TIMEOUT_LONG = 900; /* seconds */
-> > +
+> Changes since V5:
+> - Rename the 'owner' field as 'encl_owner' and update the references
+>   as a separate patch.
+> - To prevent casting the 'encl_owner' field, introduce a union with
+>   another field - "vepc_vaddr", suggested by Dave Hansen.
+> - Clean up the commit message of patch 02 suggested by Dave Hansen.
+> - Remove patch 03 unless we have better reason to keep it.
+> - Add Reviewed-by from Jarkko.
 > 
-> Apologies if my feedback was vague - I actually think that the comments in V1 added
-> valuable information, it was just the variation in formatting that was distracting.
+> V4: https://lore.kernel.org/linux-sgx/20220608032654.1764936-1-zhiquan1.li@intel.com/T/#t
+> 
+> Changes since V4:
+> - Switch the order of the two variables at patch 02 so all of variables
+>   are in reverse Christmas style.
+> - Do not initialize 'ret' because it will be overridden by the return
+>   value of force_sig_mceerr() unconditionally.
+> - Add Co-developed-by and Signed-off-by from Cathy Zhang at patch 01.
+> - Add Acked-by from Kai Huang at patch 01.
+> 
+> V3: https://lore.kernel.org/linux-sgx/41704e5d4c03b49fcda12e695595211d950cfb08.camel@kernel.org/T/#t
+> 
+> Changes since V3:
+> - Take the definition of EPC page flag SGX_EPC_PAGE_KVM_GUEST from
+>   Cathy Zhang's third patch of SGX rebootless recovery patch set but
+>   discard irrelevant portion, since it might need some time to re-forge
+>   and these are two different features.
+>   Link: https://lore.kernel.org/linux-sgx/41704e5d4c03b49fcda12e695595211d950cfb08.camel@kernel.org/T/#m9782d23496cacecb7da07a67daa79f4b322ae170
+> 
+> V2: https://lore.kernel.org/linux-sgx/694234d7-6a0d-e85f-f2f9-e52b4a61e1ec@intel.com/T/#t
+> 
+> Changes since V2:
+> - Repurpose the owner field as the virtual address of virtual EPC page
+> - Remove struct sgx_vepc_page and relevant code.
+> - Remove patch 01 as the changes are not necessary in new design.
+> - Rework patch 02 suggested by Jarkko.
+> - Adapt patch 03 and 04 since struct sgx_vepc_page was discarded.
+> - Replace EPC page flag SGX_EPC_PAGE_IS_VEPC with
+>   SGX_EPC_PAGE_KVM_GUEST as they are duplicated.
+>   Link: https://lore.kernel.org/linux-sgx/eb95b32ecf3d44a695610cf7f2816785@intel.com/T/#u
+> 
+> V1: https://lore.kernel.org/linux-sgx/443cb425-009c-2784-56f4-5e707122de76@intel.com/T/#t
+> 
+> Changes since V1:
+> - Updated cover letter and commit messages, added valuable
+>   information from Jarkko, Tony and Kai's comments.
+> - Added documentations for struct struct sgx_vepc and
+>   struct sgx_vepc_page.
+> 
+> Hi everyone,
+> 
+> This series contains a few patches to fine grained SGX MCA behavior.
+> 
+> Today, if a guest accesses an SGX EPC page with memory failure,
+> the kernel behavior will kill the entire guest.  This blast radius is
+> too large.  It would be idea to kill only the SGX application inside
+> the guest.
+> 
+> To fix this, send a SIGBUS to host userspace (like QEMU) which can
+> follow up by injecting a #MC to the guest.
+> 
+> However, when a page triggers a machine check, it only reports the
+> PFN.  But in order to inject #MC into hypervisor, the virtual address
+> is required.  The 'encl_owner' field is useless in virtualization
+> case, then repurpose it as 'vepc_vaddr' - the virtual address of the
+> virtual EPC page for such case so that arch_memory_failure() can easily
+> retrieve it.
+> 
+> Suppose an enclave is shared by multiple processes, when an enclave
+> page triggers a machine check, the enclave will be disabled so that
+> it couldn't be entered again.  Killing other processes with the same
+> enclave mapped would perhaps be overkill, but they are going to find
+> that the enclave is "dead" next time they try to use it.  Thanks for
+> Jarkko’s head up and Tony’s clarification on this point.
+> 
+> Unlike host enclaves, virtual EPC instance cannot be shared by multiple
+> VMs. It is because how enclaves are created is totally up to the guest.
+> Sharing virtual EPC instance will be very likely to unexpectedly break
+> enclaves in all VMs.
+> 
+> SGX virtual EPC driver doesn't explicitly prevent virtual EPC instance
+> being shared by multiple VMs via fork(). However KVM doesn't support
+> running a VM across multiple mm structures, and the de facto userspace
+> hypervisor (Qemu) doesn't use fork() to create a new VM, so in practice
+> this should not happen.
+> 
+> This series is based on tip/x86/sgx.
+> 
+> Tests:
+> 1. MCE injection test for SGX in VM.
+>    As we expected, the application was killed and VM was alive.
+> 2. Kernel selftest/sgx: PASS
+> 3. Internal SGX stress test: PASS
+> 4. kmemleak test: No memory leakage detected.
+> 
+> Much appreciate your feedback.
+> 
+> Best Regards,
+> Zhiquan
+> 
+> Zhiquan Li (3):
+>   x86/sgx: Rename the owner field of struct sgx_epc_page as encl_owner
+>   x86/sgx: Introduce union with vepc_vaddr field for virtualization case
+>   x86/sgx: Fine grained SGX MCA behavior for virtualization
+> 
+>  arch/x86/kernel/cpu/sgx/main.c | 48 +++++++++++++++++++++++++---------
+>  arch/x86/kernel/cpu/sgx/sgx.h  |  8 +++++-
+>  arch/x86/kernel/cpu/sgx/virt.c |  4 ++-
+>  3 files changed, 46 insertions(+), 14 deletions(-)
+> 
+> -- 
+> 2.25.1
+> 
 
-IMHO message ID is pretty good reference. Can you
-propose how would you redo it to minimize the number
-of iterations in the series?
 
-> Reinette
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org> (all patches)
 
 BR, Jarkko
