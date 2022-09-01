@@ -2,109 +2,141 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DFBC54EE9
-	for <linux-sgx@archiver.kernel.org>; Thu,  1 Sep 2022 22:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B12ECAAD2
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Sep 2022 22:30:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234945AbiIAW3l (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 1 Sep 2022 18:29:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48002 "EHLO
+        id S235304AbiIAWaP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 1 Sep 2022 18:30:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233931AbiIAW3L (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 1 Sep 2022 18:29:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 770426143;
-        Thu,  1 Sep 2022 15:27:28 -0700 (PDT)
+        with ESMTP id S235317AbiIAW3a (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 1 Sep 2022 18:29:30 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 843872CDEB;
+        Thu,  1 Sep 2022 15:28:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1140662013;
-        Thu,  1 Sep 2022 22:27:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F63AC433C1;
-        Thu,  1 Sep 2022 22:27:26 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 14AEBB82967;
+        Thu,  1 Sep 2022 22:23:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409D2C433C1;
+        Thu,  1 Sep 2022 22:23:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662071247;
-        bh=X4NhP5h1BDo+HeLevPQhixM9pF9whQkJf1DYX/W3TM0=;
+        s=k20201202; t=1662070983;
+        bh=w57zJjChMCAF0tiCRRkMgdO5xn4agumfjbmYJSkZIB4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Vg6A7fUAWqIW295veEQ27KxkQ9spNuxgvwTsvydQwe35fitLyCn/tuwn4cCoWlwlo
-         etQbRVUY5h1rLMeNJ8uXmaEyZDZzeMO+5PFEr5oFOS+M4Isx0F+EXv2GhMSKEhYu9e
-         +xSSz0vSziEL+EMjemIqhs1643fFnhJOfE40WPfAwqfmtWeeA57cX/IfSYboqpPiNY
-         DZECTdBatRaoHmadejYYbalIPk1E/gY+43CFQafkNBPwgNDpVeWjtUf9z4Cl2N+60J
-         gCS/hQPPqDco9l6vxCJAfzaOVrLanVe68uAtzQd3rkZ8f4wk1KWNL80TDmdJ05Or+i
-         vjM8fgXBJtN5A==
-Date:   Fri, 2 Sep 2022 01:27:22 +0300
-From:   "jarkko@kernel.org" <jarkko@kernel.org>
-To:     "Huang, Kai" <kai.huang@intel.com>
-Cc:     "Hansen, Dave" <dave.hansen@intel.com>,
-        "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
-        "pmenzel@molgen.mpg.de" <pmenzel@molgen.mpg.de>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>
-Subject: Re: [PATCH 1/6] x86/sgx: Do not consider unsanitized pages an error
-Message-ID: <YxExyuA/+ptl0Y4G@kernel.org>
-References: <Yw7EX5GCrEaLzpHV@kernel.org>
- <d07577c3f0b4b3fff0ce470c56f91fb634653703.camel@intel.com>
- <Yw7LJa7eRG+WZ0wv@kernel.org>
- <c3c085d69311ed759bff5bb325a2c182d423f91f.camel@intel.com>
- <Yw7OEh7QP8tb7BR1@kernel.org>
- <a91f65ad5c392b6e34f07bc6d3f35c89a76a98db.camel@intel.com>
- <op.1rrt4aecwjvjmi@hhuan26-mobl1.mshome.net>
- <Yw+oR3FKlwbeOl6I@kernel.org>
- <ea61a9ee-96dc-4f23-9de3-34e033391abc@intel.com>
- <94993d90b0b3c59fae61427cf0cc78dd10c381bb.camel@intel.com>
+        b=Xl4wDJOO4pUO6SG9nTu5QZuqmYJb+F+A9EOr86gy/hpROglt1BkB64OgAS8GFxLj/
+         MHh7emmj3U89uJ3uUIZ/+WO+7ztZSlKIvZeXomrdDww4HjKegcRhFgeF8HgFutSB5J
+         9ekdknVe7ozu78vaI7DaGrvTGdTAcNjGRNjf032sexu6PgfoiKIhPDHHFEwwLguvs1
+         mT8kkhLPuI1QeChJS0m2VGNVMGPEaSsm109oCtwe9GebIEGNGtszsd77QqPpdUXeL5
+         LLZc+VaBdqLsqijaEQz3ljy7dXmp3wWOcngEh2mrc/hZXxlXFsCmOKIdQSiYp6+DPv
+         87ojfTFOrwB1w==
+Date:   Fri, 2 Sep 2022 01:22:59 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     linux-sgx@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Vijay Dhanraj <vijay.dhanraj@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/6] selftests/sgx: Add SGX selftest
+ augment_via_eaccept_long
+Message-ID: <YxEwwzXOsCliznQJ@kernel.org>
+References: <20220831173829.126661-1-jarkko@kernel.org>
+ <20220831173829.126661-5-jarkko@kernel.org>
+ <d2b76530-82a2-6ac1-32ea-696e653d767d@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <94993d90b0b3c59fae61427cf0cc78dd10c381bb.camel@intel.com>
+In-Reply-To: <d2b76530-82a2-6ac1-32ea-696e653d767d@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 08:42:59PM +0000, Huang, Kai wrote:
-> On Wed, 2022-08-31 at 11:35 -0700, Dave Hansen wrote:
-> > Jarkko, Kai and Haitao,
-> > 
-> > Can you three please start trimming your replies?  You don't need to and
-> > should not quote the entirety of your messages every time you reply.
-> > 
-> > On 8/31/22 11:28, jarkko@kernel.org wrote:
-> > > > Will it cause racing if we expose dev nodes to user space before
-> > > > ksgxd is started and sensitization done?
-> > > I'll to explain this.
-> > > 
-> > > So the point is to fix the issue at hand, and fix it locally.
-> > > 
-> > > Changing initialization order is simply out of context. It's
-> > > not really an argument for or against changing it
-> > > 
-> > > We are fixing sanitization here, and only that with zero
-> > > side-effects to any other semantics.
-> > > 
-> > > It's dictated by the development process [*] but more
-> > > importantly it's also just plain common sense.
-> > 
-> > Kai, I think your suggestion is reasonable.  You make a good point about
-> > not needing ksgxd for vepc.
-> > 
-> > *But*, I think it's a bit too much for a bugfix that's headed to
-> > -stable.  I'm concerned that it will have unintended side effects,
-> > *especially* when there's a working, tested alternative.
+On Wed, Aug 31, 2022 at 01:07:35PM -0700, Reinette Chatre wrote:
+> Hi Jarkko,
 > 
-> Agreed. Thanks Dave/Jarkko.
+> On 8/31/2022 10:38 AM, Jarkko Sakkinen wrote:
+> > From: Vijay Dhanraj <vijay.dhanraj@intel.com>
+> > 
+> > Add a new test case which is same as augment_via_eaccept but adds a
+> > larger number of EPC pages to stress test EAUG via EACCEPT.
+> > 
+> > Signed-off-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
+> > Co-developed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > v3:
+> > - Addressed Reinette's feedback:
+> >   https://lore.kernel.org/linux-sgx/bd5285dd-d6dd-8a46-fca9-728db5e2f369@intel.com/
+> > v2:
+> > - Addressed Reinette's feedback:
+> >   https://lore.kernel.org/linux-sgx/24bd8e42-ff4e-0090-d9e1-cd81e4807f21@intel.com/
+> > ---
+> >  tools/testing/selftests/sgx/load.c |   5 +-
+> >  tools/testing/selftests/sgx/main.c | 143 +++++++++++++++++++++++++----
+> >  tools/testing/selftests/sgx/main.h |   3 +-
+> 
+> Is this test passing on your system? This version is missing the change to
+> mrenclave_ecreate() that causes SGX_IOC_ENCLAVE_INIT to fail when I try it out.
 
-Please do a patch. It's a very reasonable suggestion when
-considered out of context of this bug.
+I *did* get a pass in my test machine. Hmm... I'll check if
+the kernel tree was out-of-sync, which could be the reason.
 
-If you go really rigid with this, the compilation process
-should not compile in sanitization process in the case when
-only vepc is enabled. It's useless functionality in that
-case.
+I do not compile kernel on that machine but have the kernel
+tree for running selftests. So there is a possiblity for
+a human error. Thanks for pointing this out.
+
+> 
+> >  3 files changed, 130 insertions(+), 21 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+> > index 94bdeac1cf04..47b2786d6a77 100644
+> > --- a/tools/testing/selftests/sgx/load.c
+> > +++ b/tools/testing/selftests/sgx/load.c
+> > @@ -171,7 +171,8 @@ uint64_t encl_get_entry(struct encl *encl, const char *symbol)
+> >  	return 0;
+> >  }
+> >  
+> > -bool encl_load(const char *path, struct encl *encl, unsigned long heap_size)
+> > +bool encl_load(const char *path, struct encl *encl, unsigned long heap_size,
+> > +	       unsigned long edmm_size)
+> >  {
+> >  	const char device_path[] = "/dev/sgx_enclave";
+> >  	struct encl_segment *seg;
+> > @@ -300,7 +301,7 @@ bool encl_load(const char *path, struct encl *encl, unsigned long heap_size)
+> >  
+> >  	encl->src_size = encl->segment_tbl[j].offset + encl->segment_tbl[j].size;
+> >  
+> > -	for (encl->encl_size = 4096; encl->encl_size < encl->src_size; )
+> > +	for (encl->encl_size = 4096; encl->encl_size < encl->src_size + edmm_size;)
+> >  		encl->encl_size <<= 1;
+> >  
+> >  	return true;
+> > diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+> > index 9820b3809c69..c5aa9f323745 100644
+> > --- a/tools/testing/selftests/sgx/main.c
+> > +++ b/tools/testing/selftests/sgx/main.c
+> > @@ -23,6 +23,10 @@
+> >  
+> >  static const uint64_t MAGIC = 0x1122334455667788ULL;
+> >  static const uint64_t MAGIC2 = 0x8877665544332211ULL;
+> > +/* Message-ID: <DM8PR11MB55912A7F47A84EC9913A6352F6999@DM8PR11MB5591.namprd11.prod.outlook.com> */
+> > +static const uint64_t EDMM_SIZE_LONG = 8L * 1024L * 1024L * 1024L;
+> > +static const uint64_t TIMEOUT_LONG = 900; /* seconds */
+> > +
+> 
+> Apologies if my feedback was vague - I actually think that the comments in V1 added
+> valuable information, it was just the variation in formatting that was distracting.
+
+IMHO message ID is pretty good reference. Can you
+propose how would you redo it to minimize the number
+of iterations in the series?
+
+> Reinette
 
 BR, Jarkko
