@@ -2,75 +2,98 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3A4ECAAD2
-	for <linux-sgx@archiver.kernel.org>; Thu,  1 Sep 2022 22:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83417ECAAD3
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Sep 2022 22:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235218AbiIAWUJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 1 Sep 2022 18:20:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48214 "EHLO
+        id S235333AbiIAW2Q (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 1 Sep 2022 18:28:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235058AbiIAWTf (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 1 Sep 2022 18:19:35 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43D1A9836A;
-        Thu,  1 Sep 2022 15:18:37 -0700 (PDT)
+        with ESMTP id S231936AbiIAW1q (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 1 Sep 2022 18:27:46 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B22847199D;
+        Thu,  1 Sep 2022 15:25:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9CDD7B8295F;
-        Thu,  1 Sep 2022 22:18:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E68B9C433C1;
-        Thu,  1 Sep 2022 22:18:33 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 121C7B8293A;
+        Thu,  1 Sep 2022 22:24:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A03BC433D6;
+        Thu,  1 Sep 2022 22:24:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662070714;
-        bh=P11/1T5vHWH0SCcpyWwUdgCzRVkbP+ssblCg6//orxA=;
+        s=k20201202; t=1662071049;
+        bh=Hm8DwC0GrmApv2fYWEKeBc4h9nbEKqLf6rw3zQeK5LE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e4ZXSvTa25bXtQ4JOhN6MHYEzRmAHL5dr5fAFHDNj4qHH4lJzlUVfzJVTrc4sterB
-         v0TbdY23FmZ9U3rsB9+Tffiwq6STUgVrVhzJrTE676a8p5id8KOpvPs0jIF89pkBxI
-         oyCYPAg26t6YDYdpuwBZzd9+yu4WBB0OYqi0bZFK2gGuWz2GecnjEiohWPyVyPGj6j
-         JWmlCKbpIFgVNffPV5RB9mXnGSKpNMRsRY6E499dtKSWkMYfFFlbTe+j9iVm0BprOi
-         6pnCFt0xqZTRFUctkptNL1rMkSBtxumvRChXOQ/qEZ8iwSfEhh2B1NeocGTTGpQE8r
-         ngQkItbH/r88A==
-Date:   Fri, 2 Sep 2022 01:18:29 +0300
+        b=BRA5/HQdm95Mz2LfUa1n1wgpWrWr62tXwr21FmiNChxR3dk+tR7La0ns1/+OmLFH3
+         qDj402hH2s4HI487xv3vXDtSJvUF/ZV8nazEmw8XomiGMfM37tsQCfkixZ5zI61FqN
+         5y/11INJwlGfRNus2snrc8q2AfxMr9jaX29i1ctdJbbKzHyzwHOzOnOikY0HsMLFJY
+         2MohBNhBbATg+1QniClgBEJB+K3wvaTdj86gwW+9Igs718Q21dBhrwIdeJbD3Xq818
+         p01Pywux+4/9M02DGDd1MgVxBvorbC+omZMb/Avmx0t3/ABylTHV3Z39qAjD5kZvU8
+         pR3cnmCaM+WWQ==
+Date:   Fri, 2 Sep 2022 01:24:04 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        linux-sgx@vger.kernel.org,
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     linux-sgx@vger.kernel.org,
         Haitao Huang <haitao.huang@linux.intel.com>,
         Vijay Dhanraj <vijay.dhanraj@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
         Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/6] selftests/sgx: retry the ioctls returned with EAGAIN
-Message-ID: <YxEvtWpCQHpy3Vzf@kernel.org>
-References: <20220830031206.13449-1-jarkko@kernel.org>
- <20220830031206.13449-6-jarkko@kernel.org>
- <5d19be91-3aef-5cbe-6063-3ff3dbd5572b@intel.com>
- <Yw7IFcnjbfm3Xgqk@kernel.org>
- <709d9f58-0ae9-833a-ca54-7b50307b377e@intel.com>
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v2 6/6] selftests/sgx: Add a bpftrace script for tracking
+ allocation errors
+Message-ID: <YxExBGYLGihU9jpC@kernel.org>
+References: <20220831173829.126661-1-jarkko@kernel.org>
+ <20220831173829.126661-7-jarkko@kernel.org>
+ <048cdd4c-0454-1fb2-ebac-3bdb4cde792b@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <709d9f58-0ae9-833a-ca54-7b50307b377e@intel.com>
+In-Reply-To: <048cdd4c-0454-1fb2-ebac-3bdb4cde792b@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 11:14:02AM -0700, Dave Hansen wrote:
-> On 8/30/22 19:31, Jarkko Sakkinen wrote:
-> >> On 8/29/2022 8:12 PM, Jarkko Sakkinen wrote:
-> >>> From: Haitao Huang <haitao.huang@linux.intel.com>
-> >>>
-> >>> For EMODT and EREMOVE ioctls with a large range, kernel
-> >> ioctl()s?
-> > Ioctl is common enough to be considered as noun and is
-> > widely phrased like that in commit messages. I don't
-> > see any added clarity.
+On Wed, Aug 31, 2022 at 01:09:21PM -0700, Reinette Chatre wrote:
+> Hi Jarkko,
 > 
-> I definitely prefer ioctl().
+> On 8/31/2022 10:38 AM, Jarkko Sakkinen wrote:
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > v2:
+> > * Added comments.
+> > ---
+> >  tools/testing/selftests/sgx/alloc-error.bt | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >  create mode 100644 tools/testing/selftests/sgx/alloc-error.bt
+> > 
+> > diff --git a/tools/testing/selftests/sgx/alloc-error.bt b/tools/testing/selftests/sgx/alloc-error.bt
+> > new file mode 100644
+> > index 000000000000..0cc8b2e41852
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/sgx/alloc-error.bt
+> > @@ -0,0 +1,9 @@
+> > +/* EPC allocation */
+> > +kr:sgx_alloc_epc_page /(uint64)retval >= (uint64)(-4095)/ {
+> > +		 printf("sgx_alloc_epc_page: retval=%d\n", (int64)retval);
+> > +}
+> > +
+> > +/* kzalloc for struct sgx_encl_page */
+> > +kr:sgx_encl_page_alloc /(uint64)retval >= (uint64)(-4095)/ {
+> > +		 printf("sgx_encl_page_alloc: retval=%d\n", (int64)retval);
+> > +}
+> 
+> I did see you response in [1]. I continue to find this
+> addition very cryptic in that it assumes global familiarity
+> with BPF scripting which I do not think can be assumed. I
+> still think this script can benefit from a comment to describe
+> what the script does and how to use it.
 
-I can use it.
+
+I think I follow Dave's advice to use perf here. I'll
+make a header which explains what the script does.
 
 BR, Jarkko
