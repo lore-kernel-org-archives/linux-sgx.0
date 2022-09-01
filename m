@@ -2,87 +2,109 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48775ECAAD2
-	for <linux-sgx@archiver.kernel.org>; Thu,  1 Sep 2022 22:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DFBC54EE9
+	for <linux-sgx@archiver.kernel.org>; Thu,  1 Sep 2022 22:29:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234560AbiIAW3K (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 1 Sep 2022 18:29:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34432 "EHLO
+        id S234945AbiIAW3l (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 1 Sep 2022 18:29:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235240AbiIAW2V (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 1 Sep 2022 18:28:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F20F9AA353;
-        Thu,  1 Sep 2022 15:26:12 -0700 (PDT)
+        with ESMTP id S233931AbiIAW3L (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 1 Sep 2022 18:29:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 770426143;
+        Thu,  1 Sep 2022 15:27:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A4F7FB8293B;
-        Thu,  1 Sep 2022 22:20:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCEA0C433C1;
-        Thu,  1 Sep 2022 22:20:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1140662013;
+        Thu,  1 Sep 2022 22:27:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F63AC433C1;
+        Thu,  1 Sep 2022 22:27:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662070814;
-        bh=mbIy7pC35PrOJa2CP0A6d4IoNVjQHLiiPSWGzJbKUYc=;
+        s=k20201202; t=1662071247;
+        bh=X4NhP5h1BDo+HeLevPQhixM9pF9whQkJf1DYX/W3TM0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hl0CIhIp4usg8pqBMh8S2ZUpSRS3y4VBReRIf2IlwmJwXyw+4ucaKSiGccSheTR1C
-         nsmhZUJBJxNS/U0jEN8Bj8kQXmCnvUVaf0Ss6AE6n1wWh1PMlFWI22i/oddI/SQszd
-         OSIrF9Rs2+LUHc4P9QwnJcHy5vZvbzskmHznWleANbB5MDCHXMxHmJ4We0RcG7zswL
-         qt3FZkvj+JCtcYsZcS/9YxrXfOzK14tF9UeBK8U2ogHibHnF8Md3fsARcVn2YCFLt4
-         sBvO7zfNcP4d21Ayt0HaONSb6sMc6t9E+SIxMK4jTDUdLVwYkDNkJksyAUsNYhljf/
-         SrE5zGMClGY8g==
-Date:   Fri, 2 Sep 2022 01:20:09 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Vijay Dhanraj <vijay.dhanraj@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH 6/6] selftests/sgx: Add a bpftrace script for tracking
- allocation errors
-Message-ID: <YxEwGU2bkM272+QA@kernel.org>
-References: <20220830031206.13449-1-jarkko@kernel.org>
- <20220830031206.13449-7-jarkko@kernel.org>
- <e870df49-77ed-3222-086d-ae929107f33b@intel.com>
+        b=Vg6A7fUAWqIW295veEQ27KxkQ9spNuxgvwTsvydQwe35fitLyCn/tuwn4cCoWlwlo
+         etQbRVUY5h1rLMeNJ8uXmaEyZDZzeMO+5PFEr5oFOS+M4Isx0F+EXv2GhMSKEhYu9e
+         +xSSz0vSziEL+EMjemIqhs1643fFnhJOfE40WPfAwqfmtWeeA57cX/IfSYboqpPiNY
+         DZECTdBatRaoHmadejYYbalIPk1E/gY+43CFQafkNBPwgNDpVeWjtUf9z4Cl2N+60J
+         gCS/hQPPqDco9l6vxCJAfzaOVrLanVe68uAtzQd3rkZ8f4wk1KWNL80TDmdJ05Or+i
+         vjM8fgXBJtN5A==
+Date:   Fri, 2 Sep 2022 01:27:22 +0300
+From:   "jarkko@kernel.org" <jarkko@kernel.org>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     "Hansen, Dave" <dave.hansen@intel.com>,
+        "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
+        "pmenzel@molgen.mpg.de" <pmenzel@molgen.mpg.de>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>
+Subject: Re: [PATCH 1/6] x86/sgx: Do not consider unsanitized pages an error
+Message-ID: <YxExyuA/+ptl0Y4G@kernel.org>
+References: <Yw7EX5GCrEaLzpHV@kernel.org>
+ <d07577c3f0b4b3fff0ce470c56f91fb634653703.camel@intel.com>
+ <Yw7LJa7eRG+WZ0wv@kernel.org>
+ <c3c085d69311ed759bff5bb325a2c182d423f91f.camel@intel.com>
+ <Yw7OEh7QP8tb7BR1@kernel.org>
+ <a91f65ad5c392b6e34f07bc6d3f35c89a76a98db.camel@intel.com>
+ <op.1rrt4aecwjvjmi@hhuan26-mobl1.mshome.net>
+ <Yw+oR3FKlwbeOl6I@kernel.org>
+ <ea61a9ee-96dc-4f23-9de3-34e033391abc@intel.com>
+ <94993d90b0b3c59fae61427cf0cc78dd10c381bb.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e870df49-77ed-3222-086d-ae929107f33b@intel.com>
+In-Reply-To: <94993d90b0b3c59fae61427cf0cc78dd10c381bb.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 11:23:55AM -0700, Dave Hansen wrote:
-> On 8/29/22 20:12, Jarkko Sakkinen wrote:
-> > diff --git a/tools/testing/selftests/sgx/alloc-error.bt b/tools/testing/selftests/sgx/alloc-error.bt
-> > new file mode 100644
-> > index 000000000000..9268d50dea29
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/sgx/alloc-error.bt
-> > @@ -0,0 +1,7 @@
-> > +kr:sgx_alloc_epc_page /(uint64)retval >= (uint64)(-4095)/ {
-> > +		 printf("sgx_alloc_epc_page: retval=%d\n", (int64)retval);
-> > +}
-> > +
-> > +kr:sgx_encl_page_alloc /(uint64)retval >= (uint64)(-4095)/ {
-> > +		 printf("sgx_encl_page_alloc: retval=%d\n", (int64)retval);
-> > +}
+On Wed, Aug 31, 2022 at 08:42:59PM +0000, Huang, Kai wrote:
+> On Wed, 2022-08-31 at 11:35 -0700, Dave Hansen wrote:
+> > Jarkko, Kai and Haitao,
+> > 
+> > Can you three please start trimming your replies?  You don't need to and
+> > should not quote the entirety of your messages every time you reply.
+> > 
+> > On 8/31/22 11:28, jarkko@kernel.org wrote:
+> > > > Will it cause racing if we expose dev nodes to user space before
+> > > > ksgxd is started and sensitization done?
+> > > I'll to explain this.
+> > > 
+> > > So the point is to fix the issue at hand, and fix it locally.
+> > > 
+> > > Changing initialization order is simply out of context. It's
+> > > not really an argument for or against changing it
+> > > 
+> > > We are fixing sanitization here, and only that with zero
+> > > side-effects to any other semantics.
+> > > 
+> > > It's dictated by the development process [*] but more
+> > > importantly it's also just plain common sense.
+> > 
+> > Kai, I think your suggestion is reasonable.  You make a good point about
+> > not needing ksgxd for vepc.
+> > 
+> > *But*, I think it's a bit too much for a bugfix that's headed to
+> > -stable.  I'm concerned that it will have unintended side effects,
+> > *especially* when there's a working, tested alternative.
 > 
-> I guess this doesn't _hurt_, but it's also not exactly the easiest way
-> to get this done.  You need a whole bpf toolchain.  You could also just do:
-> 
-> 	perf probe 'sgx_encl_page_alloc%return $retval'
-> 
-> Even *that* can be replicated in a few scant lines of shell code echoing
-> into /sys/kernel/debug/tracing.
+> Agreed. Thanks Dave/Jarkko.
 
-Thanks, I have not used perf that much. What if I replace
-this with a shell script using perf? How do you use that
-for two kretprobes?
+Please do a patch. It's a very reasonable suggestion when
+considered out of context of this bug.
+
+If you go really rigid with this, the compilation process
+should not compile in sanitization process in the case when
+only vepc is enabled. It's useless functionality in that
+case.
 
 BR, Jarkko
