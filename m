@@ -2,114 +2,66 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F2BECAAD5
-	for <linux-sgx@archiver.kernel.org>; Fri,  2 Sep 2022 19:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0180BC38145
+	for <linux-sgx@archiver.kernel.org>; Sat,  3 Sep 2022 06:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229996AbiIBTVH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 2 Sep 2022 15:21:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35260 "EHLO
+        id S231728AbiICGBd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 3 Sep 2022 02:01:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229775AbiIBTVF (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 2 Sep 2022 15:21:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CD85DF0A8;
-        Fri,  2 Sep 2022 12:21:05 -0700 (PDT)
+        with ESMTP id S229508AbiICGBc (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 3 Sep 2022 02:01:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9652218B2B
+        for <linux-sgx@vger.kernel.org>; Fri,  2 Sep 2022 23:01:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9B37A62297;
-        Fri,  2 Sep 2022 19:21:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7387AC433D6;
-        Fri,  2 Sep 2022 19:21:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3253660B66
+        for <linux-sgx@vger.kernel.org>; Sat,  3 Sep 2022 06:01:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F85DC433C1;
+        Sat,  3 Sep 2022 06:01:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662146464;
-        bh=K8BGjhy+0YQS+LACFDgvDPfLnu+2CbH/clQ8DkWsJbM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=liWMEdemKbFpZWLY/soRCTkD8UO2XGe0QeJetOISEetc0v98PVvDajeNoq7ml1jtL
-         TQ+LPmnLeQmBit3DL51TAzW1HGGYBLDEJxyXZVqi2bY8JwPX9ZnTUiWAuNkKXVPeZm
-         yE1fmE5e3dzD6LB9NdVkEm+O5BcJFsAD+0/jCS2L8PwERe8YrrOi23gQHF7wAdA8d7
-         QSFVlHjaPCQ5RY+a/z7KRibnDOApgBUXO2VFppUyUYegGDn/cQXpx3SeCCX+FT7rsX
-         jTg4MFgiQK5Lp8BL+1sxLs1Pm0tKJTR69X8mJUKenl8rybXvXip+d+F5Z6MyDmPRb4
-         TIc/jSM+3/m+Q==
-Date:   Fri, 2 Sep 2022 22:20:58 +0300
+        s=k20201202; t=1662184890;
+        bh=1NeSkGQ1YrCn+qFk2TzL4LhWFeSAR7JtsHBrKdPjOl8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HIIi1bYOmiDoUkUrYGWuy4/P48igPIlTlozBo2AwjHAc0BAAe98qiFKXsyGo8nAm6
+         PERyN5h9/xwXS227ILkT4NByeAV0exPLPy1jVlqrkQ81SoDqyGV2W7DF8AyGxeer8t
+         INcev4C/gRxUUUxHgOproL8ITqJc81m8Vg9wYR/igCFrUTwZ+HBHfvOZEOklHkXWfA
+         XQFQcN/b5tkCofZvLiTDyTjnKW9CcN3xrDBPtnuJ6xGPAFAZdlh65dXirRSTrZ8WFY
+         I4l5rd7wVuyr8+ik4UjN3xvDi0npWTSQK+VhJwqoRyoR7IKhps0lWih6vsZi3IX6MS
+         XxOu6tc7L5TfA==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
+To:     linux-sgx@vger.kernel.org
+Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
         Vijay Dhanraj <vijay.dhanraj@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Paul Menzel <pmenzel@molgen.mpg.de>, stable@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/6] x86/sgx: Do not consider unsanitized pages an
- error
-Message-ID: <YxJXmuxTeKtDN9qu@kernel.org>
-References: <20220831173829.126661-3-jarkko@kernel.org>
- <24906e57-461f-6c94-9e78-0d8507df01bb@intel.com>
- <YxEp8Ji+ukLBoNE+@kernel.org>
- <84b8eb06-7b77-675f-5bc8-292fe27dd2f5@intel.com>
- <YxFGykqMb+TD4L4l@kernel.org>
- <YxIEm4uHVvUY/rv6@kernel.org>
- <YxInD1m7rEnQ/yxW@kernel.org>
- <b418161b-2613-4bb9-9269-b4995de65794@intel.com>
- <YxIvr33xgjCbW6qu@kernel.org>
- <8d66f94f-9981-1456-9040-066e35c7ba1f@intel.com>
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Subject: [PATCH 0/2] x86/sgx: Fixes for v6.0
+Date:   Sat,  3 Sep 2022 09:01:06 +0300
+Message-Id: <20220903060108.1709739-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d66f94f-9981-1456-9040-066e35c7ba1f@intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Sep 02, 2022 at 10:38:34AM -0700, Reinette Chatre wrote:
-> Hi Jarkko,
-> 
-> On 9/2/2022 9:30 AM, Jarkko Sakkinen wrote:
-> > On Fri, Sep 02, 2022 at 09:08:23AM -0700, Reinette Chatre wrote:
-> >> Hi Jarkko,
-> >>
-> >> On 9/2/2022 8:53 AM, Jarkko Sakkinen wrote:
-> >>> On Fri, Sep 02, 2022 at 04:26:51PM +0300, Jarkko Sakkinen wrote:
-> >>>> +	if (ret)
-> >>>> +		pr_err("%ld unsanitized pages\n", left_dirty);
-> >>>
-> >>> Yeah, I know, should be 'left_dirty'. I just quickly drafted
-> >>> the patch for the email.
-> >>>
-> >>
-> >> No problem - you did mention that it was an informal patch.
-> >>
-> >> (btw ... also watch out for the long local parameter returned
-> >> as an unsigned long and the signed vs unsigned printing
-> >> format string.) I also continue to recommend that you trim
-> > 
-> > Point taken.
-> > 
-> >> that backtrace ... this patch is heading to x86 area where
-> >> this is required.
-> > 
-> > Should I just cut the whole stack trace, and leave the
-> > part before it?
-> 
-> The trace is printed because of a WARN_ON() in the code.
-> I do not think there is anything very helpful in that trace.
-> I think the only helpful parts are the WARN itself that includes
-> the line number and then information on which kernel it was
-> encountered on.
-> 
-> How about something like (please note the FIXME within):
-> 
-> "
-> Paul reported the following WARN while running kernel vFIXME:
->   WARNING: CPU: 6 PID: 83 at arch/x86/kernel/cpu/sgx/main.c:401 ksgxd+0x1b7/0x1d0
+Two critical fixes for v6.0.
 
-Yeah, this is a great idea, the use of WARN() is the whole point.
-Thank you.
+Haitao Huang (1):
+  x86/sgx: Handle VA page allocation failure for EAUG on PF.
 
-BR, Jarkko
+Jarkko Sakkinen (1):
+  x86/sgx: Do not fail on incomplete sanitization on premature stop of
+    ksgxd
+
+ arch/x86/kernel/cpu/sgx/encl.c |  5 ++++-
+ arch/x86/kernel/cpu/sgx/main.c | 33 ++++++++++++++++++++++++++-------
+ 2 files changed, 30 insertions(+), 8 deletions(-)
+
+-- 
+2.37.2
 
