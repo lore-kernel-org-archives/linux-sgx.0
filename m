@@ -2,108 +2,77 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6408DECAAD3
-	for <linux-sgx@archiver.kernel.org>; Sun,  4 Sep 2022 04:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC8DEC6FA82
+	for <linux-sgx@archiver.kernel.org>; Sun,  4 Sep 2022 07:54:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232159AbiIDEVR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 4 Sep 2022 00:21:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51486 "EHLO
+        id S230227AbiIDHyM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 4 Sep 2022 03:54:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231550AbiIDEVQ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 4 Sep 2022 00:21:16 -0400
+        with ESMTP id S230190AbiIDHyL (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 4 Sep 2022 03:54:11 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4473F1F603;
-        Sat,  3 Sep 2022 21:21:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB794B4A3
+        for <linux-sgx@vger.kernel.org>; Sun,  4 Sep 2022 00:54:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D448060EBF;
-        Sun,  4 Sep 2022 04:21:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCA62C433D6;
-        Sun,  4 Sep 2022 04:21:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7F7AC60F18
+        for <linux-sgx@vger.kernel.org>; Sun,  4 Sep 2022 07:54:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8887CC433D6;
+        Sun,  4 Sep 2022 07:54:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662265274;
-        bh=HTaLkyOjeRqU6VsCndu9y+G0HXRggqTWGIUw/ybXXiE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MxGJ2cteHFQQU2LqmX2NpaI/6R7xnmfcsx/3Eu0WPftaDbPga46zvXsc12SBVYA81
-         lv08BC3pvPTj+qtjvZ5epX+o5nbRxd2+3XMWDP+1VCy9o6nU2YctavaHm39honQsQJ
-         nQ3QSnn/iD8Qu1/plkJMQoS4dpOMC3k4W2tcZkqGkzOVoU+dgt9Y/suyebfFn1oh/i
-         L5SiXE+3MuRAKin/VKVpWa4JfEwFn1swTSXH/mth7Vu/vvX/MieBG3i65bmGIE07sy
-         pJoaJkJU0bRALRKlxXySzIYWV4Wor0CvMfnV2Z30JpfxXzeInpDJ+1Xx31UdblFOLz
-         +VGAPe0uPt+gw==
-Date:   Sun, 4 Sep 2022 07:21:09 +0300
+        s=k20201202; t=1662278049;
+        bh=B2RYDqsezduQSYDUXDEYUBFIustBX/JJUNMGJE/i1KQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cmhIoh2MIaBT0j1kk6L2q3RMVsDlV5JRJSBABtpFi5/ctPXKe6GPtfACABHx6QwBL
+         f+NdZXUu81yrH8AwTCM22bWCUBp7tLZ0froVQwVohNLo9SuwUNmrXwWULpo3y8y+dC
+         oVdYMl12jz9myH0GfszYGgncq0axb0c2tpIUwjgmVLRh79OLiJGebGh8q5JXpQWjIx
+         HDwSODJp7eTL55espI9IsqQOgKUWdCvyx6GFBDKm2uPhWRCp7PgK4bm3yEdxN6T9oi
+         h/XRSRCJZdEPMb7mcZpe498ZtphUskITD3Z4R6PLXhj5Vrbx6NtAHVZQrxUSn23B9L
+         LcSfrk3lGqXtA==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
+To:     linux-sgx@vger.kernel.org
+Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
         Vijay Dhanraj <vijay.dhanraj@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Shuah Khan <shuah@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/6] selftests/sgx: Add SGX selftest
- augment_via_eaccept_long
-Message-ID: <YxQntXMQfEZ/kZQT@kernel.org>
-References: <20220831173829.126661-1-jarkko@kernel.org>
- <20220831173829.126661-5-jarkko@kernel.org>
- <d2b76530-82a2-6ac1-32ea-696e653d767d@intel.com>
- <YxEwwzXOsCliznQJ@kernel.org>
- <YxQjPbFSHOThq4c5@kernel.org>
+        Jarkko Sakkinen <jarkko@kernel.org>
+Subject: [PATCH 0/5] selftests/sgx: Test a large dynamic heap
+Date:   Sun,  4 Sep 2022 10:53:53 +0300
+Message-Id: <20220904075358.7727-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YxQjPbFSHOThq4c5@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sun, Sep 04, 2022 at 07:02:08AM +0300, Jarkko Sakkinen wrote:
-> On Fri, Sep 02, 2022 at 01:22:59AM +0300, Jarkko Sakkinen wrote:
-> > > Is this test passing on your system? This version is missing the change to
-> > > mrenclave_ecreate() that causes SGX_IOC_ENCLAVE_INIT to fail when I try it out.
-> > 
-> > I *did* get a pass in my test machine. Hmm... I'll check if
-> > the kernel tree was out-of-sync, which could be the reason.
-> > 
-> > I do not compile kernel on that machine but have the kernel
-> > tree for running selftests. So there is a possiblity for
-> > a human error. Thanks for pointing this out.
-> 
-> Apparently, v1 and v2 break the encl->src_size calculation:
-> the dynamic heap size is not added.
-> 
-> So, in order to revert sigstruct change:
-> 
-> diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-> index 47b2786d6a77..0e4e12e1e3eb 100644
-> --- a/tools/testing/selftests/sgx/load.c
-> +++ b/tools/testing/selftests/sgx/load.c
-> @@ -172,7 +172,7 @@ uint64_t encl_get_entry(struct encl *encl, const char *symbol)
->  }
-> 
->  bool encl_load(const char *path, struct encl *encl, unsigned long heap_size,
-> -              unsigned long edmm_size)
-> +              unsigned long dynamic_heap_size)
->  {
->         const char device_path[] = "/dev/sgx_enclave";
->         struct encl_segment *seg;
-> @@ -299,9 +299,9 @@ bool encl_load(const char *path, struct encl *encl, unsigned long heap_size,
->         if (seg->src == MAP_FAILED)
->                 goto err;
-> 
-> -       encl->src_size = encl->segment_tbl[j].offset + encl->segment_tbl[j].size;
-> +       encl->src_size = encl->segment_tbl[j].offset + encl->segment_tbl[j].size + dynamic_heap_size;
-> 
-> -       for (encl->encl_size = 4096; encl->encl_size < encl->src_size + edmm_size;)
-> +       for (encl->encl_size = 4096; encl->encl_size < encl->src_size;)
->                 encl->encl_size <<= 1;
+Implement functionality to define a dynamic heap for the test
+enclave. Then, implement a new augmentation test for a large
+dynamic heap.
 
-Actually, it is correct after all how Vijay changed it. We should use
-the final pre-calculated enclave address range in sigstruct.c. It's the
-re-calculation of that in sigstruct is a reminiscent of it being a
-separate command-line utility, instead of calculating the sigstruct
-on-fly. I.e. there has been sane reasons why it has been like that.
+1/5 is critical for v6.0. More information in the patch
+change log.
 
-BR, Jarkko
+Haitao Huang (1):
+  selftests/sgx: Retry the ioctl()'s returned with EAGAIN
+
+Jarkko Sakkinen (3):
+  selftests/sgx: Move ENCL_HEAP_SIZE_DEFAULT to main.c
+  selftests/sgx: Use encl->encl_size in sigstruct.c
+  selftests/sgx: Include the dynamic heap size to the ELRANGE
+    calculation
+
+Vijay Dhanraj (1):
+  selftests/sgx: Add SGX selftest augment_via_eaccept_long
+
+ tools/testing/selftests/sgx/load.c      |   8 +-
+ tools/testing/selftests/sgx/main.c      | 179 +++++++++++++++++++++---
+ tools/testing/selftests/sgx/main.h      |   6 +-
+ tools/testing/selftests/sgx/sigstruct.c |   8 +-
+ 4 files changed, 172 insertions(+), 29 deletions(-)
+
+-- 
+2.37.2
+
