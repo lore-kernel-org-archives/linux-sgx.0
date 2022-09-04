@@ -2,77 +2,162 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC8DEC6FA82
-	for <linux-sgx@archiver.kernel.org>; Sun,  4 Sep 2022 07:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBF9C6FA82
+	for <linux-sgx@archiver.kernel.org>; Sun,  4 Sep 2022 07:54:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230227AbiIDHyM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 4 Sep 2022 03:54:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50662 "EHLO
+        id S232231AbiIDHyS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 4 Sep 2022 03:54:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230190AbiIDHyL (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 4 Sep 2022 03:54:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB794B4A3
-        for <linux-sgx@vger.kernel.org>; Sun,  4 Sep 2022 00:54:10 -0700 (PDT)
+        with ESMTP id S230190AbiIDHyR (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 4 Sep 2022 03:54:17 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEE694B4A3;
+        Sun,  4 Sep 2022 00:54:15 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7F7AC60F18
-        for <linux-sgx@vger.kernel.org>; Sun,  4 Sep 2022 07:54:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8887CC433D6;
-        Sun,  4 Sep 2022 07:54:09 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2ACB9B80D41;
+        Sun,  4 Sep 2022 07:54:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81BD9C433D6;
+        Sun,  4 Sep 2022 07:54:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662278049;
-        bh=B2RYDqsezduQSYDUXDEYUBFIustBX/JJUNMGJE/i1KQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=cmhIoh2MIaBT0j1kk6L2q3RMVsDlV5JRJSBABtpFi5/ctPXKe6GPtfACABHx6QwBL
-         f+NdZXUu81yrH8AwTCM22bWCUBp7tLZ0froVQwVohNLo9SuwUNmrXwWULpo3y8y+dC
-         oVdYMl12jz9myH0GfszYGgncq0axb0c2tpIUwjgmVLRh79OLiJGebGh8q5JXpQWjIx
-         HDwSODJp7eTL55espI9IsqQOgKUWdCvyx6GFBDKm2uPhWRCp7PgK4bm3yEdxN6T9oi
-         h/XRSRCJZdEPMb7mcZpe498ZtphUskITD3Z4R6PLXhj5Vrbx6NtAHVZQrxUSn23B9L
-         LcSfrk3lGqXtA==
+        s=k20201202; t=1662278052;
+        bh=YqXxpCQTGQ725ygdhhyFAkQ+r1LluYvSD8o8glO4Ny4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cKC1DVH4BTZaoeBnTnq2W7Rv3snfIyVTlJNMnwRDIxoW7xaK3k9+Jp4CaMvSxOpOF
+         PsC59MGt2T9mvOUT7fvI/McUaW2JOcCiztS3xgKO0+q0w8VhAP71MWU73wPf8A9QkQ
+         HnxUOLgcNbAMr/5OqUl7NtTlUtiLp7Pq8qGsDOTId1gxLHnHv4o7TLZxINYQ6Odejd
+         EJOfYZmNxjhk5+UhlalrCN0UleVy155zXhW2CMs2KR5WDP3pJY+nKghlXR8I5YSjsD
+         OLUnHBEqM3+15y81zYR3hRidAfjTghpGmM+GLnIJojt+BlYFTJqgpNCQYgu4T3D6MC
+         yDuR9Z503IhbA==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
         Vijay Dhanraj <vijay.dhanraj@intel.com>,
         Reinette Chatre <reinette.chatre@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Subject: [PATCH 0/5] selftests/sgx: Test a large dynamic heap
-Date:   Sun,  4 Sep 2022 10:53:53 +0300
-Message-Id: <20220904075358.7727-1-jarkko@kernel.org>
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/5] selftests/sgx: Retry the ioctl()'s returned with EAGAIN
+Date:   Sun,  4 Sep 2022 10:53:54 +0300
+Message-Id: <20220904075358.7727-2-jarkko@kernel.org>
 X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20220904075358.7727-1-jarkko@kernel.org>
+References: <20220904075358.7727-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Implement functionality to define a dynamic heap for the test
-enclave. Then, implement a new augmentation test for a large
-dynamic heap.
+From: Haitao Huang <haitao.huang@linux.intel.com>
 
-1/5 is critical for v6.0. More information in the patch
-change log.
+For EMODT and EREMOVE ioctl()'s with a large range, kernel
+may not finish in one shot and return EAGAIN error code
+and count of bytes of EPC pages on that operations are
+finished successfully.
 
-Haitao Huang (1):
-  selftests/sgx: Retry the ioctl()'s returned with EAGAIN
+Change the unclobbered_vdso_oversubscribed_remove test
+to rerun the ioctl()'s in a loop, updating offset and length
+using the byte count returned in each iteration.
 
-Jarkko Sakkinen (3):
-  selftests/sgx: Move ENCL_HEAP_SIZE_DEFAULT to main.c
-  selftests/sgx: Use encl->encl_size in sigstruct.c
-  selftests/sgx: Include the dynamic heap size to the ELRANGE
-    calculation
+Fixes: 6507cce561b4 ("selftests/sgx: Page removal stress test")
+Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v3:
+* Added a fixes tag. The bug is in v6.0 patches.
+* Added my tested-by (the bug reproduced in my NUC often).
+v2:
+* Changed branching in EAGAIN condition so that else branch
+  is not required.
+* Addressed Reinette's feedback:
+---
+ tools/testing/selftests/sgx/main.c | 42 ++++++++++++++++++++++++------
+ 1 file changed, 34 insertions(+), 8 deletions(-)
 
-Vijay Dhanraj (1):
-  selftests/sgx: Add SGX selftest augment_via_eaccept_long
-
- tools/testing/selftests/sgx/load.c      |   8 +-
- tools/testing/selftests/sgx/main.c      | 179 +++++++++++++++++++++---
- tools/testing/selftests/sgx/main.h      |   6 +-
- tools/testing/selftests/sgx/sigstruct.c |   8 +-
- 4 files changed, 172 insertions(+), 29 deletions(-)
-
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index 9820b3809c69..59cca806eda1 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -390,6 +390,7 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
+ 	struct encl_segment *heap;
+ 	unsigned long total_mem;
+ 	int ret, errno_save;
++	unsigned long count;
+ 	unsigned long addr;
+ 	unsigned long i;
+ 
+@@ -453,16 +454,30 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
+ 	modt_ioc.offset = heap->offset;
+ 	modt_ioc.length = heap->size;
+ 	modt_ioc.page_type = SGX_PAGE_TYPE_TRIM;
+-
++	count = 0;
+ 	TH_LOG("Changing type of %zd bytes to trimmed may take a while ...",
+ 	       heap->size);
+-	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
+-	errno_save = ret == -1 ? errno : 0;
++	do {
++		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
++
++		errno_save = ret == -1 ? errno : 0;
++		if (errno_save != EAGAIN)
++			break;
++
++		EXPECT_EQ(modt_ioc.result, 0);
++
++		count += modt_ioc.count;
++		modt_ioc.offset += modt_ioc.count;
++		modt_ioc.length -= modt_ioc.count;
++		modt_ioc.result = 0;
++		modt_ioc.count = 0;
++	} while (modt_ioc.length != 0);
+ 
+ 	EXPECT_EQ(ret, 0);
+ 	EXPECT_EQ(errno_save, 0);
+ 	EXPECT_EQ(modt_ioc.result, 0);
+-	EXPECT_EQ(modt_ioc.count, heap->size);
++	count += modt_ioc.count;
++	EXPECT_EQ(count, heap->size);
+ 
+ 	/* EACCEPT all removed pages. */
+ 	addr = self->encl.encl_base + heap->offset;
+@@ -490,15 +505,26 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
+ 
+ 	remove_ioc.offset = heap->offset;
+ 	remove_ioc.length = heap->size;
+-
++	count = 0;
+ 	TH_LOG("Removing %zd bytes from enclave may take a while ...",
+ 	       heap->size);
+-	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
+-	errno_save = ret == -1 ? errno : 0;
++	do {
++		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
++
++		errno_save = ret == -1 ? errno : 0;
++		if (errno_save != EAGAIN)
++			break;
++
++		count += remove_ioc.count;
++		remove_ioc.offset += remove_ioc.count;
++		remove_ioc.length -= remove_ioc.count;
++		remove_ioc.count = 0;
++	} while (remove_ioc.length != 0);
+ 
+ 	EXPECT_EQ(ret, 0);
+ 	EXPECT_EQ(errno_save, 0);
+-	EXPECT_EQ(remove_ioc.count, heap->size);
++	count += remove_ioc.count;
++	EXPECT_EQ(count, heap->size);
+ }
+ 
+ TEST_F(enclave, clobbered_vdso)
 -- 
 2.37.2
 
