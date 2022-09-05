@@ -2,35 +2,35 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 191D0C6FA8B
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Sep 2022 02:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 167DAC6FA83
+	for <linux-sgx@archiver.kernel.org>; Mon,  5 Sep 2022 02:05:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235617AbiIECEp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 4 Sep 2022 22:04:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43978 "EHLO
+        id S235629AbiIECE6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 4 Sep 2022 22:04:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235591AbiIECEn (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 4 Sep 2022 22:04:43 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13F63DF75;
-        Sun,  4 Sep 2022 19:04:40 -0700 (PDT)
+        with ESMTP id S235631AbiIECEq (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 4 Sep 2022 22:04:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FA24DF86;
+        Sun,  4 Sep 2022 19:04:43 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id E6C17CE0FA6;
-        Mon,  5 Sep 2022 02:04:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48540C433D6;
-        Mon,  5 Sep 2022 02:04:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 82AF261077;
+        Mon,  5 Sep 2022 02:04:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9087FC433C1;
+        Mon,  5 Sep 2022 02:04:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662343475;
-        bh=zZQCkfIPNszWIc75n8kSu1sHOjjYf8Pclxp9XteeajU=;
+        s=k20201202; t=1662343482;
+        bh=XlptTBy+OXNVu3JyhunDpS9iYAtCD9uGQv0PQRapRVE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V0DQ3us3Rm1/fNTCYcZqbBObH/D81+g4eCIPsWFkOkWapGCo+Kr5BrGuBm+QcggGa
-         tkZrMjtaZLH3w8osmtEQP8GoIUzj9fe6CIa/tirpJfLtjwySsbTbqFkCDaxnRZZY60
-         YqdJkS8kjNOd53vpRvO/x067Ux14BtTzt8SkXRkatZ1qEJtoRx58rdrlSm/9IqEYEe
-         bW1Mz7z6a18MiRGo6SrqDWEvPmuGEVCnfv6PNmKsm329Kx9BjxW20+6kG1jJlohnWy
-         VjXReu7xtAw9PcyX6jnUL2XzRGPc3VGZdXFfqrH3mep84ByaiBpGMbfOx/YmeaoDPb
-         O6CFMfEWvtKYQ==
+        b=Q90KTyPmwYAm0kEkfLf8v4NJ2BsJ7hQvROitBQfkCyZ2RHPxRr8CaZ+q47cnoaWKs
+         gxNZghxCh6fvTD+M9IGfZO3FvJRmxqbmlK+3KdnzdQ7r+OIAFQBoV5EkZNizgxDtAI
+         YoyFiTXth3XCI8Qcj1uh9oRCJGL5I7biGn+AU0A8oXxV5HnF9JKqNQBjubw1pLMl6v
+         jyXXCXjfP4/xXDajyD4luGGC67UJboGq14Yz8EpajEuJUipPSDM9BtJpaOpSLczbOK
+         FweDxsuCEU+mChxhpRod5v+m0HeIEgbj6Xc8xgpZzpaiD0FjCR+iVGxVYhG4eCOZEk
+         TnfQY2GFYmt0w==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
@@ -41,9 +41,9 @@ Cc:     Haitao Huang <haitao.huang@linux.intel.com>,
         Shuah Khan <shuah@kernel.org>,
         linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 3/5] selftests/sgx: Use encl->encl_size in sigstruct.c
-Date:   Mon,  5 Sep 2022 05:04:09 +0300
-Message-Id: <20220905020411.17290-4-jarkko@kernel.org>
+Subject: [PATCH v2 5/5] selftests/sgx: Add SGX selftest augment_via_eaccept_long
+Date:   Mon,  5 Sep 2022 05:04:11 +0300
+Message-Id: <20220905020411.17290-6-jarkko@kernel.org>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20220905020411.17290-1-jarkko@kernel.org>
 References: <20220905020411.17290-1-jarkko@kernel.org>
@@ -53,83 +53,187 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The final enclave address range (referred as ELRANGE in Intel SDM)
-calculation is a reminiscent of signing tool being a separate command-line
-utility, and sigstruct being produced during the compilation. Given that
-nowadays the sigstruct is calculated on-fly, use the readily calculated
-encl->encl_size instead, in order to remove duplicate code.
+From: Vijay Dhanraj <vijay.dhanraj@intel.com>
 
+Add a new test case which is same as augment_via_eaccept but adds a
+larger number of EPC pages to stress test EAUG via EACCEPT.
+
+Signed-off-by: Vijay Dhanraj <vijay.dhanraj@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- tools/testing/selftests/sgx/load.c      | 5 +++--
- tools/testing/selftests/sgx/main.h      | 1 -
- tools/testing/selftests/sgx/sigstruct.c | 8 ++------
- 3 files changed, 5 insertions(+), 9 deletions(-)
+v8:
+- Specify dynamic heap size in side the test case.
 
-diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-index 94bdeac1cf04..3b4e2422fb09 100644
---- a/tools/testing/selftests/sgx/load.c
-+++ b/tools/testing/selftests/sgx/load.c
-@@ -174,6 +174,7 @@ uint64_t encl_get_entry(struct encl *encl, const char *symbol)
- bool encl_load(const char *path, struct encl *encl, unsigned long heap_size)
+v7:
+- Contains now only the test case. Support for dynamic heap is
+  prepared in prepending patches.
+
+v6:
+- Address Reinette's feedback:
+  https://lore.kernel.org/linux-sgx/Yw6%2FiTzSdSw%2FY%2FVO@kernel.org/
+
+v5:
+- Add the klog dump and sysctl option to the commit message.
+
+v4:
+- Explain expectations for dirty_page_list in the function header, instead
+  of an inline comment.
+- Improve commit message to explain the conditions better.
+- Return the number of pages left dirty to ksgxd() and print warning after
+  the 2nd call, if there are any.
+
+v3:
+- Remove WARN_ON().
+- Tuned comments and the commit message a bit.
+
+v2:
+- Replaced WARN_ON() with optional pr_info() inside
+  __sgx_sanitize_pages().
+- Rewrote the commit message.
+- Added the fixes tag.
+---
+ tools/testing/selftests/sgx/main.c | 112 ++++++++++++++++++++++++++++-
+ 1 file changed, 111 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
+index 78c3b913ce10..e596b45bc5f8 100644
+--- a/tools/testing/selftests/sgx/main.c
++++ b/tools/testing/selftests/sgx/main.c
+@@ -22,8 +22,10 @@
+ #include "main.h"
+ 
+ static const size_t ENCL_HEAP_SIZE_DEFAULT = PAGE_SIZE;
++static const unsigned long TIMEOUT_DEFAULT = 900;
+ static const uint64_t MAGIC = 0x1122334455667788ULL;
+ static const uint64_t MAGIC2 = 0x8877665544332211ULL;
++
+ vdso_sgx_enter_enclave_t vdso_sgx_enter_enclave;
+ 
+ /*
+@@ -387,7 +389,7 @@ TEST_F(enclave, unclobbered_vdso_oversubscribed)
+ 	EXPECT_EQ(self->run.user_data, 0);
+ }
+ 
+-TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
++TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, TIMEOUT_DEFAULT)
  {
- 	const char device_path[] = "/dev/sgx_enclave";
-+	unsigned long contents_size;
- 	struct encl_segment *seg;
- 	Elf64_Phdr *phdr_tbl;
- 	off_t src_offset;
-@@ -298,9 +299,9 @@ bool encl_load(const char *path, struct encl *encl, unsigned long heap_size)
- 	if (seg->src == MAP_FAILED)
- 		goto err;
+ 	struct sgx_enclave_remove_pages remove_ioc;
+ 	struct sgx_enclave_modify_types modt_ioc;
+@@ -1245,6 +1247,114 @@ TEST_F(enclave, augment_via_eaccept)
+ 	munmap(addr, PAGE_SIZE);
+ }
  
--	encl->src_size = encl->segment_tbl[j].offset + encl->segment_tbl[j].size;
-+	contents_size = encl->segment_tbl[j].offset + encl->segment_tbl[j].size;
- 
--	for (encl->encl_size = 4096; encl->encl_size < encl->src_size; )
-+	for (encl->encl_size = 4096; encl->encl_size < contents_size; )
- 		encl->encl_size <<= 1;
- 
- 	return true;
-diff --git a/tools/testing/selftests/sgx/main.h b/tools/testing/selftests/sgx/main.h
-index 82b33f8db048..9c1bc0d9b43c 100644
---- a/tools/testing/selftests/sgx/main.h
-+++ b/tools/testing/selftests/sgx/main.h
-@@ -20,7 +20,6 @@ struct encl {
- 	void *bin;
- 	off_t bin_size;
- 	void *src;
--	size_t src_size;
- 	size_t encl_size;
- 	off_t encl_base;
- 	unsigned int nr_segments;
-diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
-index 50c5ab1aa6fa..0c7678d2594b 100644
---- a/tools/testing/selftests/sgx/sigstruct.c
-+++ b/tools/testing/selftests/sgx/sigstruct.c
-@@ -212,13 +212,9 @@ struct mrecreate {
- } __attribute__((__packed__));
- 
- 
--static bool mrenclave_ecreate(EVP_MD_CTX *ctx, uint64_t blob_size)
-+static bool mrenclave_ecreate(EVP_MD_CTX *ctx, uint64_t encl_size)
- {
- 	struct mrecreate mrecreate;
--	uint64_t encl_size;
--
--	for (encl_size = 0x1000; encl_size < blob_size; )
--		encl_size <<= 1;
- 
- 	memset(&mrecreate, 0, sizeof(mrecreate));
- 	mrecreate.tag = MRECREATE;
-@@ -343,7 +339,7 @@ bool encl_measure(struct encl *encl)
- 	if (!ctx)
- 		goto err;
- 
--	if (!mrenclave_ecreate(ctx, encl->src_size))
-+	if (!mrenclave_ecreate(ctx, encl->encl_size))
- 		goto err;
- 
- 	for (i = 0; i < encl->nr_segments; i++) {
++/*
++ * Test for the addition of large number of pages to an initialized enclave via
++ * a pre-emptive run of EACCEPT on every page to be added.
++ */
++TEST_F_TIMEOUT(enclave, augment_via_eaccept_long, TIMEOUT_DEFAULT)
++{
++	/*
++	 * The dynamic heap size was chosen based on a bug report:
++	 * Message-ID:
++	 * <DM8PR11MB55912A7F47A84EC9913A6352F6999@DM8PR11MB5591.namprd11.prod.outlook.com>
++	 */
++	static const unsigned long DYNAMIC_HEAP_SIZE = 0x200000L * PAGE_SIZE;
++	struct encl_op_get_from_addr get_addr_op;
++	struct encl_op_put_to_addr put_addr_op;
++	struct encl_op_eaccept eaccept_op;
++	size_t total_size = 0;
++	unsigned long i;
++	void *addr;
++
++	if (!sgx2_supported())
++		SKIP(return, "SGX2 not supported");
++
++	ASSERT_TRUE(setup_test_encl_dynamic(ENCL_HEAP_SIZE_DEFAULT, DYNAMIC_HEAP_SIZE,
++					    &self->encl, _metadata));
++
++	memset(&self->run, 0, sizeof(self->run));
++	self->run.tcs = self->encl.encl_base;
++
++	for (i = 0; i < self->encl.nr_segments; i++) {
++		struct encl_segment *seg = &self->encl.segment_tbl[i];
++
++		total_size += seg->size;
++	}
++
++	/*
++	 * mmap() every page at end of existing enclave to be used for
++	 * EDMM.
++	 */
++	addr = mmap((void *)self->encl.encl_base + total_size, DYNAMIC_HEAP_SIZE,
++		    PROT_READ | PROT_WRITE | PROT_EXEC, MAP_SHARED | MAP_FIXED,
++		    self->encl.fd, 0);
++	EXPECT_NE(addr, MAP_FAILED);
++
++	self->run.exception_vector = 0;
++	self->run.exception_error_code = 0;
++	self->run.exception_addr = 0;
++
++	/*
++	 * Run EACCEPT on every page to trigger the #PF->EAUG->EACCEPT(again
++	 * without a #PF). All should be transparent to userspace.
++	 */
++	eaccept_op.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_REG | SGX_SECINFO_PENDING;
++	eaccept_op.ret = 0;
++	eaccept_op.header.type = ENCL_OP_EACCEPT;
++
++	for (i = 0; i < DYNAMIC_HEAP_SIZE; i += PAGE_SIZE) {
++		eaccept_op.epc_addr = (uint64_t)(addr + i);
++
++		EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
++		if (self->run.exception_vector == 14 &&
++		    self->run.exception_error_code == 4 &&
++		    self->run.exception_addr == self->encl.encl_base) {
++			munmap(addr, DYNAMIC_HEAP_SIZE);
++			SKIP(return, "Kernel does not support adding pages to initialized enclave");
++		}
++
++		EXPECT_EQ(self->run.exception_vector, 0);
++		EXPECT_EQ(self->run.exception_error_code, 0);
++		EXPECT_EQ(self->run.exception_addr, 0);
++		ASSERT_EQ(eaccept_op.ret, 0);
++		ASSERT_EQ(self->run.function, EEXIT);
++	}
++
++	/*
++	 * Pool of pages were successfully added to enclave. Perform sanity
++	 * check on first page of the pool only to ensure data can be written
++	 * to and read from a dynamically added enclave page.
++	 */
++	put_addr_op.value = MAGIC;
++	put_addr_op.addr = (unsigned long)addr;
++	put_addr_op.header.type = ENCL_OP_PUT_TO_ADDRESS;
++
++	EXPECT_EQ(ENCL_CALL(&put_addr_op, &self->run, true), 0);
++
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++
++	/*
++	 * Read memory from newly added page that was just written to,
++	 * confirming that data previously written (MAGIC) is present.
++	 */
++	get_addr_op.value = 0;
++	get_addr_op.addr = (unsigned long)addr;
++	get_addr_op.header.type = ENCL_OP_GET_FROM_ADDRESS;
++
++	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, true), 0);
++
++	EXPECT_EQ(get_addr_op.value, MAGIC);
++	EXPECT_EEXIT(&self->run);
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++
++	munmap(addr, DYNAMIC_HEAP_SIZE);
++}
++
+ /*
+  * SGX2 page type modification test in two phases:
+  * Phase 1:
 -- 
 2.37.2
 
