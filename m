@@ -2,183 +2,102 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E78ECAAD5
-	for <linux-sgx@archiver.kernel.org>; Fri,  9 Sep 2022 04:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4400CECAAD3
+	for <linux-sgx@archiver.kernel.org>; Fri,  9 Sep 2022 08:09:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229616AbiIIEBr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 9 Sep 2022 00:01:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54634 "EHLO
+        id S229566AbiIIIJF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 9 Sep 2022 04:09:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbiIIEBp (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 9 Sep 2022 00:01:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7837D074A;
-        Thu,  8 Sep 2022 21:01:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3A80161E35;
-        Fri,  9 Sep 2022 04:01:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16162C433C1;
-        Fri,  9 Sep 2022 04:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662696103;
-        bh=9PLi232bcOnEaVbw2xQNicyLAvrsStubFpd3g24HjS8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TKjmeoR2dbaaPj+sb57Jx3PPxOKZQnISq6tuHl3KURjplc474Wsl+FG1myLQNQq7k
-         vn+heCFNH8b+vdX1bDyNTmOZoG5Q2kzAxb8+kjed/itQsRlOg5iJE10lanYcUjyqkb
-         RMtXLmRMhhz3BWiUmEJQMe/mCAK7mYZnjk4BjrxbzSuXlCDyhTnd5/AF8bGcFewTI3
-         kNhgzS/EOHbxrAzMUnhPkxFCaFUmzWtDJqgjMF8kfpYEC4LSHh7fgDvqgjIsJ38cvm
-         gpCbQ+FqkQTsgzcmPaFmWnD7aEZMLRtiYwMADhEpdeoldiF33ZuM1rFE1OpGy9oiHm
-         gA5QrYY6nRKdg==
-Date:   Fri, 9 Sep 2022 07:01:36 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Vijay Dhanraj <vijay.dhanraj@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/5] selftests/sgx: Retry the ioctl()'s returned with
- EAGAIN
-Message-ID: <Yxq6oAcGkg33tkb8@kernel.org>
-References: <20220905020411.17290-1-jarkko@kernel.org>
- <20220905020411.17290-2-jarkko@kernel.org>
- <fe0e7a0c-da41-5918-6ef4-8906598998a6@intel.com>
- <Yxp4iIKjOQflQC2i@kernel.org>
- <d2cccc58-b6b2-4153-0c1b-8d5b39ca0862@intel.com>
+        with ESMTP id S229862AbiIIIJF (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 9 Sep 2022 04:09:05 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 158F3D6B9D;
+        Fri,  9 Sep 2022 01:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1662710944; x=1694246944;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pHcMr/HNr8GqXxikW+gg67wqAAdhnAbWd7qTUYLTQA0=;
+  b=hWI+SDRipT9KS06Qz5SReoxHfX8cAJlpA1rMYfrqdvCERDAh59yeaZDJ
+   wJ42lWr/AAP+1qvesv2Z58PewJWin6rHS8SUYYUHqR6vghhbDrtBqnICP
+   eSTkLYhkCnCSjNAK7gLfB3kE6CLymI+jKW/502WCdKVBATY5luSVrYWQ4
+   cOvn+H9y3A0AWlO8nZCi0m2IYwmfv0U90m35qPu1nYLTDr4BT01yRid85
+   R1/lhm5E4Cb0MeWUO9UHq8cH43z0EgvSeXdNblPPp6JoMhfwahIlKJodi
+   PGPPqSGrDr3CyJUjWhr07EWXj7mz4lGIBF2zcJtY+T3y0l90hI/ErTy5g
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10464"; a="298762966"
+X-IronPort-AV: E=Sophos;i="5.93,302,1654585200"; 
+   d="scan'208";a="298762966"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2022 01:09:03 -0700
+X-IronPort-AV: E=Sophos;i="5.93,302,1654585200"; 
+   d="scan'208";a="740976284"
+Received: from lmongeax-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.212.106.181])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2022 01:09:02 -0700
+From:   Kai Huang <kai.huang@intel.com>
+To:     linux-sgx@vger.kernel.org
+Cc:     dave.hansen@linux.intel.com, seanjc@google.com, jarkko@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/intel: Clear SGX bit if both SGX driver and KVM SGX are not enabled
+Date:   Fri,  9 Sep 2022 20:08:53 +1200
+Message-Id: <20220909080853.547058-1-kai.huang@intel.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d2cccc58-b6b2-4153-0c1b-8d5b39ca0862@intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Sep 08, 2022 at 05:06:58PM -0700, Reinette Chatre wrote:
-> Hi Jarkko,
-> 
-> On 9/8/2022 4:19 PM, Jarkko Sakkinen wrote:
-> > On Thu, Sep 08, 2022 at 03:43:06PM -0700, Reinette Chatre wrote:
-> >> Hi Jarkko and Haitao,
-> >>
-> >> On 9/4/2022 7:04 PM, Jarkko Sakkinen wrote:
-> >>> From: Haitao Huang <haitao.huang@linux.intel.com>
-> >>>
-> >>> For EMODT and EREMOVE ioctl()'s with a large range, kernel
-> >>> may not finish in one shot and return EAGAIN error code
-> >>> and count of bytes of EPC pages on that operations are
-> >>> finished successfully.
-> >>>
-> >>> Change the unclobbered_vdso_oversubscribed_remove test
-> >>> to rerun the ioctl()'s in a loop, updating offset and length
-> >>> using the byte count returned in each iteration.
-> >>>
-> >>> Fixes: 6507cce561b4 ("selftests/sgx: Page removal stress test")
-> >>
-> >> Should this patch be moved to the "critical fixes for v6.0" series?
-> > 
-> > I think not because it does not risk stability of the
-> > kernel itself. It's "nice to have" but not mandatory.
-> 
-> ok, thank you for considering it.
-> 
-> ...
-> 
-> >>> @@ -453,16 +454,30 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
-> >>>  	modt_ioc.offset = heap->offset;
-> >>>  	modt_ioc.length = heap->size;
-> >>>  	modt_ioc.page_type = SGX_PAGE_TYPE_TRIM;
-> >>> -
-> >>> +	count = 0;
-> >>>  	TH_LOG("Changing type of %zd bytes to trimmed may take a while ...",
-> >>>  	       heap->size);
-> >>> -	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
-> >>> -	errno_save = ret == -1 ? errno : 0;
-> >>> +	do {
-> >>> +		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
-> >>> +
-> >>> +		errno_save = ret == -1 ? errno : 0;
-> >>> +		if (errno_save != EAGAIN)
-> >>> +			break;
-> >>> +
-> >>> +		EXPECT_EQ(modt_ioc.result, 0);
-> >>
-> >> If this check triggers then there is something seriously wrong and in that case
-> >> it may also be that this loop may be unable to terminate or the error condition would
-> >> keep appearing until the loop terminates (which may be many iterations). Considering
-> >> the severity and risk I do think that ASSERT_EQ() would be more appropriate,
-> >> similar to how ASSERT_EQ() is used in patch 5/5.
-> >>
-> >> Apart from that I think that this looks good.
-> >>
-> >> Thank you very much for adding this.
-> >>
-> >> Reinette
-> > 
-> > Hmm... I could along the lines:
-> > 
-> > /*
-> >  * Get time since Epoch is milliseconds.
-> >  */
-> > unsigned long get_time(void)
-> > {
-> >     struct timeval start;
-> > 
-> >     gettimeofday(&start, NULL);
-> > 
-> >     return (unsigneg long)start.tv_sec * 1000L + (unsigned long)start.tv_usec / 1000L;
-> > }
-> > 
-> > and
-> > 
-> > #define IOCTL_RETRY_TIMEOUT 100
-> > 
-> > In the test function:
-> > 
-> >         unsigned long start_time;
-> > 
-> >         /* ... */
-> > 
-> >         start_time = get_time();
-> >         do {
-> >                 EXPECT_LT(get_time() - start_time(), IOCTL_RETRY_TIMEOUT);
-> > 
-> >                 /* ... */
-> >         }
-> > 
-> >         /* ... */
-> > 
-> > What do you think?
-> 
-> I do think that your proposal can be considered for an additional check in this
-> test but the way I understand it it does not address my feedback.
-> 
-> In this patch the flow is:
-> 
-> 	do {
-> 		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
-> 
-> 		errno_save = ret == -1 ? errno : 0;
-> 		if (errno_save != EAGAIN)
-> 			break;
-> 
-> 		EXPECT_EQ(modt_ioc.result, 0);
-> 		...
-> 	} while ...
-> 
-> 
-> If this EXPECT_EQ() check fails then it means that errno_save is EAGAIN
-> and modt_ioc.result != 0. This should never happen because in the kernel
-> (sgx_enclave_modify_types()) the only time modt_ioc.result can be set is
-> when the ioctl() returns EFAULT.
-> 
-> In my opinion this check should be changed to:
-> 		ASSERT_EQ(modt_ioc.result, 0);
+Currently on platform which has SGX enabled, if CONFIG_X86_SGX is not
+enabled, the X86_FEATURE_SGX is not cleared, resulting in /proc/cpuinfo
+shows "sgx" feature.  This is not desired.
 
-Right, I missed this. It should be definitely ASSERT_EQ(().
+Clear SGX feature bit if both SGX driver and KVM SGX are not enabled in
+init_ia32_feat_ctl().
 
-BR, Jarkko
+Signed-off-by: Kai Huang <kai.huang@intel.com>
+---
+
+Hi Dave, Sean, Jarkko,
+
+Could you help to review?  Tested on SGX (BIOS) enabled machine with
+CONFIG_X86_SGX unset.
+
+This patch is generated on latest tip/master, but it applies to
+tip/x86/sgx cleanly as well.
+
+---
+ arch/x86/kernel/cpu/feat_ctl.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+index 993697e71854..2f67409f5f00 100644
+--- a/arch/x86/kernel/cpu/feat_ctl.c
++++ b/arch/x86/kernel/cpu/feat_ctl.c
+@@ -191,6 +191,19 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 		return;
+ 	}
+ 
++	/*
++	 * By reaching here, it is certain that:
++	 *  - CPU supports SGX.
++	 *  - SGX is enabled by BIOS.
++	 *
++	 * However if both SGX driver and KVM SGX are not enabled, just
++	 * need to clear SGX feature bit.
++	 */
++	if (!enable_sgx_driver && !enable_sgx_kvm) {
++		clear_cpu_cap(c, X86_FEATURE_SGX);
++		return;
++	}
++
+ 	/*
+ 	 * VMX feature bit may be cleared due to being disabled in BIOS,
+ 	 * in which case SGX virtualization cannot be supported either.
+
+base-commit: b8b09110cf290fdab4006b717da7a776ffb0cb73
+-- 
+2.37.1
+
