@@ -2,192 +2,69 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB980ECAAD5
-	for <linux-sgx@archiver.kernel.org>; Mon, 12 Sep 2022 10:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FFDECAAD5
+	for <linux-sgx@archiver.kernel.org>; Mon, 12 Sep 2022 10:47:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229736AbiILKkr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 12 Sep 2022 06:40:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41672 "EHLO
+        id S229511AbiILKrt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 12 Sep 2022 06:47:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiILKkp (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 12 Sep 2022 06:40:45 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D88A12495D;
-        Mon, 12 Sep 2022 03:40:43 -0700 (PDT)
+        with ESMTP id S229670AbiILKrt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 12 Sep 2022 06:47:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85B8431235;
+        Mon, 12 Sep 2022 03:47:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2E01FB80C67;
-        Mon, 12 Sep 2022 10:40:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C7AFC433D6;
-        Mon, 12 Sep 2022 10:40:40 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2536261185;
+        Mon, 12 Sep 2022 10:47:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA22C433C1;
+        Mon, 12 Sep 2022 10:47:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662979240;
-        bh=DIfVeEZaLk2MHz9A0QBEd0qnfu425kQdhOpMpcQXmiA=;
+        s=k20201202; t=1662979667;
+        bh=JqvZVTquvYu9SykLPcx/npNE2iazBZMw0+uVLw8hkpY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f7yIlaBJhfHKhEAsCTDhsNQhEi+bsittT7YoYl5+IoUZ50/aKc5nasLsAl0drcB5j
-         pLE21tUBXYpl6eEskGqaZ1YNAh0Kc+zml48Z8bv9FU+PjM4Q0VCaCmp+hXl3ECFaLK
-         a4CUPHrD7f/xhh+3BAC2+4FwuLywAxsSy0rm3h4U+lqpuZq+23Bh/p3I0/fHLyTTaV
-         La89zSN/hjDIz0Mhuk4nWyVkV7PxgGzlv94KMJK6ight0dxglG0B9jDwoWJwBDWaOd
-         G1fNlQBfACK9/OQKd6UsyP1Pekcp6a+C8ICd0KvrSkEDNZnHRvlosPl4wco96L/ueM
-         gpIDcrvQZ7CZA==
-Date:   Mon, 12 Sep 2022 13:40:33 +0300
+        b=oq+h1G6gk5PSZ51uOpozKg+WiZpYc0MaiCzyZLhWZiQweHG3iKZ1nGwxl8BZ4xNwk
+         1ci9MCOCl5+813JWlPuLp18qu5cztW/czMeZqCeRxOPkU8l3ImHJXbhWhZoLTsxQrx
+         bO/qmW4j6FFVxB/YE3sew8rFm8Dn0aJOBevmqBAOq99MnnpfqYcGYOyF+HEP2Kjx9F
+         K7OZVuZwymOSCiifx3Fh7zse+lG71u5cdgF97L//KrPHPqX5AZzC59BLF7IZJVWq/W
+         uMFzy2+HF+r8cA8/dAI4KlOJYtZdzmMupAKIxrP7iCDSdgz+kNEkUfd6gF9Nylx/zo
+         Ks2DJ1j8ZedTA==
+Date:   Mon, 12 Sep 2022 13:47:40 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Vijay Dhanraj <vijay.dhanraj@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/5] selftests/sgx: Retry the ioctl()'s returned with
- EAGAIN
-Message-ID: <Yx8MoYF3Jed5G+uo@kernel.org>
-References: <20220905020411.17290-1-jarkko@kernel.org>
- <20220905020411.17290-2-jarkko@kernel.org>
- <fe0e7a0c-da41-5918-6ef4-8906598998a6@intel.com>
- <Yxp4iIKjOQflQC2i@kernel.org>
- <d2cccc58-b6b2-4153-0c1b-8d5b39ca0862@intel.com>
- <Yxq6oAcGkg33tkb8@kernel.org>
+To:     Kai Huang <kai.huang@intel.com>
+Cc:     linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com,
+        seanjc@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/intel: Clear SGX bit if both SGX driver and KVM SGX
+ are not enabled
+Message-ID: <Yx8OTDwhqbgvGp4p@kernel.org>
+References: <20220909080853.547058-1-kai.huang@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yxq6oAcGkg33tkb8@kernel.org>
+In-Reply-To: <20220909080853.547058-1-kai.huang@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Sep 09, 2022 at 07:01:36AM +0300, Jarkko Sakkinen wrote:
-> On Thu, Sep 08, 2022 at 05:06:58PM -0700, Reinette Chatre wrote:
-> > Hi Jarkko,
-> > 
-> > On 9/8/2022 4:19 PM, Jarkko Sakkinen wrote:
-> > > On Thu, Sep 08, 2022 at 03:43:06PM -0700, Reinette Chatre wrote:
-> > >> Hi Jarkko and Haitao,
-> > >>
-> > >> On 9/4/2022 7:04 PM, Jarkko Sakkinen wrote:
-> > >>> From: Haitao Huang <haitao.huang@linux.intel.com>
-> > >>>
-> > >>> For EMODT and EREMOVE ioctl()'s with a large range, kernel
-> > >>> may not finish in one shot and return EAGAIN error code
-> > >>> and count of bytes of EPC pages on that operations are
-> > >>> finished successfully.
-> > >>>
-> > >>> Change the unclobbered_vdso_oversubscribed_remove test
-> > >>> to rerun the ioctl()'s in a loop, updating offset and length
-> > >>> using the byte count returned in each iteration.
-> > >>>
-> > >>> Fixes: 6507cce561b4 ("selftests/sgx: Page removal stress test")
-> > >>
-> > >> Should this patch be moved to the "critical fixes for v6.0" series?
-> > > 
-> > > I think not because it does not risk stability of the
-> > > kernel itself. It's "nice to have" but not mandatory.
-> > 
-> > ok, thank you for considering it.
-> > 
-> > ...
-> > 
-> > >>> @@ -453,16 +454,30 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, 900)
-> > >>>  	modt_ioc.offset = heap->offset;
-> > >>>  	modt_ioc.length = heap->size;
-> > >>>  	modt_ioc.page_type = SGX_PAGE_TYPE_TRIM;
-> > >>> -
-> > >>> +	count = 0;
-> > >>>  	TH_LOG("Changing type of %zd bytes to trimmed may take a while ...",
-> > >>>  	       heap->size);
-> > >>> -	ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
-> > >>> -	errno_save = ret == -1 ? errno : 0;
-> > >>> +	do {
-> > >>> +		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
-> > >>> +
-> > >>> +		errno_save = ret == -1 ? errno : 0;
-> > >>> +		if (errno_save != EAGAIN)
-> > >>> +			break;
-> > >>> +
-> > >>> +		EXPECT_EQ(modt_ioc.result, 0);
-> > >>
-> > >> If this check triggers then there is something seriously wrong and in that case
-> > >> it may also be that this loop may be unable to terminate or the error condition would
-> > >> keep appearing until the loop terminates (which may be many iterations). Considering
-> > >> the severity and risk I do think that ASSERT_EQ() would be more appropriate,
-> > >> similar to how ASSERT_EQ() is used in patch 5/5.
-> > >>
-> > >> Apart from that I think that this looks good.
-> > >>
-> > >> Thank you very much for adding this.
-> > >>
-> > >> Reinette
-> > > 
-> > > Hmm... I could along the lines:
-> > > 
-> > > /*
-> > >  * Get time since Epoch is milliseconds.
-> > >  */
-> > > unsigned long get_time(void)
-> > > {
-> > >     struct timeval start;
-> > > 
-> > >     gettimeofday(&start, NULL);
-> > > 
-> > >     return (unsigneg long)start.tv_sec * 1000L + (unsigned long)start.tv_usec / 1000L;
-> > > }
-> > > 
-> > > and
-> > > 
-> > > #define IOCTL_RETRY_TIMEOUT 100
-> > > 
-> > > In the test function:
-> > > 
-> > >         unsigned long start_time;
-> > > 
-> > >         /* ... */
-> > > 
-> > >         start_time = get_time();
-> > >         do {
-> > >                 EXPECT_LT(get_time() - start_time(), IOCTL_RETRY_TIMEOUT);
-> > > 
-> > >                 /* ... */
-> > >         }
-> > > 
-> > >         /* ... */
-> > > 
-> > > What do you think?
-> > 
-> > I do think that your proposal can be considered for an additional check in this
-> > test but the way I understand it it does not address my feedback.
-> > 
-> > In this patch the flow is:
-> > 
-> > 	do {
-> > 		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
-> > 
-> > 		errno_save = ret == -1 ? errno : 0;
-> > 		if (errno_save != EAGAIN)
-> > 			break;
-> > 
-> > 		EXPECT_EQ(modt_ioc.result, 0);
-> > 		...
-> > 	} while ...
-> > 
-> > 
-> > If this EXPECT_EQ() check fails then it means that errno_save is EAGAIN
-> > and modt_ioc.result != 0. This should never happen because in the kernel
-> > (sgx_enclave_modify_types()) the only time modt_ioc.result can be set is
-> > when the ioctl() returns EFAULT.
-> > 
-> > In my opinion this check should be changed to:
-> > 		ASSERT_EQ(modt_ioc.result, 0);
+On Fri, Sep 09, 2022 at 08:08:53PM +1200, Kai Huang wrote:
+> Currently on platform which has SGX enabled, if CONFIG_X86_SGX is not
+> enabled, the X86_FEATURE_SGX is not cleared, resulting in /proc/cpuinfo
+> shows "sgx" feature.  This is not desired.
 > 
-> Right, I missed this. It should be definitely ASSERT_EQ(().
+> Clear SGX feature bit if both SGX driver and KVM SGX are not enabled in
+> init_ia32_feat_ctl().
+> 
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
 
-I was thinking to add patch, which adds helper to calculate static
-content length from the last item of the segment table (offset + size)
-and replace total_length calculations in various tests. 
+Is it a pattern that flags are cleared when they are disabled by the
+kernel? I don't know the answer for this.
 
-I won't send a new version this week because I'm at Open Source Summit
-EU and Linux Security Summit EU.
+I could imagine that sometimes you might want to know whether the CPU
+supports a feature, even if e.g. your distribution kernel does not.
+
+There's of course other ways to answer such qeustion, e.g. by using
+cpuid utility.
 
 BR, Jarkko
