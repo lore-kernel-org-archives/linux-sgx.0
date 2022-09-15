@@ -2,95 +2,89 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80099ECAAA1
-	for <linux-sgx@archiver.kernel.org>; Thu, 15 Sep 2022 12:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AE5C32771
+	for <linux-sgx@archiver.kernel.org>; Thu, 15 Sep 2022 20:00:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229895AbiIOMuU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 15 Sep 2022 08:50:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52428 "EHLO
+        id S229457AbiIOUAH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 15 Sep 2022 16:00:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229833AbiIOMuT (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 15 Sep 2022 08:50:19 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD1C3AE6A;
-        Thu, 15 Sep 2022 05:50:18 -0700 (PDT)
+        with ESMTP id S229480AbiIOUAF (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 15 Sep 2022 16:00:05 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDD5D45F52
+        for <linux-sgx@vger.kernel.org>; Thu, 15 Sep 2022 13:00:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663246218; x=1694782218;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=IIdOmEcdS83aIuUyuRuxgaNZb9Jk3USNPSc9UWh3dM4=;
-  b=m4u9tLDXeBMzDyF9ME0fc5t4EWlWTb2Lpz7aA8tcrRmc/7fn26FwD/x1
-   c6kN+Ktmel/PixfcRH8WTqsLSWb+1MJJQkPO95MTYiMzeOnOJZcPZdeEJ
-   MT0Oa+4Vi7YXm+7TQQAWA/7kNlmk+eYwTjVr1U2qRKAeH+IRSuhgKmrEQ
-   Fw+loAZkU4He1zWrfUOlLD8FKbBToUJnDUmhisKY7ed1Xdlf3CEca3O5U
-   FJV1pgtI3xHllIK0yGRIX9AnUHIYk4fNBml8tiTTX5M2+FdKT3ejWSaCY
-   D8h0jvMq1Zuz7SiRTGgdyWJkthpsWesPAXf8pDcneywF/xINt7yT73go2
+  t=1663272003; x=1694808003;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=cs1nuIOnP70E+xTHHsDc7FVI2GneIo/88cvU4YeN6jU=;
+  b=NUjY92ySmsvVnsaj92sAuUtTQDhGuvgrC5UlyPt+j6LJEvsAYH56IF3W
+   5XhwQ9HyOfJEDe/bIr/fAOVCiP9npv6EKN7bDrp5a7Kc+uJOIPH2lEuDH
+   NRMcvqQG8i9cJO+ZB8tZl4OahmzAeE5jJWHSJDaSnQFdYO3agqd1Y49n1
+   9s6sbx/NyyjDvBTt2vyd22jAigZpFkYRl0GKjtBdKW1Q1NeBev60GfO/d
+   c36YvsFfH939JRB3/rULWS9qNNEYE73HZoXOFA/VaDmx5Z7KcCaAJ5d5h
+   zLMq7dVgVtf7ihwKcGQHH4M2OBmd+J8WkXVaTamFjeJ1djfzUJ/YTmRam
    g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10470"; a="299513129"
-X-IronPort-AV: E=Sophos;i="5.93,318,1654585200"; 
-   d="scan'208";a="299513129"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2022 05:50:18 -0700
-X-IronPort-AV: E=Sophos;i="5.93,318,1654585200"; 
-   d="scan'208";a="647812068"
-Received: from cvbock-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.213.165.77])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2022 05:50:16 -0700
-From:   Kai Huang <kai.huang@intel.com>
-To:     linux-sgx@vger.kernel.org
-Cc:     dave.hansen@linux.intel.com, jarkko@kernel.org,
-        tony.luck@intel.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/sgx: Add xa_store_range() return value check in sgx_setup_epc_section()
-Date:   Fri, 16 Sep 2022 00:50:06 +1200
-Message-Id: <20220915125006.759592-1-kai.huang@intel.com>
-X-Mailer: git-send-email 2.37.1
+X-IronPort-AV: E=McAfee;i="6500,9779,10471"; a="297547765"
+X-IronPort-AV: E=Sophos;i="5.93,319,1654585200"; 
+   d="scan'208";a="297547765"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2022 13:00:03 -0700
+X-IronPort-AV: E=Sophos;i="5.93,319,1654585200"; 
+   d="scan'208";a="594970196"
+Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.209.157.190])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 15 Sep 2022 13:00:01 -0700
+Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
+To:     linux-sgx@vger.kernel.org, tony.luck@intel.com, jarkko@kernel.org,
+        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        "Zhiquan Li" <zhiquan1.li@intel.com>
+Cc:     seanjc@google.com, kai.huang@intel.com, fan.du@intel.com,
+        cathy.zhang@intel.com
+Subject: Re: [PATCH v8 2/3] x86/sgx: Introduce union with vepc_vaddr field for
+ virtualization case
+References: <20220913145330.2998212-1-zhiquan1.li@intel.com>
+ <20220913145330.2998212-3-zhiquan1.li@intel.com>
+ <op.1shsrfrrwjvjmi@hhuan26-mobl1.mshome.net>
+ <48f10df1-f5ac-cd66-032a-5648989b8aba@intel.com>
+Date:   Thu, 15 Sep 2022 15:00:00 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: Quoted-Printable
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel Corp
+Message-ID: <op.1sjy6abswjvjmi@hhuan26-mobl1.mshome.net>
+In-Reply-To: <48f10df1-f5ac-cd66-032a-5648989b8aba@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-In sgx_setup_epc_section(), xa_store_range() is called to store EPC
-pages' owner section to an Xarray using physical addresses of those EPC
-pages as index.  Currently, the return value of xa_store_range() is not
-checked, but actually it can fail (i.e. due to -ENOMEM).
+On Wed, 14 Sep 2022 21:22:33 -0500, Zhiquan Li <zhiquan1.li@intel.com>  =
 
-Not checking the return value of xa_store_range() would result in the
-EPC section being used by SGX driver (and KVM SGX guests), but part or
-all of its EPC pages not being handled by the memory failure handling of
-EPC page.  Such inconsistency should be avoided, even at the cost that
-this section won't be used by the kernel.
+wrote:
 
-Add the missing check of the return value of xa_store_range(), and when
-it fails, clean up and fail to initialize the EPC section.
+>
+> On 2022/9/14 23:46, Haitao Huang wrote:
+>> Maybe it's just me missing some prior knowledge. It's not obvious to =
+me
+>> why you don't need any guard accessing the encl_owner field in ksgxd
+>> thread. Is it because all vepc pages are never put in the active list=
 
-Fixes: 40e0e7843e23 ("x86/sgx: Add infrastructure to identify SGX EPC pages")
-Signed-off-by: Kai Huang <kai.huang@intel.com>
----
- arch/x86/kernel/cpu/sgx/main.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+>> and encl_owner would never be null for all pages in that list?
+>
+> Yes, all vepc pages are never put in the active list. The SGX core pag=
+e
+> reclaimer doesn=E2=80=99t support reclaiming EPC pages allocated to KV=
+M guests
+> through the virtual EPC driver.
+>
+>> Regardless, could you add a few sentence here to to make the rule  =
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 515e2a5f25bb..2ee23e60ef61 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -632,8 +632,12 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
- 	}
- 
- 	section->phys_addr = phys_addr;
--	xa_store_range(&sgx_epc_address_space, section->phys_addr,
--		       phys_addr + size - 1, section, GFP_KERNEL);
-+	if (xa_err(xa_store_range(&sgx_epc_address_space, section->phys_addr,
-+		       phys_addr + size - 1, section, GFP_KERNEL))) {
-+		vfree(section->pages);
-+		memunmap(section->virt_addr);
-+		return false;
-+	}
- 
- 	for (i = 0; i < nr_pages; i++) {
- 		section->pages[i].section = index;
-
-base-commit: ee56a283988d739c25d2d00ffb22707cb487ab47
--- 
-2.37.1
-
+>> explicit?
+>
+> More details please see the section "Virtual EPC" at
+> Documentation/x86/sgx.rst.
+>
+Thanks for pointing to that.
+Haitao
