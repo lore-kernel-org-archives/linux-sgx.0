@@ -2,205 +2,119 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAF7C6FA91
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Sep 2022 17:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48485C54EE9
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Sep 2022 17:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229740AbiIVRQO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 22 Sep 2022 13:16:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46016 "EHLO
+        id S231140AbiIVRll (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 22 Sep 2022 13:41:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231960AbiIVRPz (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 22 Sep 2022 13:15:55 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0146F267A;
-        Thu, 22 Sep 2022 10:15:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663866937; x=1695402937;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=RZlp1H2OsjXwhzzSjzzWVpctKJLOlloT8euGikMJFHM=;
-  b=biIPUgJxGAHggXeEp2S8kM0xOA79muhQaNsIWCY3OzDbNQry/R3WdXjj
-   VfMK7Lii6ZapTJxHPQ20pTR0CYy8nRd35uNpfEQ5plNmHRqWTJtYG4iEy
-   JoTsDm8huwN1poAO1MLnQZekK74DA2vYV+LMdx6RxnWJ+5tYtWHiAFGz9
-   B+S6mqUVU+GCQPA12bJaSdQS9V6i+UqJHX4wzsIvjXKFhE7fZLnD8kckV
-   VUaRXOQLgrxcOPoR8f1ENUHkHiPgMJJtXQcxwCcu0cHkC7wWxNsneGuzS
-   fL/XGt6IhRBWAPfVL815dtbR0SSJGAAlnuNlu/+mQFEmHKIILRPCLHdpn
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10478"; a="364351968"
-X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
-   d="scan'208";a="364351968"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 10:11:46 -0700
-X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
-   d="scan'208";a="762270101"
-Received: from sknaidu-mobl1.amr.corp.intel.com (HELO kcaccard-desk.amr.corp.intel.com) ([10.212.165.187])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 10:11:27 -0700
-From:   Kristen Carlson Accardi <kristen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Sean Christopherson <seanjc@google.com>
-Subject: [RFC PATCH 08/20] x86/sgx: Add EPC page flags to identify type of page
-Date:   Thu, 22 Sep 2022 10:10:45 -0700
-Message-Id: <20220922171057.1236139-9-kristen@linux.intel.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20220922171057.1236139-1-kristen@linux.intel.com>
+        with ESMTP id S232052AbiIVRlg (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 22 Sep 2022 13:41:36 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18556EFA48;
+        Thu, 22 Sep 2022 10:41:33 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id x1-20020a17090ab00100b001fda21bbc90so3148035pjq.3;
+        Thu, 22 Sep 2022 10:41:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date;
+        bh=YTw4/4H1DrZyYT8r3vAbsU7ElPYxgVDhU3+OM9JyucE=;
+        b=ElLCbl1NZGRXMxpT6v5xRjFMH5pVD8Cb811OWdYBmSUbw6+6INd7SgCM411RdFKg2D
+         3gBBwooCUeu9bguTScSkm/XZSKCxDniYvdgWCIhnkKXa/dj/aqMoxUdDf/Z4g4Z3Uyxz
+         fJktrerUAVeMdfLrhHHvN0kbmKSsQmUR4AfFzNTL/auXAiED8nOxCign4vgffb5wAAha
+         ODjUE/FYzl39vEFJ1jKVo1TaQdQR//fsoXDGhh7myPCV/CZ20tcFNpmeDfdQNQeVatLo
+         Q6WOHGCkKXqSy8yRccfb+uwAOH7duIQ8LnHnLiFE59louwT8ra/ug4luSqNxIhGSaQle
+         b8yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=YTw4/4H1DrZyYT8r3vAbsU7ElPYxgVDhU3+OM9JyucE=;
+        b=V2HLaggexGwvc31+4BvmRIWl+0T6Z1XhW9NWT1U+/DA1RcG0SkW4ms6CJ9NjC1pu9p
+         tjE6ekeYxMstIl2QW6q9wAJap0P8JBGB8w7rRgx9760AdaVDDOTSomXnSnVDs8MOwLum
+         wGNX1PVsSRLcecCXucmd8syS0cDwc1MP0DQdPAyVwruWoRzeKUmYgEfX2EN6re04ym4B
+         WAR6i5ZJCCDPN3xG0u4pIUuTLZQRwkAz5Mey9Q89VNVOjQqaCS/LZL/RkGa+LY95V/23
+         75uzCBjoPw+3oc/aeH9wqLg77sj2B7gSnavmVBfFDP7+Y13vsrIH29XpU0pUCV53SNZt
+         HgRg==
+X-Gm-Message-State: ACrzQf2D71n+0kDGnXNauMmyUYn0HmHQdAnrTbF+FXenebFChG8ZFvlU
+        MhGTBZLWg7mvedZzEGAwO742UqOMNqi+cA==
+X-Google-Smtp-Source: AMsMyM46RQnmrtmArNIqRDGJepiXlLiVqEbR8tjp1VE8FwEn++T4TpusHiOcNrt//9HfQThYvL4t+w==
+X-Received: by 2002:a17:902:e54b:b0:178:75b9:f1e9 with SMTP id n11-20020a170902e54b00b0017875b9f1e9mr4426028plf.104.1663868492316;
+        Thu, 22 Sep 2022 10:41:32 -0700 (PDT)
+Received: from localhost (2603-800c-1a02-1bae-a7fa-157f-969a-4cde.res6.spectrum.com. [2603:800c:1a02:1bae:a7fa:157f:969a:4cde])
+        by smtp.gmail.com with ESMTPSA id x128-20020a623186000000b0053e6eae9665sm4800874pfx.140.2022.09.22.10.41.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Sep 2022 10:41:31 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Thu, 22 Sep 2022 07:41:29 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [RFC PATCH 00/20] Add Cgroup support for SGX EPC memory
+Message-ID: <YyyeSVSk/lWdo/W4@slm.duckdns.org>
 References: <20220922171057.1236139-1-kristen@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220922171057.1236139-1-kristen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Hello,
 
-Create new flags to help identify whether a page is an enclave page
-or a va page and save the page type when the page is recorded.
+(cc'ing memcg folks)
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kernel/cpu/sgx/encl.c  |  6 +++---
- arch/x86/kernel/cpu/sgx/ioctl.c |  4 ++--
- arch/x86/kernel/cpu/sgx/main.c  | 20 ++++++++++----------
- arch/x86/kernel/cpu/sgx/sgx.h   |  8 +++++++-
- 4 files changed, 22 insertions(+), 16 deletions(-)
+On Thu, Sep 22, 2022 at 10:10:37AM -0700, Kristen Carlson Accardi wrote:
+> Add a new cgroup controller to regulate the distribution of SGX EPC memory,
+> which is a subset of system RAM that is used to provide SGX-enabled
+> applications with protected memory, and is otherwise inaccessible.
+> 
+> SGX EPC memory allocations are separate from normal RAM allocations,
+> and is managed solely by the SGX subsystem. The existing cgroup memory
+> controller cannot be used to limit or account for SGX EPC memory.
+> 
+> This patchset implements the sgx_epc cgroup controller, which will provide
+> support for stats, events, and the following interface files:
+> 
+> sgx_epc.current
+> 	A read-only value which represents the total amount of EPC
+> 	memory currently being used on by the cgroup and its descendents.
+> 
+> sgx_epc.low
+> 	A read-write value which is used to set best-effort protection
+> 	of EPC usage. If the EPC usage of a cgroup drops below this value,
+> 	then the cgroup's EPC memory will not be reclaimed if possible.
+> 
+> sgx_epc.high
+> 	A read-write value which is used to set a best-effort limit
+> 	on the amount of EPC usage a cgroup has. If a cgroup's usage
+> 	goes past the high value, the EPC memory of that cgroup will
+> 	get reclaimed back under the high limit.
+> 
+> sgx_epc.max
+> 	A read-write value which is used to set a hard limit for
+> 	cgroup EPC usage. If a cgroup's EPC usage reaches this limit,
+> 	allocations are blocked until EPC memory can be reclaimed from
+> 	the cgroup.
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index ad611c06798f..672b302f3688 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -252,7 +252,7 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
- 		epc_page = sgx_encl_eldu(&encl->secs, NULL);
- 		if (IS_ERR(epc_page))
- 			return ERR_CAST(epc_page);
--		sgx_record_epc_page(epc_page, 0);
-+		sgx_record_epc_page(epc_page, SGX_EPC_PAGE_ENCLAVE);
- 	}
- 
- 	epc_page = sgx_encl_eldu(entry, encl->secs.epc_page);
-@@ -260,7 +260,7 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
- 		return ERR_CAST(epc_page);
- 
- 	encl->secs_child_cnt++;
--	sgx_record_epc_page(entry->epc_page, SGX_EPC_PAGE_RECLAIMER_TRACKED);
-+	sgx_record_epc_page(entry->epc_page, SGX_EPC_PAGE_ENCLAVE_RECLAIMABLE);
- 
- 	return entry;
- }
-@@ -1221,7 +1221,7 @@ struct sgx_epc_page *sgx_alloc_va_page(struct sgx_encl *encl, bool reclaim)
- 		sgx_encl_free_epc_page(epc_page);
- 		return ERR_PTR(-EFAULT);
- 	}
--	sgx_record_epc_page(epc_page, 0);
-+	sgx_record_epc_page(epc_page, SGX_EPC_PAGE_VERSION_ARRAY);
- 
- 	epc_page->owner = encl;
- 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index aca80a3f38a1..c91cc6a01232 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -114,7 +114,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
- 	encl->attributes = secs->attributes;
- 	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
- 
--	sgx_record_epc_page(encl->secs.epc_page, 0);
-+	sgx_record_epc_page(encl->secs.epc_page, SGX_EPC_PAGE_ENCLAVE);
- 
- 	/* Set only after completion, as encl->lock has not been taken. */
- 	set_bit(SGX_ENCL_CREATED, &encl->flags);
-@@ -325,7 +325,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
- 			goto err_out;
- 	}
- 
--	sgx_record_epc_page(encl_page->epc_page, SGX_EPC_PAGE_RECLAIMER_TRACKED);
-+	sgx_record_epc_page(encl_page->epc_page, SGX_EPC_PAGE_ENCLAVE_RECLAIMABLE);
- 	mutex_unlock(&encl->lock);
- 	mmap_read_unlock(current->mm);
- 	return ret;
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 085c06fdc359..3c0d33b72896 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -304,6 +304,8 @@ static void sgx_reclaim_pages(void)
- 		epc_page = list_first_entry(&sgx_global_lru.reclaimable,
- 					    struct sgx_epc_page, list);
- 		encl_page = epc_page->owner;
-+		if (WARN_ON_ONCE(!(epc_page->flags & SGX_EPC_PAGE_ENCLAVE)))
-+			continue;
- 
- 		if (kref_get_unless_zero(&encl_page->encl->refcount) != 0) {
- 			epc_page->flags |= SGX_EPC_PAGE_RECLAIM_IN_PROGRESS;
-@@ -360,8 +362,7 @@ static void sgx_reclaim_pages(void)
- 		sgx_reclaimer_write(epc_page, &backing[i++]);
- 
- 		kref_put(&encl_page->encl->refcount, sgx_encl_release);
--		epc_page->flags &= ~(SGX_EPC_PAGE_RECLAIMER_TRACKED |
--				     SGX_EPC_PAGE_RECLAIM_IN_PROGRESS);
-+		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIM_FLAGS;
- 
- 		sgx_free_epc_page(epc_page);
- 	}
-@@ -496,6 +497,7 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
- /**
-  * sgx_record_epc_page() - Add a page to the LRU tracking
-  * @page:	EPC page
-+ * @flags:	Reclaim flags for the page.
-  *
-  * Mark a page with the specified flags and add it to the appropriate
-  * (un)reclaimable list.
-@@ -525,18 +527,16 @@ void sgx_record_epc_page(struct sgx_epc_page *page, unsigned long flags)
- int sgx_drop_epc_page(struct sgx_epc_page *page)
- {
- 	spin_lock(&sgx_global_lru.lock);
--	if (page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED) {
--		/* The page is being reclaimed. */
--		if (page->flags & SGX_EPC_PAGE_RECLAIM_IN_PROGRESS) {
--			spin_unlock(&sgx_global_lru.lock);
--			return -EBUSY;
--		}
--
--		page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
-+	if ((page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED) &&
-+	    (page->flags & SGX_EPC_PAGE_RECLAIM_IN_PROGRESS)) {
-+		spin_unlock(&sgx_global_lru.lock);
-+		return -EBUSY;
- 	}
- 	list_del(&page->list);
- 	spin_unlock(&sgx_global_lru.lock);
- 
-+	page->flags &= ~SGX_EPC_PAGE_RECLAIM_FLAGS;
-+
- 	return 0;
- }
- 
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index 284d0cda9e36..76eae4ecbf87 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -31,8 +31,14 @@
- 
- /* page flag to indicate reclaim is in progress */
- #define SGX_EPC_PAGE_RECLAIM_IN_PROGRESS BIT(2)
-+#define SGX_EPC_PAGE_ENCLAVE		BIT(3)
-+#define SGX_EPC_PAGE_VERSION_ARRAY	BIT(4)
-+#define SGX_EPC_PAGE_ENCLAVE_RECLAIMABLE (SGX_EPC_PAGE_ENCLAVE | \
-+					  SGX_EPC_PAGE_RECLAIMER_TRACKED)
- #define SGX_EPC_PAGE_RECLAIM_FLAGS	(SGX_EPC_PAGE_RECLAIMER_TRACKED | \
--					 SGX_EPC_PAGE_RECLAIM_IN_PROGRESS)
-+					 SGX_EPC_PAGE_RECLAIM_IN_PROGRESS | \
-+					 SGX_EPC_PAGE_ENCLAVE | \
-+					 SGX_EPC_PAGE_VERSION_ARRAY)
- 
- struct sgx_epc_page {
- 	unsigned int section;
+I don't know how SGX uses its memory but you said in the other message that
+it's usually a really small portion of the memory and glancing the code it
+looks like its own page aging and all. Can you give some concrete examples
+on how it's used and why we need cgroup support for it? Also, do you really
+need all three control knobs here? e.g. given that .high is only really
+useful in conjunction with memory pressure and oom handling from userspace,
+I don't see how this would actually be useful for something like this.
+
+Thanks.
+
 -- 
-2.37.3
-
+tejun
