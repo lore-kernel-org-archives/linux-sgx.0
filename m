@@ -2,52 +2,52 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C141CC6FA91
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Sep 2022 17:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69252C54EE9
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Sep 2022 17:16:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230070AbiIVROc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 22 Sep 2022 13:14:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42002 "EHLO
+        id S230064AbiIVRQL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 22 Sep 2022 13:16:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232108AbiIVROG (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 22 Sep 2022 13:14:06 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D24DE103FD0;
-        Thu, 22 Sep 2022 10:14:02 -0700 (PDT)
+        with ESMTP id S231919AbiIVRPy (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 22 Sep 2022 13:15:54 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB3EBFE074;
+        Thu, 22 Sep 2022 10:15:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663866843; x=1695402843;
+  t=1663866934; x=1695402934;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=0g8SxneYPLxLe679j97cgFtWHKoCh+6kgTZISdI3av0=;
-  b=KMJulJLdwqoBaA8RaBo3oSjztV+niqBy3NSBl500Z39dbhy6NFZzAXt2
-   C/GjUiZvcsrs2ZMZoj5Z+XbTk8zkUllOMyWqGg5oPeYuGPu8W2lu/PX65
-   uVqowGifTtEzsTGT0LM4OB3ckWB5cmrJoHqJEAczDumyJBstM1GnVR3li
-   CSYt13gdR3ml3IcZv02NKucZy15PDWRVWqD6GRQV3QQmjlvVqsH92DocN
-   NPVHM0MwJnyCjCOy2jU9IjlQwpQwNVGrpZoyORqQODP8kxUef3tDP+O9h
-   /M3lg+y/CeNm3HmA//WNbkNOT+G9rMEDNhPV12c5ofUcLFKiLvTDIH017
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10478"; a="283421613"
+  bh=UDz/+joCMOsr/E6xxinNXlAv/UogP8vf91LabdqMtoc=;
+  b=hu+DqGiNgWVVBqPQUqlZoZnwzx51emQGWvl8fosYNc3n2EN/wnwuoGNg
+   8/br2GViVc2+UzzqpnyLgEmEmmKk5LIx67qEq8EjA7ic/Fno0GzJTRNZr
+   2FZb7J3PVp4HHBn4A9L4V4Kq5DKWr8jDvN/h+z/nMYpgNRWdOq2WEYG+K
+   Dcf7d5413gbS8GWVnOKw6SMut8/aKwMP9i5vijTUjGkFwCgDON1uCnDtG
+   DVcZK2m3KCLZLOIiHvzeW394ALgqEQSobNm/SNYLJ9iBETAyhAqgfjz8q
+   cEiAPthAmTH+yLc5epo6GjXGNE+2BT9KVAtAl43HxyTuhqc1zPYT++9VD
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10478"; a="364351924"
 X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
-   d="scan'208";a="283421613"
+   d="scan'208";a="364351924"
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 10:12:32 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 10:11:40 -0700
 X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
-   d="scan'208";a="762270292"
+   d="scan'208";a="762269940"
 Received: from sknaidu-mobl1.amr.corp.intel.com (HELO kcaccard-desk.amr.corp.intel.com) ([10.212.165.187])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 10:11:56 -0700
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 10:11:17 -0700
 From:   Kristen Carlson Accardi <kristen@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>
+        cgroups@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
 Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Sean Christopherson <seanjc@google.com>,
-        linux-doc@vger.kernel.org
-Subject: [RFC PATCH 20/20] docs, cgroup, x86/sgx: Add SGX EPC cgroup controller documentation
-Date:   Thu, 22 Sep 2022 10:10:57 -0700
-Message-Id: <20220922171057.1236139-21-kristen@linux.intel.com>
+        Sean Christopherson <seanjc@google.com>
+Subject: [RFC PATCH 05/20] x86/sgx: Introduce unreclaimable EPC page lists
+Date:   Thu, 22 Sep 2022 10:10:42 -0700
+Message-Id: <20220922171057.1236139-6-kristen@linux.intel.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20220922171057.1236139-1-kristen@linux.intel.com>
 References: <20220922171057.1236139-1-kristen@linux.intel.com>
@@ -59,235 +59,303 @@ X-Mailing-List: linux-sgx@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Add initial documentation for the SGX EPC cgroup controller,
-which regulates distribution of SGX Enclave Page Cache (EPC) memory.
+Add code to keep track of pages that are not tracked by the reclaimer
+in the LRU's "unreclaimable" list. When there is an OOM event and an
+enclave must be OOM killed, the EPC pages which are not tracked by
+the reclaimer can still be freed.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
 Cc: Sean Christopherson <seanjc@google.com>
 ---
- Documentation/admin-guide/cgroup-v2.rst | 201 ++++++++++++++++++++++++
- 1 file changed, 201 insertions(+)
+ arch/x86/kernel/cpu/sgx/encl.c  | 10 +++++++---
+ arch/x86/kernel/cpu/sgx/ioctl.c | 11 +++++++----
+ arch/x86/kernel/cpu/sgx/main.c  | 26 +++++++++++++++-----------
+ arch/x86/kernel/cpu/sgx/sgx.h   |  7 ++++---
+ arch/x86/kernel/cpu/sgx/virt.c  | 28 ++++++++++++++++++++--------
+ 5 files changed, 53 insertions(+), 29 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index be4a77baf784..c355cb08fc18 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -71,6 +71,10 @@ v1 is available under :ref:`Documentation/admin-guide/cgroup-v1/index.rst <cgrou
-        5.9-2 Migration and Ownership
-      5-10. Others
-        5-10-1. perf_event
-+     5-11. SGX EPC
-+       5-11-1. SGX EPC Interface Files
-+       5-11-2. Usage Guidelines
-+       5-11-3. Migration
-      5-N. Non-normative information
-        5-N-1. CPU controller root cgroup process behaviour
-        5-N-2. IO controller root cgroup process behaviour
-@@ -2440,6 +2444,203 @@ always be filtered by cgroup v2 path.  The controller can still be
- moved to a legacy hierarchy after v2 hierarchy is populated.
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index a18f1311b57d..ad611c06798f 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -252,6 +252,7 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+ 		epc_page = sgx_encl_eldu(&encl->secs, NULL);
+ 		if (IS_ERR(epc_page))
+ 			return ERR_CAST(epc_page);
++		sgx_record_epc_page(epc_page, 0);
+ 	}
  
+ 	epc_page = sgx_encl_eldu(entry, encl->secs.epc_page);
+@@ -259,7 +260,7 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+ 		return ERR_CAST(epc_page);
  
-+SGX EPC
-+-------
-+
-+The "sgx_epc" controller regulates distribution of SGX EPC memory,
-+which is a subset of system RAM that is used to provide SGX-enabled
-+applications with protected memory, and is otherwise inaccessible,
-+i.e. shows up as reserved in /proc/iomem and cannot be read/written
-+outside of an SGX enclave.
-+
-+Although current systems implement EPC by stealing memory from RAM,
-+for all intents and purposes the EPC is independent from normal system
-+memory, e.g. must be reserved at boot from RAM and cannot be converted
-+between EPC and normal memory while the system is running.  The EPC is
-+managed by the SGX subsystem and is not accounted by the memory
-+controller.  Note that this is true only for EPC memory itself, i.e.
-+normal memory allocations related to SGX and EPC memory, e.g. the
-+backing memory for evicted EPC pages, are accounted, limited and
-+protected by the memory controller.
-+
-+Much like normal system memory, EPC memory can be overcommitted via
-+virtual memory techniques and pages can be swapped out of the EPC
-+to their backing store (normal system memory allocated via shmem).
-+The SGX EPC subsystem is analogous to the memory subsytem, and the
-+SGX EPC controller is in turn analogous to the memory controller;
-+it implements limit and protection models for EPC memory.
-+
-+See Documentation/x86/sgx.rst for more info on SGX and EPC.
-+
-+SGX EPC Interface Files
-+~~~~~~~~~~~~~~~~~~~~~~~
-+
-+All SGX EPC memory amounts are in bytes unless explicitly stated
-+otherwise.  If a value which is not PAGE_SIZE aligned is written,
-+the actual value used by the controller will be rounded down to
-+the closest PAGE_SIZE multiple.
-+
-+  sgx_epc.current
-+
-+	A read-only single value file which exists on all cgroups.
-+
-+	The total amount of EPC memory currently being used by the
-+	cgroup and its descendants.
-+
-+  sgx_epc.low
-+
-+	A read-write single value file which exists on non-root
-+	cgroups.  The default is "0".
-+
-+	Best-effort protection of EPC usage.  If the EPC usage of a
-+	cgroup is below its limits, and all its ancestors are below
-+	their low limits, then the cgroup's EPC won't be reclaimed
-+	unless EPC cannot be reclaimed from unprotected cgroups,
-+	e.g. all sibling cgroups are also below their low limit.
-+
-+	Setting low to a value more than the amount of EPC available
-+	is discouraged.  The low limit is effectively ignored if the
-+	cgroup's high or max limit is less than its low limit.
-+
-+  sgx_epc.high
-+
-+	A read-write single value file which exists on non-root
-+	cgroups.  The default is "max".
-+
-+	EPC usage best-effort limit.  This is the main mechanism to
-+	control EPC usage of a cgroup.  If a cgroup's usage goes
-+	over the high boundary, EPC pages will be reclaimed from
-+	the cgroup until it is back under the high limit.
-+
-+	Going over the high limit does not prevent allocation of
-+	additional EPC pages, e.g. EPC usage will often spike above
-+	the high limit during enclave creation, when a large number
-+	of EPC pages are EADDed in a short period.
-+
-+  sgx_epc.max
-+
-+	A read-write single value file which exists on non-root
-+	cgroups.  The default is "max".
-+
-+	EPC usage hard limit.  If a cgroup's EPC usage reaches this
-+	limit, EPC allocations, e.g. for page fault handling, will
-+	be blocked until EPC can be reclaimed from the cgroup.  If
-+	EPC cannot be reclaimed in a timely manner, reclaim will be
-+	forced, e.g. by ignoring LRU.
-+
-+	The max limit is intended to be a last line of defense; it
-+	should rarely come into play on a properly configured and
-+	monitored system.
-+
-+  sgx_epc.stats
-+
-+	A read-write flat-keyed file which exists on all cgroups.
-+	Reads from the file display the cgroup's statistics, while
-+	writes reset the underlying counters (if applicable).
-+
-+	The entries are ordered to be human readable, and new entries
-+	can show up in the middle.  Don't rely on items remaining in a
-+	fixed position; use the keys to look up specific values!
-+
-+	The following entries are defined.
-+
-+	  pages
-+
-+		The total number of pages currently being used by the
-+		cgroup and its descendants, i.e. sgx_epc.current / 4096.
-+
-+	  direct
-+
-+		The number of pages currently being used by the cgroup
-+		itself, excluding its descendants.
-+
-+	  indirect
-+
-+		The number of pages currently being used by the cgroup's
-+		descendants, excluding its own pages.
-+
-+	  reclaimed
-+
-+		The number of pages that have been reclaimed from the
-+		cgroup (since sgx_epc.stats was last reset).
-+
-+	  reclamations
-+
-+		The number of times this cgroup's LRU lists have been
-+		scanned for reclaim, i.e. the number of times the cgroup
-+		has been selected for reclaim via any code path.
-+
-+  sgx_epc.events
-+
-+	A read-write flat-keyed file which exists on non-root cgroups.
-+	Writes to the file reset the event counters to zero.  A value
-+	change in this file generates a file modified event.
-+
-+	The following entries are defined.
-+
-+	  low
-+
-+		The number of times the cgroup has been reclaimed even
-+		though its usage is under the low boundary, e.g. due to
-+		all sibling cgroups also being low.  This event usually
-+		indicates that the low boundary is over-committed.
-+
-+	  high
-+
-+		The number of times the cgroup has triggered a reclaim
-+		due to its EPC usage exceeding its high EPC boundary.
-+		This event is expected for cgroups whose EPC usage is
-+		capped by its high limit rather than global pressure.
-+
-+	  max
-+
-+		The number of times the cgroup has triggered a reclaim
-+		due to its EPC usage  approaching (or exceeding) its max
-+		EPC boundary.
-+
-+Usage Guidelines
-+~~~~~~~~~~~~~~~~
-+
-+"sgx_epc.high" and "sgx_epc.low" are the main mechanisms to control
-+EPC usage; using "sgx_epc.max" as anything other than a safety net
-+is inadvisable, SGX application performance will suffer greatly if
-+a process encounters its max limit.  Because a cgroup is allowed to
-+breach its high limit, e.g. to fault in a page, performance is not
-+artificially limited, whereas the max limit will effectively block
-+a faulting application until the kernel can reclaim EPC memory from
-+the cgroup.
-+
-+Exactly how "sgx_epc.high" is utilized will vary case by case, i.e.
-+there is no one "correct" strategy.  Deferring to global EPC memory
-+pressure, e.g. by overcommitting on the high limit, may be the most
-+effective approach for a particular situation, whereas a different
-+scenario might warrant a more draconian usage of the high limit.
-+Regardless of the strategy used, because breach of the high limit
-+does not cause processes to block or be killed, a management agent
-+has ample opportunity to monitor and react as needed, e.g. it can
-+raise the offending cgroup's high limit or terminate the workload.
-+
-+Similarly, "sgx_epc.low" can play different roles depending on the
-+situation, e.g. it can be set to a relatively high value to protect
-+a mission critical workload, or it may be used to reserve a minimal
-+amount of EPC memory simply to ensure forward progress.  Employing
-+"sgx_epc.low" in some capacity is generally recommended, especially
-+when overcommitting "sgx_epc.high", as it is relatively common for
-+a system to be under heavy EPC pressure; this holds true even on a
-+carefully tuned system, as initializing an enclave requires all of
-+the enclave's pages be brought into the EPC at some point prior to
-+initialization, if only temporarily.
-+
-+Migration
-+~~~~~~~~~~~~~~~~
-+
-+Once an EPC page is charged to a cgroup (during allocation), it
-+remains charged to the original cgroup until the page is released
-+or reclaimed.  Migrating a process to a different cgroup doesn't
-+move the EPC charges that it incurred while in the previous cgroup
-+to its new cgroup.
-+
-+
- Non-normative information
- -------------------------
+ 	encl->secs_child_cnt++;
+-	sgx_mark_page_reclaimable(entry->epc_page);
++	sgx_record_epc_page(entry->epc_page, SGX_EPC_PAGE_RECLAIMER_TRACKED);
  
+ 	return entry;
+ }
+@@ -375,7 +376,7 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+ 	encl_page->type = SGX_PAGE_TYPE_REG;
+ 	encl->secs_child_cnt++;
+ 
+-	sgx_mark_page_reclaimable(encl_page->epc_page);
++	sgx_record_epc_page(encl_page->epc_page, SGX_EPC_PAGE_RECLAIMER_TRACKED);
+ 
+ 	phys_addr = sgx_get_epc_phys_addr(epc_page);
+ 	/*
+@@ -687,7 +688,7 @@ void sgx_encl_release(struct kref *ref)
+ 			 * The page and its radix tree entry cannot be freed
+ 			 * if the page is being held by the reclaimer.
+ 			 */
+-			if (sgx_unmark_page_reclaimable(entry->epc_page))
++			if (sgx_drop_epc_page(entry->epc_page))
+ 				continue;
+ 
+ 			sgx_encl_free_epc_page(entry->epc_page);
+@@ -703,6 +704,7 @@ void sgx_encl_release(struct kref *ref)
+ 	xa_destroy(&encl->page_array);
+ 
+ 	if (!encl->secs_child_cnt && encl->secs.epc_page) {
++		sgx_drop_epc_page(encl->secs.epc_page);
+ 		sgx_encl_free_epc_page(encl->secs.epc_page);
+ 		encl->secs.epc_page = NULL;
+ 	}
+@@ -711,6 +713,7 @@ void sgx_encl_release(struct kref *ref)
+ 		va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
+ 					   list);
+ 		list_del(&va_page->list);
++		sgx_drop_epc_page(va_page->epc_page);
+ 		sgx_encl_free_epc_page(va_page->epc_page);
+ 		kfree(va_page);
+ 	}
+@@ -1218,6 +1221,7 @@ struct sgx_epc_page *sgx_alloc_va_page(struct sgx_encl *encl, bool reclaim)
+ 		sgx_encl_free_epc_page(epc_page);
+ 		return ERR_PTR(-EFAULT);
+ 	}
++	sgx_record_epc_page(epc_page, 0);
+ 
+ 	epc_page->owner = encl;
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 9a1bb3c3211a..aca80a3f38a1 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -48,6 +48,7 @@ void sgx_encl_shrink(struct sgx_encl *encl, struct sgx_va_page *va_page)
+ 	encl->page_cnt--;
+ 
+ 	if (va_page) {
++		sgx_drop_epc_page(va_page->epc_page);
+ 		sgx_encl_free_epc_page(va_page->epc_page);
+ 		list_del(&va_page->list);
+ 		kfree(va_page);
+@@ -113,6 +114,8 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	encl->attributes = secs->attributes;
+ 	encl->attributes_mask = SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT | SGX_ATTR_KSS;
+ 
++	sgx_record_epc_page(encl->secs.epc_page, 0);
++
+ 	/* Set only after completion, as encl->lock has not been taken. */
+ 	set_bit(SGX_ENCL_CREATED, &encl->flags);
+ 
+@@ -322,7 +325,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 			goto err_out;
+ 	}
+ 
+-	sgx_mark_page_reclaimable(encl_page->epc_page);
++	sgx_record_epc_page(encl_page->epc_page, SGX_EPC_PAGE_RECLAIMER_TRACKED);
+ 	mutex_unlock(&encl->lock);
+ 	mmap_read_unlock(current->mm);
+ 	return ret;
+@@ -958,7 +961,7 @@ static long sgx_enclave_modify_types(struct sgx_encl *encl,
+ 			 * Prevent page from being reclaimed while mutex
+ 			 * is released.
+ 			 */
+-			if (sgx_unmark_page_reclaimable(entry->epc_page)) {
++			if (sgx_drop_epc_page(entry->epc_page)) {
+ 				ret = -EAGAIN;
+ 				goto out_entry_changed;
+ 			}
+@@ -973,7 +976,7 @@ static long sgx_enclave_modify_types(struct sgx_encl *encl,
+ 
+ 			mutex_lock(&encl->lock);
+ 
+-			sgx_mark_page_reclaimable(entry->epc_page);
++			sgx_record_epc_page(entry->epc_page, SGX_EPC_PAGE_RECLAIMER_TRACKED);
+ 		}
+ 
+ 		/* Change EPC type */
+@@ -1130,7 +1133,7 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
+ 			goto out_unlock;
+ 		}
+ 
+-		if (sgx_unmark_page_reclaimable(entry->epc_page)) {
++		if (sgx_drop_epc_page(entry->epc_page)) {
+ 			ret = -EBUSY;
+ 			goto out_unlock;
+ 		}
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index af68dc1c677b..543bc5b20508 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -262,7 +262,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
+ 			goto out;
+ 
+ 		sgx_encl_ewb(encl->secs.epc_page, &secs_backing);
+-
++		sgx_drop_epc_page(encl->secs.epc_page);
+ 		sgx_encl_free_epc_page(encl->secs.epc_page);
+ 		encl->secs.epc_page = NULL;
+ 
+@@ -495,31 +495,35 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
+ }
+ 
+ /**
+- * sgx_mark_page_reclaimable() - Mark a page as reclaimable
++ * sgx_record_epc_page() - Add a page to the LRU tracking
+  * @page:	EPC page
+  *
+- * Mark a page as reclaimable and add it to the active page list. Pages
+- * are automatically removed from the active list when freed.
++ * Mark a page with the specified flags and add it to the appropriate
++ * (un)reclaimable list.
+  */
+-void sgx_mark_page_reclaimable(struct sgx_epc_page *page)
++void sgx_record_epc_page(struct sgx_epc_page *page, unsigned long flags)
+ {
+ 	spin_lock(&sgx_global_lru.lock);
+-	page->flags |= SGX_EPC_PAGE_RECLAIMER_TRACKED;
+-	list_add_tail(&page->list, &sgx_global_lru.reclaimable);
++	WARN_ON(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
++	page->flags |= flags;
++	if (flags & SGX_EPC_PAGE_RECLAIMER_TRACKED)
++		list_add_tail(&page->list, &sgx_global_lru.reclaimable);
++	else
++		list_add_tail(&page->list, &sgx_global_lru.unreclaimable);
+ 	spin_unlock(&sgx_global_lru.lock);
+ }
+ 
+ /**
+- * sgx_unmark_page_reclaimable() - Remove a page from the reclaim list
++ * sgx_drop_epc_page() - Remove a page from a LRU list
+  * @page:	EPC page
+  *
+- * Clear the reclaimable flag and remove the page from the active page list.
++ * Clear the reclaimable flag if set and remove the page from its LRU.
+  *
+  * Return:
+  *   0 on success,
+  *   -EBUSY if the page is in the process of being reclaimed
+  */
+-int sgx_unmark_page_reclaimable(struct sgx_epc_page *page)
++int sgx_drop_epc_page(struct sgx_epc_page *page)
+ {
+ 	spin_lock(&sgx_global_lru.lock);
+ 	if (page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED) {
+@@ -529,9 +533,9 @@ int sgx_unmark_page_reclaimable(struct sgx_epc_page *page)
+ 			return -EBUSY;
+ 		}
+ 
+-		list_del(&page->list);
+ 		page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
+ 	}
++	list_del(&page->list);
+ 	spin_unlock(&sgx_global_lru.lock);
+ 
+ 	return 0;
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index 7b208ee8eb45..65625ea8fd6e 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -86,20 +86,21 @@ static inline void *sgx_get_epc_virt_addr(struct sgx_epc_page *page)
+ struct sgx_epc_lru {
+ 	spinlock_t lock;
+ 	struct list_head reclaimable;
++	struct list_head unreclaimable;
+ };
+ 
+ static inline void sgx_lru_init(struct sgx_epc_lru *lru)
+ {
+ 	spin_lock_init(&lru->lock);
+ 	INIT_LIST_HEAD(&lru->reclaimable);
++	INIT_LIST_HEAD(&lru->unreclaimable);
+ }
+ 
+ struct sgx_epc_page *__sgx_alloc_epc_page(void);
+ void sgx_free_epc_page(struct sgx_epc_page *page);
+-
+ void sgx_reclaim_direct(void);
+-void sgx_mark_page_reclaimable(struct sgx_epc_page *page);
+-int sgx_unmark_page_reclaimable(struct sgx_epc_page *page);
++void sgx_record_epc_page(struct sgx_epc_page *page, unsigned long flags);
++int sgx_drop_epc_page(struct sgx_epc_page *page);
+ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim);
+ 
+ void sgx_ipi_cb(void *info);
+diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+index 6a77a14eee38..287e235bc3c1 100644
+--- a/arch/x86/kernel/cpu/sgx/virt.c
++++ b/arch/x86/kernel/cpu/sgx/virt.c
+@@ -62,6 +62,8 @@ static int __sgx_vepc_fault(struct sgx_vepc *vepc,
+ 		goto err_delete;
+ 	}
+ 
++	sgx_record_epc_page(epc_page, 0);
++
+ 	return 0;
+ 
+ err_delete:
+@@ -146,6 +148,7 @@ static int sgx_vepc_free_page(struct sgx_epc_page *epc_page)
+ 		return ret;
+ 	}
+ 
++	sgx_drop_epc_page(epc_page);
+ 	sgx_free_epc_page(epc_page);
+ 	return 0;
+ }
+@@ -218,8 +221,15 @@ static int sgx_vepc_release(struct inode *inode, struct file *file)
+ 		 * have been removed, the SECS page must have a child on
+ 		 * another instance.
+ 		 */
+-		if (sgx_vepc_free_page(epc_page))
++		if (sgx_vepc_free_page(epc_page)) {
++			/*
++			 * Drop the page before adding it to the list of SECS
++			 * pages.  Moving the page off the unreclaimable list
++			 * needs to be done under the LRU's spinlock.
++			 */
++			sgx_drop_epc_page(epc_page);
+ 			list_add_tail(&epc_page->list, &secs_pages);
++		}
+ 
+ 		xa_erase(&vepc->page_array, index);
+ 	}
+@@ -234,15 +244,17 @@ static int sgx_vepc_release(struct inode *inode, struct file *file)
+ 	mutex_lock(&zombie_secs_pages_lock);
+ 	list_for_each_entry_safe(epc_page, tmp, &zombie_secs_pages, list) {
+ 		/*
+-		 * Speculatively remove the page from the list of zombies,
+-		 * if the page is successfully EREMOVE'd it will be added to
+-		 * the list of free pages.  If EREMOVE fails, throw the page
+-		 * on the local list, which will be spliced on at the end.
++		 * If EREMOVE fails, throw the page on the local list, which
++		 * will be spliced on at the end.
++		 *
++		 * Note, this abuses sgx_drop_epc_page() to delete the page off
++		 * the list of zombies, but this is a very rare path (probably
++		 * never hit in production).  It's not worth special casing the
++		 * free path for this super rare case just to avoid taking the
++		 * LRU's spinlock.
+ 		 */
+-		list_del(&epc_page->list);
+-
+ 		if (sgx_vepc_free_page(epc_page))
+-			list_add_tail(&epc_page->list, &secs_pages);
++			list_move_tail(&epc_page->list, &secs_pages);
+ 	}
+ 
+ 	if (!list_empty(&secs_pages))
 -- 
 2.37.3
 
