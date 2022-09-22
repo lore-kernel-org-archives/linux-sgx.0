@@ -2,156 +2,137 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC92ECAAD8
-	for <linux-sgx@archiver.kernel.org>; Tue, 20 Sep 2022 06:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC59EC6FA82
+	for <linux-sgx@archiver.kernel.org>; Thu, 22 Sep 2022 17:11:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230403AbiITGgx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 20 Sep 2022 02:36:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47620 "EHLO
+        id S231259AbiIVRLO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 22 Sep 2022 13:11:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230107AbiITGgV (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 20 Sep 2022 02:36:21 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0782EE90
-        for <linux-sgx@vger.kernel.org>; Mon, 19 Sep 2022 23:34:31 -0700 (PDT)
+        with ESMTP id S230256AbiIVRLN (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 22 Sep 2022 13:11:13 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF699EA5A7;
+        Thu, 22 Sep 2022 10:11:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663655671; x=1695191671;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cGLYoUiOR1de/Gx/W8MZkGvfargWonvwxf3D5g9msVY=;
-  b=S9Sql9STRUY16NmX81Rg57YxQXFBOKP6cb9P4Gy5J+02wVMlkBYigxd7
-   bItvy0gNAKjZXZHcmJsnl2TgGCq5FypP9Yt8Lp8aJ+qEUdjeXFtz2duUA
-   ykFKVrnjxOW3EJXfJ6adc23lozQWvC6NV+B6nIDbR9axF0htR9Z1OTShr
-   Eya3Ll49gs1eZVssmLiBglUGFMsJO5csKt7KBgRpByUcNv4yybYkiY2ey
-   9/0p6Qg/SJz/nx3PquDbOqLy98y83fxzRVyQb6SfJT0mbXvcy6LseF+h4
-   xwocNVuAcyX1O5RO4F9WFy7MA+lk6FOc6HRlGh4iBoLJy9Ic2qbIrypfi
+  t=1663866671; x=1695402671;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AxE0i8/Mftgy7fZYyASRgEYg0hxIfDnCcTRxEHqj3Sw=;
+  b=BIraYHDiNA1YEP5Y8fGuHIdhGzAvsq7mcL7c8eYRbHXHvHVv6Axzqyry
+   W8dRmALMn95O9OMX+A2+RRHBcZ8RooaszvjM0zTGORNnCFULjH6sCPX8l
+   5R9LvnLa0q1wrjujoQCClwy9QrDV1wgdU3hpaiNIzhGIccMgGuIt3bi0n
+   ir7fqoxEGri/INBfnaeGMOUojCjq9kyVM2aPohrF6uGLhnFubhmAqNt/l
+   OBwSCBW6F7qq3u1Y5a5fxgeqDI071FPKX0lOeM4rs2i/PozCp+o4vOCBl
+   vWCrIOTH+GFy/mFMyRZ/6ynU8vRFE5ueqRDndkAI3P6WA3mTLzsI38Fva
    A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10475"; a="297203983"
-X-IronPort-AV: E=Sophos;i="5.93,329,1654585200"; 
-   d="scan'208";a="297203983"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2022 23:34:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,329,1654585200"; 
-   d="scan'208";a="947538029"
-Received: from zhiquan-linux-dev.bj.intel.com ([10.238.155.101])
-  by fmsmga005.fm.intel.com with ESMTP; 19 Sep 2022 23:34:28 -0700
-From:   Zhiquan Li <zhiquan1.li@intel.com>
-To:     linux-sgx@vger.kernel.org, tony.luck@intel.com, jarkko@kernel.org,
-        dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-        kai.huang@intel.com
-Cc:     seanjc@google.com, fan.du@intel.com, cathy.zhang@intel.com,
-        zhiquan1.li@intel.com
-Subject: [PATCH v9 3/3] x86/sgx: Fine grained SGX MCA behavior for virtualization
-Date:   Tue, 20 Sep 2022 14:39:48 +0800
-Message-Id: <20220920063948.3556917-4-zhiquan1.li@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220920063948.3556917-1-zhiquan1.li@intel.com>
-References: <20220920063948.3556917-1-zhiquan1.li@intel.com>
+X-IronPort-AV: E=McAfee;i="6500,9779,10478"; a="326689824"
+X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
+   d="scan'208";a="326689824"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 10:11:11 -0700
+X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
+   d="scan'208";a="762269804"
+Received: from sknaidu-mobl1.amr.corp.intel.com (HELO kcaccard-desk.amr.corp.intel.com) ([10.212.165.187])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 10:11:06 -0700
+From:   Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        cgroups@vger.kernel.org
+Subject: [RFC PATCH 00/20] Add Cgroup support for SGX EPC memory
+Date:   Thu, 22 Sep 2022 10:10:37 -0700
+Message-Id: <20220922171057.1236139-1-kristen@linux.intel.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Today, if a guest accesses an SGX EPC page with memory failure,
-the kernel behavior will kill the entire guest.  This blast
-radius is too large.  It would be idea to kill only the SGX
-application inside the guest.
+Add a new cgroup controller to regulate the distribution of SGX EPC memory,
+which is a subset of system RAM that is used to provide SGX-enabled
+applications with protected memory, and is otherwise inaccessible.
 
-To fix this, send a SIGBUS to host userspace (like QEMU) which can
-follow up by injecting a #MC to the guest.
+SGX EPC memory allocations are separate from normal RAM allocations,
+and is managed solely by the SGX subsystem. The existing cgroup memory
+controller cannot be used to limit or account for SGX EPC memory.
 
-SGX virtual EPC driver doesn't explicitly prevent virtual EPC instance
-being shared by multiple VMs via fork().  However KVM doesn't support
-running a VM across multiple mm structures, and the de facto userspace
-hypervisor (Qemu) doesn't use fork() to create a new VM, so in practice
-this should not happen.
+This patchset implements the sgx_epc cgroup controller, which will provide
+support for stats, events, and the following interface files:
 
-Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Link: https://lore.kernel.org/linux-sgx/443cb425-009c-2784-56f4-5e707122de76@intel.com/T/#m1d1f4098f4fad78034e8706a60e4d79c119db407
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+sgx_epc.current
+	A read-only value which represents the total amount of EPC
+	memory currently being used on by the cgroup and its descendents.
 
----
-Changes since V8:
-- Remove excess Acked-by.
+sgx_epc.low
+	A read-write value which is used to set best-effort protection
+	of EPC usage. If the EPC usage of a cgroup drops below this value,
+	then the cgroup's EPC memory will not be reclaimed if possible.
 
-Changes since V7:
-- Add Acked-by from Jarkko.
+sgx_epc.high
+	A read-write value which is used to set a best-effort limit
+	on the amount of EPC usage a cgroup has. If a cgroup's usage
+	goes past the high value, the EPC memory of that cgroup will
+	get reclaimed back under the high limit.
 
-Changes since V6:
-- Fix build warning due to type changes.
+sgx_epc.max
+	A read-write value which is used to set a hard limit for
+	cgroup EPC usage. If a cgroup's EPC usage reaches this limit,
+	allocations are blocked until EPC memory can be reclaimed from
+	the cgroup.
 
-Changes since V5:
-- Use the 'vepc_vaddr' field instead of casting the 'owner' field.
-- Clean up the commit message suggested by Dave.
-  Link: https://lore.kernel.org/linux-sgx/Yrf27fugD7lkyaek@kernel.org/T/#m2ff4778948cdc9ee65f09672f1d02f8dc467247b
-- Add Reviewed-by from Jarkko.
+This work was originally authored by Sean Christopherson a few years ago,
+and was modified to work with more recent kernels.
 
-Changes since V4:
-- Switch the order of the two variables so all of variables are in
-  reverse Christmas style.
-- Do not initialize "ret" because it will be overridden by the return
-  value of force_sig_mceerr() unconditionally.
+The patchset adds support for multiple LRUs to track both reclaimable
+EPC pages (i.e. pages the reclaimer knows about), as well as unreclaimable
+EPC pages (i.e. pages which the reclaimer isn't aware of, such as va pages).
+These pages are assigned to an LRU, as well as an enclave, so that an
+enclave's full EPC usage can be tracked. During OOM events, an enclave
+can be have its memory zapped, and all the EPC pages not tracked by the
+reclaimer can be freed.
 
-Changes since V2:
-- Retrieve virtual address from "owner" field of struct sgx_epc_page,
-  instead of struct sgx_vepc_page.
-- Replace EPC page flag SGX_EPC_PAGE_IS_VEPC with
-  SGX_EPC_PAGE_KVM_GUEST as they are duplicated.
+I appreciate your comments and feedback.
 
-Changes since V1:
-- Add Acked-by from Kai Huang.
-- Add Kai's excellent explanation regarding to why we no need to
-  consider that one virtual EPC be shared by two guests.
----
- arch/x86/kernel/cpu/sgx/main.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+Sean Christopherson (20):
+  x86/sgx: Call cond_resched() at the end of sgx_reclaim_pages()
+  x86/sgx: Store EPC page owner as a 'void *' to handle multiple users
+  x86/sgx: Track owning enclave in VA EPC pages
+  x86/sgx: Add 'struct sgx_epc_lru' to encapsulate lru list(s)
+  x86/sgx: Introduce unreclaimable EPC page lists
+  x86/sgx: Introduce RECLAIM_IN_PROGRESS flag for EPC pages
+  x86/sgx: Use a list to track to-be-reclaimed pages during reclaim
+  x86/sgx: Add EPC page flags to identify type of page
+  x86/sgx: Allow reclaiming up to 32 pages, but scan 16 by default
+  x86/sgx: Return the number of EPC pages that were successfully
+    reclaimed
+  x86/sgx: Add option to ignore age of page during EPC reclaim
+  x86/sgx: Add helper to retrieve SGX EPC LRU given an EPC page
+  x86/sgx: Prepare for multiple LRUs
+  x86/sgx: Expose sgx_reclaim_pages() for use by EPC cgroup
+  x86/sgx: Add helper to grab pages from an arbitrary EPC LRU
+  x86/sgx: Add EPC OOM path to forcefully reclaim EPC
+  cgroup, x86/sgx: Add SGX EPC cgroup controller
+  x86/sgx: Enable EPC cgroup controller in SGX core
+  x86/sgx: Add stats and events interfaces to EPC cgroup controller
+  docs, cgroup, x86/sgx: Add SGX EPC cgroup controller documentation
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index b319bedcaf1e..160c8dbee0ab 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -679,6 +679,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
- 	struct sgx_epc_page *page = sgx_paddr_to_page(pfn << PAGE_SHIFT);
- 	struct sgx_epc_section *section;
- 	struct sgx_numa_node *node;
-+	void __user *vaddr;
-+	int ret;
- 
- 	/*
- 	 * mm/memory-failure.c calls this routine for all errors
-@@ -695,8 +697,26 @@ int arch_memory_failure(unsigned long pfn, int flags)
- 	 * error. The signal may help the task understand why the
- 	 * enclave is broken.
- 	 */
--	if (flags & MF_ACTION_REQUIRED)
--		force_sig(SIGBUS);
-+	if (flags & MF_ACTION_REQUIRED) {
-+		/*
-+		 * Provide extra info to the task so that it can make further
-+		 * decision but not simply kill it. This is quite useful for
-+		 * virtualization case.
-+		 */
-+		if (page->flags & SGX_EPC_PAGE_KVM_GUEST) {
-+			/*
-+			 * The 'encl_owner' field is repurposed, when allocating EPC
-+			 * page it was assigned to the virtual address of virtual EPC
-+			 * page.
-+			 */
-+			vaddr = (void *)((unsigned long)page->vepc_vaddr & PAGE_MASK);
-+			ret = force_sig_mceerr(BUS_MCEERR_AR, vaddr, PAGE_SHIFT);
-+			if (ret < 0)
-+				pr_err("Memory failure: Error sending signal to %s:%d: %d\n",
-+					current->comm, current->pid, ret);
-+		} else
-+			force_sig(SIGBUS);
-+	}
- 
- 	section = &sgx_epc_sections[page->section];
- 	node = section->node;
+ Documentation/admin-guide/cgroup-v2.rst | 201 +++++
+ arch/x86/kernel/cpu/sgx/Makefile        |   1 +
+ arch/x86/kernel/cpu/sgx/encl.c          |  89 ++-
+ arch/x86/kernel/cpu/sgx/encl.h          |   4 +-
+ arch/x86/kernel/cpu/sgx/epc_cgroup.c    | 950 ++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/epc_cgroup.h    |  51 ++
+ arch/x86/kernel/cpu/sgx/ioctl.c         |  13 +-
+ arch/x86/kernel/cpu/sgx/main.c          | 389 ++++++++--
+ arch/x86/kernel/cpu/sgx/sgx.h           |  40 +-
+ arch/x86/kernel/cpu/sgx/virt.c          |  28 +-
+ include/linux/cgroup_subsys.h           |   4 +
+ init/Kconfig                            |  12 +
+ 12 files changed, 1669 insertions(+), 113 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.h
+
 -- 
-2.25.1
+2.37.3
 
