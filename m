@@ -2,85 +2,78 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC44FECAAD8
-	for <linux-sgx@archiver.kernel.org>; Fri, 23 Sep 2022 12:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B6CECAAD8
+	for <linux-sgx@archiver.kernel.org>; Fri, 23 Sep 2022 12:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231566AbiIWM2y (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 23 Sep 2022 08:28:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58946 "EHLO
+        id S231144AbiIWMdH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 23 Sep 2022 08:33:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231918AbiIWM2W (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 23 Sep 2022 08:28:22 -0400
+        with ESMTP id S229608AbiIWMcr (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 23 Sep 2022 08:32:47 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C0D9148A0E;
-        Fri, 23 Sep 2022 05:24:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 899AC1F61A;
+        Fri, 23 Sep 2022 05:32:45 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A2F4B61AE4;
-        Fri, 23 Sep 2022 12:24:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B140AC433D6;
-        Fri, 23 Sep 2022 12:24:11 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E74866240F;
+        Fri, 23 Sep 2022 12:32:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E6BC433C1;
+        Fri, 23 Sep 2022 12:32:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663935852;
-        bh=NM85qGkf1dVSLgcWZ9WS9hx6Yj3D92+rESK6H5VWGoE=;
+        s=k20201202; t=1663936364;
+        bh=Fev/xAbFy6dCF9ucIYtx19kMsRsV2B9GzILLEMxl7KU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fuaO3gNn+VXn3Yxl+8JP0QCWQcdXn7r1h4B7zsIOiDer1BG7984BmGJSQPsTNW//R
-         GtLPE9JShxRKCh/76id4IH1oGvbzS29V6Li1mS1kMqQRWnca/YdeTsoIWTGyHKu+AN
-         GiRN/KA6ODjUVnLVP4TpFY5oG8GXYbEglfAR9Z9GmhYTXRZsn/3ntZSNXGKJorA2Pc
-         gvnOG1u2zFwFltY670KLvDLgtP00wo2FMXCkFcQLWlGKhSht3jqDtYcT22ZV+nKbVX
-         Ca23UEV0RhF78QZFWlJ3TjvSyDpg6drYseCHe6veVdWDFILxEHRbEqKb3GTDLwpDGH
-         F+XHrJxuitqmg==
-Date:   Fri, 23 Sep 2022 15:24:07 +0300
+        b=i8VrLusZ5uePvQXxY5Mcd7BGi1YUArVfDQPr1NkwhErQ0EigpIyVeNCaC68a2fuxI
+         dcPh5rTB8eooSjAoj0sQvmq6Y10oempGoRFrFXZJDPcPCIQvbIggRJS+16m0upMLdD
+         /J9yLiwnUENhZ8NoRmXgZ9Ann7bcrOjt4O6+Qi8U/gj4IgGqmzWqpMTbUOAz6Myx/P
+         666EfrDI/guIroOhYeWlaxz1Vbvy0ZgvKxc1zvlJV7Fm+bGmx6H+e3t/eRPv0gdZ0z
+         RwXkofn7VRGdJpGtwKU6sCGr2zyYf6m8P+SSnTyDnbZSf22aIQk8gGNKBcDGXpKQRC
+         n1wa9E/VBs53w==
+Date:   Fri, 23 Sep 2022 15:32:40 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Kristen Carlson Accardi <kristen@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org
-Subject: Re: [RFC PATCH 00/20] Add Cgroup support for SGX EPC memory
-Message-ID: <Yy2lZx6u1dhFO34i@kernel.org>
+        cgroups@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Sean Christopherson <seanjc@google.com>
+Subject: Re: [RFC PATCH 01/20] x86/sgx: Call cond_resched() at the end of
+ sgx_reclaim_pages()
+Message-ID: <Yy2naAZfiAyP5H/a@kernel.org>
 References: <20220922171057.1236139-1-kristen@linux.intel.com>
+ <20220922171057.1236139-2-kristen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220922171057.1236139-1-kristen@linux.intel.com>
+In-Reply-To: <20220922171057.1236139-2-kristen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Sep 22, 2022 at 10:10:37AM -0700, Kristen Carlson Accardi wrote:
-> Add a new cgroup controller to regulate the distribution of SGX EPC memory,
-> which is a subset of system RAM that is used to provide SGX-enabled
-> applications with protected memory, and is otherwise inaccessible.
+On Thu, Sep 22, 2022 at 10:10:38AM -0700, Kristen Carlson Accardi wrote:
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
 > 
-> SGX EPC memory allocations are separate from normal RAM allocations,
-> and is managed solely by the SGX subsystem. The existing cgroup memory
-> controller cannot be used to limit or account for SGX EPC memory.
-> 
-> This patchset implements the sgx_epc cgroup controller, which will provide
-> support for stats, events, and the following interface files:
-> 
-> sgx_epc.current
-> 	A read-only value which represents the total amount of EPC
-> 	memory currently being used on by the cgroup and its descendents.
-> 
-> sgx_epc.low
-> 	A read-write value which is used to set best-effort protection
-> 	of EPC usage. If the EPC usage of a cgroup drops below this value,
-> 	then the cgroup's EPC memory will not be reclaimed if possible.
-> 
-> sgx_epc.high
-> 	A read-write value which is used to set a best-effort limit
-> 	on the amount of EPC usage a cgroup has. If a cgroup's usage
-> 	goes past the high value, the EPC memory of that cgroup will
-> 	get reclaimed back under the high limit.
-> 
-> sgx_epc.max
-> 	A read-write value which is used to set a hard limit for
-> 	cgroup EPC usage. If a cgroup's EPC usage reaches this limit,
-> 	allocations are blocked until EPC memory can be reclaimed from
-> 	the cgroup.
+> Move the invocation of post-reclaim cond_resched() from the callers of
+> sgx_reclaim_pages() into the reclaim path itself.   sgx_reclaim_pages()
+> is always called in a loop and is always followed by a call to
+> cond_resched().  This will hold true for the EPC cgroup as well, which
+> adds even more calls to sgx_reclaim_pages() and thus cond_resched().
 
-It would be worth of mentioning for clarity that shmem is accounted from
-memcg.
+This would be in my opinion better:
+
+"
+In order to avoid repetion of cond_sched() in ksgxd() and
+sgx_alloc_epc_page(), move the call inside sgx_reclaim_pages().
+
+This will hold true for the EPC cgroup as well, which adds more
+call sites sgx_reclaim_pages().
+"
+
+This way it is dead obvious and is better description because
+it enumerates the consequences (i.e. call sites).
 
 BR, Jarkko
+
