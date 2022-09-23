@@ -2,80 +2,85 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8155DC6FA91
-	for <linux-sgx@archiver.kernel.org>; Thu, 22 Sep 2022 21:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC44FECAAD8
+	for <linux-sgx@archiver.kernel.org>; Fri, 23 Sep 2022 12:28:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbiIVVj6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 22 Sep 2022 17:39:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35606 "EHLO
+        id S231566AbiIWM2y (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 23 Sep 2022 08:28:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231233AbiIVVjy (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 22 Sep 2022 17:39:54 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D229114033;
-        Thu, 22 Sep 2022 14:39:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663882793; x=1695418793;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LziEyfJawc4QSz0lLnm/mVQqdAi9KJUUSw7+yO6FQ2U=;
-  b=gPEQfjxow2GpepwrV6myffF8g/dR0a5Tiq0MfkOjd9MFkC4qXLOEyVlN
-   /FjXq//T+lmEElCfuY/4Moz5RWmq/NNu3DSPuu0k2m8cp6t8MOZSoBkVK
-   hMorp2rznH5d8/EuNuMl9NdTwh4H6ivlZtT2VNk1wd5lEWnrt7vOgxQG8
-   EqQx8OEzBDAA7zx1MFf3zLCXIOiBNDN0Z+eIsPo/i/tESidgGT8OrQiMI
-   WbeiNWNSCW1jPtRZ0l/Zqk9xZr6NCQH9q+StD6cDZEXE9IYK2dPKghHJd
-   AGUkZmWeEzdKncr6V1ETBzvwPCJPuZWDdWxy33ypfIMV7CF+DSr5pRU66
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10478"; a="287549742"
-X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
-   d="scan'208";a="287549742"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 14:39:53 -0700
-X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
-   d="scan'208";a="762373094"
-Received: from sponnura-mobl1.amr.corp.intel.com (HELO [10.209.58.200]) ([10.209.58.200])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 14:39:52 -0700
-Message-ID: <f2236b51-400a-b300-e818-297e45cc7b49@intel.com>
-Date:   Thu, 22 Sep 2022 14:39:53 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [RFC PATCH 03/20] x86/sgx: Track owning enclave in VA EPC pages
-Content-Language: en-US
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Sean Christopherson <seanjc@google.com>
+        with ESMTP id S231918AbiIWM2W (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 23 Sep 2022 08:28:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C0D9148A0E;
+        Fri, 23 Sep 2022 05:24:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A2F4B61AE4;
+        Fri, 23 Sep 2022 12:24:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B140AC433D6;
+        Fri, 23 Sep 2022 12:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663935852;
+        bh=NM85qGkf1dVSLgcWZ9WS9hx6Yj3D92+rESK6H5VWGoE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fuaO3gNn+VXn3Yxl+8JP0QCWQcdXn7r1h4B7zsIOiDer1BG7984BmGJSQPsTNW//R
+         GtLPE9JShxRKCh/76id4IH1oGvbzS29V6Li1mS1kMqQRWnca/YdeTsoIWTGyHKu+AN
+         GiRN/KA6ODjUVnLVP4TpFY5oG8GXYbEglfAR9Z9GmhYTXRZsn/3ntZSNXGKJorA2Pc
+         gvnOG1u2zFwFltY670KLvDLgtP00wo2FMXCkFcQLWlGKhSht3jqDtYcT22ZV+nKbVX
+         Ca23UEV0RhF78QZFWlJ3TjvSyDpg6drYseCHe6veVdWDFILxEHRbEqKb3GTDLwpDGH
+         F+XHrJxuitqmg==
+Date:   Fri, 23 Sep 2022 15:24:07 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        cgroups@vger.kernel.org
+Subject: Re: [RFC PATCH 00/20] Add Cgroup support for SGX EPC memory
+Message-ID: <Yy2lZx6u1dhFO34i@kernel.org>
 References: <20220922171057.1236139-1-kristen@linux.intel.com>
- <20220922171057.1236139-4-kristen@linux.intel.com>
- <1adb03c8-1274-3898-0677-03015a1f5a5d@intel.com>
- <f031ac1bd6b16509f1d714cd65e6b017f054940c.camel@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <f031ac1bd6b16509f1d714cd65e6b017f054940c.camel@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220922171057.1236139-1-kristen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 9/22/22 13:04, Kristen Carlson Accardi wrote:
->> BTW, is there a flag or any other way to tell to what kind of object
->> ->owner points?
-> The owner will only be an sgx_encl type if it is a va page, so to tell
-> what kind of object owner is, you look at the epc page flags - like
-> this:
->         if (epc_page->flags & SGX_EPC_PAGE_ENCLAVE)
->                 encl = ((struct sgx_encl_page *)epc_page->owner)->encl;
->         else if (epc_page->flags & SGX_EPC_PAGE_VERSION_ARRAY)
->                 encl = epc_page->owner;
-> ...
+On Thu, Sep 22, 2022 at 10:10:37AM -0700, Kristen Carlson Accardi wrote:
+> Add a new cgroup controller to regulate the distribution of SGX EPC memory,
+> which is a subset of system RAM that is used to provide SGX-enabled
+> applications with protected memory, and is otherwise inaccessible.
+> 
+> SGX EPC memory allocations are separate from normal RAM allocations,
+> and is managed solely by the SGX subsystem. The existing cgroup memory
+> controller cannot be used to limit or account for SGX EPC memory.
+> 
+> This patchset implements the sgx_epc cgroup controller, which will provide
+> support for stats, events, and the following interface files:
+> 
+> sgx_epc.current
+> 	A read-only value which represents the total amount of EPC
+> 	memory currently being used on by the cgroup and its descendents.
+> 
+> sgx_epc.low
+> 	A read-write value which is used to set best-effort protection
+> 	of EPC usage. If the EPC usage of a cgroup drops below this value,
+> 	then the cgroup's EPC memory will not be reclaimed if possible.
+> 
+> sgx_epc.high
+> 	A read-write value which is used to set a best-effort limit
+> 	on the amount of EPC usage a cgroup has. If a cgroup's usage
+> 	goes past the high value, the EPC memory of that cgroup will
+> 	get reclaimed back under the high limit.
+> 
+> sgx_epc.max
+> 	A read-write value which is used to set a hard limit for
+> 	cgroup EPC usage. If a cgroup's EPC usage reaches this limit,
+> 	allocations are blocked until EPC memory can be reclaimed from
+> 	the cgroup.
 
-I don't know how much refactoring it would take, but it would be nice if
-that was a bit more obvious.  Basically, can we get the code that checks
-for or sets SGX_EPC_PAGE_VERSION_ARRAY close to the code that assigns or
-reads ->owner?
+It would be worth of mentioning for clarity that shmem is accounted from
+memcg.
+
+BR, Jarkko
