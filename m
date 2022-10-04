@@ -2,147 +2,131 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317B9C433FE
-	for <linux-sgx@archiver.kernel.org>; Mon,  3 Oct 2022 22:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A6AC433F5
+	for <linux-sgx@archiver.kernel.org>; Tue,  4 Oct 2022 13:22:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230002AbiJCWEu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 3 Oct 2022 18:04:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35678 "EHLO
+        id S229795AbiJDNWT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 4 Oct 2022 09:22:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229998AbiJCWEq (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 3 Oct 2022 18:04:46 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B7763F4;
-        Mon,  3 Oct 2022 15:04:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1664834682; x=1696370682;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6WwR4lJkD9myqJbkioJF7WxCYyfmYMBhp6kUNpLwcZg=;
-  b=Z1OmKhcd1YBJzWwuALgAHsxI2ArVx57u6ltPX50bpGPtI4jCZV+vzlQd
-   aTX+13GfUejHloIJmDEqo/dE4/er1QMDnIE7hzOWP3hy9BJIgBPfSGOEU
-   KTluyq9q7uJxsQ6MVzrctlpwn8rLm8wDEkgOUsUbQxcogeT+1pZc+SAmf
-   5PS9V8bx3rHOFVMky1Bbpt213Y5KVz6IZYBHibB0+/zu5og611DvZYuZx
-   WCg26X7C0n9Sk1D2/NeWeZOZoAkERIOOyLUVoiZLxKAE+ghDqmjsXv2Pd
-   Dm/3uBli/e7iGtaEo9IAEihZ96YskzFJK1y5EL0JM6TPWAHXmAW/GSHS3
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10489"; a="366869173"
-X-IronPort-AV: E=Sophos;i="5.93,366,1654585200"; 
-   d="scan'208";a="366869173"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2022 15:04:42 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10489"; a="686310962"
-X-IronPort-AV: E=Sophos;i="5.93,366,1654585200"; 
-   d="scan'208";a="686310962"
-Received: from jparcemo-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.212.93.75])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2022 15:04:40 -0700
-From:   Kai Huang <kai.huang@intel.com>
-To:     linux-sgx@vger.kernel.org
-Cc:     dave.hansen@linux.intel.com, jarkko@kernel.org,
-        tony.luck@intel.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] x86/sgx: Only run the reclaimer when the native SGX driver is enabled
-Date:   Tue,  4 Oct 2022 11:04:28 +1300
-Message-Id: <0dd24e5549bbdee8580c2495f1df93798aadfd11.1664834225.git.kai.huang@intel.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <cover.1664834225.git.kai.huang@intel.com>
-References: <cover.1664834225.git.kai.huang@intel.com>
+        with ESMTP id S230099AbiJDNWO (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 4 Oct 2022 09:22:14 -0400
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F34F65072A
+        for <linux-sgx@vger.kernel.org>; Tue,  4 Oct 2022 06:22:13 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 70AFB3200413;
+        Tue,  4 Oct 2022 09:22:10 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 04 Oct 2022 09:22:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        invisiblethingslab.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1664889730; x=1664976130; bh=rF9Tz2/xyU
+        q1k79tlSYkyEdiumZJ2g4Uk4uR81enuf0=; b=3V9nP7XL4TdUVY4/8afef0kHIe
+        z2L3QbZedOCf95ZSHYnkNjrgitdrIY8MBhpd/L+tSkgQqFG5OHn5Sho56hhRgIa0
+        3PeiSWeizE/YsCh1po5LS5/Cr06PGoYhGRQq6zyC44KOv/oF1FCM4iDk27NgiSDE
+        agpNcwK+6/RjUmGI6GnUKVN5Gf3wK3KBaJKEt02NgrJGjbTkeKShpNZrQEwnynG8
+        KPrK9sRLYzED3O60M4IqVdAl0hDqlPuv5E2QRUU1a6QfGE/+zW08OY0Y08FqxO7z
+        20jpqdxaqMYMjGV48rrQEX7OqBQCFPUw4JZzV4JsaxPAJkQNwvgGqx110IFw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1664889730; x=
+        1664976130; bh=rF9Tz2/xyUq1k79tlSYkyEdiumZJ2g4Uk4uR81enuf0=; b=t
+        3XKYii6VpktHEfQ8ZE1mfvFGdrx0dFoKfCDE3kR7VTH31O86k4owcivnC26S6px2
+        cJF/VJa50LEIGjkf2BT8bqkHYS5POnYkZOO+DNV3VyCR8MPXt0x8AboLkN2TaQCq
+        O1TUmMcCrtCKyuDrzrw9ZBHQfpDeZOSgd6FJZLaijB1lriWIpndhc2wd5Auwkkd0
+        gKEPW6aX/hZQYM3b3R2jDa02+0rfwxmOIBb+Vv5gkeA2u6UZNX78AUuFG5r+VTXm
+        p/KAku5wVPLlAPIrRxspEatgqUPDafh5tVFhwx5GY0zgM3DIUqQH8xEXGZv+aTkW
+        KA39GvPR4UWn2ZYt3k/Rg==
+X-ME-Sender: <xms:gTM8Y55s9_hxzEV9gDAvLohALLCrl_BROWrooY2hFWxGOam15e2l-w>
+    <xme:gTM8Y25Pjbp-Pslly3A2-twccbidURIsBzpF1DxaqpInXZKrkajS7506yqimEOi-m
+    6-LSR95ixJHyx8>
+X-ME-Received: <xmr:gTM8Ywf-T_gW6s_9wzSwGB-bQ-WnRlCopvFBwB9l28V94p_n0AFgNLGab3Daf2IS5cgQAaUAKSvVqEq8XckhvCPF>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeeiuddgieefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpeeuohhr
+    hihsuceosghorhihshhpsehinhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomheqne
+    cuggftrfgrthhtvghrnhepgeelfeegueefgfejtdevheegffduudehgfdtjeegtdfhteev
+    feethfeiieefhffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepsghorhihshhpsehinhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomh
+X-ME-Proxy: <xmx:gTM8YyLfoB2rA2TlHCUg1aYZW_wG7jYuyjt9WawbEKEE9gG6ErqOsQ>
+    <xmx:gTM8Y9JRk5EYO0Wll9fMNeOibDFJuxYBtSEYifZ-_pyuFapJxEIw_g>
+    <xmx:gTM8Y7weu2HBjfoeBR7s4oKl5rly8L6b2uWn73nhUyos4RThKEZ_AQ>
+    <xmx:gjM8Y0UH9EE-jcoYTRDzdFT1eudcspMcgNMtOS4GwiQXhvGzUAu9Nw>
+Feedback-ID: i21414460:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 4 Oct 2022 09:22:08 -0400 (EDT)
+Message-ID: <703f49cb-7edd-9ac5-4202-0e799e1a98a4@invisiblethingslab.com>
+Date:   Tue, 4 Oct 2022 15:22:05 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: sgx_validate_offset_length bug
+Content-Language: en-US
+To:     Reinette Chatre <reinette.chatre@intel.com>, jarkko@kernel.org,
+        dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org
+Cc:     mkow@invisiblethingslab.com
+References: <9e1e61cf-39d9-8039-b2e4-f0a3804fe493@invisiblethingslab.com>
+ <956f6af2-e0cb-72c0-abf8-e2e00067851c@intel.com>
+ <5b3bc4ce-bdfa-285e-79e0-77a85616e637@intel.com>
+From:   Borys <borysp@invisiblethingslab.com>
+In-Reply-To: <5b3bc4ce-bdfa-285e-79e0-77a85616e637@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Currently the EPC pages assigned to KVM guests cannot be reclaimed, so
-there's no point to run the reclaimer when the native SGX driver is not
-enabled.
+Hi,
 
-Add a function to indicate whether the native SGX driver has been
-initialized, and in ksgxd(), avoid running the reclaimer when it is
-false.
+On 10/3/22 19:58, Reinette Chatre wrote:
+> Hi Borys,
+>
+> On 10/3/2022 10:33 AM, Reinette Chatre wrote:
+>> On 10/3/2022 10:19 AM, Borys wrote:
+>>> I've stumbled upon "sgx_validate_offset_length" function in
+>>> "arch/x86/kernel/cpu/sgx/ioctl.c" (all of this is based on 6.0-rc7
+>>> version), which does not entirely do what it claims. "offset" and
+>>> "length" parameters are provided by userspace and as such their
+>>> addition can overflow, which may result in this function approving
+>>> malicious values. Fortunately this does not result in any exploitable
+>>> bugs at the moment (or at least I couldn't find any), but this might
+>>> change if "sgx_validate_offset_length" is used in a new context or
+>>> current usages are changed, so it might be worth fixing anyway.
+>>> Simple overflow check `offset + length < offset` should be enough.>
+>> Could you please elaborate where you see a possibility for overflow?
+>>
+>> Together the provided values, offset and length, are already ensured to
+>> not exceed the total size of the enclave in the following check:
+>>
+>> sgx_validate_offset_length() {
+>> 	...
+>> 	if (offset + length - PAGE_SIZE >= encl->size)
+>> 		return -EINVAL;
+>> 	...
+>> }
+> I think I see what you mean now ... if offset and length are
+> sufficiently large the above check can still pass but loops
+> that have the following pattern may have issues:
+>
+> for (c = 0 ; c < length; c += PAGE_SIZE) {
+>
+> 	...
+> 	/* do something at <offset> */
+>
+> }
+>
+> Are you planning to submit a patch for the check you propose?
+>
+> Reinette
 
-In sgx_drv_init(), move the register of "/dev/sgx_enclave" misc device
-before initializing sgx_attributes_reserved_mask (and the other two
-masks) so that the new function can just use it to determine whether the
-SGX driver has been initialized w/o introducing a new boolean.
+Sure, I'll try to submit a patch later today.
 
-Signed-off-by: Kai Huang <kai.huang@intel.com>
----
- arch/x86/kernel/cpu/sgx/driver.c | 13 +++++++++----
- arch/x86/kernel/cpu/sgx/driver.h |  1 +
- arch/x86/kernel/cpu/sgx/main.c   | 11 ++++++++++-
- 3 files changed, 20 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index aa9b8b868867..b5e754632eed 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -160,6 +160,10 @@ int __init sgx_drv_init(void)
- 		return -ENODEV;
- 	}
- 
-+	ret = misc_register(&sgx_dev_enclave);
-+	if (ret)
-+		return ret;
-+
- 	sgx_misc_reserved_mask = ~ebx | SGX_MISC_RESERVED_MASK;
- 
- 	cpuid_count(SGX_CPUID, 1, &eax, &ebx, &ecx, &edx);
-@@ -172,9 +176,10 @@ int __init sgx_drv_init(void)
- 		sgx_xfrm_reserved_mask = ~xfrm_mask;
- 	}
- 
--	ret = misc_register(&sgx_dev_enclave);
--	if (ret)
--		return ret;
--
- 	return 0;
- }
-+
-+bool sgx_drv_inited(void)
-+{
-+	return !!sgx_attributes_reserved_mask;
-+}
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index 4eddb4d571ef..159cc066e9cb 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -25,5 +25,6 @@ extern const struct file_operations sgx_provision_fops;
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
- 
- int sgx_drv_init(void);
-+bool sgx_drv_inited(void);
- 
- #endif /* __ARCH_X86_SGX_DRIVER_H__ */
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 713ca09f6d6e..0fdbc490b0f8 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -403,6 +403,14 @@ static int ksgxd(void *p)
- 	__sgx_sanitize_pages(&sgx_dirty_page_list);
- 	WARN_ON(__sgx_sanitize_pages(&sgx_dirty_page_list));
- 
-+	/*
-+	 * EPC pages assigned to KVM guests cannot be reclaimed.  There's
-+	 * no reason to run the reclaimer if the native SGX driver isn't
-+	 * initialized successfully (i.e. on the machines w/o SGX_LC).
-+	 */
-+	if (!sgx_drv_inited())
-+		return 0;
-+
- 	while (!kthread_should_stop()) {
- 		if (try_to_freeze())
- 			continue;
-@@ -940,7 +948,8 @@ static int __init sgx_init(void)
- 		ksgxd_tsk = NULL;
- 		__sgx_sanitize_pages(&sgx_dirty_page_list);
- 		WARN_ON(__sgx_sanitize_pages(&sgx_dirty_page_list));
--		pr_info("Running SGX w/o EPC page reclaimer.\n");
-+		if (sgx_drv_inited())
-+			pr_info("Running native SGX driver w/o EPC page reclaimer.\n");
- 	}
- 
- 	return 0;
--- 
-2.37.1
+Borys
 
