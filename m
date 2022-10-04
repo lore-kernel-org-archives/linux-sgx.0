@@ -2,117 +2,117 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF70C433F5
-	for <linux-sgx@archiver.kernel.org>; Tue,  4 Oct 2022 22:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9187EC433F5
+	for <linux-sgx@archiver.kernel.org>; Tue,  4 Oct 2022 23:02:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229516AbiJDW7a (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 4 Oct 2022 18:59:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50526 "EHLO
+        id S229627AbiJDXCo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 4 Oct 2022 19:02:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbiJDW7X (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 4 Oct 2022 18:59:23 -0400
+        with ESMTP id S229551AbiJDXCn (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 4 Oct 2022 19:02:43 -0400
 Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED1D6F559;
-        Tue,  4 Oct 2022 15:59:13 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 4D06632001FC;
-        Tue,  4 Oct 2022 18:59:09 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 237C14686A
+        for <linux-sgx@vger.kernel.org>; Tue,  4 Oct 2022 16:02:43 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 6A7593200916;
+        Tue,  4 Oct 2022 19:02:42 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 04 Oct 2022 18:59:10 -0400
+  by compute3.internal (MEProxy); Tue, 04 Oct 2022 19:02:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         invisiblethingslab.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:message-id
-        :mime-version:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1664924348; x=1665010748; bh=CC96qaOa/nsq7X964xKP19I/KvoTkXtU5it
-        mYL0RO6Y=; b=OOEZBo3ft4jv+W/Kms9V5KAin0giNQxC14PK8kFN+4kJCH7cAdj
-        7vAGRbgLl/Vq8yrGPfLpnx+9JlZsuSVo2afKZFp5XVLz/OyuByljGbQn/h4sQeNX
-        tYX8ZCRcdzFTeRcXWjSDzkSCbpRrnDQofjRGzPwztr9g7MPNmZPceuSfrC+/VrCD
-        RLpAYglJ+kABku/QXJOmrEOofymUKx2h6FXTiY6SJkIHSTUwXAgAOTYriBYpb01d
-        VaZP+e/Dt9QKr94OZo0eEohtXrm4rzyp6vg6Mxkw99bgafTOrkhcvEVbEZSXjUSP
-        0Nkmi0FrRNQ91oPmSfwQd396tWClncgdIpg==
+        :content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1664924562; x=1665010962; bh=+Kf2t+awbn
+        0Iu3s8PD663EMDThErKEhK7wEDj/x6yLA=; b=nmAQOeoK8sD4ntxrMtbHe8rP/p
+        SwMCuQXTmwnrAVdIrosY7HzfYkJR35nJLjHRbRE3d2bWpxFNdyiy0qf/wdN0Waa5
+        A73AQHenVNSdGnNvWHiKPW99WsAV3t2U6EZXdwP8BuPoUly15liGX4A+9uwdPeFS
+        6RefyqTIc7tEPr4NwyrUfLT9OxArmmIrLgN+g79x0JK8BsY/gD4ovHImBnlanWse
+        HHI+Y7BF52V478W8TM9GnUz6/ISKvpYzHNLF+X+ozrmwofZQxMTBO2+eAt05bWol
+        hh+0qMAF1vk4PelD+9vlQgNJt0klemLwbJsf52KUIZbelIJA32SAqoL5/h9Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:message-id:mime-version:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1664924348; x=1665010748; bh=CC96qaOa/nsq7
-        X964xKP19I/KvoTkXtU5itmYL0RO6Y=; b=eZ8Fb/6tbbGKWZEAbVQAC1xBI9/42
-        YFF7G6Q7rEzzHmqBldWyC7r+x/H8V0gl/XkX1yrL9Xr2y+V7mITFZ/fFUwcmx8Td
-        riAStLrYtZuxOwSjqcA3uyoZRwKV6Rq3q1Foto129j7OOhJVOBeBCTTYXYvPLcXF
-        Fb9w+ajKZjvSVcWZ5R/HH0FL8/9J8dQiXkGYsENLRZnS+aL/732HvNuMDD0FOs9y
-        ceJcT4rKqdP5WMPaJpcLt3PPP2AJGjByKjN1Z0XbTEBhPi5X2y8NfVFUdNz1kX7h
-        ZE5qaj/CYQaZ8BUIUlGJZKWx0k/kWW+0xFlZSHFab12c9rd6VQ4nwHOKA==
-X-ME-Sender: <xms:vLo8Y7376UwO-hxZs-_Subch-O2doIjrXtv0kBVSC_mVyc6dk8iKXQ>
-    <xme:vLo8Y6EZ_jeu_ZR7LaL9nD5KYuW4Uao2IUuN9s0pt5mTcOGGBWLLu7I53SQOC37l3
-    J7zVbnB2aXWbzM>
-X-ME-Received: <xmr:vLo8Y77nA1ioiw2-0kLM0q8CbtXNksrdwgbit2wHe50p8Um8Ad-9UIcLGV2XQlHbCVKDcaZ3Evl94yADDN_tzo8z>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeeivddgudeiucetufdoteggodetrfdotf
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1664924562; x=
+        1665010962; bh=+Kf2t+awbn0Iu3s8PD663EMDThErKEhK7wEDj/x6yLA=; b=g
+        rIRG42ASZNOrwR+hF3UXnb+bkTsecXJEwY8eMgTrhBOI+USEbPVKHJI791VzXP6R
+        J7oSw6K1VVdmQ7Nc9AF4OVlXYUS1sCi0j+IrtSf+J1QMZx416WR6yeugrVgoVCFs
+        gRW/8I/8K/D3nLpUgrH6gb0109eNA7eYLLcTV1GlbFfVRFEvHcm+1ggB6U4ewNqe
+        Q7iOeyLoMdJ5W77cDRRpWO/PI2P+20yj7hN9NPRWb17odsCEvj2Yr06nT9XNtL5I
+        VtXhkQY6nLYHrLLSL01citn4TT3iKDkeyLFEIvwsjDJ8Pkp/XIA7463/5GJfI6qC
+        lCQDeNvLOz0ylk32S3AHg==
+X-ME-Sender: <xms:kbs8Y5kcLNEJkZOsAYyktISOC36gmMetMPR_k_qg395RP56jdvoYTg>
+    <xme:kbs8Y02_ewRmlY77LvnjpUvDV2J3Vm2etf95tk2lckVmv1mrOZ7tehgA97md4W0UD
+    ql2b4pKzlpoB1E>
+X-ME-Received: <xmr:kbs8Y_r56y4SXdpQGDDdSES7s9hM9A0Xe_Yr6oaxg2twi2TO7GA6o-5EYj3Exr7AHxW7F3AfIRPEDtKNQ4xJXzUZ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeeivddgudejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfvffhvefutgfgsehtkeertddtfeejnecuhfhrohhmpeeuohhrhihs
-    uceosghorhihshhpsehinhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomheqnecugg
-    ftrfgrthhtvghrnhepgfegvdeigfekvdegveeiudeliedtgfejgefflefgvdevleefieek
-    gfeljeefkedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepsghorhihshhpsehinhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomh
-X-ME-Proxy: <xmx:vLo8Yw3M6afQdWzxsUlP-g3eesrGlIgrKaT0Co-GxS_uV5DOoULRxg>
-    <xmx:vLo8Y-FTHyodNUW-G26My-OzUKvp-0zd-F2aE4Kk-ZvLDaRDdgLoLw>
-    <xmx:vLo8Yx95BQe-2DRMKm9iKvhYpJAbnNYoxO0d7TIvh-GkuyJmMQLnWw>
-    <xmx:vLo8Y8Y7lNpccqabuIesjuFr4_Z5ZTOrbARMGuxnpGqbmpnECyifpQ>
+    cujfgurhepkfffgggfvfevfhfhufgjtgfgsehtjeertddtfeejnecuhfhrohhmpeeuohhr
+    hihsuceosghorhihshhpsehinhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomheqne
+    cuggftrfgrthhtvghrnhepteetteegfeefveevgfejgfeiueelgeevueettdelledtuddu
+    heehfeehhfefjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepsghorhihshhpsehinhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomh
+X-ME-Proxy: <xmx:kbs8Y5l3a4CFHc7X6QOuI-BZKMMPv5U6ebIrjgZ7KgjsG-oQI_q7cQ>
+    <xmx:kbs8Y30mhWZudXIuVlM3ARdvu4FsXn_yzMd4WEe4Sr4cwzrFtKb4IA>
+    <xmx:kbs8Y4tNaKlFSWEnlmgcVta6Oen65ENB_4zmRErMcSTq66IfjVvckA>
+    <xmx:krs8Yw99lrj2WJXzOtTDxXHhSPQhOHRfM4vfFSVF4QFFGW7VfkLOfQ>
 Feedback-ID: i21414460:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Oct 2022 18:59:06 -0400 (EDT)
-Message-ID: <0d91ac79-6d84-abed-5821-4dbe59fa1a38@invisiblethingslab.com>
-Date:   Wed, 5 Oct 2022 00:59:03 +0200
+ 4 Oct 2022 19:02:41 -0400 (EDT)
+Message-ID: <65cc7f00-30e8-3cd4-7c1c-c50ca1e0bd42@invisiblethingslab.com>
+Date:   Wed, 5 Oct 2022 01:02:39 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
 Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
+        mkow@invisiblethingslab.com
+References: <9e1e61cf-39d9-8039-b2e4-f0a3804fe493@invisiblethingslab.com>
+ <YzyqttbWmjqzH7At@kernel.org>
 From:   Borys <borysp@invisiblethingslab.com>
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        =?UTF-8?Q?Micha=c5=82_Kowalczyk?= <mkow@invisiblethingslab.com>
-Subject: [PATCH] x86/sgx: Add overflow check in sgx_validate_offset_length()
+Subject: Re: sgx_validate_offset_length bug
+In-Reply-To: <YzyqttbWmjqzH7At@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-sgx_validate_offset_length() function verifies "offset" and "length"
-arguments provided by userspace, but was missing an overflow check on
-their addition.
-This code was originally introduced in commit c6d26d370767 ("x86/sgx:
-Add SGX_IOC_ENCLAVE_ADD_PAGES") and later refactored in commit
-dda03e2c331b ("x86/sgx: Create utility to validate user provided offset
-and length").
+On 10/4/22 23:50, Jarkko Sakkinen wrote:
+> On Mon, Oct 03, 2022 at 07:19:21PM +0200, Borys wrote:
+>> Hi,
+>>
+>> I've stumbled upon "sgx_validate_offset_length" function in
+>> "arch/x86/kernel/cpu/sgx/ioctl.c" (all of this is based on 6.0-rc7
+>> version), which does not entirely do what it claims. "offset" and
+>> "length" parameters are provided by userspace and as such their addition
+>> can overflow, which may result in this function approving malicious
+>> values. Fortunately this does not result in any exploitable bugs at the
+>> moment (or at least I couldn't find any), but this might change if
+>> "sgx_validate_offset_length" is used in a new context or current usages
+>> are changed, so it might be worth fixing anyway. Simple overflow check
+>> `offset + length < offset` should be enough.
+>>
+>> Best regards,
+>>
+>> Borys
+>>
+> 
+> I agree with the bug but not on security issue.
+> 
+> If you can call the ioctl API in the first place, you can already apply
+> the operations in arbitrary locations inside the enclave, i.e. it does
+> not introduce any new capability to the untrusted runtime.
+> 
+> BR, Jarkko
 
-Fixes: c6d26d370767 ("x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES")
-Signed-off-by: Borys Popławski <borysp@invisiblethingslab.com>
----
- Applies on top of tip/x86/sgx ee56a283988d739c25d2d00ffb22707cb487ab47
+I meant it could possibly enable some local priv escalation, if other
+code has wrong assumptions. But again, this is purely theoretical,
+current usages fail on invalid values anyway.
 
- arch/x86/kernel/cpu/sgx/ioctl.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index ebe79d60619f..da8b8ea6b063 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -356,6 +356,9 @@ static int sgx_validate_offset_length(struct sgx_encl *encl,
- 	if (!length || !IS_ALIGNED(length, PAGE_SIZE))
- 		return -EINVAL;
- 
-+	if (offset + length < offset)
-+		return -EINVAL;
-+
- 	if (offset + length - PAGE_SIZE >= encl->size)
- 		return -EINVAL;
- 
--- 
-2.37.3
-
+Best regards,
+Borys
