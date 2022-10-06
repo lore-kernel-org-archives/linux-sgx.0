@@ -2,134 +2,99 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3063FC433FE
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Oct 2022 22:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E4DC433FE
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Oct 2022 22:29:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229543AbiJFWCr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 6 Oct 2022 18:02:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51924 "EHLO
+        id S229849AbiJFW3i (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 6 Oct 2022 18:29:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbiJFWCq (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 6 Oct 2022 18:02:46 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76ADE1142F6;
-        Thu,  6 Oct 2022 15:02:44 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id x59so4691887ede.7;
-        Thu, 06 Oct 2022 15:02:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date;
-        bh=q8/n3EMD5cnLWaIZS6weR3Cz4dVlkLr18gotr5nuyIY=;
-        b=mknW/K5+nRpvbAoFF+wPkCGRLTnkZ0J3ANaHD1k5R22m0oZibnQnQx7/i2xA/1XT1C
-         fBBP2byMcKnVhmSCOor92+msIN4pM5H8cOomwRbDGepoFD4CRfkHQMrpcSZnG8EkBEm0
-         HEquvnmTrxpk7WKulUq8u4eCqy8y0dP+TmtvaGdmD/Gy4S6QEiSMkOgI8rm6WQisy98o
-         rrb9jODo3atjPu0qeVpDv9PCBb7OPukqK5pNWKkVJajZGziWjt3v3v76VnfeLGnyLrwE
-         +i3PldKubNKlcHYBfgOOqSsdzjALWRZF/YoKL6P0zAKm4xn0/BS6MOYFZwEc+p3pZXow
-         PzQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=q8/n3EMD5cnLWaIZS6weR3Cz4dVlkLr18gotr5nuyIY=;
-        b=qDzuEM9KGGb8dFEL7tYcTSmr/R7MlVDvJXGWI/NPsEEARcsBUcJS/fDILQzcZUq3d6
-         ls1A2oXvZdftJ1w96DV4y2WUNRdZwkPuq0hMrP/JpCe4D122K8bLr47JSZYPrDK+zcsl
-         qTEiVH8ubQaiCSfVV4r6fMCxXTvY69Jh9BDabHD6mHG19/SBD8jDic018UiJZaKXjiIk
-         /Y+SFq/8fG2ojLoxpNZ9DU5TLL0EEZM26Q2ocQRZ3ehp/J52eV5YaYYRi3kKys4VCRpd
-         AZ70IUSgzlFWQzsEKxXxhz0QP77pjcQcZEHUbIZsuYdxCKV4GjL01APiOgxMe/sFWDhz
-         wJ1A==
-X-Gm-Message-State: ACrzQf3t7xb3duEa2fRo66ARA5m+tezbYOiu8wMg2c34BKYBcIsU3kz1
-        8bAoN9Z811pUn2RBHml6YvrPrFmQ5mKLFA==
-X-Google-Smtp-Source: AMsMyM7Q80bsglq+Gt8IWNpz7Vpm1iZAP5p3wYEdito9JSxFIfIdZamXJNSBP6POTkAtu3xuMaY2dA==
-X-Received: by 2002:a05:6402:5406:b0:452:1560:f9d4 with SMTP id ev6-20020a056402540600b004521560f9d4mr1790233edb.333.1665093762599;
-        Thu, 06 Oct 2022 15:02:42 -0700 (PDT)
-Received: from mypc.localnet (host-79-17-38-224.retail.telecomitalia.it. [79.17.38.224])
-        by smtp.gmail.com with ESMTPSA id ti5-20020a170907c20500b0078bfff89de4sm269924ejc.58.2022.10.06.15.02.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Oct 2022 15:02:41 -0700 (PDT)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        with ESMTP id S229683AbiJFW3h (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 6 Oct 2022 18:29:37 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A718FBF2;
+        Thu,  6 Oct 2022 15:29:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1665095376; x=1696631376;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=k3VDWwiUKZLEvjl46lh7KsMqnfu7pLgXi6thYeJCce4=;
+  b=QvdG5G15msbQrX9Hl5cC8Nr0PwRQC4U6F321LBjJ4DaBX+XY+H7qGJ/R
+   kxW/gOaxpi3ovmRssyUW+JK0zTCxILhQyH6bOCbHVeWMJ/gMU8fq6rr2V
+   2fN23B8veeGVj6G6vaAnBX3P62LzUd/MPqJz4k3HRq6HKrFDlqAbULv+3
+   fIUAebX3y7HMAHa5nq3Lh243L9tMYP6NbiS3EFOR1u/M7r50NEd8PBiFd
+   aSKi5jHa51PzrISrxYgT17Xs30zGYCrQQdK1U0Sczq7SyttaB8SrQt8Uu
+   1Rit0sZTe0Rp50iOslHJduyy+HgIc/JJv+oAX4ugDiG8bA72JahuCSm4Q
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10492"; a="290852693"
+X-IronPort-AV: E=Sophos;i="5.95,164,1661842800"; 
+   d="scan'208";a="290852693"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2022 15:29:36 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10492"; a="750321487"
+X-IronPort-AV: E=Sophos;i="5.95,164,1661842800"; 
+   d="scan'208";a="750321487"
+Received: from iitotia-mobl1.amr.corp.intel.com (HELO [10.212.143.59]) ([10.212.143.59])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2022 15:29:35 -0700
+Message-ID: <3dfccc80-e089-4915-d57e-96d26b237182@intel.com>
+Date:   Thu, 6 Oct 2022 15:29:35 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] x86/sgx: Replace kmap/kunmap_atomic calls
+Content-Language: en-US
+To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>, ira.weiny@intel.com
-Subject: Re: [PATCH] x86/sgx: Replace kmap/kunmap_atomic calls
-Date:   Fri, 07 Oct 2022 00:02:42 +0200
-Message-ID: <8124835.T7Z3S40VBb@mypc>
-In-Reply-To: <d64e6e9f-27b9-9bbb-aaf8-fca1681eada5@intel.com>
-References: <20220929160647.362798-1-kristen@linux.intel.com> <3694452.kQq0lBPeGt@mypc> <d64e6e9f-27b9-9bbb-aaf8-fca1681eada5@intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+        ira.weiny@intel.com
+References: <20220929160647.362798-1-kristen@linux.intel.com>
+ <3694452.kQq0lBPeGt@mypc> <d64e6e9f-27b9-9bbb-aaf8-fca1681eada5@intel.com>
+ <8124835.T7Z3S40VBb@mypc>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <8124835.T7Z3S40VBb@mypc>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thursday, October 6, 2022 10:45:56 PM CEST Dave Hansen wrote:
-> On 10/6/22 13:37, Fabio M. De Francesco wrote:
-> > kmap() were not suited in those cases because it might sleep. If the 
-intents 
-> > of the author are simply map a page while in atomic, so to avoid sleeping 
-in 
-> > atomic bugs, your conversions looks good. 
-> > 
-> > For the reasons above, can you please say something more about why this 
-code 
-> > needed a kmap_atomic() instead of calling kmap()?
+On 10/6/22 15:02, Fabio M. De Francesco wrote:
+> On Thursday, October 6, 2022 10:45:56 PM CEST Dave Hansen wrote:
+> Am I still missing anything fundamental?
+
+Yes. :)
+
+kmap() users can sleep.  That means the number of them that you need to
+keep around is unbounded.  kmap_atomic()'s fundamentally can't sleep so
+you need fewer of them.  That means that when you kunmap_atomic() you
+can use a simple, fast, CPU-local TLB flushing operation.  kunmap()
+eventually requires a big fat global TLB flush.
+
+So, you're right.  On lowmem-only systems, kmap() *can* be cheaper than
+kmap_atomic().  But, on highmem systems there's no contest:
+kmap_atomic() is king.
+
+That's why kmap_atomic() is and should be the default.
+
+>> You use kmap_atomic() *always* unless you _need_ to sleep or one
+>> of the other kmap()-only things.
 > 
-> This question is backwards.  kmap_atomic() is the default that folks
-> use.
-
-Sorry, I can't understand why kmap_atomic() is the default. What advantage we 
-get from disabling pagefaults and probably also preemption (it depends on !
-PREEMPT_RT also when we don't need that the kernel runs in atomic?
-
-Do you mean that the more code run in atomic, the less pagefaults we allow, 
-the less preemption we allow, and so on, the better we get from Linux?
-
-Do you remember that what I say above happens both on 64 bits systems as well 
-as in 32 bits?
-
-I'm a newcomer so I may be wrong, however I think that in 64 bits systems we 
-gain from simply returning page_address() and from finer granularity
- (less atomic, less critical sections, instead more preemption and / or 
-migration).
-
-Why shouldn't be kmap() the default choice in a preemptible kernel if sections 
-don't need that disabling of pagefaults, along with preemption (which get 
-disabled many more times that only migration)?
-
-Am I still missing anything fundamental?
-
-> You use kmap_atomic() *always* unless you _need_ to sleep or one
-> of the other kmap()-only things.
-
-What would happen if you rely on switching in atomic as a side effect of 
-kmap_atomic() and then you convert to kmap_local_page() without explicitly 
-disabling, for example, preemption since who converts don't care to know if 
-the code is in atomic before calling kmap_atomic() before or after the call 
-(as I said there may be cases where non atomic execution must disable 
-preemption for some reasons only between the mapping and the unmapping?
-
-If I were a maintainer I wouldn't trust changes that let me think that the 
-developer can't tell if we need to disable something while converting to 
-kmap_local_page().
-
-I hope this time I've been to convey more clearly my thoughts. I'm sorry for 
-my scarce knowledge of English.
-
-Thanks,
-
-Fabio
-
+> What would happen if you rely on switching in atomic as a side effect of 
+> kmap_atomic() and then you convert to kmap_local_page() without explicitly 
+> disabling, for example, preemption since who converts don't care to know if 
+> the code is in atomic before calling kmap_atomic() before or after the call 
+> (as I said there may be cases where non atomic execution must disable 
+> preemption for some reasons only between the mapping and the unmapping?
 > 
-> Folks don't and shouldn't have to explain why this was using kmap_atomic().
-> 
+> If I were a maintainer I wouldn't trust changes that let me think that the 
+> developer can't tell if we need to disable something while converting to 
+> kmap_local_page().
 
-
-
-
+In this case, it's just not that complicated.  The SGX code isn't
+relying on anything subtle that kmap_local_page() does not provide.
