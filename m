@@ -2,43 +2,43 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5264AC433FE
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Oct 2022 15:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E235C4332F
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Oct 2022 15:45:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229949AbiJMPkf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 13 Oct 2022 11:40:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45022 "EHLO
+        id S229534AbiJMPpf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 13 Oct 2022 11:45:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229886AbiJMPkK (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 13 Oct 2022 11:40:10 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AD5D2870F
-        for <linux-sgx@vger.kernel.org>; Thu, 13 Oct 2022 08:39:52 -0700 (PDT)
+        with ESMTP id S229582AbiJMPpd (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 13 Oct 2022 11:45:33 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15C5165679
+        for <linux-sgx@vger.kernel.org>; Thu, 13 Oct 2022 08:45:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665675592; x=1697211592;
+  t=1665675932; x=1697211932;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=fUjs+JBmr1K4wvNXIn5fRYjrZpP+f5hwHGkI/oQ3b4o=;
-  b=MhuLoSMaWMjDKTa8Y6IMLLFBCyJvW+8jyHW/+g5wgBwNvx0GQDAauVbG
-   9vHbSz/y4K15vlwTFshUKE/a427uKz4A/SN+xdOE3LTPZxhxlNv3wwev/
-   yYk3sX9ReJTuinv+bzknu5BnKpGesu3xradKjYk9S8N41OHJR+9dpGdmv
-   plm8HfE/EeIXcRvgy6m7M6TTd8L2R6RDfTp9V3UKMMsLk9jYNKsclcdKF
-   hEnNFTe22F592PjhXIDkJtejRv6h7lVes+L6QXK3hib0TascVsTNIXCBh
-   7e6YoDZVG/1vMDPFoXaJiQjno+WQ9m6vJxhACkr1xq/zqRGraQG0I9CPE
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="331619953"
+  bh=oigiYGGuZaUvckY6PnxUSVuuGsQZHKmCHlkjnEmsDB4=;
+  b=fp5MW6TZRZ5Pco4Ur2BSkjaGtbr8Tk55hodw23/3jq5v5VkEkgyq7/PS
+   1PpoYH9BMoybjRnzW+U1UAtPkIIuU86ILdAMp6FVTHVv1N+ysMyVNcU3O
+   zamBiH7Xa5do5GdM3uPSB/oUJ6CaQdp//p6ND4nKMtvHuGOBqpoz+1zlh
+   t+gdh6ip527lzTH3yT41J4Uxl0PDCoVdQU3oGTRRsM1dNJTiy83ELi/SB
+   PKmKP7/kCfurkz+qH2sNr/ihr7nR624OmykfMvAUQ9Kc/7DtOwmLPyQn+
+   3EvZPj4QVhu7rghnnvuMyGmN11h4UdeUln/GvdnTHuMA/b6Xx3Rm/ced5
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="305105347"
 X-IronPort-AV: E=Sophos;i="5.95,182,1661842800"; 
-   d="scan'208";a="331619953"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2022 08:39:51 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="660379312"
+   d="scan'208";a="305105347"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2022 08:44:51 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="956215592"
 X-IronPort-AV: E=Sophos;i="5.95,182,1661842800"; 
-   d="scan'208";a="660379312"
+   d="scan'208";a="956215592"
 Received: from mkucejko-mobl.ger.corp.intel.com (HELO [10.213.24.166]) ([10.213.24.166])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2022 08:39:45 -0700
-Message-ID: <b2dd91b1-9b9f-6b41-4cb9-80dd99837480@intel.com>
-Date:   Thu, 13 Oct 2022 08:39:39 -0700
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2022 08:44:45 -0700
+Message-ID: <fc9ed3e0-94f1-0bbc-06db-fd14d41b7c21@intel.com>
+Date:   Thu, 13 Oct 2022 08:44:39 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
@@ -65,11 +65,52 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On 10/13/22 07:40, Zhiquan Li wrote:
-> 	There is already a signal-based ABI to tell userspace about
-> 	machine checks.  But, SGX does not use that ABI.  Today, the
-> 	kernel delivers a generic SIGBUS if a machine check occurs when
-> 	accessing SGX memory.  Userspace can not differentiate that
-> 	SIGBUS from <a recoverable machine check error>,
+>>>> What happens if a hypervisor *DOES* fork()?  What's the fallout?
+>>> This part originates from below discussion:
+>>>
+>>> https://lore.kernel.org/linux-sgx/52dc7f50b68c99cecb9e1c3383d9c6d88734cd67.camel@intel.com/#t
+>>>
+>>> It intents to answer the question:
+>>>
+>>>     Do you think the processes sharing the same enclave need to be
+>>>     killed, even they had not touched the EPC page with hardware error?
+>>>
+>>> Dave, do you mean it's not appropriate to be put here?
+>> It's actually a pretty important point, but it's still out of the blue.
+>>
+>> You also didn't answer my question.
+> Oh, sorry, I focused on answering "Why is this here?" but forgot to
+> answer "What's the fallout?"
+> 
+> It's a very good question.
+> 
+> Looks like Kai had answered it before:
+> 
+> 	For instance, an application can open /dev/sgx_vepc, mmap(), and
+> 	fork().  Then if the child does mmap() against the fd opened by
+> 	the parent, the child will share the same vepc with the parent.
+> 
+> 	...
+> 
+> 	Sharing virtual EPC instance will very likely unexpectedly break
+> 	enclaves in all VMs.
 
-I wanted an example here of a SIGBUS that can occur from sources *OTHER*
-than a recoverable machine check.
+How, though?  This basically says, "I think things will break."  I want
+to know a few more specifics than that before we merge this.  There are
+ABI implications.
+
+> https://lore.kernel.org/linux-sgx/52dc7f50b68c99cecb9e1c3383d9c6d88734cd67.camel@intel.com/#t
+> 
+> Moreover, I checked the code in below scenario while child sharing the
+> virtual EPC instance with parent:
+> - child closes /dev/sgx_vepc earlier than parent.
+> - child re-mmap() /dev/sgx_vepc to the same memory region as parent.
+> - child mmap() /dev/sgx_vepc to different memory region.
+> - child accesses the memory region of mmap() inherited from parent.
+> 
+> It's just that the app messes itself up, the vepc instance is protected
+> very well.
+> Maybe there are other corner cases I've not considered?
+
+... and what happens when *THIS* patch is in play?  What if there is a
+machine check in SGX memory?
