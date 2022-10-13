@@ -2,115 +2,115 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E235C4332F
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Oct 2022 15:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6040C4332F
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Oct 2022 16:04:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbiJMPpf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 13 Oct 2022 11:45:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34438 "EHLO
+        id S229927AbiJMQEX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 13 Oct 2022 12:04:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbiJMPpd (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 13 Oct 2022 11:45:33 -0400
+        with ESMTP id S229689AbiJMQEW (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 13 Oct 2022 12:04:22 -0400
 Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15C5165679
-        for <linux-sgx@vger.kernel.org>; Thu, 13 Oct 2022 08:45:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 412D11119DD;
+        Thu, 13 Oct 2022 09:04:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665675932; x=1697211932;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=oigiYGGuZaUvckY6PnxUSVuuGsQZHKmCHlkjnEmsDB4=;
-  b=fp5MW6TZRZ5Pco4Ur2BSkjaGtbr8Tk55hodw23/3jq5v5VkEkgyq7/PS
-   1PpoYH9BMoybjRnzW+U1UAtPkIIuU86ILdAMp6FVTHVv1N+ysMyVNcU3O
-   zamBiH7Xa5do5GdM3uPSB/oUJ6CaQdp//p6ND4nKMtvHuGOBqpoz+1zlh
-   t+gdh6ip527lzTH3yT41J4Uxl0PDCoVdQU3oGTRRsM1dNJTiy83ELi/SB
-   PKmKP7/kCfurkz+qH2sNr/ihr7nR624OmykfMvAUQ9Kc/7DtOwmLPyQn+
-   3EvZPj4QVhu7rghnnvuMyGmN11h4UdeUln/GvdnTHuMA/b6Xx3Rm/ced5
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="305105347"
+  t=1665677061; x=1697213061;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=a+oiXu31xDKr0EHzuX8XBFCyIAi3YCeRXLjNSYeRdhM=;
+  b=Y3baiJRV5BmcSqxklWhQxU8FqYkTUyQLffcOe2b0etJVhxvy3+JT2qRi
+   JT5eSK1HzZgmE6y3XPKQBIXkv5wVaW+JHIZY1OLIZEhYUryVUKYfY+in3
+   Jr5rPhHnad9t3SvO9cF8iDN3eUKcLRENf9KR+jqcw/IajSlb7i91xJlTy
+   TDzYye7T19Tls/pclcbD5KkicfNHCTWUBwGM5pkT/5XLyyLdJ6R5ZrsTr
+   MalwdMIbjy3EHhKk8UFJ/MFvOFDZ8pBcZvaI1S/pnbfQEh3vBmXgbT+Tn
+   QGKKDflBKuAfxh3zJkVtodH2n/1pGVqY2ycJkjqSNei7bHehlvVLKxMBh
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="305112177"
 X-IronPort-AV: E=Sophos;i="5.95,182,1661842800"; 
-   d="scan'208";a="305105347"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2022 08:44:51 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="956215592"
+   d="scan'208";a="305112177"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2022 09:03:16 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10499"; a="872386514"
 X-IronPort-AV: E=Sophos;i="5.95,182,1661842800"; 
-   d="scan'208";a="956215592"
-Received: from mkucejko-mobl.ger.corp.intel.com (HELO [10.213.24.166]) ([10.213.24.166])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2022 08:44:45 -0700
-Message-ID: <fc9ed3e0-94f1-0bbc-06db-fd14d41b7c21@intel.com>
-Date:   Thu, 13 Oct 2022 08:44:39 -0700
+   d="scan'208";a="872386514"
+Received: from shahidmo-mobl1.amr.corp.intel.com (HELO [10.251.5.146]) ([10.251.5.146])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2022 09:03:15 -0700
+Message-ID: <26cfc85cf1beebc600428e24f12f49c961540071.camel@linux.intel.com>
+Subject: Re: [PATCH] x86/sgx: Replace kmap/kunmap_atomic calls
+From:   Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Date:   Thu, 13 Oct 2022 09:03:01 -0700
+In-Reply-To: <Y0biN3/JsZMa0yUr@kernel.org>
+References: <20220929160647.362798-1-kristen@linux.intel.com>
+         <Y0BEV+Xgkrln8xoh@iweiny-desk3> <Y0ZphugZZBhlv/vT@kernel.org>
+         <711f8036-787a-571e-1c0d-1a258175ebb2@intel.com>
+         <Y0bUK6krEQdnFlOg@kernel.org> <Y0biN3/JsZMa0yUr@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.module_f36+15386+a24ad1a3) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v9 3/3] x86/sgx: Fine grained SGX MCA behavior for
- virtualization
-Content-Language: en-US
-To:     Zhiquan Li <zhiquan1.li@intel.com>, linux-sgx@vger.kernel.org,
-        tony.luck@intel.com, jarkko@kernel.org,
-        dave.hansen@linux.intel.com, kai.huang@intel.com
-Cc:     seanjc@google.com, fan.du@intel.com, cathy.zhang@intel.com,
-        bp@suse.de, tglx@linutronix.de
-References: <20220920063948.3556917-1-zhiquan1.li@intel.com>
- <20220920063948.3556917-4-zhiquan1.li@intel.com>
- <b775a187-32ad-836f-557f-3486ef4ac8dd@intel.com>
- <14fabc80-a9fc-05b4-eda1-62f2b265e66b@intel.com>
- <f8b49a6b-44ce-9477-b2ba-39abadfbd68f@intel.com>
- <fb885d7f-388c-6a53-798b-06805fefca3d@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <fb885d7f-388c-6a53-798b-06805fefca3d@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 10/13/22 07:40, Zhiquan Li wrote:
->>>> What happens if a hypervisor *DOES* fork()?  What's the fallout?
->>> This part originates from below discussion:
->>>
->>> https://lore.kernel.org/linux-sgx/52dc7f50b68c99cecb9e1c3383d9c6d88734cd67.camel@intel.com/#t
->>>
->>> It intents to answer the question:
->>>
->>>     Do you think the processes sharing the same enclave need to be
->>>     killed, even they had not touched the EPC page with hardware error?
->>>
->>> Dave, do you mean it's not appropriate to be put here?
->> It's actually a pretty important point, but it's still out of the blue.
->>
->> You also didn't answer my question.
-> Oh, sorry, I focused on answering "Why is this here?" but forgot to
-> answer "What's the fallout?"
-> 
-> It's a very good question.
-> 
-> Looks like Kai had answered it before:
-> 
-> 	For instance, an application can open /dev/sgx_vepc, mmap(), and
-> 	fork().  Then if the child does mmap() against the fd opened by
-> 	the parent, the child will share the same vepc with the parent.
-> 
-> 	...
-> 
-> 	Sharing virtual EPC instance will very likely unexpectedly break
-> 	enclaves in all VMs.
+On Wed, 2022-10-12 at 18:50 +0300, Jarkko Sakkinen wrote:
+> On Wed, Oct 12, 2022 at 05:50:19PM +0300, Jarkko Sakkinen wrote:
+> > On Wed, Oct 12, 2022 at 07:13:26AM -0700, Dave Hansen wrote:
+> > > On 10/12/22 00:15, Jarkko Sakkinen wrote:
+> > > > There's no data to show that this change would be useful to do.
+> > >=20
+> > > Jarkko, I think the overall transition to kmap_local_page() is a
+> > > good
+> > > one.=C2=A0 It is a superior API and having it around will pave the wa=
+y
+> > > for
+> > > new features.=C2=A0 I don't think we should demand 'data' for each an=
+d
+> > > every
+> > > one of these.
+> > >=20
+> > > Please take a look around the tree and see how other maintainers
+> > > are
+> > > handling these patches.=C2=A0 They're not limited to SGX.
+> >=20
+> > Sure, I'll take a look for comparison.
+>=20
+> Yeah, I think it is pretty solid idea.
+>=20
+> Looking at the decription:
+>=20
+> "It is not necessary to disable page faults or preemption when
+> using kmap calls, so replace kmap_atomic() and kunmap_atomic()
+> calls with more the more appropriate kmap_local_page() and
+> kunmap_local() calls."
+>=20
+> We did not pick kmap_atomic() because it disables preeemption,
+> i.e. it was not a "design choice". I'd rather phrase this as
+> along the lines:
+>=20
+> "Migrate to the newer kmap_local_page() interface from kmap_atomic()
+> in order to move away from per-CPU maps to pre-task_struct maps.
+> This in effect removes the need to disable preemption in the
+> local CPU while kmap is active, and thus vastly reduces overall
+> system latency."
+>=20
+> Can be improved or written completely otherwise. I just wrote it
+> in the way that I had understood the whole deal in the first place.
+>=20
+> BR, Jarkko
 
-How, though?  This basically says, "I think things will break."  I want
-to know a few more specifics than that before we merge this.  There are
-ABI implications.
+Thanks for looking into this Jarkko - I will update the commit log for
+the next version.
 
-> https://lore.kernel.org/linux-sgx/52dc7f50b68c99cecb9e1c3383d9c6d88734cd67.camel@intel.com/#t
-> 
-> Moreover, I checked the code in below scenario while child sharing the
-> virtual EPC instance with parent:
-> - child closes /dev/sgx_vepc earlier than parent.
-> - child re-mmap() /dev/sgx_vepc to the same memory region as parent.
-> - child mmap() /dev/sgx_vepc to different memory region.
-> - child accesses the memory region of mmap() inherited from parent.
-> 
-> It's just that the app messes itself up, the vepc instance is protected
-> very well.
-> Maybe there are other corner cases I've not considered?
+Kristen
 
-... and what happens when *THIS* patch is in play?  What if there is a
-machine check in SGX memory?
+
