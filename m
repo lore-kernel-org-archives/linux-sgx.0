@@ -2,183 +2,77 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5168C4332F
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Oct 2022 22:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D2BC4332F
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Oct 2022 03:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229928AbiJRWnZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Oct 2022 18:43:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51126 "EHLO
+        id S229900AbiJSDaE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 18 Oct 2022 23:30:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbiJRWnX (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Oct 2022 18:43:23 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC212B7EFB;
-        Tue, 18 Oct 2022 15:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666133002; x=1697669002;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=zWvHJetWpppRStA6AG4OaC92ypSl7IYvhj8e+oaUAaQ=;
-  b=Thnu00hbPhYD3IoDfZb2W00AB0MnQOhz0vFgBN3ZqOdrVYIqgX0LGJZ4
-   vJ9meUL4tTkzD2qoeYCn0eCT5EwwZGKgTCarzkYjRjiuGq3YfsRiXuZec
-   4t6QZTYvuKZv4Ne5tovgJ44yiqHxcQRSw/yJtmCl1o+scQfy33iA7/HJJ
-   Awr7h0nJ0ALUlvUQrHk2YgPevyPuO+aeBUlfpw88fDVY/SZvV124D6TIc
-   z9ClYv1A/LoQaVZjms33sEAtdHf8GGfgut162JWjW7pfdOfC4DHhFRcMC
-   kO+qH4QDAr4ekol0hG1Ves2UJh+zAmUXyirCv8Q2uUzu+ewoDPWQ1MZz0
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="332798221"
-X-IronPort-AV: E=Sophos;i="5.95,194,1661842800"; 
-   d="scan'208";a="332798221"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2022 15:43:22 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="771453683"
-X-IronPort-AV: E=Sophos;i="5.95,194,1661842800"; 
-   d="scan'208";a="771453683"
-Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2022 15:43:21 -0700
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     dave.hansen@linux.intel.com, jarkko@kernel.org,
-        md.iqbal.hossain@intel.com, haitao.huang@intel.com,
-        linux-sgx@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/sgx: Reduce delay and interference of enclave release
-Date:   Tue, 18 Oct 2022 15:42:47 -0700
-Message-Id: <06a5f478d3bfaa57954954c82dd5d4040450171d.1666130846.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S229779AbiJSDaC (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Oct 2022 23:30:02 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D9F33E2B;
+        Tue, 18 Oct 2022 20:29:58 -0700 (PDT)
+Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.54])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Msbks5XpWzJn4F;
+        Wed, 19 Oct 2022 11:27:17 +0800 (CST)
+Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
+ dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 19 Oct 2022 11:29:56 +0800
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 19 Oct 2022 11:29:56 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     Dinh Nguyen <dinguyen@kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        <linux-sgx@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
+        <linux-mm@kvack.org>, Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: [PATCH 1/5] nios2: remove unused INIT_MMAP
+Date:   Wed, 19 Oct 2022 11:49:41 +0800
+Message-ID: <20221019034945.93081-2-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20221019034945.93081-1-wangkefeng.wang@huawei.com>
+References: <20221019034945.93081-1-wangkefeng.wang@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500001.china.huawei.com (7.185.36.107)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
-releasing large enclaves") introduced a cond_resched() during enclave
-release where the EREMOVE instruction is applied to every 4k enclave
-page. Giving other tasks an opportunity to run while tearing down a
-large enclave placates the soft lockup detector but Iqbal found
-that the fix causes a 25% performance degradation of a workload
-run using Gramine.
+It seems that INIT_MMAP is gone in 2.4.10, not sure,
+anyways, it is useless now, kill it.
 
-Gramine maintains a 1:1 mapping between processes and SGX enclaves.
-That means if a workload in an enclave creates a subprocess then
-Gramine creates a duplicate enclave for that subprocess to run in.
-The consequence is that the release of the enclave used to run
-the subprocess can impact the performance of the workload that is
-run in the original enclave, especially in large enclaves when
-SGX2 is not in use.
-
-The workload run by Iqbal behaves as follows:
-Create enclave (enclave "A")
-/* Initialize workload in enclave "A" */
-Create enclave (enclave "B")
-/* Run subprocess in enclave "B" and send result to enclave "A" */
-Release enclave (enclave "B")
-/* Run workload in enclave "A" */
-Release enclave (enclave "A")
-
-The performance impact of releasing enclave "B" in the above scenario
-is amplified when there is a lot of SGX memory and the enclave size
-matches the SGX memory. When there is 128GB SGX memory and an enclave
-size of 128GB, from the time enclave "B" starts the 128GB SGX memory
-is oversubscribed with a combined demand for 256GB from the two
-enclaves.
-
-Before commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
-releasing large enclaves") enclave release was done in a tight loop
-without giving other tasks a chance to run. Even though the system
-experienced soft lockups the workload (run in enclave "A") obtained
-good performance numbers because when the workload started running
-there was no interference.
-
-Commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
-releasing large enclaves") gave other tasks opportunity to run while an
-enclave is released. The impact of this in this scenario is that while
-enclave "B" is released and needing to access each page that belongs
-to it in order to run the SGX EREMOVE instruction on it, enclave "A"
-is attempting to run the workload needing to access the enclave
-pages that belong to it. This causes a lot of swapping due to the
-demand for the oversubscribed SGX memory. Longer latencies are
-experienced by the workload in enclave "A" while enclave "B" is
-released.
-
-Improve the performance of enclave release while still avoiding the
-soft lockup detector with two enhancements:
-- Only call cond_resched() after XA_CHECK_SCHED iterations.
-- Use the xarray advanced API to keep the xarray locked for
-  XA_CHECK_SCHED iterations instead of locking and unlocking
-  at every iteration.
-
-This batching solution is copied from sgx_encl_may_map() that
-also iterates through all enclave pages using this technique.
-
-With this enhancement the workload experiences a 5%
-performance degradation when compared to a kernel without
-commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
-releasing large enclaves"), an improvement to the reported 25%
-degradation, while still placating the soft lockup detector.
-
-Scenarios with poor performance are still possible even with these
-enhancements. For example, short workloads creating sub processes
-while running in large enclaves. Further performance improvements
-are pursued in user space through avoiding to create duplicate enclaves
-for certain sub processes, and using SGX2 that will do lazy allocation
-of pages as needed so enclaves created for sub processes start quickly
-and release quickly.
-
-Fixes: 8795359e35bc ("x86/sgx: Silence softlockup detection when releasing large enclaves")
-Reported-by: Md Iqbal Hossain <md.iqbal.hossain@intel.com>
-Tested-by: Md Iqbal Hossain <md.iqbal.hossain@intel.com>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Dinh Nguyen <dinguyen@kernel.org>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
+ arch/nios2/include/asm/processor.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-I do not know if this qualifies as stable material.
-
- arch/x86/kernel/cpu/sgx/encl.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 1ec20807de1e..f7365c278525 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -682,9 +682,12 @@ void sgx_encl_release(struct kref *ref)
- 	struct sgx_encl *encl = container_of(ref, struct sgx_encl, refcount);
- 	struct sgx_va_page *va_page;
- 	struct sgx_encl_page *entry;
--	unsigned long index;
-+	unsigned long count = 0;
-+
-+	XA_STATE(xas, &encl->page_array, PFN_DOWN(encl->base));
+diff --git a/arch/nios2/include/asm/processor.h b/arch/nios2/include/asm/processor.h
+index 8916d93d5c2d..eb44130364a9 100644
+--- a/arch/nios2/include/asm/processor.h
++++ b/arch/nios2/include/asm/processor.h
+@@ -50,9 +50,6 @@ struct thread_struct {
+ 	unsigned long kpsr;
+ };
  
--	xa_for_each(&encl->page_array, index, entry) {
-+	xas_lock(&xas);
-+	xas_for_each(&xas, entry, PFN_DOWN(encl->base + encl->size  - 1)) {
- 		if (entry->epc_page) {
- 			/*
- 			 * The page and its radix tree entry cannot be freed
-@@ -699,9 +702,20 @@ void sgx_encl_release(struct kref *ref)
- 		}
- 
- 		kfree(entry);
--		/* Invoke scheduler to prevent soft lockups. */
--		cond_resched();
-+		/*
-+		 * Invoke scheduler on every XA_CHECK_SCHED iteration
-+		 * to prevent soft lockups.
-+		 */
-+		if (!(++count % XA_CHECK_SCHED)) {
-+			xas_pause(&xas);
-+			xas_unlock(&xas);
-+
-+			cond_resched();
-+
-+			xas_lock(&xas);
-+		}
- 	}
-+	xas_unlock(&xas);
- 
- 	xa_destroy(&encl->page_array);
- 
+-#define INIT_MMAP \
+-	{ &init_mm, (0), (0), __pgprot(0x0), VM_READ | VM_WRITE | VM_EXEC }
+-
+ # define INIT_THREAD {			\
+ 	.kregs	= NULL,			\
+ 	.ksp	= 0,			\
 -- 
-2.34.1
+2.35.3
 
