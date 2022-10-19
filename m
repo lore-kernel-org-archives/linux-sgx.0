@@ -2,29 +2,29 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D2BC4332F
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Oct 2022 03:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AA0C43217
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Oct 2022 03:30:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229900AbiJSDaE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Oct 2022 23:30:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44348 "EHLO
+        id S229913AbiJSDaF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 18 Oct 2022 23:30:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229779AbiJSDaC (ORCPT
+        with ESMTP id S229799AbiJSDaC (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Oct 2022 23:30:02 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D9F33E2B;
-        Tue, 18 Oct 2022 20:29:58 -0700 (PDT)
-Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.54])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Msbks5XpWzJn4F;
-        Wed, 19 Oct 2022 11:27:17 +0800 (CST)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C2293B9B5;
+        Tue, 18 Oct 2022 20:30:00 -0700 (PDT)
+Received: from dggpemm500020.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Msbk81L6QznTV5;
+        Wed, 19 Oct 2022 11:26:40 +0800 (CST)
 Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
- dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 19 Oct 2022 11:29:56 +0800
+ 15.1.2375.31; Wed, 19 Oct 2022 11:29:58 +0800
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 19 Oct 2022 11:29:56 +0800
+ 15.1.2375.31; Wed, 19 Oct 2022 11:29:57 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
@@ -33,9 +33,9 @@ CC:     Dinh Nguyen <dinguyen@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         <linux-sgx@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
         <linux-mm@kvack.org>, Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH 1/5] nios2: remove unused INIT_MMAP
-Date:   Wed, 19 Oct 2022 11:49:41 +0800
-Message-ID: <20221019034945.93081-2-wangkefeng.wang@huawei.com>
+Subject: [PATCH 4/5] mm: debug_vm_pgtable: use VM_ACCESS_FLAGS
+Date:   Wed, 19 Oct 2022 11:49:44 +0800
+Message-ID: <20221019034945.93081-5-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20221019034945.93081-1-wangkefeng.wang@huawei.com>
 References: <20221019034945.93081-1-wangkefeng.wang@huawei.com>
@@ -50,29 +50,39 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-It seems that INIT_MMAP is gone in 2.4.10, not sure,
-anyways, it is useless now, kill it.
+Directly use VM_ACCESS_FLAGS instead VMFLAGS.
 
-Cc: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- arch/nios2/include/asm/processor.h | 3 ---
- 1 file changed, 3 deletions(-)
+ mm/debug_vm_pgtable.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/nios2/include/asm/processor.h b/arch/nios2/include/asm/processor.h
-index 8916d93d5c2d..eb44130364a9 100644
---- a/arch/nios2/include/asm/processor.h
-+++ b/arch/nios2/include/asm/processor.h
-@@ -50,9 +50,6 @@ struct thread_struct {
- 	unsigned long kpsr;
- };
- 
--#define INIT_MMAP \
--	{ &init_mm, (0), (0), __pgprot(0x0), VM_READ | VM_WRITE | VM_EXEC }
+diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+index dc7df1254f0a..2b61fde8c38c 100644
+--- a/mm/debug_vm_pgtable.c
++++ b/mm/debug_vm_pgtable.c
+@@ -38,11 +38,7 @@
+  * Please refer Documentation/mm/arch_pgtable_helpers.rst for the semantics
+  * expectations that are being validated here. All future changes in here
+  * or the documentation need to be in sync.
+- */
 -
- # define INIT_THREAD {			\
- 	.kregs	= NULL,			\
- 	.ksp	= 0,			\
+-#define VMFLAGS	(VM_READ|VM_WRITE|VM_EXEC)
+-
+-/*
++ *
+  * On s390 platform, the lower 4 bits are used to identify given page table
+  * entry type. But these bits might affect the ability to clear entries with
+  * pxx_clear() because of how dynamic page table folding works on s390. So
+@@ -1125,7 +1121,7 @@ static int __init init_args(struct pgtable_debug_args *args)
+ 	 */
+ 	memset(args, 0, sizeof(*args));
+ 	args->vaddr              = get_random_vaddr();
+-	args->page_prot          = vm_get_page_prot(VMFLAGS);
++	args->page_prot          = vm_get_page_prot(VM_ACCESS_FLAGS);
+ 	args->page_prot_none     = vm_get_page_prot(VM_NONE);
+ 	args->is_contiguous_page = false;
+ 	args->pud_pfn            = ULONG_MAX;
 -- 
 2.35.3
 
