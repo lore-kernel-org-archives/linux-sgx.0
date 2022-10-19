@@ -2,29 +2,29 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBF8C4332F
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Oct 2022 03:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB13C4332F
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Oct 2022 03:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230078AbiJSDbL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Oct 2022 23:31:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45202 "EHLO
+        id S230087AbiJSDbP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 18 Oct 2022 23:31:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229933AbiJSDao (ORCPT
+        with ESMTP id S229939AbiJSDao (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Oct 2022 23:30:44 -0400
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02E1AA8355;
-        Tue, 18 Oct 2022 20:30:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C60ECA3A8B;
+        Tue, 18 Oct 2022 20:30:31 -0700 (PDT)
 Received: from dggpemm500022.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MsbpS1MRdzHv24;
-        Wed, 19 Oct 2022 11:30:24 +0800 (CST)
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MsbpQ4FcWzHtpy;
+        Wed, 19 Oct 2022 11:30:22 +0800 (CST)
 Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
  dggpemm500022.china.huawei.com (7.185.36.162) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 19 Oct 2022 11:29:58 +0800
+ 15.1.2375.31; Wed, 19 Oct 2022 11:29:56 +0800
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 19 Oct 2022 11:29:58 +0800
+ 15.1.2375.31; Wed, 19 Oct 2022 11:29:55 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
@@ -32,21 +32,14 @@ CC:     Dinh Nguyen <dinguyen@kernel.org>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         <linux-sgx@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
-        <linux-mm@kvack.org>, Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH 5/5] amdgpu: use VM_ACCESS_FLAGS
-Date:   Wed, 19 Oct 2022 11:49:45 +0800
-Message-ID: <20221019034945.93081-6-wangkefeng.wang@huawei.com>
+        <linux-mm@kvack.org>, Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: [PATCH 0/5] mm: cleanup with VM_ACCESS_FLAGS
+Date:   Wed, 19 Oct 2022 11:49:40 +0800
+Message-ID: <20221019034945.93081-1-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20221019034945.93081-1-wangkefeng.wang@huawei.com>
-References: <20221019034945.93081-1-wangkefeng.wang@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [10.175.113.25]
 X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  dggpemm500001.china.huawei.com (7.185.36.107)
@@ -55,31 +48,20 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Simplify VM_READ|VM_WRITE|VM_EXEC with VM_ACCESS_FLAGS.
+Kefeng Wang (5):
+  nios2: remove unused INIT_MMAP
+  x86/sgx: use VM_ACCESS_FLAGS
+  mm: mprotect: use VM_ACCESS_FLAGS
+  mm: debug_vm_pgtable: use VM_ACCESS_FLAGS
+  amdgpu: use VM_ACCESS_FLAGS
 
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: "Pan, Xinhui" <Xinhui.Pan@amd.com>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
+ arch/nios2/include/asm/processor.h      | 3 ---
+ arch/x86/kernel/cpu/sgx/encl.c          | 4 ++--
  drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/debug_vm_pgtable.c                   | 8 ++------
+ mm/mprotect.c                           | 3 +--
+ 5 files changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-index 8ef31d687ef3..4728be161828 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-@@ -255,7 +255,7 @@ static int amdgpu_gem_object_mmap(struct drm_gem_object *obj, struct vm_area_str
- 	 * becoming writable and makes is_cow_mapping(vm_flags) false.
- 	 */
- 	if (is_cow_mapping(vma->vm_flags) &&
--	    !(vma->vm_flags & (VM_READ | VM_WRITE | VM_EXEC)))
-+	    !(vma->vm_flags & VM_ACCESS_FLAGS))
- 		vma->vm_flags &= ~VM_MAYWRITE;
- 
- 	return drm_gem_ttm_mmap(obj, vma);
 -- 
 2.35.3
 
