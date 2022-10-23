@@ -2,254 +2,192 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 029E0C4332F
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Oct 2022 19:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F1EC3A59D
+	for <linux-sgx@archiver.kernel.org>; Sun, 23 Oct 2022 20:06:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229785AbiJSTOZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 19 Oct 2022 15:14:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54324 "EHLO
+        id S231126AbiJWUGn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 23 Oct 2022 16:06:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230071AbiJSTOT (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 19 Oct 2022 15:14:19 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D71D71D3773
-        for <linux-sgx@vger.kernel.org>; Wed, 19 Oct 2022 12:14:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666206855; x=1697742855;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=KWnJFJGkfA7A5GGsnzDAK63MfJBiJ4YYGRMcSk6UlFk=;
-  b=ddxoSQu2asfu0AEQBxzIri06aJb70hAkVpvXZcg2ftHGdoXzXYpXVchl
-   JpSHtO8rt5zksmi4Oy0oaqrWCLvtM+T+u9IRVR6s6fH2oTPKXb0fMiJ+e
-   s8ks46QcA4rZNdzgwe8snhg5wbo8rbmMgBOz4g3AiGMTxpyo9WPGMEi6V
-   02PWNswFJyd4EdPVhwQmXakGyXlOl1vcbM0tEWz8ST1Y+IUbEXSQipVu5
-   N9vChimoJVA6WDuEWQphTJ7FI78E/stx08hEy3dlcRf5TZWdpQql0Qufl
-   XFXxzjSEodd25GdSwRYxHq8h5SpYkBxRERW+158goyZamSPYWXwc+9xIK
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="286226069"
-X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
-   d="scan'208";a="286226069"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 12:14:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="874579988"
-X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
-   d="scan'208";a="874579988"
-Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by fmsmga006.fm.intel.com with ESMTP; 19 Oct 2022 12:14:15 -0700
-From:   Haitao Huang <haitao.huang@linux.intel.com>
-To:     linux-sgx@vger.kernel.org, jarkko@kernel.org,
-        dave.hansen@linux.intel.com, reinette.chatre@intel.com,
-        vijay.dhanraj@intel.com
-Subject: [RFC PATCH 4/4] selftests/sgx: Add test for madvise(..., WILLNEED)
-Date:   Wed, 19 Oct 2022 12:14:13 -0700
-Message-Id: <20221019191413.48752-5-haitao.huang@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221019191413.48752-4-haitao.huang@linux.intel.com>
-References: <20221019191413.48752-1-haitao.huang@linux.intel.com>
- <20221019191413.48752-2-haitao.huang@linux.intel.com>
- <20221019191413.48752-3-haitao.huang@linux.intel.com>
- <20221019191413.48752-4-haitao.huang@linux.intel.com>
+        with ESMTP id S229956AbiJWUGf (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 23 Oct 2022 16:06:35 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0028071BF8;
+        Sun, 23 Oct 2022 13:06:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 198BAB80DBE;
+        Sun, 23 Oct 2022 20:06:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679C3C433C1;
+        Sun, 23 Oct 2022 20:06:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666555581;
+        bh=uqQeIGbgba67C2y76k/W/YmS022AmFS+rOo0N3FprIY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VTMY8/lid3FUYKetdO4brSgNfte9VlQ6FtYGIsgLkdWdCZfyxFJlMMGOBZ0rEzDgf
+         VTz1AwAcUVZCKJKW98ooGY7xxg+XzDQf5hFXYC0Jst8ZGInbB1AIuOsL8xDJ9Ln3+i
+         ya42qHIWSVSFnOf/xWyy1emwC4L4onp12EEonehufT9+yJmwS4JTOO6M4Bg2p9yRLX
+         NLrf4AeL6iyDZYi1gKv0KiGrMjvfVpMKrW7oY8bsVXe7lO8mWDRZTI/BsvGeTUnTaV
+         qXnZuJ8y8duP16OOqwV7RvIV43jIQhG0kLaJutCPOVlbvowCl3EtDcnrR1uVfhuJfJ
+         bri5WI/fNd3jw==
+Date:   Sun, 23 Oct 2022 23:06:14 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, md.iqbal.hossain@intel.com,
+        haitao.huang@intel.com, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: Reduce delay and interference of enclave release
+Message-ID: <Y1WemizNZgFOVxja@kernel.org>
+References: <06a5f478d3bfaa57954954c82dd5d4040450171d.1666130846.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06a5f478d3bfaa57954954c82dd5d4040450171d.1666130846.git.reinette.chatre@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Measure and compare run time for EAUG'ing different number
-of EPC pages with/without madvise(..., WILLNEED) call.
+On Tue, Oct 18, 2022 at 03:42:47PM -0700, Reinette Chatre wrote:
+> commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
+> releasing large enclaves") introduced a cond_resched() during enclave
+> release where the EREMOVE instruction is applied to every 4k enclave
+> page. Giving other tasks an opportunity to run while tearing down a
+> large enclave placates the soft lockup detector but Iqbal found
+> that the fix causes a 25% performance degradation of a workload
+> run using Gramine.
+> 
+> Gramine maintains a 1:1 mapping between processes and SGX enclaves.
+> That means if a workload in an enclave creates a subprocess then
+> Gramine creates a duplicate enclave for that subprocess to run in.
+> The consequence is that the release of the enclave used to run
+> the subprocess can impact the performance of the workload that is
+> run in the original enclave, especially in large enclaves when
+> SGX2 is not in use.
+> 
+> The workload run by Iqbal behaves as follows:
+> Create enclave (enclave "A")
+> /* Initialize workload in enclave "A" */
+> Create enclave (enclave "B")
+> /* Run subprocess in enclave "B" and send result to enclave "A" */
+> Release enclave (enclave "B")
+> /* Run workload in enclave "A" */
+> Release enclave (enclave "A")
+> 
+> The performance impact of releasing enclave "B" in the above scenario
+> is amplified when there is a lot of SGX memory and the enclave size
+> matches the SGX memory. When there is 128GB SGX memory and an enclave
+> size of 128GB, from the time enclave "B" starts the 128GB SGX memory
+> is oversubscribed with a combined demand for 256GB from the two
+> enclaves.
+> 
+> Before commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
+> releasing large enclaves") enclave release was done in a tight loop
+> without giving other tasks a chance to run. Even though the system
+> experienced soft lockups the workload (run in enclave "A") obtained
+> good performance numbers because when the workload started running
+> there was no interference.
+> 
+> Commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
+> releasing large enclaves") gave other tasks opportunity to run while an
+> enclave is released. The impact of this in this scenario is that while
+> enclave "B" is released and needing to access each page that belongs
+> to it in order to run the SGX EREMOVE instruction on it, enclave "A"
+> is attempting to run the workload needing to access the enclave
+> pages that belong to it. This causes a lot of swapping due to the
+> demand for the oversubscribed SGX memory. Longer latencies are
+> experienced by the workload in enclave "A" while enclave "B" is
+> released.
+> 
+> Improve the performance of enclave release while still avoiding the
+> soft lockup detector with two enhancements:
+> - Only call cond_resched() after XA_CHECK_SCHED iterations.
+> - Use the xarray advanced API to keep the xarray locked for
+>   XA_CHECK_SCHED iterations instead of locking and unlocking
+>   at every iteration.
+> 
+> This batching solution is copied from sgx_encl_may_map() that
+> also iterates through all enclave pages using this technique.
+> 
+> With this enhancement the workload experiences a 5%
+> performance degradation when compared to a kernel without
+> commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
+> releasing large enclaves"), an improvement to the reported 25%
+> degradation, while still placating the soft lockup detector.
+> 
+> Scenarios with poor performance are still possible even with these
+> enhancements. For example, short workloads creating sub processes
+> while running in large enclaves. Further performance improvements
+> are pursued in user space through avoiding to create duplicate enclaves
+> for certain sub processes, and using SGX2 that will do lazy allocation
+> of pages as needed so enclaves created for sub processes start quickly
+> and release quickly.
+> 
+> Fixes: 8795359e35bc ("x86/sgx: Silence softlockup detection when releasing large enclaves")
+> Reported-by: Md Iqbal Hossain <md.iqbal.hossain@intel.com>
+> Tested-by: Md Iqbal Hossain <md.iqbal.hossain@intel.com>
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> 
+> I do not know if this qualifies as stable material.
+> 
+>  arch/x86/kernel/cpu/sgx/encl.c | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> index 1ec20807de1e..f7365c278525 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -682,9 +682,12 @@ void sgx_encl_release(struct kref *ref)
+>  	struct sgx_encl *encl = container_of(ref, struct sgx_encl, refcount);
+>  	struct sgx_va_page *va_page;
+>  	struct sgx_encl_page *entry;
+> -	unsigned long index;
+> +	unsigned long count = 0;
+> +
+> +	XA_STATE(xas, &encl->page_array, PFN_DOWN(encl->base));
+>  
+> -	xa_for_each(&encl->page_array, index, entry) {
+> +	xas_lock(&xas);
+> +	xas_for_each(&xas, entry, PFN_DOWN(encl->base + encl->size  - 1)) {
 
-Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
----
- tools/testing/selftests/sgx/main.c | 167 +++++++++++++++++++++++++++++
- 1 file changed, 167 insertions(+)
+I would add to declarations:
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 48976bb7bd79..7b5f6705716d 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -10,6 +10,7 @@
- #include <stdint.h>
- #include <stdlib.h>
- #include <string.h>
-+#include <time.h>
- #include <unistd.h>
- #include <sys/ioctl.h>
- #include <sys/mman.h>
-@@ -1358,6 +1359,172 @@ TEST_F_TIMEOUT(enclave, augment_via_eaccept_long, TIMEOUT_DEFAULT)
- 	munmap(addr, ENCL_DYNAMIC_SIZE_LONG);
- }
- 
-+static int eaccept_range(struct _test_data_enclave *self, void *addr,
-+			 unsigned long size, uint64_t flags,
-+						struct __test_metadata *_metadata)
-+{
-+	struct encl_op_eaccept eaccept_op;
-+
-+	self->run.exception_vector = 0;
-+	self->run.exception_error_code = 0;
-+	self->run.exception_addr = 0;
-+
-+	/*
-+	 * Run EACCEPT on every page to trigger the #PF->EAUG->EACCEPT(again
-+	 * without a #PF). All should be transparent to userspace.
-+	 */
-+	eaccept_op.flags = flags;
-+	eaccept_op.ret = 0;
-+	eaccept_op.header.type = ENCL_OP_EACCEPT;
-+	eaccept_op.len = size;
-+	eaccept_op.epc_addr = (uint64_t)(addr);
-+
-+	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
-+
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+	ASSERT_EQ(eaccept_op.ret, 0);
-+	ASSERT_EQ(self->run.function, EEXIT);
-+
-+	return 0;
-+}
-+
-+static int trim_remove_range(struct _test_data_enclave *self, void *addr,
-+			     unsigned long size, struct __test_metadata *_metadata)
-+{
-+	int ret, errno_save;
-+	struct sgx_enclave_remove_pages remove_ioc;
-+	struct sgx_enclave_modify_types modt_ioc;
-+	unsigned long offset;
-+	unsigned long count;
-+
-+	if ((uint64_t)addr <= self->encl.encl_base)
-+		return -1;
-+	offset = (uint64_t)addr - self->encl.encl_base;
-+
-+	memset(&modt_ioc, 0, sizeof(modt_ioc));
-+	modt_ioc.offset = offset;
-+	modt_ioc.length = size;
-+	modt_ioc.page_type = SGX_PAGE_TYPE_TRIM;
-+	count = 0;
-+	do {
-+		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
-+
-+		errno_save = ret == -1 ? errno : 0;
-+		if (errno_save != EAGAIN)
-+			break;
-+		EXPECT_EQ(modt_ioc.result, 0);
-+
-+		count += modt_ioc.count;
-+		modt_ioc.offset += modt_ioc.count;
-+		modt_ioc.length -= modt_ioc.count;
-+		modt_ioc.result = 0;
-+		modt_ioc.count = 0;
-+	} while (modt_ioc.length != 0);
-+
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
-+	EXPECT_EQ(modt_ioc.result, 0);
-+	count += modt_ioc.count;
-+	EXPECT_EQ(count, size);
-+
-+	EXPECT_EQ(eaccept_range(self, addr, size,
-+				SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED,
-+				   _metadata), 0);
-+
-+	/* Complete page removal. */
-+	memset(&remove_ioc, 0, sizeof(remove_ioc));
-+	remove_ioc.offset = offset;
-+	remove_ioc.length = size;
-+	count = 0;
-+	do {
-+		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
-+
-+		errno_save = ret == -1 ? errno : 0;
-+		if (errno_save != EAGAIN)
-+			break;
-+
-+		count += remove_ioc.count;
-+		remove_ioc.offset += remove_ioc.count;
-+		remove_ioc.length -= remove_ioc.count;
-+		remove_ioc.count = 0;
-+	} while (remove_ioc.length != 0);
-+
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
-+	count += remove_ioc.count;
-+	EXPECT_EQ(count, size);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Compare performance with and without madvise call before EACCEPT'ing
-+ * different size of regions.
-+ */
-+TEST_F_TIMEOUT(enclave, augment_via_madvise, TIMEOUT_DEFAULT)
-+{
-+	unsigned long advise_size = PAGE_SIZE;
-+	unsigned long max_advise_size = get_total_epc_mem() * 3UL;
-+	int speed_up_percent;
-+	clock_t start;
-+	double time_used1, time_used2;
-+	size_t total_size = 0;
-+	unsigned long i;
-+	void *addr;
-+
-+	if (!sgx2_supported())
-+		SKIP(return, "SGX2 not supported");
-+
-+	ASSERT_TRUE(setup_test_encl_dynamic(ENCL_HEAP_SIZE_DEFAULT,
-+					    max_advise_size, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
-+	for (i = 0; i < self->encl.nr_segments; i++) {
-+		struct encl_segment *seg = &self->encl.segment_tbl[i];
-+
-+		total_size += seg->size;
-+	}
-+
-+	for (i = 1; i < 52 && advise_size < max_advise_size; i++) {
-+		addr = mmap((void *)self->encl.encl_base + total_size, advise_size,
-+			    PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED,
-+					self->encl.fd, 0);
-+		EXPECT_NE(addr, MAP_FAILED);
-+
-+		start = clock();
-+		EXPECT_EQ(eaccept_range(self, addr, advise_size,
-+					SGX_SECINFO_R | SGX_SECINFO_W
-+								| SGX_SECINFO_REG
-+								| SGX_SECINFO_PENDING,
-+								_metadata), 0);
-+		time_used1 = (double)clock() - start;
-+
-+		EXPECT_EQ(trim_remove_range(self, addr, advise_size, _metadata), 0);
-+
-+		start = clock();
-+		EXPECT_EQ(madvise(addr, advise_size, MADV_WILLNEED), 0);
-+		EXPECT_EQ(eaccept_range(self, addr, advise_size,
-+					SGX_SECINFO_R | SGX_SECINFO_W
-+								| SGX_SECINFO_REG
-+								| SGX_SECINFO_PENDING,
-+								_metadata), 0);
-+		time_used2 = (double)clock() - start;
-+
-+		speed_up_percent = (int)((time_used1 - time_used2) / time_used1 * 100);
-+		TH_LOG("madvise speed up for eaug'ing %10ld pages: %d%%",
-+		       advise_size / PAGE_SIZE, speed_up_percent);
-+		EXPECT_GE(speed_up_percent, 0);
-+		EXPECT_EQ(trim_remove_range(self, addr, advise_size, _metadata), 0);
-+	    munmap(addr, advise_size);
-+		advise_size = (advise_size << 1UL);
-+	}
-+	encl_delete(&self->encl);
-+}
-+
- /*
-  * SGX2 page type modification test in two phases:
-  * Phase 1:
--- 
-2.25.1
+unsigned long nr_pages = PFN_DOWN(encl->base + encl->size  - 1);
 
+Makes this more readable.
+
+>  		if (entry->epc_page) {
+>  			/*
+>  			 * The page and its radix tree entry cannot be freed
+> @@ -699,9 +702,20 @@ void sgx_encl_release(struct kref *ref)
+>  		}
+>  
+>  		kfree(entry);
+> -		/* Invoke scheduler to prevent soft lockups. */
+> -		cond_resched();
+> +		/*
+> +		 * Invoke scheduler on every XA_CHECK_SCHED iteration
+> +		 * to prevent soft lockups.
+> +		 */
+> +		if (!(++count % XA_CHECK_SCHED)) {
+> +			xas_pause(&xas);
+> +			xas_unlock(&xas);
+> +
+> +			cond_resched();
+> +
+> +			xas_lock(&xas);
+> +		}
+>  	}
+
+        WARN_ON(count != nr_pages);
+
+> +	xas_unlock(&xas);
+>  
+>  	xa_destroy(&encl->page_array);
+>  
+> -- 
+> 2.34.1
+> 
+
+BR, Jarkko
