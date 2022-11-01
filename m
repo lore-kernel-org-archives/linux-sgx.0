@@ -2,194 +2,190 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F4EFA3744
-	for <linux-sgx@archiver.kernel.org>; Tue,  1 Nov 2022 02:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FC1C433FE
+	for <linux-sgx@archiver.kernel.org>; Tue,  1 Nov 2022 18:24:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229838AbiKAClt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 31 Oct 2022 22:41:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40400 "EHLO
+        id S230018AbiKASYv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 1 Nov 2022 14:24:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbiKACls (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 31 Oct 2022 22:41:48 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15C2E1789B;
-        Mon, 31 Oct 2022 19:41:48 -0700 (PDT)
+        with ESMTP id S230089AbiKASYt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 1 Nov 2022 14:24:49 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EFE3192BF
+        for <linux-sgx@vger.kernel.org>; Tue,  1 Nov 2022 11:24:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1667270508; x=1698806508;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=VAXcZxjVNHA/YNj8/aGDnklwai0v4JL4oxtQlslvVZs=;
-  b=JVM/w/G27ZYnfglVc/AncWYzTPmMem/ilIIGdt/9TdF98CiFJI+WyH5n
-   m0FJdBtPfks566jWccAcycG6VXO9KtrabfxM6AMjK/NfHaGJmbCa5VGVN
-   +qnKXuf/cyj2DBdL0kitdecoxsVdA0AahKnCasDNlN5ITq/eXSqSccZjY
-   83obD5geM+SxFimI9n1836/pbbSQRyDsldIoSAD3L7DVZwhFIzO8nQIo5
-   Dc1pTJkNIF3Io0bcbZWnnw/xcjD/rNXEcAL6ue2HXB4OUIr71AJpbrFHt
-   bH67bx7SBQ7CbD5mpIOmplJcWnNuTIuZFDleHDu9M7V/uo5dSSESr7ziw
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10517"; a="371130880"
-X-IronPort-AV: E=Sophos;i="5.95,229,1661842800"; 
-   d="scan'208";a="371130880"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2022 19:41:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10517"; a="667049269"
-X-IronPort-AV: E=Sophos;i="5.95,229,1661842800"; 
-   d="scan'208";a="667049269"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orsmga001.jf.intel.com with ESMTP; 31 Oct 2022 19:41:47 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 31 Oct 2022 19:41:47 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31 via Frontend Transport; Mon, 31 Oct 2022 19:41:47 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.104)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.31; Mon, 31 Oct 2022 19:41:46 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Sah5Lp/cx9ApInKupzRALQa4Sd4G4+TowdT0LU6k0ybFQjizWdPI1HKv49HA2+O+O8Lc27WMS8pBBkH7sC1jlhfG93/I/UKlczW97J8y5xxX2pSzLtRRsuPu2b1CUFozN+svBmwOfj+Jjv8ApDhfQ/rsewNBG+lZliFaTf6Fp8VgbAyhfe6a/VKm2/76maaKaLshLn/re4XlY2d+IbIaiSFvnyj9RaNfroJqW6PVRIBLcM+9uiGCHNWx5Oy36k09hObiEpvQEAz/wNXLYcKq8niu8c6L/6JktygHptzGxFZn37v8IX/aYb3xrHUaf09cuvYu9TIAljcKTQbZ2wzSmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VAXcZxjVNHA/YNj8/aGDnklwai0v4JL4oxtQlslvVZs=;
- b=m+Np7k+/Jl1jwR0nCyCKqTdbS03qaLncivimRD2q8/OJFLvWuUrLVVQ6h41r+Brt6voxa6Ze8b6G+IvCuwF0gnjIvdYYDp7JlaFLvFQ+wLtNCGsrIh0WhDnFO/6c7KNTrD7LDqa1m5yBsg8QppP+dEf4ohOCq6QNZZ5u2PiY+qJZatgOcQY/VTjiOxpLE1Pt2omX811CUjb2woveCEKJS61fc3slMGu4W5Z4TZnhVut6+jAoG1mE1Ko6BuBzFk6jtcoQ6OmXFMtGCZ5bV/e+uYUZj55h74jdCfmOX/2labi4xf8u0r9zJfMPhvgQrZFRLlqificnw8sK6hd+ZM7U6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by SJ0PR11MB5165.namprd11.prod.outlook.com (2603:10b6:a03:2ad::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.19; Tue, 1 Nov
- 2022 02:41:40 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::6eb:99bf:5c45:a94b]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::6eb:99bf:5c45:a94b%3]) with mapi id 15.20.5769.021; Tue, 1 Nov 2022
- 02:41:39 +0000
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     "jarkko@kernel.org" <jarkko@kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-CC:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND PATCH 3/3] x86/sgx: Add xa_store_range() return value
- check in sgx_setup_epc_section()
-Thread-Topic: [RESEND PATCH 3/3] x86/sgx: Add xa_store_range() return value
- check in sgx_setup_epc_section()
-Thread-Index: AQHY13Pfg2WQsgd00UuSgGOh0H9u1K3+0GKAgAAF4ICAKrHEAA==
-Date:   Tue, 1 Nov 2022 02:41:39 +0000
-Message-ID: <0b22047833ec63106b7b2c97ca0dcda0bd16470b.camel@intel.com>
-References: <cover.1664834225.git.kai.huang@intel.com>
-         <c02b60d3b92469a2ccfc0780e974d29da578be73.1664834225.git.kai.huang@intel.com>
-         <Yzyx5333eIuX0zaT@kernel.org>
-         <57b607fa66a84996174fd16be415ec65dbffe8d4.camel@intel.com>
-In-Reply-To: <57b607fa66a84996174fd16be415ec65dbffe8d4.camel@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.44.4 (3.44.4-2.fc36) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|SJ0PR11MB5165:EE_
-x-ms-office365-filtering-correlation-id: 5d6d686d-0482-48c7-965e-08dabbb29a7c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: KWzxgDNurYetTqclYXrUr1kuWhRcYonfdEQgHxGsGXBPGnZxdTa4SzkueC4erbi7rJxifa1bBZ7a/SaZXJK8z2fDou8BXaRME1ALKD3nK6HBEFXcKMKcfioMySziXLM7XiRAC+W5ORBpKe7XdON5MTLM2v/F1sLU2P0c9v5ArJuGK9eyNjOuBhPcFzb1ZCKa19iLyHm6otKivlQV816iv2WXgdTkZ8qnm82I7xv/7aM0UYhXW4u2iebhv1tVRBJmHmddgOAEOP0h+1dAnZGMU583wztJKj0IyNXQdnpytagG9A6ol1mw+jT1gMPOQ9W4tKzRjPv8hEdsgZpEcO+h6tHOXwVHmF4Z/J5idTWxNh0mFVHAdN6wfNtoY9Peyk+oL8gVii0ZF+cl1rte+UwXf3td2EAvS0Y+wNynUEhmBXqE+QlxrLcWeeeGMXUq6FyYDECOXaTB9rQSXJObCpwMEpOGNwsfQoSe0xrpelQFZ07ft1akYQF/nBMNkjSD2KUd4F8iWZh1ye9cnKtaPqj/5ANVWbwAd4DlYRkz5lRA1z5LTQ8MdELLovDlJHDEwbiSOorhSMmCi2gUZ5FFTOZmYE9oWGmOVyDgWktf/4VPq3pNjXF9p4QJ8F8FHAsxicopsVhNorwB10ifdaBcYJsHTFrz+nt1v/tdYi3VwTdREQz2doezv+syfJuJ06WIQ+TYmL6miB2gbVFQ8ma/rpyaO/kWZcnEH+gM/tBc1U/r4GQdrB9WXFXIRI6+YZdtS3scts0auRP4qQrNZF5UE6d5Ig==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(396003)(366004)(136003)(39860400002)(346002)(451199015)(54906003)(110136005)(5660300002)(6512007)(8936002)(2616005)(66476007)(26005)(76116006)(66946007)(186003)(91956017)(2906002)(41300700001)(4326008)(66556008)(316002)(6506007)(36756003)(64756008)(66446008)(8676002)(86362001)(38100700002)(83380400001)(478600001)(71200400001)(6486002)(82960400001)(38070700005)(122000001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SUlyeENmdmh2MmppWlBRU0FHYVBBdGdyb0UxZ3RFYUZ2SENsMVY1YXBZczZQ?=
- =?utf-8?B?Z0tra212NnZxcmdaVFBGQVM1eU9wMktmV3VHaHFLcndabklXZ2hybEFMK3FJ?=
- =?utf-8?B?L0Z6UmxaMkZLV3V1eExwa3FxRHlvVUI3cC9rVk9BS3o2eWZCcTZZazlNYVI2?=
- =?utf-8?B?WUQ1SzVOTDl1TUhjMDIraVY5Q0E3UEVpVXFWUFp0UDlQSnBXeUI3NVlwOWl0?=
- =?utf-8?B?YXFBT3VhQlgwOWtKZ2dEbjNXSWExUE5oTnZ4TGZZOWs1RDk4OWVuNmRybXkx?=
- =?utf-8?B?aG1oT0Iwb01vRWpPSTdmSXNKWUxlajlMWHJncWlYTHkyc3p5RFZJUTdoa2hj?=
- =?utf-8?B?VlF4UnlaSDdBbVBkVDNubFlUOXBXY2p3NTB6SkhqNnk3ZkJHQ2U0TzVFWGFQ?=
- =?utf-8?B?ZHpuNXhhcVJYamVaSy85SDNZd3dLdXg3T1NHMkNSeGRYcjhVamNuZ3JXMWhW?=
- =?utf-8?B?aUJIWmNuMFVMMXBUNkZTazU2bTBYWlJNWWRCR3RyNjNFQnlpeWp6NWwxQjBU?=
- =?utf-8?B?S0p3VC9PU09NYlEzSHlJTlhOWEVldnZnaU1iYVplSXVrSy9tTWNXTG5DN0dw?=
- =?utf-8?B?Yi9tNjFNcCtZZXdrREdrTTZXVVBOOUphandvTlpXQkpxNXdKUUxLUUQrbFpL?=
- =?utf-8?B?N1VSVFZXS0FiRW1wSmZSZWpvaHBvczBOdW15ekZKSGxPV3hYM2t1ZHd3eTh3?=
- =?utf-8?B?SC9KL0R6NnpzeE5xOUh3TEFvdDE1elA3d3VBV0lNVmF0K1gzeHdLVTZ4d0xw?=
- =?utf-8?B?WXg3SHl5Y29zdCtLZHVMT2FqUU5zZjl5bzFVbjlKY3dDRlNPVG9zQnhuTDVX?=
- =?utf-8?B?UHprK1d6TStsWFVPWXdMclp2MEhZTk5uYUlWZHdwYW10SFFMQXRQM1l2R0c2?=
- =?utf-8?B?cC9UamFsNXFtQ2cyV21sNkVaQzZRNmdFS0ZzZTkrbUZwY3RmeEpkVFhZRkps?=
- =?utf-8?B?aTRISXBvYmhkY2NZeUhCVEFyMGxYK1lVTmt0eEZUblZHYkxyQnlSYUowMFdP?=
- =?utf-8?B?cTdQYk9kYTBGZmltWkhIeE9OMXZqTnpoSDM2QjFXZG90WTZPY09GYUo2VHpQ?=
- =?utf-8?B?VXM4ZER5QWJaR3dsTW1FWEF3bTZiVHh3UWRUdGJBbTJtai9KNWpoRzJRcHl2?=
- =?utf-8?B?dlpDL3RtczVRNGlGRGtNR2syQytQTjEyaFRZVk0wZjFHR2hZTUJHWWRtTXVx?=
- =?utf-8?B?MXZPaEZlb2pCWHdKMGRWQ1QvQkV6RTlQNHBqUXhhNVhPeEVNcm93RGZwOW5x?=
- =?utf-8?B?aHNxZE42bU9NYWViYWpoM3oxUE90L1JhcXhtb2IvYjBIODVxR2pGU2Q0QUFi?=
- =?utf-8?B?TVpwekMxdFpaYWhOMERBeVRLQU0zbnBuQll1dkxIOUVsbUM1S3VMcWRmZmxw?=
- =?utf-8?B?NmNnNk9JWDFjeGNydGllRGpVQWhabWdOMlBYY280WDFPaldPMjRtYjMremhW?=
- =?utf-8?B?NGdCWkFQbUJDaFNTY1ZNTFJlZzdNMDdyaEJDQndUYzR3ZWZ3MkIwOVBON3hw?=
- =?utf-8?B?OVpBS2pNM1V6NDRUcXZsajF1a3NSbnV3ckhWQmt2UUtTcE9vRWxYTkFWQmtm?=
- =?utf-8?B?TnBTV0tVdmhrTXhzKzIxaXYrb2xHcUZ5NllvQ3BzMGk1bjF1VER4b2tJMFBW?=
- =?utf-8?B?QUFPMGFJZ3RSTjdiaHNYeDVTamQ1SUVRUS9iRUZsUTEzbGljemVrSGswYzdh?=
- =?utf-8?B?WmdtNDI3a20zOGJCcmRtK1UzZ09vMFZIc1RKLzVacTBMdFdHcnZyWHpBNWE5?=
- =?utf-8?B?bEU2QnA2bjczZ1RLMExNTFBrak1ONTdadkJnbURFUy81L1ZXdk9XUHZpSFY2?=
- =?utf-8?B?d1dZNTdYS1MwbVJhTDllSHowUmdISzlyWW5JY3JrUDU3ZFBQbGpqa0R5NHBK?=
- =?utf-8?B?Ulh0akJQTnJIc2JaUzF1dEdVRXIwM0cyVlpMMnFhZGhkR2JDelpjWWlSTGt4?=
- =?utf-8?B?N05hbjBQd1lrTGFjS2NhMkIrTXYxbkN6a1J6eDBZU2lDYXVKcHA0a3g1d2E5?=
- =?utf-8?B?RWgzUVM1MWYvSkhiT0x6V0xOeVIxamdOQ3M4WE5ndnMycTFON2hqWnZkVGFN?=
- =?utf-8?B?R0pVYy9DdEtaa2ZoMDY5UG45NVl5QWdBRXNkZUdrblFWYTVFYzZGQk40Nnps?=
- =?utf-8?B?T0ovUDJVWm8xTWJVdzkxWUVqTnNBcVl4SmlpVVVBT29ya3F6QmR5Rjh5N25Z?=
- =?utf-8?B?dWc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C1F8985B5D05254E935C6F45A1C8FECC@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+  t=1667327088; x=1698863088;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=00xS+JOL5J5k25mcjniwO/wvtd5OWaov5z4107Cqs4g=;
+  b=lKB14SBAn08C1ZmTbqyiEOvjA2mG7wrT3eJSAHbXvCfzMx2I/zQDeB1V
+   +ZotvMeVrt7QKF4nfciTnyTk7PjADHUUAeYHhdCUxj1CajjDeGBhctobv
+   A8jIn4aPYBmMAAXLDSSRQHDs3Xfn6CoEAj8KM1seSA5YmqDBESUlm8/5S
+   agFYjcoCseOU2IWJf+rXRecX7BQNDayNy7k62+Ic7eragzjZkB8p7P4cI
+   d88HH7xTAeiZJCeV0cYF4CFbbcHSTdwyRTDn81MQMRunj0RsSn7Tc95K4
+   JXA44P6JtnWOwGBZSlbq+utdSEAI+dhUCKrCfcZpBHQFP66fZMlwlIopl
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10518"; a="309208055"
+X-IronPort-AV: E=Sophos;i="5.95,231,1661842800"; 
+   d="scan'208";a="309208055"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2022 11:24:28 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10518"; a="723251560"
+X-IronPort-AV: E=Sophos;i="5.95,231,1661842800"; 
+   d="scan'208";a="723251560"
+Received: from hhuan26-mobl1.amr.corp.intel.com (HELO hhuan26-mobl1.mshome.net) ([10.122.136.245])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 01 Nov 2022 11:24:28 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "Jarkko Sakkinen" <jarkko@kernel.org>
+Cc:     linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com,
+        reinette.chatre@intel.com, vijay.dhanraj@intel.com
+Subject: Re: [RFC PATCH v2 2/4] x86/sgx: Implement support for MADV_WILLNEED
+References: <20221027194532.180053-1-haitao.huang@linux.intel.com>
+ <20221027194532.180053-2-haitao.huang@linux.intel.com>
+ <20221027194532.180053-3-haitao.huang@linux.intel.com>
+ <Y2B0jBsG6HE4KVk7@kernel.org>
+Date:   Tue, 01 Nov 2022 13:24:24 -0500
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d6d686d-0482-48c7-965e-08dabbb29a7c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2022 02:41:39.6619
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 60I6dzixuLENpBb+XcKprc4MmE8VOZ5GvXver15rzU2qwDP5KaDA+HrK9oiNBSMZ7kBqBukqMbEuKbYg7+HKHQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5165
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel Corp
+Message-ID: <op.1uyv2yc5wjvjmi@hhuan26-mobl1.mshome.net>
+In-Reply-To: <Y2B0jBsG6HE4KVk7@kernel.org>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-T24gVHVlLCAyMDIyLTEwLTA0IGF0IDIyOjQyICswMDAwLCBIdWFuZywgS2FpIHdyb3RlOg0KPiBP
-biBXZWQsIDIwMjItMTAtMDUgYXQgMDE6MjEgKzAzMDAsIEphcmtrbyBTYWtraW5lbiB3cm90ZToN
-Cj4gPiBPbiBUdWUsIE9jdCAwNCwgMjAyMiBhdCAxMTowNDoyOUFNICsxMzAwLCBLYWkgSHVhbmcg
-d3JvdGU6DQo+ID4gPiBJbiBzZ3hfc2V0dXBfZXBjX3NlY3Rpb24oKSwgeGFfc3RvcmVfcmFuZ2Uo
-KSBpcyBjYWxsZWQgdG8gc3RvcmUgRVBDDQo+ID4gPiBwYWdlcycgb3duZXIgc2VjdGlvbiB0byBh
-biBYYXJyYXkgdXNpbmcgcGh5c2ljYWwgYWRkcmVzc2VzIG9mIHRob3NlIEVQQw0KPiA+ID4gcGFn
-ZXMgYXMgaW5kZXguICBDdXJyZW50bHksIHRoZSByZXR1cm4gdmFsdWUgb2YgeGFfc3RvcmVfcmFu
-Z2UoKSBpcyBub3QNCj4gPiA+IGNoZWNrZWQsIGJ1dCBhY3R1YWxseSBpdCBjYW4gZmFpbCAoaS5l
-LiBkdWUgdG8gLUVOT01FTSkuDQo+ID4gPiANCj4gPiA+IE5vdCBjaGVja2luZyB0aGUgcmV0dXJu
-IHZhbHVlIG9mIHhhX3N0b3JlX3JhbmdlKCkgd291bGQgcmVzdWx0IGluIHRoZQ0KPiA+ID4gRVBD
-IHNlY3Rpb24gYmVpbmcgdXNlZCBieSBTR1ggZHJpdmVyIChhbmQgS1ZNIFNHWCBndWVzdHMpLCBi
-dXQgcGFydCBvcg0KPiA+ID4gYWxsIG9mIGl0cyBFUEMgcGFnZXMgbm90IGJlaW5nIGhhbmRsZWQg
-YnkgdGhlIG1lbW9yeSBmYWlsdXJlIGhhbmRsaW5nIG9mDQo+ID4gPiBFUEMgcGFnZS4gIFN1Y2gg
-aW5jb25zaXN0ZW5jeSBzaG91bGQgYmUgYXZvaWRlZCwgZXZlbiBhdCB0aGUgY29zdCB0aGF0DQo+
-ID4gPiB0aGlzIHNlY3Rpb24gd29uJ3QgYmUgdXNlZCBieSB0aGUga2VybmVsLg0KPiA+ID4gDQo+
-ID4gPiBBZGQgdGhlIG1pc3NpbmcgY2hlY2sgb2YgdGhlIHJldHVybiB2YWx1ZSBvZiB4YV9zdG9y
-ZV9yYW5nZSgpLCBhbmQgd2hlbg0KPiA+ID4gaXQgZmFpbHMsIGNsZWFuIHVwIGFuZCBmYWlsIHRv
-IGluaXRpYWxpemUgdGhlIEVQQyBzZWN0aW9uLg0KPiA+ID4gDQo+ID4gPiBGaXhlczogNDBlMGU3
-ODQzZTIzICgieDg2L3NneDogQWRkIGluZnJhc3RydWN0dXJlIHRvIGlkZW50aWZ5IFNHWCBFUEMg
-cGFnZXMiKQ0KPiA+ID4gU2lnbmVkLW9mZi1ieTogS2FpIEh1YW5nIDxrYWkuaHVhbmdAaW50ZWwu
-Y29tPg0KPiA+IA0KPiA+IFJldmlld2VkLWJ5OiBKYXJra28gU2Fra2luZW4gPGphcmtrb0BrZXJu
-ZWwub3JnPg0KPiA+IA0KPiA+IFRoaXMgbmVlZHM6DQo+ID4gDQo+ID4gQ2M6IHN0YWJsZUB2Z2Vy
-Lmtlcm5lbC5vcmcgIyB2NS4xNysNCj4gPiANCj4gPiBEYXZlLCBjYW4geW91IHBpY2sgdGhpcyBp
-bmRlcGVuZGVudGx5IG9mIHJlc3Qgb2YgdGhlIHBhdGNoIHNldA0KPiA+ICh1bmxlc3Mgb2ZjIHlv
-dSBoYXZlIGNoYW5nZSBzdWdnZXN0aW9ucyk/DQo+ID4gDQo+ID4gQlIsIEphcmtrbw0KPiANCj4g
-VGhhbmtzIEphcmtrby4gIEkgd2lsbCBhZGQgdGhlICJDYyBzdGFibGUiIHBhcnQgaWYgSSBuZWVk
-IHRvIHNlbmQgb3V0IGEgbmV3DQo+IHZlcnNpb24uDQo+ICANCj4gLS0gDQo+IFRoYW5rcywNCj4g
-LUthaQ0KPiANCg0KSGkgRGF2ZSwNCg0KSXMgdGhpcyBwYXRjaCB3b3J0aCB0byBkbz8gIEZvciBu
-b3cgdGhpcyBzaG91bGQgYmUgbW9yZSBsaWtlIGEgdGhlb3JldGljYWwgaXNzdWUNCnRoYXQgSSBq
-dXN0IHNhdyB3aGVuIHNjYW5uaW5nIHRoZSBjb2RlLiAgSWYgaXQgaXMgd29ydGggdG8gZG8gSSds
-bCBzZW5kIG91dCBhDQpuZXcgb25lIHdpdGggSmFya2tvJ3MgcmV2aWV3ZWQtYnkgYW5kIENDIHN0
-YWJsZSB0YWcuDQoNCi0tIA0KVGhhbmtzLA0KLUthaQ0KDQoNCg==
+Hi Jarkko,
+
+On Mon, 31 Oct 2022 20:21:16 -0500, Jarkko Sakkinen <jarkko@kernel.org>  
+wrote:
+
+> On Thu, Oct 27, 2022 at 12:45:30PM -0700, Haitao Huang wrote:
+>> Support madvise(..., MADV_WILLNEED) by adding EPC pages with EAUG in
+>> the newly added fops->fadvise() callback implementation, sgx_fadvise().
+>>
+>> Change the return type and values of the sgx_encl_eaug_page function
+>> so that more specific error codes are returned for different treatment
+>> by the page fault handler and the fadvise callback.
+>> On any error, sgx_fadvise() will discontinue further operations
+>> and return as normal. The page fault handler allows a PF retried
+>> by returning VM_FAULT_NOPAGE in handling -EBUSY returned from
+>> sgx_encl_eaug_page.
+>>
+>> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+>> ---
+>>  arch/x86/kernel/cpu/sgx/driver.c | 81 ++++++++++++++++++++++++++++++++
+>>  arch/x86/kernel/cpu/sgx/encl.c   | 46 +++++++++++-------
+>>  arch/x86/kernel/cpu/sgx/encl.h   |  4 +-
+>>  3 files changed, 113 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/arch/x86/kernel/cpu/sgx/driver.c  
+>> b/arch/x86/kernel/cpu/sgx/driver.c
+>> index aa9b8b868867..54b24897605b 100644
+>> --- a/arch/x86/kernel/cpu/sgx/driver.c
+>> +++ b/arch/x86/kernel/cpu/sgx/driver.c
+>> @@ -2,6 +2,7 @@
+>>  /*  Copyright(c) 2016-20 Intel Corporation. */
+>>
+>>  #include <linux/acpi.h>
+>> +#include <linux/fadvise.h>
+>>  #include <linux/miscdevice.h>
+>>  #include <linux/mman.h>
+>>  #include <linux/security.h>
+>> @@ -9,6 +10,7 @@
+>>  #include <asm/traps.h>
+>>  #include "driver.h"
+>>  #include "encl.h"
+>> +#include "encls.h"
+>>
+>>  u64 sgx_attributes_reserved_mask;
+>>  u64 sgx_xfrm_reserved_mask = ~0x3;
+>> @@ -97,10 +99,88 @@ static int sgx_mmap(struct file *file, struct  
+>> vm_area_struct *vma)
+>>  	vma->vm_ops = &sgx_vm_ops;
+>>  	vma->vm_flags |= VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO;
+>>  	vma->vm_private_data = encl;
+>> +	/* Anchor vm_pgoff to the enclave base.
+>> +	 * So offset passed back to sgx_fadvise hook
+>> +	 * is relative to the enclave base
+>> +	 */
+>
+> This comment only convolutes code because it does not tell anything
+> that is non-intuitive to understand from the code.
+>
+>> +	vma->vm_pgoff = (vma->vm_start - encl->base) >> PAGE_SHIFT;
+>
+> vma->vm_pgoff = PFN_DOWN(vma->vm_start - encl->base);
+>
+>>
+>>  	return 0;
+>>  }
+>>
+>> +/*
+>> + * Add new pages to the enclave sequentially with ENCLS[EAUG] for the  
+>> WILLNEED advice.
+>> + * Only do this to existing VMAs in the same enclave and reject the  
+>> request.
+>
+> Keep this.
+>
+>> + * Returns:	0 if EAUG done with best effort, -EINVAL if any sub-range  
+>> given
+>> + * is not in the enclave, or enclave is not initialized..
+>> + */
+>
+> Please remove this.
+>
+> It is useless and also incorrect, given that the function can also return
+> other return values.
+>
+>> +static int sgx_fadvise(struct file *file, loff_t offset, loff_t len,  
+>> int advice)
+>> +{
+>> +	struct sgx_encl *encl = file->private_data;
+>> +	unsigned long start, end, pos;
+>> +	int ret = -EINVAL;
+>> +	struct vm_area_struct *vma = NULL;
+>
+> Reverse christmas tree order.
+>
+>> +
+>> +	/* Only support WILLNEED */
+>> +	if (advice != POSIX_FADV_WILLNEED)
+>> +		return -EINVAL;
+>> +	if (!encl)
+>> +		return -EINVAL;
+...
+>> +
+>> +	/* EAUG works only for initialized enclaves. */
+>
+> Please, remove this comment.
+>
+>> +	if (!test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
+>> +		return -EINVAL;
+...
+>> +		/* Don't allow any gaps */
+>> +		goto unlock;
+>> +	}
+>
+> Empty line.
+>
+>> +	/* Here: vm_start <= pos < end <= vm_end */
+>
+...
+>> +		if (ret)
+>> +			break;
+>> +		pos = pos + PAGE_SIZE;
+>> +		cond_resched();
+>> +	}
+>> +	ret = 0;
+>
+> Empty line.
+>
+
+Thanks for the review. Will fix all above in next version.
+BR
+Haitao
