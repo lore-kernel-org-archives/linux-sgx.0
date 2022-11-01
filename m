@@ -2,359 +2,194 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C42FA3741
-	for <linux-sgx@archiver.kernel.org>; Tue,  1 Nov 2022 01:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240D4FA3741
+	for <linux-sgx@archiver.kernel.org>; Tue,  1 Nov 2022 01:27:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229757AbiKABVX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 31 Oct 2022 21:21:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56690 "EHLO
+        id S229626AbiKAB13 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 31 Oct 2022 21:27:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiKABVW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 31 Oct 2022 21:21:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62370167DC
-        for <linux-sgx@vger.kernel.org>; Mon, 31 Oct 2022 18:21:21 -0700 (PDT)
+        with ESMTP id S229469AbiKAB12 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 31 Oct 2022 21:27:28 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3709167DA;
+        Mon, 31 Oct 2022 18:27:27 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EFF2E614E3
-        for <linux-sgx@vger.kernel.org>; Tue,  1 Nov 2022 01:21:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB7FCC433C1;
-        Tue,  1 Nov 2022 01:21:19 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 3C775CE1919;
+        Tue,  1 Nov 2022 01:27:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B01FCC433B5;
+        Tue,  1 Nov 2022 01:27:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667265680;
-        bh=lUXc7CgXbdRs9I1CAwpzPK5nNBtr4XsrglpgK2LNbUA=;
+        s=k20201202; t=1667266044;
+        bh=PS1as+ceSEXBGHbOqVQdndDC8+DR17xtfU44SRYRlFE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AlnzlJOi5cjHjWAVSjwBG6D5VENjm80rozXpI74Gjzvo62qpZA1ZDlfDCbkka2Vu1
-         OSS7U5QijB1xM1D3++LquliaCzeclFjemKwKpCTkkQinDofWOgS848h3lr4udXIol2
-         tLe6fzMSJWJ7tY2nFW/4Svydra+OEs48KbBeZHk/ezeGAc4opVpsc8tkFz8cNFKZk5
-         wzecfXkG/ag5gb897XEMglBMQMuhA1qBOl6hLKLtj4XNJv3itChqEX27O5EvbawMDK
-         XY725NT1a0ShU/f+7mNUCECzhkP6HYCUs2YOI6XIt7sWZJb73JRzJrubD4phReWcol
-         IKKWlwXVMsH5w==
-Date:   Tue, 1 Nov 2022 03:21:16 +0200
+        b=hMGgzfYiCH502VeSJ9PCjWIO5p6Cw6JngKeVG3Tz3UPL+7UqG0NH9eAXfejv9bmpC
+         pUwBTtlPnOL7IVQaqffg+ObRP+9x62BL2v7t80r2sgMltSFkvnx5VKNEDRvdQJj/Mb
+         d3uVrK4eTThoCP8BnUlKMhupJtq/OqsaeOhuwulb7TGL7hBth2snqswwI9bD8OWN1a
+         MVF7dGGTeCo+nHqO9TtLKVRuJCr7pz7CqQ4S/jEPdop6IPQyGdrSB8ZD5QeYRlUJJN
+         SvEcBxGWIIAZP5EljDcjl+CYC1iyXtR6CGjxHAFIwjBF1vH4lbANibBDbldolh6b/M
+         W4IfdOWvyJ9eg==
+Date:   Tue, 1 Nov 2022 03:27:20 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com,
-        reinette.chatre@intel.com, vijay.dhanraj@intel.com
-Subject: Re: [RFC PATCH v2 2/4] x86/sgx: Implement support for MADV_WILLNEED
-Message-ID: <Y2B0jBsG6HE4KVk7@kernel.org>
-References: <20221027194532.180053-1-haitao.huang@linux.intel.com>
- <20221027194532.180053-2-haitao.huang@linux.intel.com>
- <20221027194532.180053-3-haitao.huang@linux.intel.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     dave.hansen@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+        mingo@redhat.com, hpa@zytor.com, md.iqbal.hossain@intel.com,
+        haitao.huang@intel.com, linux-sgx@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] x86/sgx: Reduce delay and interference of enclave
+ release
+Message-ID: <Y2B1+NM2ONHGPgwj@kernel.org>
+References: <00efa80dd9e35dc85753e1c5edb0344ac07bb1f0.1667236485.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221027194532.180053-3-haitao.huang@linux.intel.com>
+In-Reply-To: <00efa80dd9e35dc85753e1c5edb0344ac07bb1f0.1667236485.git.reinette.chatre@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Oct 27, 2022 at 12:45:30PM -0700, Haitao Huang wrote:
-> Support madvise(..., MADV_WILLNEED) by adding EPC pages with EAUG in
-> the newly added fops->fadvise() callback implementation, sgx_fadvise().
+On Mon, Oct 31, 2022 at 10:29:58AM -0700, Reinette Chatre wrote:
+> commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
+> releasing large enclaves") introduced a cond_resched() during enclave
+> release where the EREMOVE instruction is applied to every 4k enclave
+> page. Giving other tasks an opportunity to run while tearing down a
+> large enclave placates the soft lockup detector but Iqbal found
+> that the fix causes a 25% performance degradation of a workload
+> run using Gramine.
 > 
-> Change the return type and values of the sgx_encl_eaug_page function
-> so that more specific error codes are returned for different treatment
-> by the page fault handler and the fadvise callback.
-> On any error, sgx_fadvise() will discontinue further operations
-> and return as normal. The page fault handler allows a PF retried
-> by returning VM_FAULT_NOPAGE in handling -EBUSY returned from
-> sgx_encl_eaug_page.
+> Gramine maintains a 1:1 mapping between processes and SGX enclaves.
+> That means if a workload in an enclave creates a subprocess then
+> Gramine creates a duplicate enclave for that subprocess to run in.
+> The consequence is that the release of the enclave used to run
+> the subprocess can impact the performance of the workload that is
+> run in the original enclave, especially in large enclaves when
+> SGX2 is not in use.
 > 
-> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> The workload run by Iqbal behaves as follows:
+> Create enclave (enclave "A")
+> /* Initialize workload in enclave "A" */
+> Create enclave (enclave "B")
+> /* Run subprocess in enclave "B" and send result to enclave "A" */
+> Release enclave (enclave "B")
+> /* Run workload in enclave "A" */
+> Release enclave (enclave "A")
+> 
+> The performance impact of releasing enclave "B" in the above scenario
+> is amplified when there is a lot of SGX memory and the enclave size
+> matches the SGX memory. When there is 128GB SGX memory and an enclave
+> size of 128GB, from the time enclave "B" starts the 128GB SGX memory
+> is oversubscribed with a combined demand for 256GB from the two
+> enclaves.
+> 
+> Before commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
+> releasing large enclaves") enclave release was done in a tight loop
+> without giving other tasks a chance to run. Even though the system
+> experienced soft lockups the workload (run in enclave "A") obtained
+> good performance numbers because when the workload started running
+> there was no interference.
+> 
+> Commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
+> releasing large enclaves") gave other tasks opportunity to run while an
+> enclave is released. The impact of this in this scenario is that while
+> enclave "B" is released and needing to access each page that belongs
+> to it in order to run the SGX EREMOVE instruction on it, enclave "A"
+> is attempting to run the workload needing to access the enclave
+> pages that belong to it. This causes a lot of swapping due to the
+> demand for the oversubscribed SGX memory. Longer latencies are
+> experienced by the workload in enclave "A" while enclave "B" is
+> released.
+> 
+> Improve the performance of enclave release while still avoiding the
+> soft lockup detector with two enhancements:
+> - Only call cond_resched() after XA_CHECK_SCHED iterations.
+> - Use the xarray advanced API to keep the xarray locked for
+>   XA_CHECK_SCHED iterations instead of locking and unlocking
+>   at every iteration.
+> 
+> This batching solution is copied from sgx_encl_may_map() that
+> also iterates through all enclave pages using this technique.
+> 
+> With this enhancement the workload experiences a 5%
+> performance degradation when compared to a kernel without
+> commit 8795359e35bc ("x86/sgx: Silence softlockup detection when
+> releasing large enclaves"), an improvement to the reported 25%
+> degradation, while still placating the soft lockup detector.
+> 
+> Scenarios with poor performance are still possible even with these
+> enhancements. For example, short workloads creating sub processes
+> while running in large enclaves. Further performance improvements
+> are pursued in user space through avoiding to create duplicate enclaves
+> for certain sub processes, and using SGX2 that will do lazy allocation
+> of pages as needed so enclaves created for sub processes start quickly
+> and release quickly.
+> 
+> Fixes: 8795359e35bc ("x86/sgx: Silence softlockup detection when releasing large enclaves")
+> Reported-by: Md Iqbal Hossain <md.iqbal.hossain@intel.com>
+> Tested-by: Md Iqbal Hossain <md.iqbal.hossain@intel.com>
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 > ---
->  arch/x86/kernel/cpu/sgx/driver.c | 81 ++++++++++++++++++++++++++++++++
->  arch/x86/kernel/cpu/sgx/encl.c   | 46 +++++++++++-------
->  arch/x86/kernel/cpu/sgx/encl.h   |  4 +-
->  3 files changed, 113 insertions(+), 18 deletions(-)
+> I do not know if this qualifies as stable material.
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-> index aa9b8b868867..54b24897605b 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver.c
-> @@ -2,6 +2,7 @@
->  /*  Copyright(c) 2016-20 Intel Corporation. */
->  
->  #include <linux/acpi.h>
-> +#include <linux/fadvise.h>
->  #include <linux/miscdevice.h>
->  #include <linux/mman.h>
->  #include <linux/security.h>
-> @@ -9,6 +10,7 @@
->  #include <asm/traps.h>
->  #include "driver.h"
->  #include "encl.h"
-> +#include "encls.h"
->  
->  u64 sgx_attributes_reserved_mask;
->  u64 sgx_xfrm_reserved_mask = ~0x3;
-> @@ -97,10 +99,88 @@ static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
->  	vma->vm_ops = &sgx_vm_ops;
->  	vma->vm_flags |= VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO;
->  	vma->vm_private_data = encl;
-> +	/* Anchor vm_pgoff to the enclave base.
-> +	 * So offset passed back to sgx_fadvise hook
-> +	 * is relative to the enclave base
-> +	 */
-
-This comment only convolutes code because it does not tell anything
-that is non-intuitive to understand from the code.
-
-> +	vma->vm_pgoff = (vma->vm_start - encl->base) >> PAGE_SHIFT;
-
-vma->vm_pgoff = PFN_DOWN(vma->vm_start - encl->base);
-
->  
->  	return 0;
->  }
->  
-> +/*
-> + * Add new pages to the enclave sequentially with ENCLS[EAUG] for the WILLNEED advice.
-> + * Only do this to existing VMAs in the same enclave and reject the request.
-
-Keep this.
-
-> + * Returns:	0 if EAUG done with best effort, -EINVAL if any sub-range given
-> + * is not in the enclave, or enclave is not initialized..
-> + */
-
-Please remove this.
-
-It is useless and also incorrect, given that the function can also return
-other return values.
-
-> +static int sgx_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
-> +{
-> +	struct sgx_encl *encl = file->private_data;
-> +	unsigned long start, end, pos;
-> +	int ret = -EINVAL;
-> +	struct vm_area_struct *vma = NULL;
-
-Reverse christmas tree order.
-
-> +
-> +	/* Only support WILLNEED */
-> +	if (advice != POSIX_FADV_WILLNEED)
-> +		return -EINVAL;
-> +	if (!encl)
-> +		return -EINVAL;
-> +	if (!cpu_feature_enabled(X86_FEATURE_SGX2))
-> +		return -EINVAL;
-> +
-> +	if (offset + len < offset)
-> +		return -EINVAL;
-> +	if (encl->base + offset < encl->base)
-> +		return -EINVAL;
-> +	start  = offset + encl->base;
-> +	end = start + len;
-> +	if (end < start)
-> +		return -EINVAL;
-> +	if (end > encl->base + encl->size)
-> +		return -EINVAL;
-> +
-> +	/* EAUG works only for initialized enclaves. */
-
-Please, remove this comment.
-
-> +	if (!test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
-> +		return -EINVAL;
-> +
-> +	mmap_read_lock(current->mm);
-> +
-> +	vma = find_vma(current->mm, start);
-> +	if (!vma)
-> +		goto unlock;
-> +	if (vma->vm_private_data != encl)
-> +		goto unlock;
-> +
-> +	pos = start;
-> +	if (pos < vma->vm_start || end > vma->vm_end) {
-> +		/* Don't allow any gaps */
-> +		goto unlock;
-> +	}
-
-Empty line.
-
-> +	/* Here: vm_start <= pos < end <= vm_end */
-
-
-
-> +	while (pos < end) {
-> +		if (xa_load(&encl->page_array, PFN_DOWN(pos)))
-> +			continue;
-> +		if (signal_pending(current)) {
-> +			if (pos == start)
-> +				ret = -ERESTARTSYS;
-> +			else
-> +				ret = -EINTR;
-> +			goto unlock;
-> +		}
-> +		ret = sgx_encl_eaug_page(vma, encl, pos);
-> +		/* It's OK to not finish */
-> +		if (ret)
-> +			break;
-> +		pos = pos + PAGE_SIZE;
-> +		cond_resched();
-> +	}
-> +	ret = 0;
-
-Empty line.
-
-> +unlock:
-> +	mmap_read_unlock(current->mm);
-> +	return ret;
-> +}
-> +
->  static unsigned long sgx_get_unmapped_area(struct file *file,
->  					   unsigned long addr,
->  					   unsigned long len,
-> @@ -133,6 +213,7 @@ static const struct file_operations sgx_encl_fops = {
->  	.compat_ioctl		= sgx_compat_ioctl,
->  #endif
->  	.mmap			= sgx_mmap,
-> +	.fadvise		= sgx_fadvise,
->  	.get_unmapped_area	= sgx_get_unmapped_area,
->  };
->  
+> Changes since V1:
+> - V1: https://lore.kernel.org/lkml/06a5f478d3bfaa57954954c82dd5d4040450171d.1666130846.git.reinette.chatre@intel.com/
+> - Use local variable for max index instead of open code in loop. (Jarkko)
+> - Send to broader X86 audience.
+> 
+>  arch/x86/kernel/cpu/sgx/encl.c | 23 +++++++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
+> 
 > diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> index 1abc5e7f2660..c57e60d5a0aa 100644
+> index 1ec20807de1e..2c258255a629 100644
 > --- a/arch/x86/kernel/cpu/sgx/encl.c
 > +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -305,11 +305,11 @@ struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
->   * on a SGX2 system then the EPC can be added dynamically via the SGX2
->   * ENCLS[EAUG] instruction.
->   *
-> - * Returns: Appropriate vm_fault_t: VM_FAULT_NOPAGE when PTE was installed
-> - * successfully, VM_FAULT_SIGBUS or VM_FAULT_OOM as error otherwise.
-> + * Returns: 0 when PTE was installed successfully, -EBUSY for waiting on
-> + * reclaimer to free EPC, -ENOMEM for out of RAM, -EFAULT as error otherwise.
->   */
-> -vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
-> -			      struct sgx_encl *encl, unsigned long addr)
-> +int sgx_encl_eaug_page(struct vm_area_struct *vma,
-> +		       struct sgx_encl *encl, unsigned long addr)
+> @@ -680,11 +680,15 @@ const struct vm_operations_struct sgx_vm_ops = {
+>  void sgx_encl_release(struct kref *ref)
 >  {
->  	vm_fault_t vmret = VM_FAULT_SIGBUS;
->  	struct sgx_pageinfo pginfo = {0};
-> @@ -318,10 +318,10 @@ vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+>  	struct sgx_encl *encl = container_of(ref, struct sgx_encl, refcount);
+> +	unsigned long max_page_index = PFN_DOWN(encl->base + encl->size - 1);
 >  	struct sgx_va_page *va_page;
->  	unsigned long phys_addr;
->  	u64 secinfo_flags;
-> -	int ret;
-> +	int ret = -EFAULT;
+>  	struct sgx_encl_page *entry;
+> -	unsigned long index;
+> +	unsigned long count = 0;
+> +
+> +	XA_STATE(xas, &encl->page_array, PFN_DOWN(encl->base));
 >  
->  	if (!test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
-> -		return VM_FAULT_SIGBUS;
-> +		return -EFAULT;
+> -	xa_for_each(&encl->page_array, index, entry) {
+> +	xas_lock(&xas);
+> +	xas_for_each(&xas, entry, max_page_index) {
+>  		if (entry->epc_page) {
+>  			/*
+>  			 * The page and its radix tree entry cannot be freed
+> @@ -699,9 +703,20 @@ void sgx_encl_release(struct kref *ref)
+>  		}
 >  
->  	/*
->  	 * Ignore internal permission checking for dynamically added pages.
-> @@ -332,21 +332,21 @@ vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
->  	secinfo_flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X;
->  	encl_page = sgx_encl_page_alloc(encl, addr - encl->base, secinfo_flags);
->  	if (IS_ERR(encl_page))
-> -		return VM_FAULT_OOM;
-> +		return -ENOMEM;
->  
->  	mutex_lock(&encl->lock);
->  
->  	epc_page = sgx_alloc_epc_page(encl_page, false);
->  	if (IS_ERR(epc_page)) {
->  		if (PTR_ERR(epc_page) == -EBUSY)
-> -			vmret =  VM_FAULT_NOPAGE;
-> +			ret =  -EBUSY;
->  		goto err_out_unlock;
->  	}
->  
->  	va_page = sgx_encl_grow(encl, false);
->  	if (IS_ERR(va_page)) {
->  		if (PTR_ERR(va_page) == -EBUSY)
-> -			vmret = VM_FAULT_NOPAGE;
-> +			ret = -EBUSY;
->  		goto err_out_epc;
->  	}
->  
-> @@ -359,16 +359,20 @@ vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
->  	 * If ret == -EBUSY then page was created in another flow while
->  	 * running without encl->lock
->  	 */
-> -	if (ret)
-> +	if (ret) {
-> +		ret = -EFAULT;
->  		goto err_out_shrink;
-> +	}
->  
->  	pginfo.secs = (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_page);
->  	pginfo.addr = encl_page->desc & PAGE_MASK;
->  	pginfo.metadata = 0;
->  
->  	ret = __eaug(&pginfo, sgx_get_epc_virt_addr(epc_page));
-> -	if (ret)
-> +	if (ret) {
-> +		ret = -EFAULT;
->  		goto err_out;
-> +	}
->  
->  	encl_page->encl = encl;
->  	encl_page->epc_page = epc_page;
-> @@ -385,10 +389,10 @@ vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
->  	vmret = vmf_insert_pfn(vma, addr, PFN_DOWN(phys_addr));
->  	if (vmret != VM_FAULT_NOPAGE) {
->  		mutex_unlock(&encl->lock);
-> -		return VM_FAULT_SIGBUS;
-> +		return -EFAULT;
->  	}
->  	mutex_unlock(&encl->lock);
-> -	return VM_FAULT_NOPAGE;
-> +	return 0;
->  
->  err_out:
->  	xa_erase(&encl->page_array, PFN_DOWN(encl_page->desc));
-> @@ -401,7 +405,7 @@ vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
->  	mutex_unlock(&encl->lock);
->  	kfree(encl_page);
->  
-> -	return vmret;
-> +	return ret;
->  }
->  
->  static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
-> @@ -431,8 +435,18 @@ static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
->  	 * enclave that will be checked for right away.
->  	 */
->  	if (cpu_feature_enabled(X86_FEATURE_SGX2) &&
-> -	    (!xa_load(&encl->page_array, PFN_DOWN(addr))))
-> -		return sgx_encl_eaug_page(vma, encl, addr);
-> +	    (!xa_load(&encl->page_array, PFN_DOWN(addr)))) {
-> +		switch (sgx_encl_eaug_page(vma, encl, addr)) {
-> +		case 0:
-> +		case -EBUSY:
-> +			return VM_FAULT_NOPAGE;
-> +		case -ENOMEM:
-> +			return VM_FAULT_OOM;
-> +		case -EFAULT:
-> +		default:
-> +			return VM_FAULT_SIGBUS;
+>  		kfree(entry);
+> -		/* Invoke scheduler to prevent soft lockups. */
+> -		cond_resched();
+> +		/*
+> +		 * Invoke scheduler on every XA_CHECK_SCHED iteration
+> +		 * to prevent soft lockups.
+> +		 */
+> +		if (!(++count % XA_CHECK_SCHED)) {
+> +			xas_pause(&xas);
+> +			xas_unlock(&xas);
+> +
+> +			cond_resched();
+> +
+> +			xas_lock(&xas);
 > +		}
-> +	}
+>  	}
+> +	xas_unlock(&xas);
 >  
->  	mutex_lock(&encl->lock);
+>  	xa_destroy(&encl->page_array);
 >  
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-> index 500437981161..36059d35e1bc 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.h
-> +++ b/arch/x86/kernel/cpu/sgx/encl.h
-> @@ -127,6 +127,6 @@ struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
->  					 unsigned long addr);
->  struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl, bool reclaim);
->  void sgx_encl_shrink(struct sgx_encl *encl, struct sgx_va_page *va_page);
-> -vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
-> -			      struct sgx_encl *encl, unsigned long addr)
-> +int sgx_encl_eaug_page(struct vm_area_struct *vma,
-> +		       struct sgx_encl *encl, unsigned long addr);
->  #endif /* _X86_ENCL_H */
 > -- 
-> 2.25.1
+> 2.34.1
 > 
+
+Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
