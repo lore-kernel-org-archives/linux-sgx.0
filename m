@@ -2,142 +2,110 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF51FA3741
-	for <linux-sgx@archiver.kernel.org>; Tue,  1 Nov 2022 00:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A026FFA3740
+	for <linux-sgx@archiver.kernel.org>; Tue,  1 Nov 2022 00:53:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229477AbiKAAwX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 31 Oct 2022 20:52:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41746 "EHLO
+        id S229479AbiKAAxu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 31 Oct 2022 20:53:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiKAAwW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 31 Oct 2022 20:52:22 -0400
+        with ESMTP id S229475AbiKAAxt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 31 Oct 2022 20:53:49 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D92FD14D3E;
-        Mon, 31 Oct 2022 17:52:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF19E3F
+        for <linux-sgx@vger.kernel.org>; Mon, 31 Oct 2022 17:53:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 78F9461411;
-        Tue,  1 Nov 2022 00:52:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B039C433D6;
-        Tue,  1 Nov 2022 00:52:19 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ED068614EC
+        for <linux-sgx@vger.kernel.org>; Tue,  1 Nov 2022 00:53:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C51B2C433D6;
+        Tue,  1 Nov 2022 00:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667263940;
-        bh=HWEyYhTRPVpxScw+Umz7p1bNJQ9QmOz14vkT8EGXetc=;
+        s=k20201202; t=1667264027;
+        bh=5nhiEn1NgmMqRPh15oTTVv+clUHPsBKpYuZSZGEaS9Q=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Zs88KE0XmeUvH7SNcf3URWb5ISZx9zmIJ1IEYkN24oL2k3DWU7WEWQtbsdeH5Wo3e
-         EzoouQ0U8xQstv4a4PARXwRDHiasUiTO89U7ZhXVD5cgNezbnMp457stM2vLNpoDL9
-         B3QHsDxK4hNHY7OQ7Wflh+JCKNVjxOI5krJMJAwzEkqBdOWkLeL/9gY8okgneLMq5Y
-         PnC8CyVlPOCQ4hBN93Tt2zqI/1O4nGlTA+hCS0E2YEnA1lJj3yRqRm39TFzxHLL8de
-         gF4JoKt4cwJyuObEbitJ44ogEABH4h+b6UaU7JrmaL3rJIBoyvOoOKAMKGyRgqlEnM
-         Q+tX/nnuPRs9w==
-Date:   Tue, 1 Nov 2022 02:52:16 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     dave.hansen@linux.intel.com, md.iqbal.hossain@intel.com,
-        haitao.huang@intel.com, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/sgx: Reduce delay and interference of enclave release
-Message-ID: <Y2BtwGIfnW4fqkUg@kernel.org>
-References: <06a5f478d3bfaa57954954c82dd5d4040450171d.1666130846.git.reinette.chatre@intel.com>
- <Y1WemizNZgFOVxja@kernel.org>
- <77943714-b988-bf14-8795-c72ff0424418@intel.com>
+        b=MkZB42E8AD7YwjpOTqta+78mpstZ4FtHEvvfo7vvosKc8IRLNjqNPGJJCxcpoewS2
+         6RbgP5qDKvjxkSzwxk/aAxfLsr+5s6KvhW5sLQJ/QKLeLOBkVPbA4VhG99G2umi20f
+         nCbC2tlBf6LtKKlXrtH9zQpF5N0IFNZOdN3inqmf2XXNwwfeiCO/dP8+oWkcvrfCOd
+         u2PcFwXiFpbew/wJ84l1fFl9no6fEI8YvSBUBxmzHF2Y+EUj+U0oHBpE+Tcnv+9ExP
+         nuGVIyKQFGY1cP2ao/dag9PXRHyNHd8cU6RE+bBE68Eain/YAxtw4ahdjA+/nov6mI
+         tR+AsN4QHNgAA==
+Date:   Tue, 1 Nov 2022 02:53:43 +0200
+From:   "jarkko@kernel.org" <jarkko@kernel.org>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     "Hansen, Dave" <dave.hansen@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "bp@suse.de" <bp@suse.de>, "Zhang, Cathy" <cathy.zhang@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Luck, Tony" <tony.luck@intel.com>, "Du, Fan" <fan.du@intel.com>,
+        "Li, Zhiquan1" <zhiquan1.li@intel.com>
+Subject: Re: [PATCH v9 3/3] x86/sgx: Fine grained SGX MCA behavior for
+ virtualization
+Message-ID: <Y2BuF1juF0R0hhq0@kernel.org>
+References: <42470b9c41adefd2d4b4c79a3b7b2963cd24f423.camel@intel.com>
+ <4f82ec46-4c85-babb-38ea-a6ecc5e397a9@intel.com>
+ <5ade54ce8e182307309426e1055dcc580c1dc5fc.camel@intel.com>
+ <4930999a-888f-88bc-a05c-86762504f059@intel.com>
+ <c8e7cff6f8d66ce4f8575caaf69f02b491ed7d90.camel@intel.com>
+ <5afff147-dfb4-9033-6826-5965ba0bf3a0@intel.com>
+ <061580727e503d092ca3867919fa0f26391568eb.camel@intel.com>
+ <10c4b928a37fdf96df767fc7b8f1348f6af05984.camel@intel.com>
+ <Y1WmZgqIkl8GkR/i@kernel.org>
+ <31afc45e67f303645b81d231e4a5cb6878b30016.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <77943714-b988-bf14-8795-c72ff0424418@intel.com>
+In-Reply-To: <31afc45e67f303645b81d231e4a5cb6878b30016.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Oct 24, 2022 at 11:56:39AM -0700, Reinette Chatre wrote:
-> Hi Jarkko,
-> 
-> On 10/23/2022 1:06 PM, Jarkko Sakkinen wrote:
-> > On Tue, Oct 18, 2022 at 03:42:47PM -0700, Reinette Chatre wrote:
-> 
-> ...
-> 
-> >> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> >> index 1ec20807de1e..f7365c278525 100644
-> >> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> >> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> >> @@ -682,9 +682,12 @@ void sgx_encl_release(struct kref *ref)
-> >>  	struct sgx_encl *encl = container_of(ref, struct sgx_encl, refcount);
-> >>  	struct sgx_va_page *va_page;
-> >>  	struct sgx_encl_page *entry;
-> >> -	unsigned long index;
-> >> +	unsigned long count = 0;
-> >> +
-> >> +	XA_STATE(xas, &encl->page_array, PFN_DOWN(encl->base));
-> >>  
-> >> -	xa_for_each(&encl->page_array, index, entry) {
-> >> +	xas_lock(&xas);
-> >> +	xas_for_each(&xas, entry, PFN_DOWN(encl->base + encl->size  - 1)) {
+On Mon, Oct 24, 2022 at 10:23:10PM +0000, Huang, Kai wrote:
+> On Sun, 2022-10-23 at 23:39 +0300, jarkko@kernel.org wrote:
+> > On Wed, Oct 19, 2022 at 10:59:20AM +0000, Huang, Kai wrote:
+> > > static int __sgx_vepc_fault(struct sgx_vepc *vepc,
+> > >                             struct vm_area_struct *vma, unsigned long addr)
+> > > {
+> > > 	......
+> > >         /* Calculate index of EPC page in virtual EPC's page_array */
+> > >         index = vma->vm_pgoff + PFN_DOWN(addr - vma->vm_start);
+> > > 
+> > >         epc_page = xa_load(&vepc->page_array, index);
+> > >         if (epc_page)
+> > >                 return 0;
+> > > 
+> > > 	...
+> > > }
+> > > 
+> > > As you can see if the EPC page has already been populated at a given index of
+> > > one virtual EPC instance, the current fault handler just assumes the mapping is
+> > > already there and returns success immediately.  This causes a bug when one
+> > > virtual EPC instance is shared by multi processes via fork(): if the EPC page at
+> > > one index is already populated by the parent process, when the child accesses
+> > > the same page using different virtual address, the fault handler just returns
+> > > success w/o actually setting up the mapping for the child, resulting in endless
+> > > page fault.
+> > > 
+> > > This needs to be fixed in no matter what way.
 > > 
-> > I would add to declarations:
+> > I think you mean that vm_insert_pfn() does not happen for child because
+> > of early return?
 > > 
-> > unsigned long nr_pages = PFN_DOWN(encl->base + encl->size  - 1);
-> > 
-> > Makes this more readable.
 > 
-> Will do, but I prefer to name it "max_page_index" or something related instead.
-> "nr_pages" implies "number of pages" to me, which is not what
-> PFN_DOWN(encl->base + encl->size - 1) represents. What is represented is the
-> highest possible index of a page in page_array, where an index is the
-> pfn of a page.
+> Yes exactly.  Sorry for not pointing out directly.
 
-Yeah, makes sense.
+Np.
 
 > 
-> > 
-> >>  		if (entry->epc_page) {
-> >>  			/*
-> >>  			 * The page and its radix tree entry cannot be freed
-> >> @@ -699,9 +702,20 @@ void sgx_encl_release(struct kref *ref)
-> >>  		}
-> >>  
-> >>  		kfree(entry);
-> >> -		/* Invoke scheduler to prevent soft lockups. */
-> >> -		cond_resched();
-> >> +		/*
-> >> +		 * Invoke scheduler on every XA_CHECK_SCHED iteration
-> >> +		 * to prevent soft lockups.
-> >> +		 */
-> >> +		if (!(++count % XA_CHECK_SCHED)) {
-> >> +			xas_pause(&xas);
-> >> +			xas_unlock(&xas);
-> >> +
-> >> +			cond_resched();
-> >> +
-> >> +			xas_lock(&xas);
-> >> +		}
-> >>  	}
-> > 
-> >         WARN_ON(count != nr_pages);
-> > 
+> > I did not understand the part about "different virtual
+> > addresses", as it is the same mapping.
 > 
-> nr_pages as assigned in your example does not represent a count of the
-> enclave pages but instead a pfn index into the page_array. Comparing it
-> to count, the number of removed enclave pages that are not being held
-> by reclaimer, is not appropriate.
-> 
-> This check would be problematic even if we create a "nr_pages" from
-> the range of possible indices. This is because of how enclave sizes are
-> required to be power-of-two that makes it likely for there to be indices
-> without pages associated with it.
+> The child can use mmap() to get a new mapping.  Whether the virtual address is
+> different from the parent's doesn't matter actually.
 
-Ok.
-
-> 
-> >> +	xas_unlock(&xas);
-> >>  
-> >>  	xa_destroy(&encl->page_array);
-> >>  
-> >> -- 
-> >> 2.34.1
-> >>
-> 
-> Reinette
+Thanks for the response, I had one additional query responded to Zhiquan.
 
 BR, Jarkko
