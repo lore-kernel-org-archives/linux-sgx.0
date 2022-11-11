@@ -2,41 +2,41 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C4CC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3EAC4332F
 	for <linux-sgx@archiver.kernel.org>; Fri, 11 Nov 2022 18:37:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233900AbiKKShA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 11 Nov 2022 13:37:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37722 "EHLO
+        id S233958AbiKKShB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 11 Nov 2022 13:37:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234234AbiKKSgO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 11 Nov 2022 13:36:14 -0500
+        with ESMTP id S234334AbiKKSg1 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 11 Nov 2022 13:36:27 -0500
 Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2775083381;
-        Fri, 11 Nov 2022 10:36:14 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE2A6178A6;
+        Fri, 11 Nov 2022 10:36:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1668191774; x=1699727774;
+  t=1668191779; x=1699727779;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=wY8Ia7AhZOsSBmUDim+2xlwCX7VM8EjOrhb9ezVOttc=;
-  b=CP7moDwxZdBbz+ai2ISJn8ohwUFqPbFTnZc97wcRrphBU0tPUK4mn+NE
-   nyfu8SRGvGBGTFkAeEn0CC2GPcfgqadZFqgvf9K409D+kr+YJ4DrYLu8M
-   n+P9994qJ5tAXS9OvBSOILxZ3HifnVKcw7tX/01ArQLXeMee4eeyd1kxk
-   SW4XREmyq3/IOEZC+N/rQ+pbzFL9JBFip+CYyJQfShUWfYa+48tNcTf4k
-   oM3osAoLXgCL/iXLyU/HRtkxM8V4kriPg2lYt5WiLWTdoFrMbguyMNmh8
-   PcJjgbjMOBum5JAG3l3/lNKgb6BWJFdOjIcBh7hEUztb5tFaBDbME77nY
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10528"; a="313447706"
+  bh=qDw1+KlOA5sa/9TNbGFSCosxMRaFIDw8SgzYI5H+AWg=;
+  b=isfnaWRjwuVMTz7qupQcJpeA5mJyp0cM8SxoRmcmL8y1s2UNL6r95fdQ
+   2vtLWDWTi8nJZhMEJJkOl3t1zhh1FyJU2rMQOhybxVAG0HMmtt36yHERl
+   hjtWKXfOTe6yl7q2pTrgKY6uzYVjwqGkW4Ml/iP9BXkbgPrdxIEWTcq0M
+   gNhrNL2ZnopOBHXZKsL5YTIZ8dnqoiXHzawEapwzfm0zpyD1y+f9BhQjb
+   lTWktPfsblzcPsiyYZfELSXzH0Ai6vAtouYXNgYesjaPWx687yJCoVkYm
+   nQXIcfNcxUpwkI4ls4W/SdAZjgyIKafaT6E0wS9Vo+2dPbRcEFljd+knK
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10528"; a="313447727"
 X-IronPort-AV: E=Sophos;i="5.96,157,1665471600"; 
-   d="scan'208";a="313447706"
+   d="scan'208";a="313447727"
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2022 10:36:13 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10528"; a="640089360"
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2022 10:36:19 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10528"; a="640089422"
 X-IronPort-AV: E=Sophos;i="5.96,157,1665471600"; 
-   d="scan'208";a="640089360"
+   d="scan'208";a="640089422"
 Received: from hermesli-mobl.amr.corp.intel.com (HELO kcaccard-desk.amr.corp.intel.com) ([10.212.218.5])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2022 10:36:12 -0800
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2022 10:36:18 -0800
 From:   Kristen Carlson Accardi <kristen@linux.intel.com>
 To:     jarkko@kernel.org, dave.hansen@linux.kernel.org, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
@@ -44,9 +44,9 @@ To:     jarkko@kernel.org, dave.hansen@linux.kernel.org, tj@kernel.org,
         Johannes Weiner <hannes@cmpxchg.org>
 Cc:     zhiquan1.li@intel.com,
         Kristen Carlson Accardi <kristen@linux.intel.com>
-Subject: [PATCH 18/26] cgroup/misc: Expose root_misc
-Date:   Fri, 11 Nov 2022 10:35:23 -0800
-Message-Id: <20221111183532.3676646-19-kristen@linux.intel.com>
+Subject: [PATCH 22/26] cgroup/misc: Add private per cgroup data to struct misc_cg
+Date:   Fri, 11 Nov 2022 10:35:27 -0800
+Message-Id: <20221111183532.3676646-23-kristen@linux.intel.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20221111183532.3676646-1-kristen@linux.intel.com>
 References: <20221111183532.3676646-1-kristen@linux.intel.com>
@@ -56,59 +56,103 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The SGX driver will need to get access to the root misc_cg object
-to do iterative walks and also determine if a charge will be
-towards the root cgroup or not.
+The SGX driver needs to be able to store additional per cgroup data
+specific to SGX along with the misc_cg struct. Add the ability to get
+and set this data in struct misc_cg.
 
 Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
 ---
- include/linux/misc_cgroup.h | 5 +++++
- kernel/cgroup/misc.c        | 9 +++++++++
- 2 files changed, 14 insertions(+)
+ include/linux/misc_cgroup.h | 12 ++++++++++++
+ kernel/cgroup/misc.c        | 39 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
 
 diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
-index 8f1b7b6cb81d..b79c78378f17 100644
+index c00deae4d2df..7fbf3efb0f62 100644
 --- a/include/linux/misc_cgroup.h
 +++ b/include/linux/misc_cgroup.h
-@@ -59,6 +59,7 @@ struct misc_cg {
- 	struct misc_res res[MISC_CG_RES_TYPES];
+@@ -43,6 +43,7 @@ struct misc_res {
+ 	unsigned long max;
+ 	atomic_long_t usage;
+ 	atomic_long_t events;
++	void *priv;
  };
  
-+struct misc_cg *root_misc(void);
+ /**
+@@ -63,6 +64,8 @@ struct misc_cg *root_misc(void);
+ struct misc_cg *parent_misc(struct misc_cg *cg);
+ unsigned long misc_cg_read(enum misc_res_type type, struct misc_cg *cg);
+ unsigned long misc_cg_max(enum misc_res_type type, struct misc_cg *cg);
++void *misc_cg_get_priv(enum misc_res_type type, struct misc_cg *cg);
++void misc_cg_set_priv(enum misc_res_type type, struct misc_cg *cg, void *priv);
  unsigned long misc_cg_res_total_usage(enum misc_res_type type);
  int misc_cg_set_capacity(enum misc_res_type type, unsigned long capacity);
  int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg,
-@@ -106,6 +107,10 @@ static inline void put_misc_cg(struct misc_cg *cg)
+@@ -130,6 +133,15 @@ static inline unsigned long misc_cg_max(enum misc_res_type type, struct misc_cg
+ 	return 0;
  }
  
- #else /* !CONFIG_CGROUP_MISC */
-+static inline struct misc_cg *root_misc(void)
++static void *misc_cg_get_priv(enum misc_res_type type, struct misc_cg *cg)
 +{
 +	return NULL;
 +}
- 
++
++static void misc_cg_set_priv(enum misc_res_type type, struct misc_cg *cg, void *priv)
++{
++}
++
  static inline unsigned long misc_cg_res_total_usage(enum misc_res_type type)
  {
+ 	return 0;
 diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-index 1e93e1d20347..8aa994d9cd02 100644
+index 18d0bec7d609..642879ad136f 100644
 --- a/kernel/cgroup/misc.c
 +++ b/kernel/cgroup/misc.c
-@@ -45,6 +45,15 @@ static unsigned long misc_res_capacity[MISC_CG_RES_TYPES];
-  */
- static BLOCKING_NOTIFIER_HEAD(misc_cg_notify_list);
+@@ -251,6 +251,45 @@ unsigned long misc_cg_max(enum misc_res_type type, struct misc_cg *cg)
+ }
+ EXPORT_SYMBOL_GPL(misc_cg_max);
  
 +/**
-+ * root_misc() - Return the root misc cgroup.
++ * misc_cg_get_priv() - Return the priv value of the misc cgroup res.
++ * @type: Type of the misc res.
++ * @cg: Misc cgroup whose priv will be read
++ *
++ * Context: Any context.
++ * Return:
++ * 	The value of the priv field for the specified misc cgroup.
++ * 	If an invalid misc_res_type is given, NULL will be returned.
 + */
-+struct misc_cg *root_misc(void)
++void *misc_cg_get_priv(enum misc_res_type type, struct misc_cg *cg)
 +{
-+	return &root_cg;
++	if (!(valid_type(type) && cg))
++		return NULL;
++
++	return cg->res[type].priv;
 +}
-+EXPORT_SYMBOL_GPL(root_misc);
++EXPORT_SYMBOL_GPL(misc_cg_get_priv);
++
++/**
++ * misc_cg_set_priv() - Set the priv value of the misc cgroup res.
++ * @type: Type of the misc res.
++ * @cg: Misc cgroup whose priv will be written
++ * @priv: Value to store in the priv field of the struct misc_cg
++ *
++ * If an invalid misc_res_type is given, the priv data will not be
++ * stored.
++ *
++ * Context: Any context.
++ */
++void misc_cg_set_priv(enum misc_res_type type, struct misc_cg *cg, void *priv)
++{
++	if (!(valid_type(type) && cg))
++		return;
++
++	cg->res[type].priv = priv;
++}
++EXPORT_SYMBOL_GPL(misc_cg_set_priv);
 +
  /**
-  * parent_misc() - Get the parent of the passed misc cgroup.
-  * @cgroup: cgroup whose parent needs to be fetched.
+  * misc_cg_max_show() - Show the misc cgroup max limit.
+  * @sf: Interface file
 -- 
 2.37.3
 
