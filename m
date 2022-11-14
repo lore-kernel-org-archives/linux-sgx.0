@@ -2,107 +2,106 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6A8C4332F
-	for <linux-sgx@archiver.kernel.org>; Mon, 14 Nov 2022 22:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5743CC4332F
+	for <linux-sgx@archiver.kernel.org>; Mon, 14 Nov 2022 23:10:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237543AbiKNWm1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 14 Nov 2022 17:42:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39122 "EHLO
+        id S230144AbiKNXKR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 14 Nov 2022 18:10:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237475AbiKNWmW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 14 Nov 2022 17:42:22 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 529F1167F1;
-        Mon, 14 Nov 2022 14:42:21 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id 4so11504911pli.0;
-        Mon, 14 Nov 2022 14:42:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Pv0RF9FjcySyliu+qAVl2fypXUgmAr/MY6Cbxd80Sz8=;
-        b=eSgJ8ipCFU8uWn7ioQiHixpjSI530v8dcOHQJaH+Il8EKjYSq/C3UntNbW9AWG1uyL
-         5lnt+ZiHYIaprJAq+HQe5BOu2/dBE6/l58VWMvYmTsF1TUVN+So55HqBquzLN/NsvIG6
-         TGNmqinUqbHSH0VYFFNRAOmTjw8BKJJ6TF+PUcyXcNJQxus/qIlKy2zhDLXwzBC5lut+
-         jS3EpUsqjWgG/lq3fblL8cKjYPhnWZkrO9WBBZKXg6D1cF/NpIX9dRuT0Pm+JKISCGGk
-         ZN0Dio+ukJxJAGGcrNIKHKzvMQO8ReBPY40POFPqNst/adBwLjl6Qh6UAMoI5y18zxb6
-         ZuLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pv0RF9FjcySyliu+qAVl2fypXUgmAr/MY6Cbxd80Sz8=;
-        b=MN1j7FNFAqP7Wh8RZJe8EvrHx2K8eMEjUxYjJNWFKrWiHMvb1+rEj2GhbofxSVSMWL
-         jNMd0mfH/IKHIi8FW1YOkeEG4+G5psYIGRaQwUINqrOFdxE/4OU3Mr7vMCFuqM4wLG4R
-         Jld97k11+7/E5nlXRz9NiU1MPUyIEXL1MtvZP9OAJXWlOzh5kW2zcZFJ6QklfHdUo/RG
-         465wNoiTPv4iiysg3uxRc74qkI/KvKTs/o5WqEHYUceK16MGQ4N71/EPC7aa03A7J49/
-         4D7LKurOQGuN0Yb1zwaET9K2HGi47jq5x9Rtj4dOn3p9cHmUWrr/hLXyhdSdK2hfZwJv
-         VsBA==
-X-Gm-Message-State: ANoB5pmF3MwxjvrRMcbFaIKFvSB1tkXYceWEsZekyxHbCvzxDaEqV2ar
-        +tV9LkdrULJ13lHc/ldeRLo=
-X-Google-Smtp-Source: AA0mqf7gPPzruf7lf7JrXP1fewft11eBWPwC/u2lJ8VuFFA5smtrYMHiueZHj19vv9DQMgYwgZ0SXw==
-X-Received: by 2002:a17:90a:e60f:b0:214:1a8a:a415 with SMTP id j15-20020a17090ae60f00b002141a8aa415mr15355219pjy.197.1668465740654;
-        Mon, 14 Nov 2022 14:42:20 -0800 (PST)
-Received: from localhost (2603-800c-1a02-1bae-a7fa-157f-969a-4cde.res6.spectrum.com. [2603:800c:1a02:1bae:a7fa:157f:969a:4cde])
-        by smtp.gmail.com with ESMTPSA id h15-20020a17090a648f00b0020ad53b5883sm7078235pjj.14.2022.11.14.14.42.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Nov 2022 14:42:20 -0800 (PST)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Mon, 14 Nov 2022 12:42:19 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     jarkko@kernel.org, dave.hansen@linux.kernel.org,
+        with ESMTP id S231627AbiKNXKP (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 14 Nov 2022 18:10:15 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09E0B22C;
+        Mon, 14 Nov 2022 15:10:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668467414; x=1700003414;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=xegt7ptKTtdJNW416eZFU2xzyfbyFyg07lD2i0oq41Q=;
+  b=bEarSPNZtvx1T83GZvW9m36KNUTrCZAKbbqhkMxfty356n6/Sl2glriy
+   s8HHrq8+b31UNMmxw4/wMm8M7Q1mW5aT0BotXqqV8dv0Xz/+PBkVeKACy
+   NnpgxT3rwFcOr/T1NYhWl6ePQZjtacz3YpzZltz/J+918Bs1jOQRGA8Xr
+   42ZElt3RY0EUThXsa+Dv/dc9CSB5NLp0QdV8wmfL9RrT9cB5pXaw3K1EB
+   s8H6X4Ue94zJJXjii4nuZwqv80PDCURgL2DYGKGQF4mdQU8lcYKTLLq/f
+   yOKwTR4xf8tf+IYPhpYLZ+IneqxdAwx5Ved1ZI8wl56w2vGGwarnQZ8nR
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="312109889"
+X-IronPort-AV: E=Sophos;i="5.96,164,1665471600"; 
+   d="scan'208";a="312109889"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2022 15:10:14 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="702198648"
+X-IronPort-AV: E=Sophos;i="5.96,164,1665471600"; 
+   d="scan'208";a="702198648"
+Received: from tmacfarl-mobl1.amr.corp.intel.com (HELO [10.209.82.47]) ([10.209.82.47])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2022 15:10:13 -0800
+Message-ID: <6f7afaa6811cbda30d12c38d73d4b261ab733a9f.camel@linux.intel.com>
+Subject: Re: [PATCH 17/26] cgroup/misc: Add notifier block list support for
+ css events
+From:   Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     jarkko@kernel.org, dave.hansen@linux.intel.com,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
         cgroups@vger.kernel.org, Zefan Li <lizefan.x@bytedance.com>,
         Johannes Weiner <hannes@cmpxchg.org>, zhiquan1.li@intel.com
-Subject: Re: [PATCH 17/26] cgroup/misc: Add notifier block list support for
- css events
-Message-ID: <Y3LES3rUIZ/PtwzV@slm.duckdns.org>
+Date:   Mon, 14 Nov 2022 15:10:05 -0800
+In-Reply-To: <Y3LES3rUIZ/PtwzV@slm.duckdns.org>
 References: <20221111183532.3676646-1-kristen@linux.intel.com>
- <20221111183532.3676646-18-kristen@linux.intel.com>
+         <20221111183532.3676646-18-kristen@linux.intel.com>
+         <Y3LES3rUIZ/PtwzV@slm.duckdns.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221111183532.3676646-18-kristen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hello,
+On Mon, 2022-11-14 at 12:42 -1000, Tejun Heo wrote:
+> Hello,
+>=20
+> On Fri, Nov 11, 2022 at 10:35:22AM -0800, Kristen Carlson Accardi
+> wrote:
+> > +/**
+> > + * register_misc_cg_notifier() - Register for css callback events
+> > + * @nb: notifier_block to register
+> > + *
+> > + * Context: Any context.
+> > + */
+> > +int register_misc_cg_notifier(struct notifier_block *nb)
+> > +{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return
+> > blocking_notifier_chain_register(&misc_cg_notify_list, nb);
+> > +}
+> > +EXPORT_SYMBOL_GPL(register_misc_cg_notifier);
+> > +
+> > +/**
+> > + * unregister_misc_cg_notifier() - unregister for css callback
+> > events
+> > + * @nb: notifier_block to unregister
+> > + *
+> > + * Context: Any context.
+> > + */
+> > +int unregister_misc_cg_notifier(struct notifier_block *nb)
+> > +{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return
+> > blocking_notifier_chain_unregister(&misc_cg_notify_list, nb);
+> > +}
+> > +EXPORT_SYMBOL_GPL(unregister_misc_cg_notifier);
+>=20
+> So, I'm not necessarily against this but wonder whether it'd be more
+> straightforward to add sth like struct misc_res_ops which contains
+> the
+> optional callbacks and then have an array of pointers to the structs
+> which
+> are initialized / registered somehow. What do you think?
+>=20
+> Thanks.
+>=20
 
-On Fri, Nov 11, 2022 at 10:35:22AM -0800, Kristen Carlson Accardi wrote:
-> +/**
-> + * register_misc_cg_notifier() - Register for css callback events
-> + * @nb: notifier_block to register
-> + *
-> + * Context: Any context.
-> + */
-> +int register_misc_cg_notifier(struct notifier_block *nb)
-> +{
-> +	return blocking_notifier_chain_register(&misc_cg_notify_list, nb);
-> +}
-> +EXPORT_SYMBOL_GPL(register_misc_cg_notifier);
-> +
-> +/**
-> + * unregister_misc_cg_notifier() - unregister for css callback events
-> + * @nb: notifier_block to unregister
-> + *
-> + * Context: Any context.
-> + */
-> +int unregister_misc_cg_notifier(struct notifier_block *nb)
-> +{
-> +	return blocking_notifier_chain_unregister(&misc_cg_notify_list, nb);
-> +}
-> +EXPORT_SYMBOL_GPL(unregister_misc_cg_notifier);
+Makes no difference to me TBH - I believe they will be functionally
+equivalent and from a downstream user perspective equally as easy to
+use, so whatever you think is easiest for you to maintain.
 
-So, I'm not necessarily against this but wonder whether it'd be more
-straightforward to add sth like struct misc_res_ops which contains the
-optional callbacks and then have an array of pointers to the structs which
-are initialized / registered somehow. What do you think?
-
-Thanks.
-
--- 
-tejun
