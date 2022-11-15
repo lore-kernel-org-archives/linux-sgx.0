@@ -2,161 +2,170 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CDFC433FE
-	for <linux-sgx@archiver.kernel.org>; Tue, 15 Nov 2022 23:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B43CC4332F
+	for <linux-sgx@archiver.kernel.org>; Tue, 15 Nov 2022 23:44:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229651AbiKOXmt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 15 Nov 2022 18:42:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42906 "EHLO
+        id S231156AbiKOXn7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 15 Nov 2022 18:43:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbiKOXms (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Nov 2022 18:42:48 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77ED3B8D;
-        Tue, 15 Nov 2022 15:42:47 -0800 (PST)
+        with ESMTP id S229509AbiKOXn6 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Nov 2022 18:43:58 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F6531379;
+        Tue, 15 Nov 2022 15:43:56 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 12728617E3;
-        Tue, 15 Nov 2022 23:42:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0D7DC433B5;
-        Tue, 15 Nov 2022 23:42:45 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 595FDB81B58;
+        Tue, 15 Nov 2022 23:43:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B48B2C433D6;
+        Tue, 15 Nov 2022 23:43:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668555766;
-        bh=ql4VR+JXhu364eSkc9NN3BGyg3p4NvWJIrWjWqfPrPE=;
+        s=k20201202; t=1668555834;
+        bh=nHyx5VBKR1ORkS34RAGCTC2XAeY+SuDji/GewtsXumY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vBQUhZQoYyb+8Zv73llLk1RJe6HknkFnFOwFLCmQj1+Lc68X/G0CjGODOKz21peMJ
-         wISqY2zhFdF8pXrNsh+uYTiOY5YWr8SMdQINHK3cuGGqzXFVtp9derazEK+CxqzZXD
-         /MKxLmzpe2ynEQTAbUqIOO6riu+jeOxUSrnYm9fL+2IZe1Kgz8Phzk9KvS8qWgXsGp
-         e55lFIXSuisJ39e8uSf1mzmtCnUICrgYR3KzMkZ/9ACh9kjPG9mAqh1xaGsdMHBqW2
-         Y7sDqwkdpigcw4P+TS5KMuMiGXr7gtwmIMTnYgGa21b97NUSthD6+9ut/dqmnVIoQn
-         kbT28I9Z2nSzw==
-Date:   Wed, 16 Nov 2022 01:42:42 +0200
+        b=JbVDWoFVt706qP7k+L3826/Urt+3ZTULCYCAjXz+J6L3HkiENUWMxciuGg6cecvdV
+         j0OYO2fL2c7NwpRDML1itrnR7+BwcqEUZy7+mTvHnYFEaowUY8XrkgeUcw6rJ5G6BE
+         jqSgqao82WVMdFmcJKv1Sn/7LWj4XPeUvNQwrv8ZdDJax4xi9YKYeHyqHQRn9lu0Wo
+         m5TdkFj12KldXeJDaKYd09tjRmX7Ncgr0/8EFfSvEzoMTzbdFCOvdsFohl9WY+PZCL
+         thHaYHoumjqwxPrSZm4JzfVEUcnGgRWhjk7VItCEYBV/0HNAXFPTLbmrO6BW1GhmZJ
+         JXTbVX9DWCz0Q==
+Date:   Wed, 16 Nov 2022 01:43:50 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     dave.hansen@linux.kernel.org, tj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Cc:     ira.weiny@intel.com, dave.hansen@linux.intel.com,
+        linux-sgx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        zhiquan1.li@intel.com, Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH 06/26] x86/sgx: Introduce RECLAIM_IN_PROGRESS flag for
- EPC pages
-Message-ID: <Y3Qj8sIzwU925DOw@kernel.org>
-References: <20221111183532.3676646-1-kristen@linux.intel.com>
- <20221111183532.3676646-7-kristen@linux.intel.com>
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/sgx: Replace kmap/kunmap_atomic calls
+Message-ID: <Y3QkNj4AWRSsfFst@kernel.org>
+References: <20221115161627.4169428-1-kristen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221111183532.3676646-7-kristen@linux.intel.com>
+In-Reply-To: <20221115161627.4169428-1-kristen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Nov 11, 2022 at 10:35:11AM -0800, Kristen Carlson Accardi wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Tue, Nov 15, 2022 at 08:16:26AM -0800, Kristen Carlson Accardi wrote:
+> kmap_local_page() is the preferred way to create temporary mappings
+> when it is feasible, because the mappings are thread-local and
+> CPU-local. kmap_local_page() uses per-task maps rather than per-CPU
+> maps. This in effect removes the need to preemption in the
+> local CPU while kmap is active, and thus vastly reduces overall
+> system latency. It is also valid to take pagefaults.
 > 
-> Keep track of whether the EPC page is in the middle of being reclaimed
-> and do not delete the page off the it's LRU if it has not yet finished
-
-"off the it's LRU" ?
-
-> being reclaimed.
-
-I'm not sure how the description makes the change understandable.
-
+> The use of kmap_atomic() in the SGX code was not an explicit design
+> choice to disable page faults or preemption, and there is no compelling
+> design reason to using kmap_atomic() vs. kmap_local_page().
 > 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Link: https://lore.kernel.org/linux-sgx/Y0biN3%2FJsZMa0yUr@kernel.org/
+> 
+> For more information on the use of kmap_local_page() vs.
+> kmap_atomic(), please see Documentation/mm/highmem.rst
+> 
 > Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> Cc: Sean Christopherson <seanjc@google.com>
 > ---
->  arch/x86/kernel/cpu/sgx/main.c | 14 +++++++++-----
->  arch/x86/kernel/cpu/sgx/sgx.h  |  4 ++++
->  2 files changed, 13 insertions(+), 5 deletions(-)
+> Changes since V1:
 > 
+> - Reword commit message to make it more clear why it is preferred
+>   to use kmap_local_page() vs. kmap_atomic().
+> 
+>  arch/x86/kernel/cpu/sgx/encl.c  | 12 ++++++------
+>  arch/x86/kernel/cpu/sgx/ioctl.c |  4 ++--
+>  arch/x86/kernel/cpu/sgx/main.c  |  8 ++++----
+>  3 files changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> index 2c258255a629..68f8b18d2278 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -160,8 +160,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+>  		return ret;
+>  
+>  	pginfo.addr = encl_page->desc & PAGE_MASK;
+> -	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
+> -	pcmd_page = kmap_atomic(b.pcmd);
+> +	pginfo.contents = (unsigned long)kmap_local_page(b.contents);
+> +	pcmd_page = kmap_local_page(b.pcmd);
+>  	pginfo.metadata = (unsigned long)pcmd_page + b.pcmd_offset;
+>  
+>  	if (secs_page)
+> @@ -187,8 +187,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+>  	 */
+>  	pcmd_page_empty = !memchr_inv(pcmd_page, 0, PAGE_SIZE);
+>  
+> -	kunmap_atomic(pcmd_page);
+> -	kunmap_atomic((void *)(unsigned long)pginfo.contents);
+> +	kunmap_local(pcmd_page);
+> +	kunmap_local((void *)(unsigned long)pginfo.contents);
+>  
+>  	get_page(b.pcmd);
+>  	sgx_encl_put_backing(&b);
+> @@ -197,10 +197,10 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
+>  
+>  	if (pcmd_page_empty && !reclaimer_writing_to_pcmd(encl, pcmd_first_page)) {
+>  		sgx_encl_truncate_backing_page(encl, PFN_DOWN(page_pcmd_off));
+> -		pcmd_page = kmap_atomic(b.pcmd);
+> +		pcmd_page = kmap_local_page(b.pcmd);
+>  		if (memchr_inv(pcmd_page, 0, PAGE_SIZE))
+>  			pr_warn("PCMD page not empty after truncate.\n");
+> -		kunmap_atomic(pcmd_page);
+> +		kunmap_local(pcmd_page);
+>  	}
+>  
+>  	put_page(b.pcmd);
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> index ef874828fa6b..03c50f11ad75 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -221,11 +221,11 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
+>  	pginfo.secs = (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_page);
+>  	pginfo.addr = encl_page->desc & PAGE_MASK;
+>  	pginfo.metadata = (unsigned long)secinfo;
+> -	pginfo.contents = (unsigned long)kmap_atomic(src_page);
+> +	pginfo.contents = (unsigned long)kmap_local_page(src_page);
+>  
+>  	ret = __eadd(&pginfo, sgx_get_epc_virt_addr(epc_page));
+>  
+> -	kunmap_atomic((void *)pginfo.contents);
+> +	kunmap_local((void *)pginfo.contents);
+>  	put_page(src_page);
+>  
+>  	return ret ? -EIO : 0;
 > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index 3b09433ffd85..8c451071fa91 100644
+> index 0aad028f04d4..e5a37b6e9aa5 100644
 > --- a/arch/x86/kernel/cpu/sgx/main.c
 > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -305,13 +305,15 @@ static void __sgx_reclaim_pages(void)
+> @@ -165,17 +165,17 @@ static int __sgx_encl_ewb(struct sgx_epc_page *epc_page, void *va_slot,
+>  	pginfo.addr = 0;
+>  	pginfo.secs = 0;
 >  
->  		encl_page = epc_page->encl_owner;
+> -	pginfo.contents = (unsigned long)kmap_atomic(backing->contents);
+> -	pginfo.metadata = (unsigned long)kmap_atomic(backing->pcmd) +
+> +	pginfo.contents = (unsigned long)kmap_local_page(backing->contents);
+> +	pginfo.metadata = (unsigned long)kmap_local_page(backing->pcmd) +
+>  			  backing->pcmd_offset;
 >  
-> -		if (kref_get_unless_zero(&encl_page->encl->refcount) != 0)
-> +		if (kref_get_unless_zero(&encl_page->encl->refcount) != 0) {
-> +			epc_page->flags |= SGX_EPC_PAGE_RECLAIM_IN_PROGRESS;
->  			chunk[cnt++] = epc_page;
-> -		else
-> +		} else {
->  			/* The owner is freeing the page. No need to add the
->  			 * page back to the list of reclaimable pages.
->  			 */
->  			epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
-> +		}
->  	}
->  	spin_unlock(&sgx_global_lru.lock);
+>  	ret = __ewb(&pginfo, sgx_get_epc_virt_addr(epc_page), va_slot);
+>  	set_page_dirty(backing->pcmd);
+>  	set_page_dirty(backing->contents);
 >  
-> @@ -337,6 +339,7 @@ static void __sgx_reclaim_pages(void)
+> -	kunmap_atomic((void *)(unsigned long)(pginfo.metadata -
+> +	kunmap_local((void *)(unsigned long)(pginfo.metadata -
+>  					      backing->pcmd_offset));
+> -	kunmap_atomic((void *)(unsigned long)pginfo.contents);
+> +	kunmap_local((void *)(unsigned long)pginfo.contents);
 >  
->  skip:
->  		spin_lock(&sgx_global_lru.lock);
-> +		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIM_IN_PROGRESS;
->  		sgx_epc_push_reclaimable(&sgx_global_lru, epc_page);
->  		spin_unlock(&sgx_global_lru.lock);
->  
-> @@ -360,7 +363,8 @@ static void __sgx_reclaim_pages(void)
->  		sgx_reclaimer_write(epc_page, &backing[i]);
->  
->  		kref_put(&encl_page->encl->refcount, sgx_encl_release);
-> -		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
-> +		epc_page->flags &= ~(SGX_EPC_PAGE_RECLAIMER_TRACKED |
-> +				     SGX_EPC_PAGE_RECLAIM_IN_PROGRESS);
->  
->  		sgx_free_epc_page(epc_page);
->  	}
-> @@ -508,7 +512,7 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
->  void sgx_record_epc_page(struct sgx_epc_page *page, unsigned long flags)
->  {
->  	spin_lock(&sgx_global_lru.lock);
-> -	WARN_ON(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
-> +	WARN_ON(page->flags & SGX_EPC_PAGE_RECLAIM_FLAGS);
-
-Please, open code SGX_EPC_PAGE_RECLAIM_FLAGS. It only adds unnecassry
-need to cross-reference to the header file.
-
-Also, please describe the changes on how state flags are used before
-and after this patch to the commit message.
-
->  	page->flags |= flags;
->  	if (flags & SGX_EPC_PAGE_RECLAIMER_TRACKED)
->  		sgx_epc_push_reclaimable(&sgx_global_lru, page);
-> @@ -532,7 +536,7 @@ int sgx_drop_epc_page(struct sgx_epc_page *page)
->  	spin_lock(&sgx_global_lru.lock);
->  	if (page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED) {
->  		/* The page is being reclaimed. */
-> -		if (list_empty(&page->list)) {
-> +		if (page->flags & SGX_EPC_PAGE_RECLAIM_IN_PROGRESS) {
->  			spin_unlock(&sgx_global_lru.lock);
->  			return -EBUSY;
->  		}
-> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-> index 969606615211..04ca644928a8 100644
-> --- a/arch/x86/kernel/cpu/sgx/sgx.h
-> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-> @@ -30,6 +30,10 @@
->  #define SGX_EPC_PAGE_IS_FREE		BIT(1)
->  /* Pages allocated for KVM guest */
->  #define SGX_EPC_PAGE_KVM_GUEST		BIT(2)
-> +/* page flag to indicate reclaim is in progress */
-> +#define SGX_EPC_PAGE_RECLAIM_IN_PROGRESS BIT(3)
-> +#define SGX_EPC_PAGE_RECLAIM_FLAGS	(SGX_EPC_PAGE_RECLAIMER_TRACKED | \
-> +					 SGX_EPC_PAGE_RECLAIM_IN_PROGRESS)
->  
->  struct sgx_epc_page {
->  	unsigned int section;
+>  	return ret;
+>  }
 > -- 
-> 2.37.3
+> 2.38.1
 > 
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
