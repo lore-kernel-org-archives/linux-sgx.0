@@ -2,170 +2,93 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB08C43219
-	for <linux-sgx@archiver.kernel.org>; Tue, 15 Nov 2022 16:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C91C433FE
+	for <linux-sgx@archiver.kernel.org>; Tue, 15 Nov 2022 21:54:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238455AbiKOQQm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 15 Nov 2022 11:16:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37040 "EHLO
+        id S231928AbiKOVyU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 15 Nov 2022 16:54:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238503AbiKOQQi (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Nov 2022 11:16:38 -0500
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABFCB2AE16;
-        Tue, 15 Nov 2022 08:16:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1668528997; x=1700064997;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Y3hO9w9U7Sm/Kr+NV1OeBCHXa0PIh0mzuLu98vZzr4E=;
-  b=Mvg/ejvu9AvLvRoFAnmphvlr+YP97PU4TNCyv1+/Ise2hVATcKdw4evN
-   njNPs8wOM+tPxTY8aDFZo58REQLRWR+DkZR+7mA64zwT+hwxsi+QRmgyM
-   bB0rx/hm8tHembFwSr6nV8QezIu3s99DRT7H5PRq5YWcbL1krpj3zGh5X
-   s9frZgsNigdywqJJdjq2aF21JX8vDMFqe7p+SwvIflvTH8/ORbovbHV3S
-   F3f9036HJ18TcsaB6zPm4YMCeNNDsNgd0LotaOIXMAfcJt4x9u93UJvBv
-   3HkEBhhPfkHjIhDFKZsHqETQOb6/GR+/8UPYIOu3Xvo1mfwn6wDRuaMdn
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10532"; a="292687561"
-X-IronPort-AV: E=Sophos;i="5.96,166,1665471600"; 
-   d="scan'208";a="292687561"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 08:16:37 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10532"; a="672044261"
-X-IronPort-AV: E=Sophos;i="5.96,166,1665471600"; 
-   d="scan'208";a="672044261"
-Received: from kuilincl-mobl2.amr.corp.intel.com (HELO kcaccard-desk.amr.corp.intel.com) ([10.212.165.212])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 08:16:35 -0800
-From:   Kristen Carlson Accardi <kristen@linux.intel.com>
-To:     jarkko@kernel.org, ira.weiny@intel.com,
-        dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] x86/sgx: Replace kmap/kunmap_atomic calls
-Date:   Tue, 15 Nov 2022 08:16:26 -0800
-Message-Id: <20221115161627.4169428-1-kristen@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+        with ESMTP id S231881AbiKOVyI (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Nov 2022 16:54:08 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08AC225C71
+        for <linux-sgx@vger.kernel.org>; Tue, 15 Nov 2022 13:54:08 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 97024618F5
+        for <linux-sgx@vger.kernel.org>; Tue, 15 Nov 2022 21:54:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C847C433C1;
+        Tue, 15 Nov 2022 21:54:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668549247;
+        bh=aMnkWTHQFjqnzFCh47+E4XXguvKhJIP5/Okl+tVKSbc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=o9cgoq4zcBpV5c+38zUh/CqtIK3b9LeGsPDtSCett9SqELqQsSSYZqmWolZto4oKt
+         gKdMINFsxpuZiEKKfl6fcaar+qXCo1+o+ZwuZd9RcCbnR3Ow6R3EJsJdnixneTjVRQ
+         x/F4owdVXBFjcS40XmutDrRMG+UJCfgZ21jHYXR5fLnQrc7J2em2RZsVgM1H2es8dm
+         nvSarDGY+z6eADf+J9NDas7VlCA+XS+oxwXU6SFTOOi/JG8BnrmpNRMq0hnOGaGh/1
+         Sbnx0e6mYuVqnT5xb/njO9tobOg0Wm2x4Jz0MrdzA8r2Kd+FVWNSxJc5mYEv039Huj
+         f0qAu27HkwF+w==
+Date:   Tue, 15 Nov 2022 23:54:03 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com,
+        reinette.chatre@intel.com, vijay.dhanraj@intel.com
+Subject: Re: [RFC PATCH v3 1/4] x86/sgx: Export sgx_encl_eaug_page
+Message-ID: <Y3QKXQjydl7WwAzZ@kernel.org>
+References: <20221107220212.257422-1-haitao.huang@linux.intel.com>
+ <20221107220212.257422-2-haitao.huang@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221107220212.257422-2-haitao.huang@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-kmap_local_page() is the preferred way to create temporary mappings
-when it is feasible, because the mappings are thread-local and
-CPU-local. kmap_local_page() uses per-task maps rather than per-CPU
-maps. This in effect removes the need to preemption in the
-local CPU while kmap is active, and thus vastly reduces overall
-system latency. It is also valid to take pagefaults.
+On Mon, Nov 07, 2022 at 02:02:09PM -0800, Haitao Huang wrote:
+> This function will be called by both the page fault handler
+> and the fops->fadvise callback.
+> 
+> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/encl.c | 4 ++--
+>  arch/x86/kernel/cpu/sgx/encl.h | 2 ++
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> index 8bdeae2fc309..1abc5e7f2660 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -308,8 +308,8 @@ struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
+>   * Returns: Appropriate vm_fault_t: VM_FAULT_NOPAGE when PTE was installed
+>   * successfully, VM_FAULT_SIGBUS or VM_FAULT_OOM as error otherwise.
+>   */
+> -static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+> -				     struct sgx_encl *encl, unsigned long addr)
+> +vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+> +			      struct sgx_encl *encl, unsigned long addr)
+>  {
+>  	vm_fault_t vmret = VM_FAULT_SIGBUS;
+>  	struct sgx_pageinfo pginfo = {0};
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+> index a65a952116fd..557d4abb13fc 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.h
+> +++ b/arch/x86/kernel/cpu/sgx/encl.h
+> @@ -127,5 +127,7 @@ struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
+>  					 unsigned long addr);
+>  struct sgx_va_page *sgx_encl_grow(struct sgx_encl *encl, bool reclaim);
+>  void sgx_encl_shrink(struct sgx_encl *encl, struct sgx_va_page *va_page);
+> +vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+> +			      struct sgx_encl *encl, unsigned long addr);
+>  
+>  #endif /* _X86_ENCL_H */
+> -- 
+> 2.25.1
+> 
 
-The use of kmap_atomic() in the SGX code was not an explicit design
-choice to disable page faults or preemption, and there is no compelling
-design reason to using kmap_atomic() vs. kmap_local_page().
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Link: https://lore.kernel.org/linux-sgx/Y0biN3%2FJsZMa0yUr@kernel.org/
-
-For more information on the use of kmap_local_page() vs.
-kmap_atomic(), please see Documentation/mm/highmem.rst
-
-Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
----
-Changes since V1:
-
-- Reword commit message to make it more clear why it is preferred
-  to use kmap_local_page() vs. kmap_atomic().
-
- arch/x86/kernel/cpu/sgx/encl.c  | 12 ++++++------
- arch/x86/kernel/cpu/sgx/ioctl.c |  4 ++--
- arch/x86/kernel/cpu/sgx/main.c  |  8 ++++----
- 3 files changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 2c258255a629..68f8b18d2278 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -160,8 +160,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 		return ret;
- 
- 	pginfo.addr = encl_page->desc & PAGE_MASK;
--	pginfo.contents = (unsigned long)kmap_atomic(b.contents);
--	pcmd_page = kmap_atomic(b.pcmd);
-+	pginfo.contents = (unsigned long)kmap_local_page(b.contents);
-+	pcmd_page = kmap_local_page(b.pcmd);
- 	pginfo.metadata = (unsigned long)pcmd_page + b.pcmd_offset;
- 
- 	if (secs_page)
-@@ -187,8 +187,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 	 */
- 	pcmd_page_empty = !memchr_inv(pcmd_page, 0, PAGE_SIZE);
- 
--	kunmap_atomic(pcmd_page);
--	kunmap_atomic((void *)(unsigned long)pginfo.contents);
-+	kunmap_local(pcmd_page);
-+	kunmap_local((void *)(unsigned long)pginfo.contents);
- 
- 	get_page(b.pcmd);
- 	sgx_encl_put_backing(&b);
-@@ -197,10 +197,10 @@ static int __sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 
- 	if (pcmd_page_empty && !reclaimer_writing_to_pcmd(encl, pcmd_first_page)) {
- 		sgx_encl_truncate_backing_page(encl, PFN_DOWN(page_pcmd_off));
--		pcmd_page = kmap_atomic(b.pcmd);
-+		pcmd_page = kmap_local_page(b.pcmd);
- 		if (memchr_inv(pcmd_page, 0, PAGE_SIZE))
- 			pr_warn("PCMD page not empty after truncate.\n");
--		kunmap_atomic(pcmd_page);
-+		kunmap_local(pcmd_page);
- 	}
- 
- 	put_page(b.pcmd);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index ef874828fa6b..03c50f11ad75 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -221,11 +221,11 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
- 	pginfo.secs = (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_page);
- 	pginfo.addr = encl_page->desc & PAGE_MASK;
- 	pginfo.metadata = (unsigned long)secinfo;
--	pginfo.contents = (unsigned long)kmap_atomic(src_page);
-+	pginfo.contents = (unsigned long)kmap_local_page(src_page);
- 
- 	ret = __eadd(&pginfo, sgx_get_epc_virt_addr(epc_page));
- 
--	kunmap_atomic((void *)pginfo.contents);
-+	kunmap_local((void *)pginfo.contents);
- 	put_page(src_page);
- 
- 	return ret ? -EIO : 0;
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 0aad028f04d4..e5a37b6e9aa5 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -165,17 +165,17 @@ static int __sgx_encl_ewb(struct sgx_epc_page *epc_page, void *va_slot,
- 	pginfo.addr = 0;
- 	pginfo.secs = 0;
- 
--	pginfo.contents = (unsigned long)kmap_atomic(backing->contents);
--	pginfo.metadata = (unsigned long)kmap_atomic(backing->pcmd) +
-+	pginfo.contents = (unsigned long)kmap_local_page(backing->contents);
-+	pginfo.metadata = (unsigned long)kmap_local_page(backing->pcmd) +
- 			  backing->pcmd_offset;
- 
- 	ret = __ewb(&pginfo, sgx_get_epc_virt_addr(epc_page), va_slot);
- 	set_page_dirty(backing->pcmd);
- 	set_page_dirty(backing->contents);
- 
--	kunmap_atomic((void *)(unsigned long)(pginfo.metadata -
-+	kunmap_local((void *)(unsigned long)(pginfo.metadata -
- 					      backing->pcmd_offset));
--	kunmap_atomic((void *)(unsigned long)pginfo.contents);
-+	kunmap_local((void *)(unsigned long)pginfo.contents);
- 
- 	return ret;
- }
--- 
-2.38.1
-
+BR, Jarkko
