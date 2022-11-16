@@ -2,245 +2,237 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA4BC4332F
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Nov 2022 01:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAEE7C4321E
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Nov 2022 10:17:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231504AbiKPBAa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 15 Nov 2022 20:00:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41642 "EHLO
+        id S232740AbiKPKRQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 16 Nov 2022 05:17:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230142AbiKPBA2 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 15 Nov 2022 20:00:28 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 009CE22B0E;
-        Tue, 15 Nov 2022 17:00:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1668560427; x=1700096427;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=QXTMzqqZDlGjkoTzfjYcmLuBmOWujGrc3tQIGgZRAH0=;
-  b=Lb3Xp391zDwO8OZW7Wf6CZeqXEXhghkaAUu70amTgAQDChrxksIAJczf
-   wJr3qJjYXxX89XA1u5S9wYCkRZ+WUnAmOh8QgInn0PjYA1Ca6Ppyq6lUk
-   izjP7ZtCsii4vdB9Ge5QEjcePH/cJtmMGwRNxKY4CjVfmrlnBjTvoMyPw
-   7ax0rzvX04VJPb0GPMzdt3WWmzPxd3p2OVU5duASm+JdcWb6TYs1jrdvb
-   D0edoCMpsUPrGDmhHpkoEYtQfT1rBSNEt9rlGIEHSsz0ldWtJ91I3N9Sz
-   aODUngbtCdKK6tBAZGYYhjKi9J5bqxF4GVUh8TA2QMKQ9ECTYO/CuByn3
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10532"; a="312418125"
-X-IronPort-AV: E=Sophos;i="5.96,167,1665471600"; 
-   d="scan'208";a="312418125"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 17:00:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10532"; a="589996449"
-X-IronPort-AV: E=Sophos;i="5.96,167,1665471600"; 
-   d="scan'208";a="589996449"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orsmga003.jf.intel.com with ESMTP; 15 Nov 2022 17:00:17 -0800
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 15 Nov 2022 17:00:16 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31 via Frontend Transport; Tue, 15 Nov 2022 17:00:16 -0800
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.176)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.31; Tue, 15 Nov 2022 17:00:16 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=N6odERXfGoklyYYA29RUZGBD0JzmOVkikVAsksn0zZ63GJ6w53NbuPRACGkMKQxdCI9RpsHWYf0kSjqPSraizQlz1p8GZKnDARmYPQAKr3+XE0bbVniSqFE9+6oX9FwyFMg8QAcyAFzMEDPzaZQGGJgWD20Gskjf11O46vQAqeI+mK4js/ya0BuHfP6hDBTRTolPjA4D+M37f4OA2JW4pDJVuK5JQPOZzoGF7m62+T3ka9JMzUWLKuWT6jBusJn7c0/Qi95KXR6q/Uf13v3FamRh1UAcTjUByGLrIPICIZnrArjicYn0ZU6076gCdgZ6Je0g168MMpBWyGdI0o5fEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kFUzM6OQ33d3eKcxFpI8vZG/yrmFQWgD81haoQCshTA=;
- b=nNd5W2nLh3/zP9SL3ympVPzkGh0O60g2i1TvpVDpbrtvWROIzox7jnQ5Wvz7A/bZvE29M0ByXVisH/X5/gGV+FNlJXYifda3gNfizWtLo+xj/DQeJV2hZohb20wRQ6LmLelo/ufnhrep/YEE9P/Rpi2WmWojG9kkGrK696UICcPH8YkasSlCDnYP3XkcjLRRnnQM3gjeeosVtOFpFycK2im1EKp/dmCdk8WzI5zFlstDZAIlkj/S21T7uZxeWtY754iHHq9Hj/drih9NnpSuxKgTSrmcRLUILbNsY/Xw6ZFDZ2kk2vzOmoXK7QJ0twYhzDxDH2Z9QefqSX0FOyPj8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY4PR11MB1862.namprd11.prod.outlook.com (2603:10b6:903:124::18)
- by SA2PR11MB4892.namprd11.prod.outlook.com (2603:10b6:806:f9::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.18; Wed, 16 Nov
- 2022 01:00:13 +0000
-Received: from CY4PR11MB1862.namprd11.prod.outlook.com
- ([fe80::207e:ab0b:9e29:6a4b]) by CY4PR11MB1862.namprd11.prod.outlook.com
- ([fe80::207e:ab0b:9e29:6a4b%12]) with mapi id 15.20.5813.017; Wed, 16 Nov
- 2022 01:00:12 +0000
-Message-ID: <a4eb5ab0-bf83-17a4-8bc0-a90aaf438a8e@intel.com>
-Date:   Tue, 15 Nov 2022 17:00:08 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.4.2
-Subject: Re: [PATCH 01/26] x86/sgx: Call cond_resched() at the end of
- sgx_reclaim_pages()
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>
-CC:     <dave.hansen@linux.kernel.org>, <tj@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
-        <cgroups@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Borislav Petkov" <bp@alien8.de>, <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, <zhiquan1.li@intel.com>,
-        Sean Christopherson <seanjc@google.com>
-References: <20221111183532.3676646-1-kristen@linux.intel.com>
- <20221111183532.3676646-2-kristen@linux.intel.com>
- <Y3QgZ+ZKAfJ92U5L@kernel.org>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <Y3QgZ+ZKAfJ92U5L@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0387.namprd03.prod.outlook.com
- (2603:10b6:a03:3a1::32) To CY4PR11MB1862.namprd11.prod.outlook.com
- (2603:10b6:903:124::18)
+        with ESMTP id S232864AbiKPKRM (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 16 Nov 2022 05:17:12 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2010BB489;
+        Wed, 16 Nov 2022 02:17:11 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id p8so28733384lfu.11;
+        Wed, 16 Nov 2022 02:17:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z54lkZe3bQ/PhyhfV3DmxnA1bQoJasraIDSUiodRqqU=;
+        b=Q9RdCaP9Lcy0bUJ3bUq2sAkw6BoDo0oLGY0o5F3Lopojj16jAU8y+2Fral6T4nm4se
+         vmfLsuIPUcw0pbo1e23+SJ+at/gf5rCqFZo5iDEEyKQvjsLEBXrcRMzxmQHHl5pVIcEf
+         y6Ms6DugmsIcZh2yp4g3WemkaqbnpmhOS40fisevIIaTedu3oj0Xh8chMiPHSt2d6R/z
+         wzLLQFrDLPvlW7Y7rjMTb5XxbbXDMQE8qODAGekUm6osxKYPglbAdO93ia3DkfxDoN9l
+         e9QjY22W39ic8B58JU6qFPzWtgqXyIjuNDr1GbC54YC12L4FXKG5vM2o4iMtIqxqboJY
+         SVtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z54lkZe3bQ/PhyhfV3DmxnA1bQoJasraIDSUiodRqqU=;
+        b=NbKqgwMBCkdiVNA35McOsIVdHTjKXXgwAoZfJVojNQyqbrS62xha7CLnJDhQF+1brJ
+         aiTDq+eOcYEXGDrGX1L/IVGFt/W8JjnFrBuABHt15RjkRQo/YTwB2BlSPvDtHYB8lGMm
+         ykaI5eCACXIPNTUuXhxuMY3rhBBoDcYtIEvcsHFd/auHPBH5ZYm1XcXdrTknllV46fWI
+         6IxbV4RJ6+1zvxO7JEtmuKCpPH6ZAanPb0B26PYa4Yvuc1PJslqy6m0jGk32IqVK+wPY
+         QRu0Y81Y3O82N/r8kXy1fHsBoo786BATfHZCYiYZC2kw+lV7jaRhfpd5QHuozlK7UgJ9
+         EmuA==
+X-Gm-Message-State: ANoB5pk4GIA2Zm394bLOyVHf4Fy+6NmaOwF/R8GHslNMQExYaw/eG1RY
+        QYtJtVhXg+qFo1EDyClRBa6tUrmis/EHzo7pUoA=
+X-Google-Smtp-Source: AA0mqf4h9Qg9MqhCY9VuEOPUMlBiJzqI9bIG9pR0FF0T9xfosq9DlT373cl41zhdQbP6THl+wdppnASeWMKC+6NI0Pc=
+X-Received: by 2002:a05:6512:759:b0:4b0:65c6:11fc with SMTP id
+ c25-20020a056512075900b004b065c611fcmr8122095lfs.193.1668593829196; Wed, 16
+ Nov 2022 02:17:09 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PR11MB1862:EE_|SA2PR11MB4892:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d674a80-d4e3-4825-410c-08dac76de9dc
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: VyF3txn9yDL/hjaWq9W6uKuPA6AH1WYzsW4VC64Xlg4ZdMrULTGwYAUHP9S6+1nWuad+UM+PEdcOngkuB1m52dfIECA6e8ZgcVQUyrLZo+rLOEIo5cH9lZ3WT0C7UsiaHaDJQ2wA35NM+X/bmaKdnnC07ofPcwoGKheTEEbWyHq0occtfbg6bvc91QtsvkC6iYxSRAn94X8ZuLnglR5Z864c4pcTWGW1neuv5l+Eq/SfF6HdgP0j7xiQbuagbFe3315h1ZAfu33o+UiS25kjbQ/oseTZBOITAq5qH6z6/XL46R7XzKgi+Vkyd0th1ms80tOl3ZPcPNE5Psyni9ooPEgwJM8KJ0r7K6nB10T/5y58H0NJK6DPzGLPoJTPg9Jv8WK+qGaus2chp7uVJDkDx+GHosd5ZmCyE3U9HNAWr8Dv6L2uYk6sd+Sd2MOYEFvzDNuJWNXaiiXxgwfzPjKNhD0rJnVIncvRiDzH4M5ceY9Hoqn0l7N4A9EkMlNvzWmqd4tx16sgQKGdmTMpmPrmTI7TYQLaaCYszBghQg2VEeRxVemHy/B+E7+cGMrjluOtBLegUFoqJ1rz9SaVOouPKi3kNRs9gpcHX68wolRlmTSBKTh6dI8evrDvJ/BLquwTLv5narLlIb2TwxpOJWl9jMRPGp5yXDQrZ/0n9ogfje1wJugNsNRafQFA3dVa41qICdQMHYjAWPWIL6+R6Og6nElqbCft1zHSS4GV3ePRxaDiIAPBvorYJ4801TtEyDyZ9S8V3GuUTgvFgheigq9sbNpJzFCAdEMuv1wOiA7RpO4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR11MB1862.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(39860400002)(136003)(396003)(346002)(366004)(451199015)(66899015)(478600001)(2906002)(6666004)(53546011)(31686004)(6506007)(6486002)(26005)(6512007)(186003)(36756003)(8676002)(4326008)(66556008)(110136005)(5660300002)(66946007)(316002)(54906003)(66476007)(41300700001)(44832011)(8936002)(7416002)(83380400001)(86362001)(31696002)(2616005)(82960400001)(38100700002)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OGUwYndra3lQM29RTWEzU1RFZm9LUGxDWWI0V282cE1ZTk1zMWRYL2lnT0Ew?=
- =?utf-8?B?MkVwRWhWQ0MyL1ovZnBoaWxKRi9FQTBHb3RRemdidmtXWno2TjNaMlhRbDV0?=
- =?utf-8?B?ZFFlNU9PMk1XSFFDTW9Xdzh4d2MzOHJSaitNOEVhN3J0WWtmL2tpdW8wTkRM?=
- =?utf-8?B?NmlkQytOcjdUQVNkc1U5YlVTT2E4K2h4NnZkb2xVdG0zbUFkK0ZOdHoyV2lr?=
- =?utf-8?B?NWJlMFJWUUU4K3VoYWRINWVGeStrVmhxeTQ4Mk44ZmZ6ZTVJbysyMlM4Qzd2?=
- =?utf-8?B?TXk4clpoVk5MVDVBdVNFMnNlUkRXUk1Fa0NrQmE4U1JVN3RDUEZnRm9yUzdx?=
- =?utf-8?B?aHpxUmlJcG1NSDJJVTJiZVdEQXQ4Vmc0Z2ovb2Q3SjFoVHMxZzBSK0sxZk1l?=
- =?utf-8?B?QUFDTDN6RHhTdmdIYy8zVFRMTFdiR3EwNFVxOHhDemlib2VjQnM3eDJVak9V?=
- =?utf-8?B?RlkzQWN4SlYyWjFIVjNidHJOY1AyNk02ZEh0VnFyVk5kYmloY1hrb1ZDVFFJ?=
- =?utf-8?B?anYzRFhzZ3JOUFRoQnpNOU1xWS9reHlzcGZES2t0N2oxRHNZeVcvL2xRTVY5?=
- =?utf-8?B?SmtHMUU4akM4a2ZtbHh6di9vUHpUYlprdXR3dUNKY2dIY3d5WURWcU5IL25K?=
- =?utf-8?B?b2V2NjdoYmZvV1VHVGtGckpYbVpycjFMUFRKdTF0UjZ3MjlQUzNHdDdKWjNx?=
- =?utf-8?B?YzRtS1dhNXgyYzRHN0ozVEdmenUxeVo1MW5PM0xNRjhJSlFLM1JmblptT21v?=
- =?utf-8?B?dlFhWHV0S1pMOVZ3dW5CRDFIUlY2dStDajNVQnBrYkhTSEpYeGhPZnNodUE5?=
- =?utf-8?B?b1N4UXlsa0UwalFYNEhzMEN4NHZvMHJWNGxaOExVK1dYcVVDaEFZZmNjT21Q?=
- =?utf-8?B?bnJUanlEY092Z2t1bldxc3RHb25mRjc4aHNCZU5mbkNOcEFjZTh0WVYrcmxU?=
- =?utf-8?B?NzdiR1k1VllsaWwrSm5CTlF6WVpxMDc3UDZHN0ZWYlN5dHR2UG5UZnQ1RjRJ?=
- =?utf-8?B?NENJRmpuYWJ0elpnNHhFU0JhM2dlNjVzUlRzL2pSMVFoYlBkM0dqblRxTnNy?=
- =?utf-8?B?bFdBYktiN0RqT2VSK3N5ZkYzUjJ1UHFiOUhlK29YVU1nMWFqU2lkK3Nrazdi?=
- =?utf-8?B?Sk5oOEg0VlFJWlVRQWhiOTFNYi9rNnFDZEdlR0ZoVytPS3BLSmJpZ1E3N1RO?=
- =?utf-8?B?TjVDcm01bjZuRFNYK21HbERjZlArOW16SlF2dUNlK3laRzRZLzd5Z1ZwVVdl?=
- =?utf-8?B?alE5MS94OG5IN0hYejdzVTJqSU1MQ3ltT0dLWVJpWkRXMGpEQWc3ZnBlT2tL?=
- =?utf-8?B?MXI0UjhndTFma3d5dklWTjljTW5jaGRBNE9hMlFNSVIrb0ZMUEx4YXl3Z2t6?=
- =?utf-8?B?SGo2RXRkd25MOUVCRU1YVC9yNUlZZitTVUlSQkRKS0NwTWRIbUJ4ZDJFblp0?=
- =?utf-8?B?QXdXU2k4eHJNM2d0dUhzK29ycjVCMTE1U082MUJkZ1g0d2VITWN3bTlpanR4?=
- =?utf-8?B?ckZZTFA0TDZKVCtXWW5zOVU0ekcrakwyTlJ1NUFnVDJrUXJyOGVReDdpZlZK?=
- =?utf-8?B?SXVTdExjSlRHQ3lsZGlYcUZ0akxUeHoxZGRzSTdLMGdHU29sc0tpQmx4a1Vn?=
- =?utf-8?B?RGNkSEJuTFBMb3ZJQ1Fkb3Z3NldhUnV3NXg5QXZ5VzkxWnRmbGxHVHRYSzRU?=
- =?utf-8?B?aFFUb1NoY1BCSXQzMEpNbTludlhiSUs5UU5QblU3TkxKU3UvYlNMampGSG42?=
- =?utf-8?B?QjEvY1FUcUtKWnFOVzVleFcxN05KTmpIc1dJRE9tczdqdWk3ZDZpK001S053?=
- =?utf-8?B?WVlCcm4zY1BoejJybDNveGk1SURDQ0U4ZFlNenNwbmhoL1dzeCtUWmZLWHA3?=
- =?utf-8?B?U2h0MkhrRHphWk9YK29YWkVIMGFuNjBEZ3huT3VOWUFvTmRMeXZQaWRUNGhM?=
- =?utf-8?B?U0c3L0N4REVZd2pKdTJjc3Nvdk9KVzFXSzhqL0J5Y3JuV1cvY3JZYm9Ka3A0?=
- =?utf-8?B?UHk2WkV3amloM1ZyUUxoZDFTZEVXcjVaekVKMjVtWCtRTGR0eEorVmRFK3FV?=
- =?utf-8?B?ZDNTZDhtMHp4UkFpTURVeUlUdHZIMjBzYlk3aUlrb1pqY21GSXZwY1VTUmJr?=
- =?utf-8?B?UUFFUTcxZkY1NjhDbkNwQk5RR25nUllPTUFzamY1REFwallhVi9nVkFGTGhY?=
- =?utf-8?B?S0E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d674a80-d4e3-4825-410c-08dac76de9dc
-X-MS-Exchange-CrossTenant-AuthSource: CY4PR11MB1862.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2022 01:00:12.8828
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0u09Jd0zvDryQLDEl/IDn9CjQF9ESljZYnlkssMN9L3IfEPzG11qto68uQbXaJSNVTr/UUnCd+imqbO/MXACSHvBAtDBsZXP4VuPA1A+56w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4892
-X-OriginatorOrg: intel.com
+References: <20221115161627.4169428-1-kristen@linux.intel.com>
+In-Reply-To: <20221115161627.4169428-1-kristen@linux.intel.com>
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+Date:   Wed, 16 Nov 2022 11:16:52 +0100
+Message-ID: <CAPj211ugzBFJHgDNtSgR2zB7ZcGa_EqOAQGhFSu938718u+yMQ@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/sgx: Replace kmap/kunmap_atomic calls
+To:     jarkko@kernel.org, ira.weiny@intel.com,
+        dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Jarkko,
+On marted=C3=AC 15 novembre 2022 17:16:26 CET Kristen Carlson Accardi wrote=
+:
+> kmap_local_page() is the preferred way to create temporary mappings
+> when it is feasible, because the mappings are thread-local and
+> CPU-local.
 
-On 11/15/2022 3:27 PM, Jarkko Sakkinen wrote:
-> On Fri, Nov 11, 2022 at 10:35:06AM -0800, Kristen Carlson Accardi wrote:
->> From: Sean Christopherson <sean.j.christopherson@intel.com>
->>
->> In order to avoid repetition of cond_resched() in ksgxd() and
->> sgx_alloc_epc_page(), move the invocation of post-reclaim cond_resched()
->> inside sgx_reclaim_pages(). Except in the case of sgx_reclaim_direct(),
->> sgx_reclaim_pages() is always called in a loop and is always followed
->> by a call to cond_resched().  This will hold true for the EPC cgroup
->> as well, which adds even more calls to sgx_reclaim_pages() and thus
->> cond_resched(). Calls to sgx_reclaim_direct() may be performance
->> sensitive. Allow sgx_reclaim_direct() to avoid the cond_resched()
->> call by moving the original sgx_reclaim_pages() call to
->> __sgx_reclaim_pages() and then have sgx_reclaim_pages() become a
->> wrapper around that call with a cond_resched().
->>
->> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
->> Cc: Sean Christopherson <seanjc@google.com>
->> ---
->>  arch/x86/kernel/cpu/sgx/main.c | 17 +++++++++++------
->>  1 file changed, 11 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
->> index 160c8dbee0ab..ffce6fc70a1f 100644
->> --- a/arch/x86/kernel/cpu/sgx/main.c
->> +++ b/arch/x86/kernel/cpu/sgx/main.c
->> @@ -287,7 +287,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
->>   * problematic as it would increase the lock contention too much, which would
->>   * halt forward progress.
->>   */
->> -static void sgx_reclaim_pages(void)
->> +static void __sgx_reclaim_pages(void)
->>  {
->>  	struct sgx_epc_page *chunk[SGX_NR_TO_SCAN];
->>  	struct sgx_backing backing[SGX_NR_TO_SCAN];
->> @@ -369,6 +369,12 @@ static void sgx_reclaim_pages(void)
->>  	}
->>  }
->>  
->> +static void sgx_reclaim_pages(void)
->> +{
->> +	__sgx_reclaim_pages();
->> +	cond_resched();
->> +}
->> +
->>  static bool sgx_should_reclaim(unsigned long watermark)
->>  {
->>  	return atomic_long_read(&sgx_nr_free_pages) < watermark &&
->> @@ -378,12 +384,14 @@ static bool sgx_should_reclaim(unsigned long watermark)
->>  /*
->>   * sgx_reclaim_direct() should be called (without enclave's mutex held)
->>   * in locations where SGX memory resources might be low and might be
->> - * needed in order to make forward progress.
->> + * needed in order to make forward progress. This call to
->> + * __sgx_reclaim_pages() avoids the cond_resched() in sgx_reclaim_pages()
->> + * to improve performance.
->>   */
->>  void sgx_reclaim_direct(void)
->>  {
->>  	if (sgx_should_reclaim(SGX_NR_LOW_PAGES))
->> -		sgx_reclaim_pages();
->> +		__sgx_reclaim_pages();
-> 
-> Is it a big deal to have "extra" cond_resched?
-> 
+The atomic mappings are thread and CPU local too.
 
-sgx_reclaim_direct() is used to ensure that there is enough
-SGX memory available to make forward progress within a loop that
-may span a large range of pages. sgx_reclaim_direct()
-ensures that there is enough memory right before it depends on
-that available memory. I think that giving other tasks an opportunity
-to run in the middle is risky since these other tasks may end
-up consuming the SGX memory that was just freed up and thus increase
-likelihood of the operation to fail with user getting an EAGAIN error.
-Additionally, in a constrained environment where sgx_reclaim_direct()
-is needed to reclaim pages an additional cond_resched() could cause
-user visible slow down when operating on a large memory range. 
+Instead, please note that the most important difference is that
+kmap_local_page() won't ever disable (1) pagefaults and (2) (depending on
+PREEMPT_RT) preemption.
 
-Reinette
+To make it clearer: I think that your conversions are correct and welcome. =
+I'm
+only asking for clarifications about how you show the reasons why they are
+good.
+
+> kmap_local_page() uses per-task maps rather than per-CPU
+> maps. This in effect removes the need to preemption in the
+> local CPU while kmap is active, and thus vastly reduces overall
+> system latency.
+
+I'm also experiencing difficulties with the paragraph above. What do you me=
+an
+by "This in effect removes the need to preemption in the local CPU while km=
+ap
+is active"? I understand that for me, being a non native English speaker, s=
+ome
+sentences may appear weird even in cases where they are perfectly fine.
+
+I can't see why you are expressing the way you are, since kmap_local_page()
+does not ever disable preemption.
+
+Let's focus to the call sites you are converting: you know that the code
+between kmap_atomic() and kunmap_atomic() can run in non atomic context, th=
+us
+there are no real reason to rely on any kmap_atomic() side effects (please
+look above again, if necessary).
+
+Therefore, the real good reason for converting are (1) avoid unnecessary
+disabling of page faults and (2) avoid the probable disabling of preemption=
+.
+
+> local CPU while kmap is active
+
+> It is also valid to take pagefaults.
+>
+> The use of kmap_atomic() in the SGX code was not an explicit design
+> choice to disable page faults or preemption, and there is no compelling
+> design reason to using kmap_atomic() vs. kmap_local_page().
+
+This is at the core of the reasons why you are converting, that is to avoid
+the potential overhead (in 32 bit architectures) of switching in atomic
+context where it is not required.
+
+> Link: https://lore.kernel.org/linux-sgx/Y0biN3%2FJsZMa0yUr@kernel.org/
+>
+> For more information on the use of kmap_local_page() vs.
+> kmap_atomic(), please see Documentation/mm/highmem.rst
+>
+> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> ---
+> Changes since V1:
+>
+> - Reword commit message to make it more clear why it is preferred
+>   to use kmap_local_page() vs. kmap_atomic().
+>
+>  arch/x86/kernel/cpu/sgx/encl.c  | 12 ++++++------
+>  arch/x86/kernel/cpu/sgx/ioctl.c |  4 ++--
+>  arch/x86/kernel/cpu/sgx/main.c  |  8 ++++----
+>  3 files changed, 12 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/enc=
+l.c
+> index 2c258255a629..68f8b18d2278 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -160,8 +160,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page
+> *encl_page, return ret;
+>
+>       pginfo.addr =3D encl_page->desc & PAGE_MASK;
+> -     pginfo.contents =3D (unsigned long)kmap_atomic(b.contents);
+> -     pcmd_page =3D kmap_atomic(b.pcmd);
+> +     pginfo.contents =3D (unsigned long)kmap_local_page(b.contents);
+> +     pcmd_page =3D kmap_local_page(b.pcmd);
+>       pginfo.metadata =3D (unsigned long)pcmd_page + b.pcmd_offset;
+>
+>       if (secs_page)
+> @@ -187,8 +187,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page
+> *encl_page, */
+>       pcmd_page_empty =3D !memchr_inv(pcmd_page, 0, PAGE_SIZE);
+>
+> -     kunmap_atomic(pcmd_page);
+> -     kunmap_atomic((void *)(unsigned long)pginfo.contents);
+> +     kunmap_local(pcmd_page);
+> +     kunmap_local((void *)(unsigned long)pginfo.contents);
+>
+>       get_page(b.pcmd);
+>       sgx_encl_put_backing(&b);
+> @@ -197,10 +197,10 @@ static int __sgx_encl_eldu(struct sgx_encl_page
+> *encl_page,
+>
+>       if (pcmd_page_empty && !reclaimer_writing_to_pcmd(encl,
+pcmd_first_page)) {
+>               sgx_encl_truncate_backing_page(encl,
+PFN_DOWN(page_pcmd_off));
+> -             pcmd_page =3D kmap_atomic(b.pcmd);
+> +             pcmd_page =3D kmap_local_page(b.pcmd);
+>               if (memchr_inv(pcmd_page, 0, PAGE_SIZE))
+>                       pr_warn("PCMD page not empty after truncate.
+\n");
+> -             kunmap_atomic(pcmd_page);
+> +             kunmap_local(pcmd_page);
+>       }
+>
+>       put_page(b.pcmd);
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/
+ioctl.c
+> index ef874828fa6b..03c50f11ad75 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -221,11 +221,11 @@ static int __sgx_encl_add_page(struct sgx_encl *enc=
+l,
+>       pginfo.secs =3D (unsigned long)sgx_get_epc_virt_addr(encl-
+>secs.epc_page);
+>       pginfo.addr =3D encl_page->desc & PAGE_MASK;
+>       pginfo.metadata =3D (unsigned long)secinfo;
+> -     pginfo.contents =3D (unsigned long)kmap_atomic(src_page);
+> +     pginfo.contents =3D (unsigned long)kmap_local_page(src_page);
+>
+>       ret =3D __eadd(&pginfo, sgx_get_epc_virt_addr(epc_page));
+>
+> -     kunmap_atomic((void *)pginfo.contents);
+> +     kunmap_local((void *)pginfo.contents);
+>       put_page(src_page);
+>
+>       return ret ? -EIO : 0;
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/mai=
+n.c
+> index 0aad028f04d4..e5a37b6e9aa5 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -165,17 +165,17 @@ static int __sgx_encl_ewb(struct sgx_epc_page
+*epc_page,
+> void *va_slot, pginfo.addr =3D 0;
+>       pginfo.secs =3D 0;
+>
+> -     pginfo.contents =3D (unsigned long)kmap_atomic(backing->contents);
+> -     pginfo.metadata =3D (unsigned long)kmap_atomic(backing->pcmd) +
+> +     pginfo.contents =3D (unsigned long)kmap_local_page(backing->content=
+s);
+> +     pginfo.metadata =3D (unsigned long)kmap_local_page(backing->pcmd) +
+>                         backing->pcmd_offset;
+>
+>       ret =3D __ewb(&pginfo, sgx_get_epc_virt_addr(epc_page), va_slot);
+>       set_page_dirty(backing->pcmd);
+>       set_page_dirty(backing->contents);
+>
+> -     kunmap_atomic((void *)(unsigned long)(pginfo.metadata -
+> +     kunmap_local((void *)(unsigned long)(pginfo.metadata -
+>                                             backing-
+>pcmd_offset));
+
+> -     kunmap_atomic((void *)(unsigned long)pginfo.contents);
+> +     kunmap_local((void *)(unsigned long)pginfo.contents);
+>
+>       return ret;
+>  }
+> --
+> 2.38.1
