@@ -2,235 +2,227 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D721C4332F
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Nov 2022 20:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AFEC433FE
+	for <linux-sgx@archiver.kernel.org>; Wed, 16 Nov 2022 21:57:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234314AbiKPUBP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 16 Nov 2022 15:01:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60718 "EHLO
+        id S233395AbiKPV5o (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 16 Nov 2022 16:57:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231221AbiKPUBO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 16 Nov 2022 15:01:14 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62F265E3EF;
-        Wed, 16 Nov 2022 12:01:13 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id p8so31286824lfu.11;
-        Wed, 16 Nov 2022 12:01:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MfGLZdKXBdAk8RMv1wRt7dXoc+6iSCMoIXic69seXLY=;
-        b=ojh5S7Te/VBk5dxmXCFxXPj7xDKC6G/i6aVDc9qVLAcB829KAcjehaTq43EGbhexsA
-         KXWc3+WTUOAWlb6H9O7+Ujt/mL/DazPQWvV8wmcCdWKL7nwKHKcL0S4vRMJVaJjVBApr
-         6UScZwZIBUtqqC9gwV9kW3Eg1NNIElH1caTFs3IyGbiaIFyKFjHP/+skXJjfKTn9Z/xd
-         EOuxi3ew/Sx1TiQkm9xZ4CLAN7l92DfR1Yn/i2tTsfUT3iANr40skUAlW9g+lejTEg08
-         WeMt6LCDGZhm0wP7FQ5QTDn+shhnTI5r7DR4Pbb3YeqnATQeph36aGDxgIQy2tuGSr2k
-         P+8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MfGLZdKXBdAk8RMv1wRt7dXoc+6iSCMoIXic69seXLY=;
-        b=oE2RdwBybbuOB1UL4Ll8K1j/ov1mzvD6ETvovRW1MUTti4Xa8ctbfVb+VZxm6MlI5b
-         dNdme0M9ZxauKGS1qCGE/buRmti4+QvJb0uacHbvF/JlTrIKu2NitzB8/BY6yCe0NWeJ
-         MgubLYzY1CaYe16ZxEotlsl+mxl5HHjS5fmMRhhcdRR804xEAl/nCzFrt0o2I+XwihKQ
-         OI81HP9uHY9n2ugpCUFl4z1pqGhhehz3bLrqx4bpsG8LlA9baI1oaQtiaVi4JG0BGKCe
-         1iCaWMqDnNiOLJR+SVnI5W/gzUOB/a+NTxR2ZW7Il5xB7bzkhSQdAA1iybnQzqglHp4I
-         HhWg==
-X-Gm-Message-State: ANoB5pn/aGIIGEkb/fqf8Ki1Glmyr5QGg+aDjmSx5+TjyrS6tFEpMnnq
-        mpeZQLvNNyUjwKURhPdV3zRzNgsONfTxgWujamE=
-X-Google-Smtp-Source: AA0mqf78EvhFvcuMKT35lCRgvg2mKlqiET77zOhkC03NxE9HCmEQb/TA55qVIxjjopPNreksJErXBTSSVslSeqHJXj4=
-X-Received: by 2002:a05:6512:759:b0:4b0:65c6:11fc with SMTP id
- c25-20020a056512075900b004b065c611fcmr8937919lfs.193.1668628871560; Wed, 16
- Nov 2022 12:01:11 -0800 (PST)
-MIME-Version: 1.0
-References: <20221115161627.4169428-1-kristen@linux.intel.com>
- <CAPj211ugzBFJHgDNtSgR2zB7ZcGa_EqOAQGhFSu938718u+yMQ@mail.gmail.com>
- <87cz9nqff2.ffs@tglx> <CAPj211shRbJQcnhEpjs461nEMQw2x53f+2G46CXWJg6_Rc-x-g@mail.gmail.com>
- <Y3UcLudVzuS55Bp5@iweiny-mobl>
-In-Reply-To: <Y3UcLudVzuS55Bp5@iweiny-mobl>
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Date:   Wed, 16 Nov 2022 21:00:55 +0100
-Message-ID: <CAPj211tkReuuqyi8w2dFvrz3MFgmVFgnheDJbJ25_gCBvZX7VA@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/sgx: Replace kmap/kunmap_atomic calls
-To:     Ira Weiny <ira.weiny@intel.com>
+        with ESMTP id S233773AbiKPV5U (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 16 Nov 2022 16:57:20 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73D72617E;
+        Wed, 16 Nov 2022 13:57:19 -0800 (PST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1668635837;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=M9L+zEqSpNA5Jp91IUNwLWWPcTldTbJ3Yh/ZXwlMJ7o=;
+        b=YYu6UTIRbqPBau5Ut/qwkKhGLGNNsed5hymlWTKsUnRKhWBVJ/gDGsZXPpF55LxrASkVvh
+        Wujj2Y2pi2j8epnr8ybwtw1Hv0qguEnGOvmtNi0+A3/evsop9u38jtUnxKHnxYdzCcsOvq
+        amdJRSNyRSXJdBMsanV5ULVbm2BNx2uDlexEyPNF+kxIu9VLhVP76UXjS54MDysa84qypf
+        A0wv24asxIz5LWKD8c8n+AaVhoFr33jAVWhnA2W23I4m2WSI+Axv/gexOjQXyEPC5MKV9c
+        moLly4Wta9YJWx/VJym62o35wd4GrZ9ZHdCKv1BRwXJ5NsbCTofnAO467LJlNw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1668635837;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=M9L+zEqSpNA5Jp91IUNwLWWPcTldTbJ3Yh/ZXwlMJ7o=;
+        b=loO4HQQDMPAIHiHMQbzc/fsfbK3p6w/MAh9ZDtvehmncrUf11IE91XKIjT2rGuSBaAELvq
+        5RAXM8xKUOACZcAw==
+To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Ira Weiny <ira.weiny@intel.com>
 Cc:     jarkko@kernel.org, dave.hansen@linux.intel.com,
         linux-sgx@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
         Borislav Petkov <bp@alien8.de>, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>,
         Kristen Carlson Accardi <kristen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/sgx: Replace kmap/kunmap_atomic calls
+In-Reply-To: <CAPj211tkReuuqyi8w2dFvrz3MFgmVFgnheDJbJ25_gCBvZX7VA@mail.gmail.com>
+References: <20221115161627.4169428-1-kristen@linux.intel.com>
+ <CAPj211ugzBFJHgDNtSgR2zB7ZcGa_EqOAQGhFSu938718u+yMQ@mail.gmail.com>
+ <87cz9nqff2.ffs@tglx>
+ <CAPj211shRbJQcnhEpjs461nEMQw2x53f+2G46CXWJg6_Rc-x-g@mail.gmail.com>
+ <Y3UcLudVzuS55Bp5@iweiny-mobl>
+ <CAPj211tkReuuqyi8w2dFvrz3MFgmVFgnheDJbJ25_gCBvZX7VA@mail.gmail.com>
+Date:   Wed, 16 Nov 2022 22:57:16 +0100
+Message-ID: <87zgcqo94z.ffs@tglx>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On mercoled=C3=AC 16 novembre 2022 18:21:50 CET Ira Weiny wrote:
-> On Wed, Nov 16, 2022 at 03:01:56PM +0100, Fabio M. De Francesco wrote:
-> > On mercoled=C3=AC 16 novembre 2022 12:58:41 CET Thomas Gleixner wrote:
-> > > On Wed, Nov 16 2022 at 11:16, Fabio M. De Francesco wrote:
-> > > > On marted=C3=AC 15 novembre 2022 17:16:26 CET Kristen Carlson Accar=
-di
-wrote:
-> > > >> The use of kmap_atomic() in the SGX code was not an explicit desig=
-n
-> > > >> choice to disable page faults or preemption, and there is no
-compelling
-> > > >> design reason to using kmap_atomic() vs. kmap_local_page().
-> > > >
-> > > > This is at the core of the reasons why you are converting, that is =
-to
-> >
-> > avoid
-> >
-> > > > the potential overhead (in 32 bit architectures) of switching in
-atomic
-> > > > context where it is not required.
-> > >
-> > > No. The point is that kmap_atomic() is an historical artifact of 32bi=
-t
-> > > HIGHMEM support.
-> >
-> > I just saw that the last part of my email is missing. In fact it's enou=
-gh
-> > clear that what I was saying was still incomplete and that no signature
-was
-> > visible.
-> >
-> > I meant that, before we had kmap_local_page(), the choice was between
-kmap()
-> > and kmap_atomic().
-> >
-> > Despite I suppose that nobody should rely on those kmap_atomic() side
-> > effects, I have been observing that a large part of the users of the
-> > Highmem API used to call kmap_atomic() for its implicit
-> > pagefault_disable()
-> > and preempt_disable() side effects.
+On Wed, Nov 16 2022 at 21:00, Fabio M. De Francesco wrote:
+> On mercoled=C3=AC 16 novembre 2022 18:21:50 CET Ira Weiny wrote:
+>> > Despite I suppose that nobody should rely on those kmap_atomic() side
+>> > effects, I have been observing that a large part of the users of the
+>> > Highmem API used to call kmap_atomic() for its implicit
+>> > pagefault_disable()
+>> > and preempt_disable() side effects.
+>>
+>> Fabio I think you missed the point here.  Just because we have found _so=
+me_
+>> places where the side effect was required does not mean that "a large pa=
+rt
+>> of the users..." do.
 >
-> Fabio I think you missed the point here.  Just because we have found _som=
-e_
-> places where the side effect was required does not mean that "a large par=
-t
-> of the users..." do.
+> You are right. Numbers don't support that "a large part of the users..." =
+but
+> that it happened and will happen again.
 
-You are right. Numbers don't support that "a large part of the users..." bu=
-t
-that it happened and will happen again. Let's delete "large". However this =
-is
-not the point. The real point is below...
+There is a fundamental misconception here. You argue about requirement
+instead of dependency. Those are absolutely not the same.
 
-> While I value your review of these conversions I think Kristen did her ho=
-me
-> work here.
+Technically there is no requirement at all to use kmap_atomic().
 
-I agree with you: she did her homework and the patch is good.
+kmap_atomic() in it's original implementation had the requirement of
+disabling preemption to protect the temporary mapping. kmap_atomic()
+is nothing else than a conveniance wrapper:
 
-I don't know why I have not been able to convey that I appreciated her
-homework. I especially appreciated that she cared of checking that the
-code between mappings / un-mappings does not rely on any of the disabling s=
-ide
-effects of kmap_atomic so she could simply replace it with kmap_local_page(=
-).
+   preempt_disable();
+   establish_mapping();
 
-I'm not sure why the message that this patch is good didn't pass. I suspect
-that I stressed too much what I was considering minor inaccuracies.
+and later on when pagefault_disable() was separated from
+preempt_disable() it became:
 
-In the while I missed to talk about what matters for real, i.e. that the
-changes are good and that they will work properly.
+   preempt_disable();
+   pagefault_disable();
+   establish_mapping();
 
-> She checked with Jarkko (the original author of the code) and
-> verified that the side effects are not necessary here.  That is all that =
-needs
-> to be mentioned in the commit message.
+which is again technically not required at all.
 
-I should avoid that kind of excessive focus on less relevant things.
-Instead the overall end product is what matters the most.
+It was done because there were usage sites where the implementation of
+the kmap_atomic() section _depended_ on the implicit pagefault_disable()
+of preempt_disable(). So the pagefault_disable() was added in order not
+to break these usage sites.
 
-[snip]
+But did any of the usage sites have a hard technical requirment to have
+pagefaults or preemption disabled by kmap_atomic(). No. Not a single
+one. All of them could have been converted to disable preemption and/or
+pagefaults explicitely.
 
-> > This is the core: Kristen knows that the code between mapping / unmappi=
-ng
-> > does not need preemption and page faults disabling. Therefore
-> > kmap_local_page() will work with no need to run in atomic. We all agree=
- to
-> > the necessity to convert but sometimes we are not sure about how to
-> > convert.
->
-> But we are sure about this conversion.
->
+The implementation dependencies are a consequence of the original
+kmap_atomic() implementation and not the other way round.
 
-Yes we are. Did you note that I wrote it above?
+There is no single context where the implicit preemption and pagefault
+disable of kmap_atomic() is required due to the context itself.
 
-I supposed that that was enough to see that I'm aware that Kristen knows wh=
-at
-she did and that she did it correctly. My objections were only about
-minor details
-in the commit message. I didn't ask for another version, but I admit
-that several
-parts of my message were ambiguous.
+If there is code which runs, e.g. with interrupts disabled and needs a
+temporary mapping which is then used for a copy to user operation, which
+can obviously fault, then there is still no requirement for
+kmap_atomic() to disable preemption or pagefaults.
 
-[snip]
+The requirement to disable pagefaults comes from the
+copy_to_user_inatomic() which is in turn necessary because the code runs
+with interrupts disabled.
 
-> > Ira confirmed that system protection keys aren't affected.
->
-> I'm not sure what you mean here.  This work started because of system
-> protection keys.  But since they have yet to have a good use case they ar=
-e
-not
-> yet upstream.  Therefore some _specific_ conversions have used
-page_address()
-> directly because those drivers know _exactly_ where and how the pages wer=
-e
-> mapped.  That is a very specific use case which is different from what
-Thomas
-> is talking about.  General code which gets a page may still need to have
-> additional operations performed prior to using a kernel map.
+So now we have kmap_local() which does not rely on preemption disable
+anymore because the protection of the temporary mapping is done
+differently.
 
-I was referring to an email from you to Jonathan Corbet.[1]
-Did I misunderstand it?
+So you can convert any instance of kmap_atomic() over to kmap_local(),
+but you have to analyze whether any code inside the mapped section
+requires protection against preemption or pagefault handling.
 
-> > I'm not sure about
-> > what you are referring to when talking about "other things".
->
-> There are a number of other ideas where memory may not be in the direct m=
-ap.
+If there is code which requires that, then you have to figure out
+whether that code has been written in that way due to the semantics of
+kmap_atomic() or if there is a different requirement for it.
 
-OK, I'm not yet aware of them.
+In the previous example I gave you vs. copy_to_user_inatomic()
 
-[snip]
+again:
+    kmap_atomic();
+    remaining =3D copy_to_user_inatomic();
+    kunmap_atomic();
+    if (remaining) {
+	if (try_to_handle_fault())
+	    goto again;
+	ret =3D -EFAULT;
+    }
 
-> I think the issue is you are trying to get way too much detail for patche=
-s
-> which don't require it.  If you review a patch like this and you find
-> kmap_atomic() was being used for the side effects note that and NAK the
-patch.
-> If you feel there is some evidence but you are unsure a quick email askin=
-g
-is
-> fine.  But if there is no evidence the patch is fine lets tag it with a
-> review and move on.
->
-> In this case people are getting frustrated with the 'bikesheding'[1].  We
-are
-> never going to complete all these conversions if we spend this much time =
-on
-> the easy ones.
->
-> Ira
->
-> [1] https://en.wiktionary.org/wiki/bikeshedding
->
+is clearly no requirement neither for preemption nor for pagefault
+disable. The semantics of kmap_atomic() enforced to write the code this
+way. The replacement code:
 
-You are right. I'm sorry especially because we recently talked about
-this topic.
-But I fell again into the same trap :-(
+    kmap_local();
+    ret =3D copy_to_user();
+    kunmap_local();
+
+is completely equivalent. It can be written this way because
+kmap_local() has no implicit side effects which prevent using
+copy_to_user() which in turn can fault, handle the fault ...
+
+This is all about implementation details which depend on the original
+kmap_atomic() semantics and have been enforced by them.
+
+E.g. something like this:
+
+    kmap_atomic();
+    smp_processor_id();
+    kunmap_atomic();
+
+has a dependency, but not a requirement.
+
+    kmap_local();
+    preempt_disable();
+    smp_processor_id();
+    preempt_enable();
+    kunmap_local();
+=20=20=20=20
+is completely equivalent and it makes it entirely clear why preemption
+needs to be disabled: because smp_processor_id() requires it.
+
+There are only the three classes of usage sites which are affected:
+
+   1) The code which is enforced to be stupid because of kmap_atomic()
+
+   2) The code which (ab)uses the side effects of kmap_atomic()
+
+   3) The combination of #1 and #2
+
+All of them can be replaced by functionaly equivalent code.
+
+There is not a single usage site which has a hard requirement on the
+kmap_atomic() semantics due to the context in which kmap_atomic() is
+invoked.
+
+Ergo _ALL_ usage of kmap_atomic() and related interfaces can be
+eliminated completely.
+
+Claiming that even a single place
+
+>> > used to call kmap_atomic() for its implicit pagefault_disable() and
+>> > preempt_disable() side effects.
+
+belongs into fairy tale territory, but has nothing to do with technical
+reality and facts. Why? Simply because there was no other solution to
+handle highmem in a hotpath or in a non-sleepable context.
+
+Ergo developers were forced to use kmap_atomic() and then obviously had
+to accomodate the code in the mapping section. Of course they utilized
+the side effects because that's what we do with spinlocks and other
+primitives as well.
+
+So can we just go and fix these places instead of indulging in
+handwaving and bikeshedding?
 
 Thanks,
 
-Fabio
+        tglx
 
-[1] https://lore.kernel.org/lkml/Ytny132kWjXvu1Ql@iweiny-desk3/
+
+
+
+
+
+
+
