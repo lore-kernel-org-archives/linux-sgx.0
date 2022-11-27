@@ -2,206 +2,108 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF0CC4332F
-	for <linux-sgx@archiver.kernel.org>; Wed, 16 Nov 2022 22:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B6CC43217
+	for <linux-sgx@archiver.kernel.org>; Sun, 27 Nov 2022 17:16:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239063AbiKPWqd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 16 Nov 2022 17:46:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60904 "EHLO
+        id S229450AbiK0RQx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 27 Nov 2022 12:16:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239127AbiKPWqN (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 16 Nov 2022 17:46:13 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C216EB44;
-        Wed, 16 Nov 2022 14:45:44 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id a29so31954735lfj.9;
-        Wed, 16 Nov 2022 14:45:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NOzbRqoexIerjFudiptz/V+WQ2iY16Vv0uUoLUqoblE=;
-        b=bgGCBqR25eYw9/KiYTU5oUEAsuMXPX0r6nD+Ci8t+TOFDf4svb4zTiiHBeDXL52pMg
-         +CJIM/6pRJWJE1tBMrsX7yC8BScgiDNK10gCe8IgG0A1YTS0gByzmaFwDnnHoZxQipvj
-         hQrrFsT14vCW9Z5VgVWCgqbSwkEngUtrJLVSlTQWRnZG0X14iJ5i0uV2gCMByzlgibvL
-         kx+EBfm/MJQ7zWq33QDaj8qOOAk4Vq0B5gwiHr7d85mcsP2EVjAdSJBiC3LxzmaLr5mr
-         oA9tzmrcMYrbO/7JJfl7QNgs6FeCxJEMJ0WyQbpXQLY3IBBlrjZc221RApETlDzjfBDx
-         PNUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NOzbRqoexIerjFudiptz/V+WQ2iY16Vv0uUoLUqoblE=;
-        b=vvU3V+P/BE29NG+00wMMzNytx0JANzv4a1W2BcT1JhfztNrkOf75uysGCqCWt+v/t5
-         8ybqyBRqUQ7kYOHLzqRsIYmi3+KwZbkBswZ32Cn3Pcfoyr9O/XC6NLZ/9m+zd5/exnyV
-         dI0wyVJMn0IiwEgWw9bMGP4mIj3GY0SLCYsgfjePEd+xVGXXg9qJMgQzI/PgqdysX2HS
-         6rmRPyKjhbhkXWin+LsZk4RdxjrlnNOb9LyXqgJi4zELIhacIYYX2Nr92LXrylfV+XOX
-         FmmioeYG+jc8dTPYs+DM4CH0IcjGG2Kpyeb0qUIUzVCWuXFMa8Q9IIkuE8OuJLkQD0HQ
-         AefQ==
-X-Gm-Message-State: ANoB5plHmgIMFOV64RaUdBV2SDu+XPQcr0xlAifbgoBmKNnbxj9+M6M/
-        tr0B5G/r4J+VPxRD7Rn0R6uAaXThUxtBP1sBeFY=
-X-Google-Smtp-Source: AA0mqf6wR4mNOabyl/sxE7AcNGGXeFsnh0UvWoVfxYgt5WAeqaCrUBJEXu9QLWTr430tFFVHUucv3vTughwrkV0wMQc=
-X-Received: by 2002:a05:6512:3982:b0:4b4:210d:7d2e with SMTP id
- j2-20020a056512398200b004b4210d7d2emr55130lfu.450.1668638742859; Wed, 16 Nov
- 2022 14:45:42 -0800 (PST)
+        with ESMTP id S229436AbiK0RQw (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 27 Nov 2022 12:16:52 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61FF0DFC8
+        for <linux-sgx@vger.kernel.org>; Sun, 27 Nov 2022 09:16:51 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 13FAEB80B27
+        for <linux-sgx@vger.kernel.org>; Sun, 27 Nov 2022 17:16:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5564DC433D6;
+        Sun, 27 Nov 2022 17:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669569408;
+        bh=bSo6Mjbli43t2ylqPY00/6eAzaEubHitLNf7gGUPKL0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YGSUEoYXA+PQaPyQ2FbO0IDfMOohe8AZ6AgVSrQvrdq46aBSX7Tc5OVVLAlEgrzHL
+         /uQU3JEXuf4hX9nGc3D7Z86wHwsBHi+ztIiwuYaX8/sJm/KRgklHTd1i9EvMqU5juS
+         96qL14+uKv11aUvrubl/6pCwUKCYbA/SIJI/D4OqPQZogsjey0+0mdQu8ZPpHvY6cA
+         +V+R/LKi2ABzrwZVB9HeBn1b4DPDac6SUJ450U6Cw/aK/YYWlCUdbuNr5F3og59brP
+         c7VzruqZEJNzNql2B1nL+gXFaU48EH1RgB/TOkQrXU67Qw85Gq+EeJqMJ8jHnEYACp
+         OrvgqsNEwHY/w==
+Date:   Sun, 27 Nov 2022 19:16:44 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com,
+        reinette.chatre@intel.com, vijay.dhanraj@intel.com
+Subject: Re: [RFC PATCH v3 3/4] selftests/sgx: add len field for EACCEPT op
+Message-ID: <Y4ObJvPfDoKCdSeR@kernel.org>
+References: <20221107220212.257422-1-haitao.huang@linux.intel.com>
+ <20221107220212.257422-2-haitao.huang@linux.intel.com>
+ <20221107220212.257422-3-haitao.huang@linux.intel.com>
+ <20221107220212.257422-4-haitao.huang@linux.intel.com>
+ <Y3QfrQFiWtOK3+c+@kernel.org>
+ <op.1vqqonrswjvjmi@hhuan26-mobl1.mshome.net>
 MIME-Version: 1.0
-References: <20221115161627.4169428-1-kristen@linux.intel.com>
-In-Reply-To: <20221115161627.4169428-1-kristen@linux.intel.com>
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Date:   Wed, 16 Nov 2022 23:45:26 +0100
-Message-ID: <CAPj211stX5Tja_wjiYnSDGq-vtgFgntT9Wir1dM9HcqyVNk68w@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/sgx: Replace kmap/kunmap_atomic calls
-To:     jarkko@kernel.org, ira.weiny@intel.com,
-        dave.hansen@linux.intel.com, linux-sgx@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <op.1vqqonrswjvjmi@hhuan26-mobl1.mshome.net>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On marted=C3=AC 15 novembre 2022 17:16:26 CET Kristen Carlson Accardi wrote=
-:
-> kmap_local_page() is the preferred way to create temporary mappings
-> when it is feasible, because the mappings are thread-local and
-> CPU-local. kmap_local_page() uses per-task maps rather than per-CPU
-> maps. This in effect removes the need to preemption in the
-> local CPU while kmap is active, and thus vastly reduces overall
-> system latency. It is also valid to take pagefaults.
->
-> The use of kmap_atomic() in the SGX code was not an explicit design
-> choice to disable page faults or preemption, and there is no compelling
-> design reason to using kmap_atomic() vs. kmap_local_page().
->
-> Link: https://lore.kernel.org/linux-sgx/Y0biN3%2FJsZMa0yUr@kernel.org/
->
-> For more information on the use of kmap_local_page() vs.
-> kmap_atomic(), please see Documentation/mm/highmem.rst
->
-> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> ---
-> Changes since V1:
->
-> - Reword commit message to make it more clear why it is preferred
->   to use kmap_local_page() vs. kmap_atomic().
->
->  arch/x86/kernel/cpu/sgx/encl.c  | 12 ++++++------
->  arch/x86/kernel/cpu/sgx/ioctl.c |  4 ++--
->  arch/x86/kernel/cpu/sgx/main.c  |  8 ++++----
->  3 files changed, 12 insertions(+), 12 deletions(-)
->
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/enc=
-l.c
-> index 2c258255a629..68f8b18d2278 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -160,8 +160,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page
-> *encl_page, return ret;
->
->       pginfo.addr =3D encl_page->desc & PAGE_MASK;
-> -     pginfo.contents =3D (unsigned long)kmap_atomic(b.contents);
-> -     pcmd_page =3D kmap_atomic(b.pcmd);
-> +     pginfo.contents =3D (unsigned long)kmap_local_page(b.contents);
-> +     pcmd_page =3D kmap_local_page(b.pcmd);
->       pginfo.metadata =3D (unsigned long)pcmd_page + b.pcmd_offset;
->
->       if (secs_page)
-> @@ -187,8 +187,8 @@ static int __sgx_encl_eldu(struct sgx_encl_page
-> *encl_page, */
->       pcmd_page_empty =3D !memchr_inv(pcmd_page, 0, PAGE_SIZE);
->
-> -     kunmap_atomic(pcmd_page);
-> -     kunmap_atomic((void *)(unsigned long)pginfo.contents);
-> +     kunmap_local(pcmd_page);
-> +     kunmap_local((void *)(unsigned long)pginfo.contents);
->
->       get_page(b.pcmd);
->       sgx_encl_put_backing(&b);
-> @@ -197,10 +197,10 @@ static int __sgx_encl_eldu(struct sgx_encl_page
-> *encl_page,
->
->       if (pcmd_page_empty && !reclaimer_writing_to_pcmd(encl,
-pcmd_first_page)) {
->               sgx_encl_truncate_backing_page(encl,
-PFN_DOWN(page_pcmd_off));
-> -             pcmd_page =3D kmap_atomic(b.pcmd);
-> +             pcmd_page =3D kmap_local_page(b.pcmd);
->               if (memchr_inv(pcmd_page, 0, PAGE_SIZE))
->                       pr_warn("PCMD page not empty after truncate.
-\n");
-> -             kunmap_atomic(pcmd_page);
-> +             kunmap_local(pcmd_page);
->       }
->
->       put_page(b.pcmd);
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/
-ioctl.c
-> index ef874828fa6b..03c50f11ad75 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -221,11 +221,11 @@ static int __sgx_encl_add_page(struct sgx_encl *enc=
-l,
->       pginfo.secs =3D (unsigned long)sgx_get_epc_virt_addr(encl-
->secs.epc_page);
->       pginfo.addr =3D encl_page->desc & PAGE_MASK;
->       pginfo.metadata =3D (unsigned long)secinfo;
-> -     pginfo.contents =3D (unsigned long)kmap_atomic(src_page);
-> +     pginfo.contents =3D (unsigned long)kmap_local_page(src_page);
->
->       ret =3D __eadd(&pginfo, sgx_get_epc_virt_addr(epc_page));
->
-> -     kunmap_atomic((void *)pginfo.contents);
-> +     kunmap_local((void *)pginfo.contents);
->       put_page(src_page);
->
->       return ret ? -EIO : 0;
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/mai=
-n.c
-> index 0aad028f04d4..e5a37b6e9aa5 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -165,17 +165,17 @@ static int __sgx_encl_ewb(struct sgx_epc_page
-*epc_page,
-> void *va_slot, pginfo.addr =3D 0;
->       pginfo.secs =3D 0;
->
-> -     pginfo.contents =3D (unsigned long)kmap_atomic(backing->contents);
-> -     pginfo.metadata =3D (unsigned long)kmap_atomic(backing->pcmd) +
-> +     pginfo.contents =3D (unsigned long)kmap_local_page(backing->content=
-s);
-> +     pginfo.metadata =3D (unsigned long)kmap_local_page(backing->pcmd) +
->                         backing->pcmd_offset;
->
->       ret =3D __ewb(&pginfo, sgx_get_epc_virt_addr(epc_page), va_slot);
->       set_page_dirty(backing->pcmd);
->       set_page_dirty(backing->contents);
->
-> -     kunmap_atomic((void *)(unsigned long)(pginfo.metadata -
-> +     kunmap_local((void *)(unsigned long)(pginfo.metadata -
->                                             backing-
->pcmd_offset));
-> -     kunmap_atomic((void *)(unsigned long)pginfo.contents);
-> +     kunmap_local((void *)(unsigned long)pginfo.contents);
->
->       return ret;
->  }
-> --
-> 2.38.1
+On Wed, Nov 16, 2022 at 01:26:46PM -0600, Haitao Huang wrote:
+> On Tue, 15 Nov 2022 17:24:29 -0600, Jarkko Sakkinen <jarkko@kernel.org>
+> wrote:
+> 
+> > On Mon, Nov 07, 2022 at 02:02:11PM -0800, Haitao Huang wrote:
+> > > So we can EACCEPT multiple pages inside enclave without EEXIT,
+> > > preparing for testing with MADV_WILLNEED for ranges bigger than
+> > > a single page.
+> > > 
+> > > Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> > > ---
+> > >  tools/testing/selftests/sgx/defines.h   |  1 +
+> > >  tools/testing/selftests/sgx/test_encl.c | 20 ++++++++++++++------
+> > >  2 files changed, 15 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/tools/testing/selftests/sgx/defines.h
+> > > b/tools/testing/selftests/sgx/defines.h
+> > > index d8587c971941..8578e773d3d8 100644
+> > > --- a/tools/testing/selftests/sgx/defines.h
+> > > +++ b/tools/testing/selftests/sgx/defines.h
+> > > @@ -60,6 +60,7 @@ struct encl_op_eaccept {
+> > >  	struct encl_op_header header;
+> > >  	uint64_t epc_addr;
+> > >  	uint64_t flags;
+> > > +	uint64_t len;
+> > >  	uint64_t ret;
+> > >  };
+> > > 
+> > > diff --git a/tools/testing/selftests/sgx/test_encl.c
+> > > b/tools/testing/selftests/sgx/test_encl.c
+> > > index c0d6397295e3..fc797385200b 100644
+> > > --- a/tools/testing/selftests/sgx/test_encl.c
+> > > +++ b/tools/testing/selftests/sgx/test_encl.c
+> > > @@ -35,14 +35,22 @@ static void do_encl_eaccept(void *_op)
+> > >  	struct sgx_secinfo secinfo __aligned(sizeof(struct sgx_secinfo)) =
+> > > {0};
+> > >  	struct encl_op_eaccept *op = _op;
+> > >  	int rax;
+> > 
+> > Should be empty line after declarations.
+> > 
+> > > +	if (op->len == 0)
+> > > +		op->len = 4096;
+> > 
+> > What is this?
+> 
+> Existing test cases is always eaccepting one page at a time.
+> With the new len field, this is to set value to 1 page by default so no
+> changes in other places is needed.
+> I can add a comment in struct encl_op_eaccept declaration or let me know if
+> you prefer a different way.
 
-Despite my tendency to focus attention on details of little importance for =
-the
-task at hand, I think that your conversions are good and that your analysis
-proves them safe because there is no need to explicitly disable page faults
-and/or preemption along with the conversions.
+Please set op->len properly in all test cases.
 
-Reviewed-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
-
-Thanks,
-
-Fabio
+BR, Jarkko
