@@ -2,108 +2,143 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B6CC43217
-	for <linux-sgx@archiver.kernel.org>; Sun, 27 Nov 2022 17:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EDEC4332F
+	for <linux-sgx@archiver.kernel.org>; Fri,  2 Dec 2022 18:37:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229450AbiK0RQx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 27 Nov 2022 12:16:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46924 "EHLO
+        id S234143AbiLBShJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 2 Dec 2022 13:37:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbiK0RQw (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 27 Nov 2022 12:16:52 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61FF0DFC8
-        for <linux-sgx@vger.kernel.org>; Sun, 27 Nov 2022 09:16:51 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 13FAEB80B27
-        for <linux-sgx@vger.kernel.org>; Sun, 27 Nov 2022 17:16:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5564DC433D6;
-        Sun, 27 Nov 2022 17:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669569408;
-        bh=bSo6Mjbli43t2ylqPY00/6eAzaEubHitLNf7gGUPKL0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YGSUEoYXA+PQaPyQ2FbO0IDfMOohe8AZ6AgVSrQvrdq46aBSX7Tc5OVVLAlEgrzHL
-         /uQU3JEXuf4hX9nGc3D7Z86wHwsBHi+ztIiwuYaX8/sJm/KRgklHTd1i9EvMqU5juS
-         96qL14+uKv11aUvrubl/6pCwUKCYbA/SIJI/D4OqPQZogsjey0+0mdQu8ZPpHvY6cA
-         +V+R/LKi2ABzrwZVB9HeBn1b4DPDac6SUJ450U6Cw/aK/YYWlCUdbuNr5F3og59brP
-         c7VzruqZEJNzNql2B1nL+gXFaU48EH1RgB/TOkQrXU67Qw85Gq+EeJqMJ8jHnEYACp
-         OrvgqsNEwHY/w==
-Date:   Sun, 27 Nov 2022 19:16:44 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     linux-sgx@vger.kernel.org, dave.hansen@linux.intel.com,
-        reinette.chatre@intel.com, vijay.dhanraj@intel.com
-Subject: Re: [RFC PATCH v3 3/4] selftests/sgx: add len field for EACCEPT op
-Message-ID: <Y4ObJvPfDoKCdSeR@kernel.org>
-References: <20221107220212.257422-1-haitao.huang@linux.intel.com>
- <20221107220212.257422-2-haitao.huang@linux.intel.com>
- <20221107220212.257422-3-haitao.huang@linux.intel.com>
- <20221107220212.257422-4-haitao.huang@linux.intel.com>
- <Y3QfrQFiWtOK3+c+@kernel.org>
- <op.1vqqonrswjvjmi@hhuan26-mobl1.mshome.net>
+        with ESMTP id S234523AbiLBShE (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 2 Dec 2022 13:37:04 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D9A3EDD47;
+        Fri,  2 Dec 2022 10:37:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1670006223; x=1701542223;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ZqDhaSj465j8Weu6K/8SPWCZ4E93AhshOKFXA95cDvk=;
+  b=eCQsefgyEG0ZCMcPfJ9ZWAwd5o6pzLuygGaqGnXt1nUPSBLKBNkAJN/1
+   4hIQsle/vNd+HT/UbKPSE+AZgYgyizphTuSZgtNOSUnEqHVVsVxGpPdB0
+   uvNfleEPPifEgpiLIp2QDpBGvN5LcGyJkAvHuFVdIJHBLK6SxQV0LDd3H
+   Ow0O4n7Px9WRszq5M/6uSnxMBaqUVwfTkU6SDVUdLGEQGotLfDZb0uJoi
+   QgpDb5WG7un2j/gYJ0t5xidbADSnaAdAsTy9w75n+9djLdrOWZAa336Cl
+   f8crkKsl01YzmwjH4KDPUAEdU0VxNcVf+fPO1c+Em5RvOxHEIy7yUra2W
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10549"; a="314724460"
+X-IronPort-AV: E=Sophos;i="5.96,213,1665471600"; 
+   d="scan'208";a="314724460"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2022 10:37:03 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10549"; a="713717323"
+X-IronPort-AV: E=Sophos;i="5.96,213,1665471600"; 
+   d="scan'208";a="713717323"
+Received: from kcaskeyx-mobl1.amr.corp.intel.com (HELO kcaccard-desk.amr.corp.intel.com) ([10.251.1.207])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2022 10:37:01 -0800
+From:   Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     jarkko@kernel.org, dave.hansen@linux.intel.com, tj@kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        cgroups@vger.kernel.org
+Cc:     zhiquan1.li@intel.com
+Subject: [PATCH v2 00/18]  Add Cgroup support for SGX EPC memory
+Date:   Fri,  2 Dec 2022 10:36:36 -0800
+Message-Id: <20221202183655.3767674-1-kristen@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <op.1vqqonrswjvjmi@hhuan26-mobl1.mshome.net>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 01:26:46PM -0600, Haitao Huang wrote:
-> On Tue, 15 Nov 2022 17:24:29 -0600, Jarkko Sakkinen <jarkko@kernel.org>
-> wrote:
-> 
-> > On Mon, Nov 07, 2022 at 02:02:11PM -0800, Haitao Huang wrote:
-> > > So we can EACCEPT multiple pages inside enclave without EEXIT,
-> > > preparing for testing with MADV_WILLNEED for ranges bigger than
-> > > a single page.
-> > > 
-> > > Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
-> > > ---
-> > >  tools/testing/selftests/sgx/defines.h   |  1 +
-> > >  tools/testing/selftests/sgx/test_encl.c | 20 ++++++++++++++------
-> > >  2 files changed, 15 insertions(+), 6 deletions(-)
-> > > 
-> > > diff --git a/tools/testing/selftests/sgx/defines.h
-> > > b/tools/testing/selftests/sgx/defines.h
-> > > index d8587c971941..8578e773d3d8 100644
-> > > --- a/tools/testing/selftests/sgx/defines.h
-> > > +++ b/tools/testing/selftests/sgx/defines.h
-> > > @@ -60,6 +60,7 @@ struct encl_op_eaccept {
-> > >  	struct encl_op_header header;
-> > >  	uint64_t epc_addr;
-> > >  	uint64_t flags;
-> > > +	uint64_t len;
-> > >  	uint64_t ret;
-> > >  };
-> > > 
-> > > diff --git a/tools/testing/selftests/sgx/test_encl.c
-> > > b/tools/testing/selftests/sgx/test_encl.c
-> > > index c0d6397295e3..fc797385200b 100644
-> > > --- a/tools/testing/selftests/sgx/test_encl.c
-> > > +++ b/tools/testing/selftests/sgx/test_encl.c
-> > > @@ -35,14 +35,22 @@ static void do_encl_eaccept(void *_op)
-> > >  	struct sgx_secinfo secinfo __aligned(sizeof(struct sgx_secinfo)) =
-> > > {0};
-> > >  	struct encl_op_eaccept *op = _op;
-> > >  	int rax;
-> > 
-> > Should be empty line after declarations.
-> > 
-> > > +	if (op->len == 0)
-> > > +		op->len = 4096;
-> > 
-> > What is this?
-> 
-> Existing test cases is always eaccepting one page at a time.
-> With the new len field, this is to set value to 1 page by default so no
-> changes in other places is needed.
-> I can add a comment in struct encl_op_eaccept declaration or let me know if
-> you prefer a different way.
+Utilize the Miscellaneous cgroup controller to regulate the distribution
+of SGX EPC memory, which is a subset of system RAM that is used to provide
+SGX-enabled applications with protected memory, and is otherwise inaccessible.
 
-Please set op->len properly in all test cases.
+SGX EPC memory allocations are separate from normal RAM allocations,
+and is managed solely by the SGX subsystem. The existing cgroup memory
+controller cannot be used to limit or account for SGX EPC memory.
 
-BR, Jarkko
+This patchset implements the support for sgx_epc memory within the 
+misc cgroup controller, and then utilizes the misc cgroup controller
+to provide support for setting the total system capacity, max limit
+per cgroup, and events.
+
+This work was originally authored by Sean Christopherson a few years ago,
+and was modified to work with more recent kernels, and to utilize the
+misc cgroup controller rather than a custom controller. It is currently
+based on top of the MCA patches.
+
+Here's the MCA patchset for reference.
+https://lore.kernel.org/linux-sgx/2d52c8c4-8ed0-6df2-2911-da5b9fcc9ae4@intel.com/T/#t
+
+The patchset adds support for multiple LRUs to track both reclaimable
+EPC pages (i.e. pages the reclaimer knows about), as well as unreclaimable
+EPC pages (i.e. pages which the reclaimer isn't aware of, such as va pages).
+These pages are assigned to an LRU, as well as an enclave, so that an
+enclave's full EPC usage can be tracked, and limited to a max value. During
+OOM events, an enclave can be have its memory zapped, and all the EPC pages
+not tracked by the reclaimer can be freed.
+
+I appreciate your comments and feedback.
+
+Changelog:
+
+v2:
+ * rename struct sgx_epc_lru to sgx_epc_lru_lists to be more clear
+   that this struct contains 2 lists.
+ * use inline functions rather than macros for sgx_epc_page_list*
+   wrappers.
+ * Remove flags macros and open code all flags.
+ * Improve the commit message for RECLAIM_IN_PROGRESS patch to make
+   it more clear what the patch does.
+ * remove notifier_block from misc cgroup changes and use a set
+   of ops for callbacks instead.
+ * rename root_misc to misc_cg_root and parent_misc to misc_cg_parent
+ * consolidate misc cgroup changes to 2 patches and remove most of
+   the previous helper functions.
+
+Kristen Carlson Accardi (7):
+  x86/sgx: Add 'struct sgx_epc_lru_lists' to encapsulate lru list(s)
+  x86/sgx: Use sgx_epc_lru_lists for existing active page list
+  x86/sgx: Track epc pages on reclaimable or unreclaimable lists
+  cgroup/misc: Add per resource callbacks for css events
+  cgroup/misc: Prepare for SGX usage
+  x86/sgx: Add support for misc cgroup controller
+  Docs/x86/sgx: Add description for cgroup support
+
+Sean Christopherson (11):
+  x86/sgx: Call cond_resched() at the end of sgx_reclaim_pages()
+  x86/sgx: Store struct sgx_encl when allocating new VA pages
+  x86/sgx: Introduce RECLAIM_IN_PROGRESS flag for EPC pages
+  x86/sgx: Use a list to track to-be-reclaimed pages during reclaim
+  x86/sgx: Allow reclaiming up to 32 pages, but scan 16 by default
+  x86/sgx: Return the number of EPC pages that were successfully
+    reclaimed
+  x86/sgx: Add option to ignore age of page during EPC reclaim
+  x86/sgx: Prepare for multiple LRUs
+  x86/sgx: Expose sgx_reclaim_pages() for use by EPC cgroup
+  x86/sgx: Add helper to grab pages from an arbitrary EPC LRU
+  x86/sgx: Add EPC OOM path to forcefully reclaim EPC
+
+ Documentation/x86/sgx.rst            |  77 ++++
+ arch/x86/Kconfig                     |  13 +
+ arch/x86/kernel/cpu/sgx/Makefile     |   1 +
+ arch/x86/kernel/cpu/sgx/encl.c       |  90 ++++-
+ arch/x86/kernel/cpu/sgx/encl.h       |   4 +-
+ arch/x86/kernel/cpu/sgx/epc_cgroup.c | 539 +++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/epc_cgroup.h |  59 +++
+ arch/x86/kernel/cpu/sgx/ioctl.c      |  14 +-
+ arch/x86/kernel/cpu/sgx/main.c       | 412 ++++++++++++++++----
+ arch/x86/kernel/cpu/sgx/sgx.h        | 122 +++++-
+ arch/x86/kernel/cpu/sgx/virt.c       |  28 +-
+ include/linux/misc_cgroup.h          |  35 ++
+ kernel/cgroup/misc.c                 |  76 +++-
+ 13 files changed, 1341 insertions(+), 129 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.h
+
+-- 
+2.38.1
+
