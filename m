@@ -2,91 +2,83 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3F5C4332F
-	for <linux-sgx@archiver.kernel.org>; Mon,  5 Dec 2022 18:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF45C4332F
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Dec 2022 09:26:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233629AbiLESa0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 5 Dec 2022 13:30:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39780 "EHLO
+        id S229543AbiLHJ0i (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 8 Dec 2022 04:26:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232577AbiLESaJ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 5 Dec 2022 13:30:09 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93D462124A;
-        Mon,  5 Dec 2022 10:26:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1670264771; x=1701800771;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=6Ibb9FHX6sDZCVR/tQ45ZXWV1fgsrR8xYe8426ATKDs=;
-  b=HVMyzuTQbjCHl37OyUHWo8Au1jNGjK6PCJu/rEwXb5T1I+vX6zUg1SeL
-   AiIZkD6DjHACUvWoTkHXmlo86d+mcTrMou7nbbggUZA4d08ulznikMv5p
-   Cowst5sCHeBKcseF/aBKwiY9did2pruwWU6m24z9kOSza6JHGRwdcc1fr
-   ej5YZUT4tMsJhWY+dRXZ7ugMxcMaJM71JIRhSrHB69exUOONwTU88eR3n
-   nK3YBtYuXQ1i4xSUhvHb7Tmz0n0ECDgd3QhVdVW5ap7c4naHa/3yvVkjs
-   bRmpycocOsyPv7lF6W/1sguczneZRphn6gVy0eeueos+lSrNWNRhUsL+S
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10552"; a="317570171"
-X-IronPort-AV: E=Sophos;i="5.96,220,1665471600"; 
-   d="scan'208";a="317570171"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2022 10:25:59 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10552"; a="752302027"
-X-IronPort-AV: E=Sophos;i="5.96,220,1665471600"; 
-   d="scan'208";a="752302027"
-Received: from almamunm-mobl.amr.corp.intel.com (HELO [10.209.53.139]) ([10.209.53.139])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2022 10:25:57 -0800
-Message-ID: <7017151a739c42516ace0de439679b37016b031c.camel@linux.intel.com>
-Subject: Re: [PATCH v2 07/18] x86/sgx: Use a list to track to-be-reclaimed
- pages during reclaim
-From:   Kristen Carlson Accardi <kristen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>, jarkko@kernel.org,
-        dave.hansen@linux.intel.com, tj@kernel.org,
+        with ESMTP id S229772AbiLHJ0i (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 8 Dec 2022 04:26:38 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B45425E3E4;
+        Thu,  8 Dec 2022 01:26:37 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 548BC61E37;
+        Thu,  8 Dec 2022 09:26:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 366D0C433D7;
+        Thu,  8 Dec 2022 09:26:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670491596;
+        bh=TNqJerM9UR1fg07xX3h23a2j69g0XEpwAAYXPgA4ZEI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=s6CZZHIqy2xxLR3jpTBP+mtBdBxj+rY6+ATpzcxHIKjvPsU3xfYS23x1cuKm0NQk+
+         e968/2VYe1r14ryWx5aHvjSKkXQ4zjUGk7Hgtk/Hzv8hDAuO+++M1V1bQydOn6A/N0
+         2W/r+n3CWFatZLQsHsAuP4sjEd2PJlz+jkd6B62gzFpcAeYYBeoKWUqbWjvfnZ1ni7
+         yF2MmE2sGvH57azEdUviynHwYkog9ABiYbMYnpbBLFPbzauFUeeOsRoXkF+ATDOjY/
+         aDptE0IvKxRc/b5rhT68YTFEMuVzo7jJ4aXGihkgIMomwPzb5CTZeY/8KO3gUGZwM9
+         zquRZ/oh754XQ==
+Date:   Thu, 8 Dec 2022 09:26:32 +0000
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+Cc:     dave.hansen@linux.intel.com, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
         cgroups@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc:     zhiquan1.li@intel.com, Sean Christopherson <seanjc@google.com>
-Date:   Mon, 05 Dec 2022 10:25:56 -0800
-In-Reply-To: <6668e428-8e4a-0a44-d77c-a540c04d72ed@intel.com>
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        zhiquan1.li@intel.com, Sean Christopherson <seanjc@google.com>
+Subject: Re: [PATCH v2 08/18] x86/sgx: Allow reclaiming up to 32 pages, but
+ scan 16 by default
+Message-ID: <Y5GtyM92jE5/UJT3@kernel.org>
 References: <20221202183655.3767674-1-kristen@linux.intel.com>
-         <20221202183655.3767674-8-kristen@linux.intel.com>
-         <0646275c-0ab9-2fad-8db1-7098656d6e1d@intel.com>
-         <931e48dc399eddf8ad9f9dec8783f57df776daa9.camel@linux.intel.com>
-         <6668e428-8e4a-0a44-d77c-a540c04d72ed@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
+ <20221202183655.3767674-9-kristen@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221202183655.3767674-9-kristen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 2022-12-05 at 09:03 -0800, Dave Hansen wrote:
-> On 12/5/22 08:33, Kristen Carlson Accardi wrote:
-> > The helpers were added because Jarrko requested a queue abstraction
-> > for
-> > the sgx_epc_lru_lists data structure in the first round of reviews.
-> > the
-> > simple one line inlines are effectively just renaming to make the
-> > queue
-> > abstraction more obvious to the reader.
->=20
-> Jarkko,
->=20
-> Do you have any issues with zapping these helpers?=C2=A0 I really don't
-> think
-> they add to readability.=C2=A0 The "reclaimable" versus "unreclaimable"
-> naming is patently obvious from the structure member names.=C2=A0 I'm not
-> sure what value it adds to have them in the function names too.
->=20
->=20
+On Fri, Dec 02, 2022 at 10:36:44AM -0800, Kristen Carlson Accardi wrote:
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+> 
+> Modify sgx_reclaim_pages() to take a parameter that specifies the
+> number of pages to scan for reclaiming. Specify a max value of
+> 32, but scan 16 in the usual case. This allows the number of pages
+> sgx_reclaim_pages() scans to be specified by the caller, and adjusted
+> in future patches.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> Cc: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/main.c | 25 +++++++++++++++----------
+>  1 file changed, 15 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index 83aaf5cea7b9..f201ca85212f 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -18,6 +18,8 @@
+>  #include "encl.h"
+>  #include "encls.h"
+>  
+> +#define SGX_MAX_NR_TO_RECLAIM	32
 
+SGX_NR_TO_SCAN_MAX
 
-Well, there's sort of 2 things I would want clarity on before my next
-revision. One is obviously deleting the wrappers for unreclaimable and
-reclaimable pushes etc. The other is deleting the wrappers for the list
-operations (the push/pop/peek queue abstractions) and whether those are
-desired.
-
+BR, Jarkko
