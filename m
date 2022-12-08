@@ -2,95 +2,66 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF46C3A5A7
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Dec 2022 09:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF0BC63703
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Dec 2022 14:53:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbiLHJ5E (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 8 Dec 2022 04:57:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45764 "EHLO
+        id S230018AbiLHOxq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 8 Dec 2022 09:53:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbiLHJ5D (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 8 Dec 2022 04:57:03 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C3FA654ED;
-        Thu,  8 Dec 2022 01:57:02 -0800 (PST)
+        with ESMTP id S230046AbiLHOxi (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 8 Dec 2022 09:53:38 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323814C271;
+        Thu,  8 Dec 2022 06:53:38 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E613261E61;
-        Thu,  8 Dec 2022 09:57:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE15C433C1;
-        Thu,  8 Dec 2022 09:57:00 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CEB93B82432;
+        Thu,  8 Dec 2022 14:53:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20ECFC433D6;
+        Thu,  8 Dec 2022 14:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670493421;
-        bh=0YONDyXSVa33MyT3Y1l44dW3jNZREl8JU1hVtA1zMfc=;
+        s=k20201202; t=1670511215;
+        bh=gNYmD028duyNvaTJtvf/NGBZ2mjD2/rgX8wXO9WiHfY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FCSyXRUaBuN5Gfn5yMzGv4WNYwCtUjmYth2dtuI2WPqWJmXCbUCNNo4MJjxsRQ7ml
-         25QzxXJWThQe16pB9msMXeV0V57sqf/XAySKr4f75hUXFY2JcCfdIksFAZ/ZPyTy26
-         6qk6jXvM50+/jZ+dD8dNsPtT0HPYua0aq+PQDwRZz6q6DFvr05138ugmelxchXQVBM
-         iG2Mjy+BK5qKg/aunxPyWAWnPDMNRYj4WmIDc3a/B5trq9ndv5eGo2WT+/23TAmAr8
-         nqalOGJABkT5Y9hC3StQq0HehSbsEBdrd71JX42YX0hF4I0DK6mFYiNbhKJsxb2Tpc
-         OeVJD4rNFw2Ng==
-Date:   Thu, 8 Dec 2022 09:56:57 +0000
+        b=sD7RMyOzkU97qx+1zhDY0V/GUBCnO/9DYn4xHp6yLY4soGKny4IjRZtNBH6ylYVRT
+         wdT07S9bgmuKm4z5qqy6A0RbyQcR6Y/Mo8EahGwb/MSEhdIktLivSA+tRs9E7A/QzJ
+         5V1W2aO95TQsa5sHmvq7LXb1M7qQy6PfGmQCYJc0DwHE/zP8or46LDW//uoQ1JnZaB
+         6dap3aBye7T6rQ6Q2s+ylr3Hr8lVtOhvzggqn58nvFRyOUdwvxHEG3c9rCDzO8V/IQ
+         miQRWws2BkCY4fZl4jcatYQiOLg5d40oHHNiOseHQYNnILKj/Dcb7Uhnmu7LeOvz95
+         prfaG30OOluyg==
+Date:   Thu, 8 Dec 2022 14:53:24 +0000
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     Kristen Carlson Accardi <kristen@linux.intel.com>
 Cc:     dave.hansen@linux.intel.com, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        zhiquan1.li@intel.com, Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH v2 13/18] x86/sgx: Add helper to grab pages from an
- arbitrary EPC LRU
-Message-ID: <Y5G06eSnWRAOJMty@kernel.org>
+        cgroups@vger.kernel.org, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, zhiquan1.li@intel.com
+Subject: Re: [PATCH v2 15/18] cgroup/misc: Add per resource callbacks for css
+ events
+Message-ID: <Y5H6ZLz7HXSaTF30@kernel.org>
 References: <20221202183655.3767674-1-kristen@linux.intel.com>
- <20221202183655.3767674-14-kristen@linux.intel.com>
+ <20221202183655.3767674-16-kristen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221202183655.3767674-14-kristen@linux.intel.com>
+In-Reply-To: <20221202183655.3767674-16-kristen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Dec 02, 2022 at 10:36:49AM -0800, Kristen Carlson Accardi wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Fri, Dec 02, 2022 at 10:36:51AM -0800, Kristen Carlson Accardi wrote:
+> Consumers of the misc cgroup controller might need to perform separate actions
+> in the event of a cgroup alloc, free or release call. In addition,
+> writes to the max value may also need separate action. Add the ability
+> to allow downstream users to setup callbacks for these operations, and
+> call the per resource type callback when appropriate.
 > 
-> Move the isolation loop into a standalone helper, sgx_isolate_pages(),
-> in preparation for existence of multiple LRUs.  Expose the helper to
-> other SGX code so that it can be called from the EPC cgroup code, e.g.
-> to isolate pages from a single cgroup LRU.  Exposing the isolation loop
-> allows the cgroup iteration logic to be wholly encapsulated within the
-> cgroup code.
+> This code will be utilized by the SGX driver in a future patch.
 > 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> Cc: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kernel/cpu/sgx/main.c | 68 +++++++++++++++++++++-------------
->  arch/x86/kernel/cpu/sgx/sgx.h  |  2 +
->  2 files changed, 44 insertions(+), 26 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index c947b4ae06f3..a59550fa150b 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -280,7 +280,46 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
->  }
->  
->  /**
-> - * sgx_reclaim_pages() - Reclaim EPC pages from the consumers
-> + * sgx_isolate_epc_pages() - Isolate pages from an LRU for reclaim
-> + * @lru:	LRU from which to reclaim
-> + * @nr_to_scan:	Number of pages to scan for reclaim
-> + * @dst:	Destination list to hold the isolated pages
-> + */
-> +void sgx_isolate_epc_pages(struct sgx_epc_lru_lists *lru, int *nr_to_scan,
-> +			   struct list_head *dst)
 
-Why not instead return the number of pages scanned, and pass
-'int nr_to_scan'?
-
-That would just be more idiomatic choice.
+I don't know what css is.
 
 BR, Jarkko
