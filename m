@@ -2,183 +2,115 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E694EC4332F
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Dec 2022 15:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC743C4332F
+	for <linux-sgx@archiver.kernel.org>; Thu,  8 Dec 2022 18:03:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229660AbiLHPq3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 8 Dec 2022 10:46:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35438 "EHLO
+        id S229784AbiLHSDo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 8 Dec 2022 13:03:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230051AbiLHPq1 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 8 Dec 2022 10:46:27 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB39451C2C;
-        Thu,  8 Dec 2022 07:46:26 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F58961F94;
-        Thu,  8 Dec 2022 15:46:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70498C43150;
-        Thu,  8 Dec 2022 15:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670514385;
-        bh=05rF6alqZ9n0FU7nrg3W/B/DQ0ox7mpQjwDMeBQNWu0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EDR/lD98d5MJ6Ho6a/oOYnc99oHhwIRQNwcRpJS97Dc4sNSWV4p07+6En9RUph/5v
-         UUw6vv830ShbRT72jXcuXG/qzVpaP1rK8WJaq5BkLwjGj0mkoofJYoXaolShBxbszO
-         g1uYfpyJUbZub2rQtxLMf7tgN7fIanYyX8RGW0B0jqzjp5roweJIumZFgevHsOgweq
-         yxZWvBOjeQNFqT1x0Uum4mGkyZEJpgI4uDD6oOCz+Q8p/KDDT0/2a04gfAJvHjJYMa
-         zot+veLxvvlkGCEcT4PyO5WZ1O8aW8GcFk369hN3/1pP6Hu+6LvbFLtNwFT8rcd1Jf
-         nU9eXNZXWLr7Q==
-Date:   Thu, 8 Dec 2022 15:46:21 +0000
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+        with ESMTP id S229969AbiLHSDa (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 8 Dec 2022 13:03:30 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B72AD33C;
+        Thu,  8 Dec 2022 10:03:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1670522609; x=1702058609;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=a5QVaJCW+1KfH+RIxcXb6CC8DOjg9E8IGIEr6DurHN4=;
+  b=GZuGOMlkP+zF9wHo7SHVTokw/nl48YpRT0CYYAXRoIrdfryA9SkNIcX6
+   kpiwtN+tR82YC6fGzonfqI081wmtM2D4i6lIxKyxi7eh79gH1Pw7Uqdwm
+   dp96rdTbLgAxN18Dx3xYpD29uc5C2sH03I8lLNAfD2tp4e0jNfH851NXk
+   BA2Ls5d8Nu5DMSeybuvpKFfWlVPnp56giV1T17hFcoGN5XE4SZsjnCBcP
+   gWPEA1kqBrjwJnAuMMjwRog7UHvimecZBHcK7/7Qs16QYWi9d0l31bCgQ
+   imqijagBcvfKFLmeaiBGQudyLz44uZNd+EUasJdv0nKe0cqxlizaDiiT0
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10555"; a="319116038"
+X-IronPort-AV: E=Sophos;i="5.96,227,1665471600"; 
+   d="scan'208";a="319116038"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2022 10:03:06 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10555"; a="640720980"
+X-IronPort-AV: E=Sophos;i="5.96,227,1665471600"; 
+   d="scan'208";a="640720980"
+Received: from nmanikan-mobl1.amr.corp.intel.com (HELO [10.251.3.168]) ([10.251.3.168])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2022 10:03:05 -0800
+Message-ID: <08a420401b2fb539f37cbf21a0ded6bf8c68c72b.camel@linux.intel.com>
+Subject: Re: [PATCH v2 03/18] x86/sgx: Add 'struct sgx_epc_lru_lists' to
+ encapsulate lru list(s)
+From:   Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
 Cc:     dave.hansen@linux.intel.com, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
         cgroups@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         zhiquan1.li@intel.com, Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH v2 06/18] x86/sgx: Introduce RECLAIM_IN_PROGRESS flag for
- EPC pages
-Message-ID: <Y5IGzbNxOBkRoaRx@kernel.org>
+Date:   Thu, 08 Dec 2022 10:03:04 -0800
+In-Reply-To: <Y5IDXF+6GmURxbYF@kernel.org>
 References: <20221202183655.3767674-1-kristen@linux.intel.com>
- <20221202183655.3767674-7-kristen@linux.intel.com>
+         <20221202183655.3767674-4-kristen@linux.intel.com>
+         <Y5IDXF+6GmURxbYF@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221202183655.3767674-7-kristen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Dec 02, 2022 at 10:36:42AM -0800, Kristen Carlson Accardi wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> When selecting pages to be reclaimed from the page pool (sgx_global_lru),
-> the list of reclaimable pages is walked, and any page that is both
-> reclaimable and not in the process of being freed is added to a list of
-> potential candidates to be reclaimed. After that, this separate list is
-> further examined and may or may not ultimately be reclaimed. In order
-> to prevent this page from being removed from the sgx_epc_lru_lists
-> struct in a separate thread by sgx_drop_epc_page(), keep track of
-> whether the EPC page is in the middle of being reclaimed with
-> the addtion of a RECLAIM_IN_PROGRESS flag, and do not delete the page
-> off the LRU in sgx_drop_epc_page() if it has not yet finished being
-> reclaimed.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> Cc: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kernel/cpu/sgx/main.c | 15 ++++++++++-----
->  arch/x86/kernel/cpu/sgx/sgx.h  |  2 ++
->  2 files changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index ecd7f8e704cc..bad72498b0a7 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -305,13 +305,15 @@ static void __sgx_reclaim_pages(void)
->  
->  		encl_page = epc_page->encl_owner;
->  
-> -		if (kref_get_unless_zero(&encl_page->encl->refcount) != 0)
-> +		if (kref_get_unless_zero(&encl_page->encl->refcount) != 0) {
-> +			epc_page->flags |= SGX_EPC_PAGE_RECLAIM_IN_PROGRESS;
->  			chunk[cnt++] = epc_page;
-> -		else
-> +		} else {
->  			/* The owner is freeing the page. No need to add the
->  			 * page back to the list of reclaimable pages.
->  			 */
->  			epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
-> +		}
->  	}
->  	spin_unlock(&sgx_global_lru.lock);
->  
-> @@ -337,6 +339,7 @@ static void __sgx_reclaim_pages(void)
->  
->  skip:
->  		spin_lock(&sgx_global_lru.lock);
-> +		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIM_IN_PROGRESS;
->  		sgx_epc_push_reclaimable(&sgx_global_lru, epc_page);
->  		spin_unlock(&sgx_global_lru.lock);
->  
-> @@ -360,7 +363,8 @@ static void __sgx_reclaim_pages(void)
->  		sgx_reclaimer_write(epc_page, &backing[i]);
->  
->  		kref_put(&encl_page->encl->refcount, sgx_encl_release);
-> -		epc_page->flags &= ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
-> +		epc_page->flags &= ~(SGX_EPC_PAGE_RECLAIMER_TRACKED |
-> +				     SGX_EPC_PAGE_RECLAIM_IN_PROGRESS);
->  
->  		sgx_free_epc_page(epc_page);
->  	}
-> @@ -508,7 +512,8 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
->  void sgx_record_epc_page(struct sgx_epc_page *page, unsigned long flags)
->  {
->  	spin_lock(&sgx_global_lru.lock);
-> -	WARN_ON(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
-> +	WARN_ON(page->flags & (SGX_EPC_PAGE_RECLAIMER_TRACKED |
-> +			       SGX_EPC_PAGE_RECLAIM_IN_PROGRESS));
->  	page->flags |= flags;
->  	if (flags & SGX_EPC_PAGE_RECLAIMER_TRACKED)
->  		sgx_epc_push_reclaimable(&sgx_global_lru, page);
-> @@ -532,7 +537,7 @@ int sgx_drop_epc_page(struct sgx_epc_page *page)
->  	spin_lock(&sgx_global_lru.lock);
->  	if (page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED) {
->  		/* The page is being reclaimed. */
-> -		if (list_empty(&page->list)) {
-> +		if (page->flags & SGX_EPC_PAGE_RECLAIM_IN_PROGRESS) {
->  			spin_unlock(&sgx_global_lru.lock);
->  			return -EBUSY;
->  		}
-> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-> index ba4338b7303f..37d66bc6ca27 100644
-> --- a/arch/x86/kernel/cpu/sgx/sgx.h
-> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-> @@ -30,6 +30,8 @@
->  #define SGX_EPC_PAGE_IS_FREE		BIT(1)
->  /* Pages allocated for KVM guest */
->  #define SGX_EPC_PAGE_KVM_GUEST		BIT(2)
-> +/* page flag to indicate reclaim is in progress */
-> +#define SGX_EPC_PAGE_RECLAIM_IN_PROGRESS BIT(3)
->  
->  struct sgx_epc_page {
->  	unsigned int section;
-> -- 
-> 2.38.1
-> 
+On Thu, 2022-12-08 at 15:31 +0000, Jarkko Sakkinen wrote:
+> On Fri, Dec 02, 2022 at 10:36:39AM -0800, Kristen Carlson Accardi
+> wrote:
+> > Introduce a data structure to wrap the existing reclaimable list
+> > and its spinlock in a struct to minimize the code changes needed
+> > to handle multiple LRUs as well as reclaimable and non-reclaimable
+> > lists, both of which will be introduced and used by SGX EPC
+> > cgroups.
+> >=20
+> > Signed-off-by: Sean Christopherson
+> > <sean.j.christopherson@intel.com>
+> > Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> > Cc: Sean Christopherson <seanjc@google.com>
+> > ---
+> > =C2=A0arch/x86/kernel/cpu/sgx/sgx.h | 65
+> > +++++++++++++++++++++++++++++++++++
+> > =C2=A01 file changed, 65 insertions(+)
+> >=20
+> > diff --git a/arch/x86/kernel/cpu/sgx/sgx.h
+> > b/arch/x86/kernel/cpu/sgx/sgx.h
+> > index 39cb15a8abcb..5e6d88438fae 100644
+> > --- a/arch/x86/kernel/cpu/sgx/sgx.h
+> > +++ b/arch/x86/kernel/cpu/sgx/sgx.h
+> > @@ -90,6 +90,71 @@ static inline void *sgx_get_epc_virt_addr(struct
+> > sgx_epc_page *page)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return section->virt_ad=
+dr + index * PAGE_SIZE;
+> > =C2=A0}
+> > =C2=A0
+> > +/*
+> > + * This data structure wraps a list of reclaimable EPC pages, and
+> > a list of
+> > + * non-reclaimable EPC pages and is used to implement a LRU policy
+> > during
+> > + * reclamation.
+> > + */
+> > +struct sgx_epc_lru_lists {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0spinlock_t lock;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct list_head reclaimable=
+;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct list_head unreclaimab=
+le;
+> > +};
+> =C2=A0
+> Why this is named like this, and not sgx_epc_global_rcu? Are there
+> any other use cases?
+>=20
+> BR, Jarkko
 
-I would create:
+Yes, there are other use cases that are introduced in the other
+patches. This structure is used to in the cgroup struct to hold cgroup
+specific LRUs.
 
-enum sgx_epc_state {    
-        SGX_EPC_STATE_READY = 0,
-        SGX_EPC_STATE_RECLAIMER_TRACKED = 1,
-        SGX_EPC_STATE_RECLAIM_IN_PROGRESS = 2,
-};
-
-I.e. not a bitmask because page should have only one state at
-a time for any of this to make any sense. We have an FSM,
-right?
-
-And then allocate 2 upper bits to store this information from
-flags.
-
-And probably would make sense to have inline helper functions
-to setting and getting the state that does the bitshifting and
-masking shenanigangs.
-
-This would be a patch prepending this.
-
-In this patch you should then describe in the context of FSM
-how EPC page moves between these states. With that knowledge
-we can then reflect the actual code change.
-
-The point is not to get right but more like a mindset that we
-can discuss right or wrong in thee first place so just do your
-best but don't stress too much.
-
-BR, Jarkko
