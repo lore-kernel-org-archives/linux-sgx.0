@@ -2,44 +2,44 @@ Return-Path: <linux-sgx-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E01DEC4332F
-	for <linux-sgx@archiver.kernel.org>; Thu,  8 Dec 2022 18:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E93DFC4332F
+	for <linux-sgx@archiver.kernel.org>; Fri,  9 Dec 2022 16:07:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbiLHSNn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 8 Dec 2022 13:13:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39014 "EHLO
+        id S229796AbiLIQH0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 9 Dec 2022 11:07:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbiLHSNm (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 8 Dec 2022 13:13:42 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE0B776831;
-        Thu,  8 Dec 2022 10:13:41 -0800 (PST)
+        with ESMTP id S229675AbiLIQHE (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 9 Dec 2022 11:07:04 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01F45A384A;
+        Fri,  9 Dec 2022 08:05:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1670523221; x=1702059221;
+  t=1670601959; x=1702137959;
   h=message-id:subject:from:to:cc:date:in-reply-to:
    references:content-transfer-encoding:mime-version;
-  bh=shZLSFSHk7cyvEmOvu+L1aGeUnOVtdDfgOpI+fJT6U0=;
-  b=jGsTzc/gs7x0Njwy136HESDctZZYcE/RPI1wV4KiXlf8v21pVZ1ezSu8
-   8zvAmS+pAVaU5qpftXu89kbsZY3xgvjzQj1DRJPkjFU/a9hGx/slbMYEA
-   Py/w1CZo/USI6mbVAzmUyLJkRV11nyGovmTsaskKyqwbcr/8AYfMG/Urb
-   9cZmgdnCusjeD6Q2syeW8vvsKJMh0tYnBDZvdppaATZaK3voedZEbMBpp
-   4S7+RHPLj4yrBkH5oZSuFvvda1E84G0bmcQhK1tSS5tnWBG45KrtDMwGh
-   lgH7lQN9vXNQ4I2p0R3k0biG7jnDvfjHxQUUIBJAEZynAmi1owZxN6llf
+  bh=XWRLIvNaPSbx3qgHOle8bZTzrcu0wd+pVGPi5uuTaLg=;
+  b=Dx9A1LP4Rj3v31a86MkFcPaEXndEZ3bJeuWd/xZMw8foA+g2pK5lyz5p
+   3b3qtM5ZMPz8j4I4cqo5O2xKt4cQclKM8vcfnFgvr9xwM3Ak3OrBbbtD/
+   fBJpLEFmWsQ1YqrQ5B6AzrS6ekOI1XPU8/X+7bQ8qTYQxLIjnh+Y31502
+   RGIqHNxUFjDmndfbdOn58pD8ZpjR064rV3nVNYb/bucsLE3YpBvMJWhwx
+   KV9F5aBPxE1RSh4o4S6Py4ZBqhuzo37dJmtkmbJ+MnpqY30aE9/Roz0Zq
+   6Xf58jz4dLmH5QQGrZW1lSj1vzgCdkvSt0p78jxwQqeMPNeEiQWknyxdu
    w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10555"; a="318408992"
-X-IronPort-AV: E=Sophos;i="5.96,227,1665471600"; 
-   d="scan'208";a="318408992"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2022 10:13:40 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10555"; a="710576019"
-X-IronPort-AV: E=Sophos;i="5.96,227,1665471600"; 
-   d="scan'208";a="710576019"
-Received: from nmanikan-mobl1.amr.corp.intel.com (HELO [10.251.3.168]) ([10.251.3.168])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2022 10:13:37 -0800
-Message-ID: <dd0c92b47496be5f59cc416c6e135ef573184c66.camel@linux.intel.com>
-Subject: Re: [PATCH v2 06/18] x86/sgx: Introduce RECLAIM_IN_PROGRESS flag
- for EPC pages
+X-IronPort-AV: E=McAfee;i="6500,9779,10556"; a="316194344"
+X-IronPort-AV: E=Sophos;i="5.96,230,1665471600"; 
+   d="scan'208";a="316194344"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2022 08:05:58 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10556"; a="976319943"
+X-IronPort-AV: E=Sophos;i="5.96,230,1665471600"; 
+   d="scan'208";a="976319943"
+Received: from pphiri-mobl1.amr.corp.intel.com (HELO [10.212.198.173]) ([10.212.198.173])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2022 08:05:57 -0800
+Message-ID: <cb5abce531c1b14118de419ba68c2a501b016873.camel@linux.intel.com>
+Subject: Re: [PATCH v2 14/18] x86/sgx: Add EPC OOM path to forcefully
+ reclaim EPC
 From:   Kristen Carlson Accardi <kristen@linux.intel.com>
 To:     Jarkko Sakkinen <jarkko@kernel.org>
 Cc:     dave.hansen@linux.intel.com, tj@kernel.org,
@@ -48,137 +48,66 @@ Cc:     dave.hansen@linux.intel.com, tj@kernel.org,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         zhiquan1.li@intel.com, Sean Christopherson <seanjc@google.com>
-Date:   Thu, 08 Dec 2022 10:13:36 -0800
-In-Reply-To: <Y5IGzbNxOBkRoaRx@kernel.org>
+Date:   Fri, 09 Dec 2022 08:05:56 -0800
+In-Reply-To: <Y5IBCOuF8X7jEK3+@kernel.org>
 References: <20221202183655.3767674-1-kristen@linux.intel.com>
-         <20221202183655.3767674-7-kristen@linux.intel.com>
-         <Y5IGzbNxOBkRoaRx@kernel.org>
+         <20221202183655.3767674-15-kristen@linux.intel.com>
+         <Y5IBCOuF8X7jEK3+@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-T24gVGh1LCAyMDIyLTEyLTA4IGF0IDE1OjQ2ICswMDAwLCBKYXJra28gU2Fra2luZW4gd3JvdGU6
-Cj4gT24gRnJpLCBEZWMgMDIsIDIwMjIgYXQgMTA6MzY6NDJBTSAtMDgwMCwgS3Jpc3RlbiBDYXJs
-c29uIEFjY2FyZGkKPiB3cm90ZToKPiA+IEZyb206IFNlYW4gQ2hyaXN0b3BoZXJzb24gPHNlYW4u
-ai5jaHJpc3RvcGhlcnNvbkBpbnRlbC5jb20+Cj4gPiAKPiA+IFdoZW4gc2VsZWN0aW5nIHBhZ2Vz
-IHRvIGJlIHJlY2xhaW1lZCBmcm9tIHRoZSBwYWdlIHBvb2wKPiA+IChzZ3hfZ2xvYmFsX2xydSks
-Cj4gPiB0aGUgbGlzdCBvZiByZWNsYWltYWJsZSBwYWdlcyBpcyB3YWxrZWQsIGFuZCBhbnkgcGFn
-ZSB0aGF0IGlzIGJvdGgKPiA+IHJlY2xhaW1hYmxlIGFuZCBub3QgaW4gdGhlIHByb2Nlc3Mgb2Yg
-YmVpbmcgZnJlZWQgaXMgYWRkZWQgdG8gYQo+ID4gbGlzdCBvZgo+ID4gcG90ZW50aWFsIGNhbmRp
-ZGF0ZXMgdG8gYmUgcmVjbGFpbWVkLiBBZnRlciB0aGF0LCB0aGlzIHNlcGFyYXRlCj4gPiBsaXN0
-IGlzCj4gPiBmdXJ0aGVyIGV4YW1pbmVkIGFuZCBtYXkgb3IgbWF5IG5vdCB1bHRpbWF0ZWx5IGJl
-IHJlY2xhaW1lZC4gSW4KPiA+IG9yZGVyCj4gPiB0byBwcmV2ZW50IHRoaXMgcGFnZSBmcm9tIGJl
-aW5nIHJlbW92ZWQgZnJvbSB0aGUgc2d4X2VwY19scnVfbGlzdHMKPiA+IHN0cnVjdCBpbiBhIHNl
-cGFyYXRlIHRocmVhZCBieSBzZ3hfZHJvcF9lcGNfcGFnZSgpLCBrZWVwIHRyYWNrIG9mCj4gPiB3
-aGV0aGVyIHRoZSBFUEMgcGFnZSBpcyBpbiB0aGUgbWlkZGxlIG9mIGJlaW5nIHJlY2xhaW1lZCB3
-aXRoCj4gPiB0aGUgYWRkdGlvbiBvZiBhIFJFQ0xBSU1fSU5fUFJPR1JFU1MgZmxhZywgYW5kIGRv
-IG5vdCBkZWxldGUgdGhlCj4gPiBwYWdlCj4gPiBvZmYgdGhlIExSVSBpbiBzZ3hfZHJvcF9lcGNf
-cGFnZSgpIGlmIGl0IGhhcyBub3QgeWV0IGZpbmlzaGVkIGJlaW5nCj4gPiByZWNsYWltZWQuCj4g
-PiAKPiA+IFNpZ25lZC1vZmYtYnk6IFNlYW4gQ2hyaXN0b3BoZXJzb24KPiA+IDxzZWFuLmouY2hy
-aXN0b3BoZXJzb25AaW50ZWwuY29tPgo+ID4gU2lnbmVkLW9mZi1ieTogS3Jpc3RlbiBDYXJsc29u
-IEFjY2FyZGkgPGtyaXN0ZW5AbGludXguaW50ZWwuY29tPgo+ID4gQ2M6IFNlYW4gQ2hyaXN0b3Bo
-ZXJzb24gPHNlYW5qY0Bnb29nbGUuY29tPgo+ID4gLS0tCj4gPiDCoGFyY2gveDg2L2tlcm5lbC9j
-cHUvc2d4L21haW4uYyB8IDE1ICsrKysrKysrKystLS0tLQo+ID4gwqBhcmNoL3g4Ni9rZXJuZWwv
-Y3B1L3NneC9zZ3guaMKgIHzCoCAyICsrCj4gPiDCoDIgZmlsZXMgY2hhbmdlZCwgMTIgaW5zZXJ0
-aW9ucygrKSwgNSBkZWxldGlvbnMoLSkKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2tl
-cm5lbC9jcHUvc2d4L21haW4uYwo+ID4gYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9tYWluLmMK
-PiA+IGluZGV4IGVjZDdmOGU3MDRjYy4uYmFkNzI0OThiMGE3IDEwMDY0NAo+ID4gLS0tIGEvYXJj
-aC94ODYva2VybmVsL2NwdS9zZ3gvbWFpbi5jCj4gPiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1
-L3NneC9tYWluLmMKPiA+IEBAIC0zMDUsMTMgKzMwNSwxNSBAQCBzdGF0aWMgdm9pZCBfX3NneF9y
-ZWNsYWltX3BhZ2VzKHZvaWQpCj4gPiDCoAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqBlbmNsX3BhZ2UgPSBlcGNfcGFnZS0+ZW5jbF9vd25lcjsKPiA+IMKgCj4gPiAtwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKGtyZWZfZ2V0X3VubGVzc196ZXJvKCZlbmNsX3Bh
-Z2UtPmVuY2wtCj4gPiA+cmVmY291bnQpICE9IDApCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgaWYgKGtyZWZfZ2V0X3VubGVzc196ZXJvKCZlbmNsX3BhZ2UtPmVuY2wtCj4gPiA+
-cmVmY291bnQpICE9IDApIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgZXBjX3BhZ2UtPmZsYWdzIHw9Cj4gPiBTR1hfRVBDX1BBR0VfUkVDTEFJTV9J
-Tl9QUk9HUkVTUzsKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoGNodW5rW2NudCsrXSA9IGVwY19wYWdlOwo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoGVsc2UKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9IGVsc2Ug
-ewo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLyog
-VGhlIG93bmVyIGlzIGZyZWVpbmcgdGhlIHBhZ2UuIE5vIG5lZWQKPiA+IHRvIGFkZCB0aGUKPiA+
-IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIHBhZ2Ug
-YmFjayB0byB0aGUgbGlzdCBvZiByZWNsYWltYWJsZQo+ID4gcGFnZXMuCj4gPiDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKi8KPiA+IMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGVwY19wYWdlLT5mbGFncyAmPQo+
-ID4gflNHWF9FUENfUEFHRV9SRUNMQUlNRVJfVFJBQ0tFRDsKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqB9Cj4gPiDCoMKgwqDCoMKgwqDCoMKgfQo+ID4gwqDCoMKgwqDCoMKgwqDC
-oHNwaW5fdW5sb2NrKCZzZ3hfZ2xvYmFsX2xydS5sb2NrKTsKPiA+IMKgCj4gPiBAQCAtMzM3LDYg
-KzMzOSw3IEBAIHN0YXRpYyB2b2lkIF9fc2d4X3JlY2xhaW1fcGFnZXModm9pZCkKPiA+IMKgCj4g
-PiDCoHNraXA6Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNwaW5fbG9jaygm
-c2d4X2dsb2JhbF9scnUubG9jayk7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-ZXBjX3BhZ2UtPmZsYWdzICY9Cj4gPiB+U0dYX0VQQ19QQUdFX1JFQ0xBSU1fSU5fUFJPR1JFU1M7
-Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNneF9lcGNfcHVzaF9yZWNsYWlt
-YWJsZSgmc2d4X2dsb2JhbF9scnUsCj4gPiBlcGNfcGFnZSk7Cj4gPiDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoHNwaW5fdW5sb2NrKCZzZ3hfZ2xvYmFsX2xydS5sb2NrKTsKPiA+IMKg
-Cj4gPiBAQCAtMzYwLDcgKzM2Myw4IEBAIHN0YXRpYyB2b2lkIF9fc2d4X3JlY2xhaW1fcGFnZXMo
-dm9pZCkKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2d4X3JlY2xhaW1lcl93
-cml0ZShlcGNfcGFnZSwgJmJhY2tpbmdbaV0pOwo+ID4gwqAKPiA+IMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKga3JlZl9wdXQoJmVuY2xfcGFnZS0+ZW5jbC0+cmVmY291bnQsCj4gPiBz
-Z3hfZW5jbF9yZWxlYXNlKTsKPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBlcGNf
-cGFnZS0+ZmxhZ3MgJj0gflNHWF9FUENfUEFHRV9SRUNMQUlNRVJfVFJBQ0tFRDsKPiA+ICvCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBlcGNfcGFnZS0+ZmxhZ3MgJj0gfihTR1hfRVBDX1BB
-R0VfUkVDTEFJTUVSX1RSQUNLRUQKPiA+IHwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gPiBTR1hfRVBD
-X1BBR0VfUkVDTEFJTV9JTl9QUk9HUkVTUyk7Cj4gPiDCoAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqBzZ3hfZnJlZV9lcGNfcGFnZShlcGNfcGFnZSk7Cj4gPiDCoMKgwqDCoMKg
-wqDCoMKgfQo+ID4gQEAgLTUwOCw3ICs1MTIsOCBAQCBzdHJ1Y3Qgc2d4X2VwY19wYWdlICpfX3Nn
-eF9hbGxvY19lcGNfcGFnZSh2b2lkKQo+ID4gwqB2b2lkIHNneF9yZWNvcmRfZXBjX3BhZ2Uoc3Ry
-dWN0IHNneF9lcGNfcGFnZSAqcGFnZSwgdW5zaWduZWQgbG9uZwo+ID4gZmxhZ3MpCj4gPiDCoHsK
-PiA+IMKgwqDCoMKgwqDCoMKgwqBzcGluX2xvY2soJnNneF9nbG9iYWxfbHJ1LmxvY2spOwo+ID4g
-LcKgwqDCoMKgwqDCoMKgV0FSTl9PTihwYWdlLT5mbGFncyAmIFNHWF9FUENfUEFHRV9SRUNMQUlN
-RVJfVFJBQ0tFRCk7Cj4gPiArwqDCoMKgwqDCoMKgwqBXQVJOX09OKHBhZ2UtPmZsYWdzICYgKFNH
-WF9FUENfUEFHRV9SRUNMQUlNRVJfVFJBQ0tFRCB8Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBTR1hfRVBDX1BBR0VfUkVDTEFJ
-TV9JTl9QUk9HUkVTUykpOwo+ID4gwqDCoMKgwqDCoMKgwqDCoHBhZ2UtPmZsYWdzIHw9IGZsYWdz
-Owo+ID4gwqDCoMKgwqDCoMKgwqDCoGlmIChmbGFncyAmIFNHWF9FUENfUEFHRV9SRUNMQUlNRVJf
-VFJBQ0tFRCkKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2d4X2VwY19wdXNo
-X3JlY2xhaW1hYmxlKCZzZ3hfZ2xvYmFsX2xydSwgcGFnZSk7Cj4gPiBAQCAtNTMyLDcgKzUzNyw3
-IEBAIGludCBzZ3hfZHJvcF9lcGNfcGFnZShzdHJ1Y3Qgc2d4X2VwY19wYWdlCj4gPiAqcGFnZSkK
-PiA+IMKgwqDCoMKgwqDCoMKgwqBzcGluX2xvY2soJnNneF9nbG9iYWxfbHJ1LmxvY2spOwo+ID4g
-wqDCoMKgwqDCoMKgwqDCoGlmIChwYWdlLT5mbGFncyAmIFNHWF9FUENfUEFHRV9SRUNMQUlNRVJf
-VFJBQ0tFRCkgewo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKiBUaGUgcGFn
-ZSBpcyBiZWluZyByZWNsYWltZWQuICovCj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgaWYgKGxpc3RfZW1wdHkoJnBhZ2UtPmxpc3QpKSB7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgaWYgKHBhZ2UtPmZsYWdzICYgU0dYX0VQQ19QQUdFX1JFQ0xBSU1fSU5fUFJP
-R1JFU1MpCj4gPiB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqBzcGluX3VubG9jaygmc2d4X2dsb2JhbF9scnUubG9jayk7Cj4gPiDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gLUVCVVNZOwo+ID4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Cj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94
-ODYva2VybmVsL2NwdS9zZ3gvc2d4LmgKPiA+IGIvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvc2d4
-LmgKPiA+IGluZGV4IGJhNDMzOGI3MzAzZi4uMzdkNjZiYzZjYTI3IDEwMDY0NAo+ID4gLS0tIGEv
-YXJjaC94ODYva2VybmVsL2NwdS9zZ3gvc2d4LmgKPiA+ICsrKyBiL2FyY2gveDg2L2tlcm5lbC9j
-cHUvc2d4L3NneC5oCj4gPiBAQCAtMzAsNiArMzAsOCBAQAo+ID4gwqAjZGVmaW5lIFNHWF9FUENf
-UEFHRV9JU19GUkVFwqDCoMKgwqDCoMKgwqDCoMKgwqDCoEJJVCgxKQo+ID4gwqAvKiBQYWdlcyBh
-bGxvY2F0ZWQgZm9yIEtWTSBndWVzdCAqLwo+ID4gwqAjZGVmaW5lIFNHWF9FUENfUEFHRV9LVk1f
-R1VFU1TCoMKgwqDCoMKgwqDCoMKgwqBCSVQoMikKPiA+ICsvKiBwYWdlIGZsYWcgdG8gaW5kaWNh
-dGUgcmVjbGFpbSBpcyBpbiBwcm9ncmVzcyAqLwo+ID4gKyNkZWZpbmUgU0dYX0VQQ19QQUdFX1JF
-Q0xBSU1fSU5fUFJPR1JFU1MgQklUKDMpCj4gPiDCoAo+ID4gwqBzdHJ1Y3Qgc2d4X2VwY19wYWdl
-IHsKPiA+IMKgwqDCoMKgwqDCoMKgwqB1bnNpZ25lZCBpbnQgc2VjdGlvbjsKPiA+IC0tIAo+ID4g
-Mi4zOC4xCj4gPiAKPiAKPiBJIHdvdWxkIGNyZWF0ZToKPiAKPiBlbnVtIHNneF9lcGNfc3RhdGUg
-e8KgwqDCoCAKPiDCoMKgwqDCoMKgwqDCoCBTR1hfRVBDX1NUQVRFX1JFQURZID0gMCwKPiDCoMKg
-wqDCoMKgwqDCoCBTR1hfRVBDX1NUQVRFX1JFQ0xBSU1FUl9UUkFDS0VEID0gMSwKPiDCoMKgwqDC
-oMKgwqDCoCBTR1hfRVBDX1NUQVRFX1JFQ0xBSU1fSU5fUFJPR1JFU1MgPSAyLAo+IH07Cj4gCj4g
-SS5lLiBub3QgYSBiaXRtYXNrIGJlY2F1c2UgcGFnZSBzaG91bGQgaGF2ZSBvbmx5IG9uZSBzdGF0
-ZSBhdAo+IGEgdGltZSBmb3IgYW55IG9mIHRoaXMgdG8gbWFrZSBhbnkgc2Vuc2UuIFdlIGhhdmUg
-YW4gRlNNLAo+IHJpZ2h0Pwo+IAoKSSBjYW4gZXhwZXJpbWVudCB3aXRoIGl0IGFuZCBzZWUgaWYg
-aXQgY2FuIHdvcmsgZm9yIHRoZSBmbGFncyB0bwpyZXByZXNlbnQgYSBzdGF0ZSBtYWNoaW5lLiBU
-aGV5IGRvbid0IHdvcmsgbGlrZSB0aGF0IHJpZ2h0IG5vdwpvYnZpb3VzbHksIHNpbmNlIHlvdSBj
-YW4gaGF2ZSBib3RoIFJFQ0xBSU1FUl9UUkFDS0VEIGFuZApSRUNMQUlNX0lOX1BST0dSRVNTIHNl
-dCBhdCB0aGUgc2FtZSB0aW1lLgoKCj4gQW5kIHRoZW4gYWxsb2NhdGUgMiB1cHBlciBiaXRzIHRv
-IHN0b3JlIHRoaXMgaW5mb3JtYXRpb24gZnJvbQo+IGZsYWdzLgo+IAo+IEFuZCBwcm9iYWJseSB3
-b3VsZCBtYWtlIHNlbnNlIHRvIGhhdmUgaW5saW5lIGhlbHBlciBmdW5jdGlvbnMKPiB0byBzZXR0
-aW5nIGFuZCBnZXR0aW5nIHRoZSBzdGF0ZSB0aGF0IGRvZXMgdGhlIGJpdHNoaWZ0aW5nIGFuZAo+
-IG1hc2tpbmcgc2hlbmFuaWdhbmdzLgo+IAo+IFRoaXMgd291bGQgYmUgYSBwYXRjaCBwcmVwZW5k
-aW5nIHRoaXMuCj4gCj4gSW4gdGhpcyBwYXRjaCB5b3Ugc2hvdWxkIHRoZW4gZGVzY3JpYmUgaW4g
-dGhlIGNvbnRleHQgb2YgRlNNCj4gaG93IEVQQyBwYWdlIG1vdmVzIGJldHdlZW4gdGhlc2Ugc3Rh
-dGVzLiBXaXRoIHRoYXQga25vd2xlZGdlCj4gd2UgY2FuIHRoZW4gcmVmbGVjdCB0aGUgYWN0dWFs
-IGNvZGUgY2hhbmdlLgo+IAo+IFRoZSBwb2ludCBpcyBub3QgdG8gZ2V0IHJpZ2h0IGJ1dCBtb3Jl
-IGxpa2UgYSBtaW5kc2V0IHRoYXQgd2UKPiBjYW4gZGlzY3VzcyByaWdodCBvciB3cm9uZyBpbiB0
-aGVlIGZpcnN0IHBsYWNlIHNvIGp1c3QgZG8geW91cgo+IGJlc3QgYnV0IGRvbid0IHN0cmVzcyB0
-b28gbXVjaC4KPiAKPiBCUiwgSmFya2tvCgo=
+On Thu, 2022-12-08 at 15:21 +0000, Jarkko Sakkinen wrote:
+> On Fri, Dec 02, 2022 at 10:36:50AM -0800, Kristen Carlson Accardi
+> wrote:
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> >=20
+> > Introduce the OOM path for killing an enclave with the reclaimer
+> > is no longer able to reclaim enough EPC pages. Find a victim
+> > enclave,
+> > which will be an enclave with EPC pages remaining that are not
+> > accessible to the reclaimer ("unreclaimable"). Once a victim is
+> > identified, mark the enclave as OOM and zap the enclaves entire
+> > page range. Release all the enclaves resources except for the
+> > struct sgx_encl memory itself.
+> >=20
+> > Signed-off-by: Sean Christopherson
+> > <sean.j.christopherson@intel.com>
+> > Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> > Cc: Sean Christopherson <seanjc@google.com>
+>=20
+> Why this patch is dependent of all 13 patches before it?
+>=20
+> Looks like something that is orthogonal to cgroups and could be
+> live by its own. At least it probably does not require all of
+> those patches, or does it?
+>=20
+> Even without cgroups it would make sense to killing enclaves if
+> reclaimer gets stuck.
+>=20
+> BR, Jarkko
+
+It is dependent first of all of having the LRU struct with the
+unreclaimable/reclaimable lists. Which means it requires storing the
+enclave pointer in the page as well. It's dependent on knowing how many
+pages are available, being able to ignore the age of a page etc. Right
+now, without cgroups, sgx will be unable to allocate memory when an
+enclave is created if it cannot reclaim enough memory from the existing
+in use enclaves.
+
+Aside from that though, I don't think that killing enclaves makes sense
+outside the context of cgroup limits. Without cgroup limits, you have a
+max number of EPC pages that you can have active at any one time. If an
+enclave attempts to allocate a new page and the reclaimer can't free up
+any, how would you decide whether it's ok to kill an entire enclave in
+order to grant this other enclave the higher priority for getting a
+page? With a cgroup limit, the system owner explicitly can decide what
+the limits on usage will be, but without that, you'd have a situation
+where one new enclave could kill others I would think. Better to just
+have it the way it is - new page allocations fail if there are not free
+pages, but you don't kill enclaves that already exist.
 
