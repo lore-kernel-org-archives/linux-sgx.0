@@ -2,45 +2,59 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5003CC61DA3
-	for <linux-sgx@archiver.kernel.org>; Wed, 25 Jan 2023 17:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBACDC61D9D
+	for <linux-sgx@archiver.kernel.org>; Wed, 25 Jan 2023 17:22:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236168AbjAYRJi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 25 Jan 2023 12:09:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59968 "EHLO
+        id S236220AbjAYRW5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 25 Jan 2023 12:22:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235395AbjAYRJL (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 25 Jan 2023 12:09:11 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31905AA6C;
-        Wed, 25 Jan 2023 09:08:39 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id D8DC81FD8E;
-        Wed, 25 Jan 2023 17:08:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1674666487; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FNzsO8QkHd4bwcFXjgFFOOBC/xElVC4T91KIaFtN0Io=;
-        b=D/br1xSsxQfk6apBfZHBB6RWB236iiiYqtOZ2eZ95J8WjWhuYAEVV+tXTEh0QKRmA1b4xH
-        QN55Gxk1acvIRqe6qMTQwSbVuwI9C24RIc9UEoj8Q4rbZSCTfRh25I8IC+VWb1YjIErqcg
-        9b1EbAjGibksBO3NPm+wpmCzLKQPsIY=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7757F1358F;
-        Wed, 25 Jan 2023 17:08:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id T+qcHPdh0WP1JAAAMHmgww
-        (envelope-from <mhocko@suse.com>); Wed, 25 Jan 2023 17:08:07 +0000
-Date:   Wed, 25 Jan 2023 18:08:06 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Suren Baghdasaryan <surenb@google.com>
+        with ESMTP id S236212AbjAYRWt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 25 Jan 2023 12:22:49 -0500
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E1ED5A835
+        for <linux-sgx@vger.kernel.org>; Wed, 25 Jan 2023 09:22:36 -0800 (PST)
+Received: by mail-yb1-xb2c.google.com with SMTP id d132so2370993ybb.5
+        for <linux-sgx@vger.kernel.org>; Wed, 25 Jan 2023 09:22:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IqJXv+IInDU1mKTOWecSjx46uIp9RhIiEah7PjvPLrg=;
+        b=QlZyecSvRJAlH7daZiVbTmdMCDJawwIkjqybbPcYd50INvCOOFwycJjGFsDCENBvPF
+         JeBM9yeOQDknmaZC6LT0p7wlzLAJo3QYgAn7K1xQNCTJjPrh6oinOxgRNGwGedAqUfeH
+         4EF6oknHwKU0N6BIZOc0CJi1hrgM4W0zxm3gicvvOuEGF7JC9HCNICDdMPEAz6Lz/B5y
+         FN2dpyuojKkpe3r7ipsFxRIyHaJ4nJmkiiUGkQy6aOsuBhBZ3WzwUsGkq0uXDlGTKFEH
+         iRh4N/trPN148wcbBUC1DmqB3ErHQLF9n9pkmMXooLK6oXyXf0aS41iIJv2buhnN7zSu
+         X8Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IqJXv+IInDU1mKTOWecSjx46uIp9RhIiEah7PjvPLrg=;
+        b=v62HQXGnn40cPUwoOUlOpt2duONtJQZXAXzfpbfqKIkgDkTp88icpTUO3C7aAva0X3
+         Xuk2SVd3b4dtG/tRMP+ZrUCR2hsWVRnh2kWHjiuQk1011VXoQE04QPhX98zsCZZpYvW1
+         qn3B+7JmeoIXjPsHTJvEiDn80IWx65Be7pmqUVJA/IStvfpP0OrvJqcASEFXLeGv6Maw
+         u7R7u6D4ptmD2fRIV1hzaf5WgXlMQPvpZZP50M5fPbeuorMH/GKBa8qo46Fe5WpEVzjG
+         6fzHEsCLI9eTAeU1esIal6CqBAt8yz1bZvKtFBuvvK+I8GigGBhfM/SKedRHRPbnaddy
+         sRDQ==
+X-Gm-Message-State: AFqh2kozh057zUU7a7PumHpl57utk0EaVgdoTnY+dM/3HASSF1JswTCd
+        ayi1G47h3yycp0GUzvlpK2RwdKHxl3rbhPUE22HAdw==
+X-Google-Smtp-Source: AMrXdXv634nY3BrnZ3PlTUGlyUi8i7L3YenO2gMgxW5qJ4tF6Xha6yZp+2FFeWeU8OQrXrCFeHpomo5nr++haHZW7UI=
+X-Received: by 2002:a25:a408:0:b0:800:28d4:6936 with SMTP id
+ f8-20020a25a408000000b0080028d46936mr2303639ybi.431.1674667354997; Wed, 25
+ Jan 2023 09:22:34 -0800 (PST)
+MIME-Version: 1.0
+References: <20230125083851.27759-1-surenb@google.com> <20230125083851.27759-5-surenb@google.com>
+ <Y9D4rWEsajV/WfNx@dhcp22.suse.cz> <CAJuCfpGd2eG0RSMte9OVgsRVWPo+Sj7+t8EOo8o_iKzZoh1MXA@mail.gmail.com>
+ <Y9Fh9joU3vTCwYbX@dhcp22.suse.cz>
+In-Reply-To: <Y9Fh9joU3vTCwYbX@dhcp22.suse.cz>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Wed, 25 Jan 2023 09:22:23 -0800
+Message-ID: <CAJuCfpEJ1U2UHBNhLx4gggN3PLZKP5RejiZL_U5ZLxU_wdviVg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] mm: replace vma->vm_flags indirect modification in ksm_madvise
+To:     Michal Hocko <mhocko@suse.com>
 Cc:     akpm@linux-foundation.org, michel@lespinasse.org,
         jglisse@google.com, vbabka@suse.cz, hannes@cmpxchg.org,
         mgorman@techsingularity.net, dave@stgolabs.net,
@@ -111,40 +125,36 @@ Cc:     akpm@linux-foundation.org, michel@lespinasse.org,
         linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
         selinux@vger.kernel.org, alsa-devel@alsa-project.org,
         kernel-team@android.com
-Subject: Re: [PATCH v2 4/6] mm: replace vma->vm_flags indirect modification
- in ksm_madvise
-Message-ID: <Y9Fh9joU3vTCwYbX@dhcp22.suse.cz>
-References: <20230125083851.27759-1-surenb@google.com>
- <20230125083851.27759-5-surenb@google.com>
- <Y9D4rWEsajV/WfNx@dhcp22.suse.cz>
- <CAJuCfpGd2eG0RSMte9OVgsRVWPo+Sj7+t8EOo8o_iKzZoh1MXA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpGd2eG0RSMte9OVgsRVWPo+Sj7+t8EOo8o_iKzZoh1MXA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed 25-01-23 08:57:48, Suren Baghdasaryan wrote:
-> On Wed, Jan 25, 2023 at 1:38 AM 'Michal Hocko' via kernel-team
-> <kernel-team@android.com> wrote:
+On Wed, Jan 25, 2023 at 9:08 AM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Wed 25-01-23 08:57:48, Suren Baghdasaryan wrote:
+> > On Wed, Jan 25, 2023 at 1:38 AM 'Michal Hocko' via kernel-team
+> > <kernel-team@android.com> wrote:
+> > >
+> > > On Wed 25-01-23 00:38:49, Suren Baghdasaryan wrote:
+> > > > Replace indirect modifications to vma->vm_flags with calls to modifier
+> > > > functions to be able to track flag changes and to keep vma locking
+> > > > correctness. Add a BUG_ON check in ksm_madvise() to catch indirect
+> > > > vm_flags modification attempts.
+> > >
+> > > Those BUG_ONs scream to much IMHO. KSM is an MM internal code so I
+> > > gueess we should be willing to trust it.
 > >
-> > On Wed 25-01-23 00:38:49, Suren Baghdasaryan wrote:
-> > > Replace indirect modifications to vma->vm_flags with calls to modifier
-> > > functions to be able to track flag changes and to keep vma locking
-> > > correctness. Add a BUG_ON check in ksm_madvise() to catch indirect
-> > > vm_flags modification attempts.
-> >
-> > Those BUG_ONs scream to much IMHO. KSM is an MM internal code so I
-> > gueess we should be willing to trust it.
-> 
-> Yes, but I really want to prevent an indirect misuse since it was not
-> easy to find these. If you feel strongly about it I will remove them
-> or if you have a better suggestion I'm all for it.
+> > Yes, but I really want to prevent an indirect misuse since it was not
+> > easy to find these. If you feel strongly about it I will remove them
+> > or if you have a better suggestion I'm all for it.
+>
+> You can avoid that by making flags inaccesible directly, right?
 
-You can avoid that by making flags inaccesible directly, right?
+Ah, you mean Peter's suggestion of using __private? I guess that would
+cover it. I'll drop these BUG_ONs in the next version. Thanks!
 
--- 
-Michal Hocko
-SUSE Labs
+>
+> --
+> Michal Hocko
+> SUSE Labs
