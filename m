@@ -2,254 +2,168 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01749C27C76
-	for <linux-sgx@archiver.kernel.org>; Sat, 28 Jan 2023 04:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B3EC64EC3
+	for <linux-sgx@archiver.kernel.org>; Sat, 28 Jan 2023 10:49:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232858AbjA1Eze (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 27 Jan 2023 23:55:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50338 "EHLO
+        id S234054AbjA1KtD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 28 Jan 2023 05:49:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232788AbjA1Ezd (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 27 Jan 2023 23:55:33 -0500
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB7884B40
-        for <linux-sgx@vger.kernel.org>; Fri, 27 Jan 2023 20:55:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674881732; x=1706417732;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=p7VuF4MeZw62oHxoOnYf/joNE+7SSumiSsIIev3eA8I=;
-  b=jaEE8v8RpCsTKc31qsAxYupAQ+lClkyflbbAimFVd8URlgWzqe+dtK4N
-   X6SAlq3sY4NTExAi32K5Ef+mbhCvzGW405JXo+Y5bLXFjECuTGm/J6LeT
-   h59XJK3EkZv3bi+H0M8n4zw67BNQ8A51rXsHoq0Wsfx7HwhOet9ZyXoiw
-   suh6zK6DaLMJqL0uHFDBWjctLAit9sfobU4Vas+H/UkSVtx/kInlxP7/r
-   zHrhMWp0dlC9ZKJ58vyLJiyU/8Y6PGeY4HMiQW1gKcdqSg1WVXGRllzMs
-   SWwB22lLCZjf4NSvL3PcFWdnItKlTTfVR16o/iRFpEEc0Cew7DGHx6JSr
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10603"; a="413484080"
-X-IronPort-AV: E=Sophos;i="5.97,253,1669104000"; 
-   d="scan'208";a="413484080"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2023 20:55:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10603"; a="640942051"
-X-IronPort-AV: E=Sophos;i="5.97,253,1669104000"; 
-   d="scan'208";a="640942051"
-Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by orsmga006.jf.intel.com with ESMTP; 27 Jan 2023 20:55:29 -0800
-From:   Haitao Huang <haitao.huang@linux.intel.com>
-To:     linux-sgx@vger.kernel.org, jarkko@kernel.org,
-        dave.hansen@linux.intel.com, reinette.chatre@intel.com,
-        vijay.dhanraj@intel.com
-Subject: [RFC PATCH v4 4/4] selftests/sgx: Add test for madvise(..., WILLNEED)
-Date:   Fri, 27 Jan 2023 20:55:29 -0800
-Message-Id: <20230128045529.15749-5-haitao.huang@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230128045529.15749-4-haitao.huang@linux.intel.com>
-References: <20230128045529.15749-1-haitao.huang@linux.intel.com>
- <20230128045529.15749-2-haitao.huang@linux.intel.com>
- <20230128045529.15749-3-haitao.huang@linux.intel.com>
- <20230128045529.15749-4-haitao.huang@linux.intel.com>
+        with ESMTP id S234320AbjA1Ksy (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 28 Jan 2023 05:48:54 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F9837963E;
+        Sat, 28 Jan 2023 02:48:38 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C60C360B49;
+        Sat, 28 Jan 2023 10:48:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F057DC433D2;
+        Sat, 28 Jan 2023 10:48:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674902917;
+        bh=Y432cQgFP5F34pSdT8J5cN2U4/Abh03N/7/nnZFsfgA=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=ucQIwNrYn1j82n5kEO9WaLijY1byLMow61bm47krLw9/rm4ppKVrlbLz6phB9zNbS
+         qYY9lfErpOzRey8+JWhrlP2K20ge8aTXRGAB1RaAXSma5mb3gsVcM7JjsMlaYHRq6p
+         5Sc6Wb+I4Y9+t6nEP7exbyKAI00PmKAmlmdPi+RpRtLkxQxgwEsoweOc60InbgtjXH
+         FqvZ8MvQZkaZTFpjHfucUR24TwuTg8tFdRbslI7LaInKzs0Rwp3ur5+5MyfOIl4uaR
+         6DEA3qekp8dP3oIUZTw+yBhAfVg6biPer6tOhWjPLMuQk2/uOpgUZPcQmhGK5/Sihz
+         AcjSu+HZd6TdA==
+From:   Mark Brown <broonie@kernel.org>
+To:     linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        =?utf-8?q?J=C3=A9r=C3=B4me_Glisse?= <jglisse@redhat.com>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Len Brown <len.brown@intel.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Daniel Bristot de Oliveira <bristot@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Evgeniy Polyakov <zbr@ioremap.net>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>, alsa-devel@alsa-project.org,
+        coresight@lists.linaro.org, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, isdn4linux@listserv.isdn4linux.de,
+        keyrings@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-sgx@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-trace-devel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-mm@kvack.org,
+        openrisc@lists.librecores.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+In-Reply-To: <20230127064005.1558-1-rdunlap@infradead.org>
+References: <20230127064005.1558-1-rdunlap@infradead.org>
+Subject: Re: (subset) [PATCH 00/35] Documentation: correct lots of spelling
+ errors (series 1)
+Message-Id: <167490289567.2145989.15703368734300500078.b4-ty@kernel.org>
+Date:   Sat, 28 Jan 2023 10:48:15 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.0
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Measure and compare run time for EAUG'ing different number
-of EPC pages with/without madvise(..., WILLNEED) call.
+On Thu, 26 Jan 2023 22:39:30 -0800, Randy Dunlap wrote:
+> Correct many spelling errors in Documentation/ as reported by codespell.
+> 
+> Maintainers of specific kernel subsystems are only Cc-ed on their
+> respective patches, not the entire series. [if all goes well]
+> 
+> These patches are based on linux-next-20230125.
+> 
+> [...]
 
-Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
----
- tools/testing/selftests/sgx/main.c | 167 +++++++++++++++++++++++++++++
- 1 file changed, 167 insertions(+)
+Applied to
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index e457f2d35461..e3432e73af69 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -10,6 +10,7 @@
- #include <stdint.h>
- #include <stdlib.h>
- #include <string.h>
-+#include <time.h>
- #include <unistd.h>
- #include <sys/ioctl.h>
- #include <sys/mman.h>
-@@ -1360,6 +1361,172 @@ TEST_F_TIMEOUT(enclave, augment_via_eaccept_long, TIMEOUT_DEFAULT)
- 	munmap(addr, DYNAMIC_HEAP_SIZE);
- }
- 
-+static int eaccept_range(struct _test_data_enclave *self, void *addr,
-+			 unsigned long size, uint64_t flags,
-+						struct __test_metadata *_metadata)
-+{
-+	struct encl_op_eaccept eaccept_op;
-+
-+	self->run.exception_vector = 0;
-+	self->run.exception_error_code = 0;
-+	self->run.exception_addr = 0;
-+
-+	/*
-+	 * Run EACCEPT on every page to trigger the #PF->EAUG->EACCEPT(again
-+	 * without a #PF). All should be transparent to userspace.
-+	 */
-+	eaccept_op.flags = flags;
-+	eaccept_op.ret = 0;
-+	eaccept_op.header.type = ENCL_OP_EACCEPT;
-+	eaccept_op.len = size;
-+	eaccept_op.epc_addr = (uint64_t)(addr);
-+
-+	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
-+
-+	EXPECT_EQ(self->run.exception_vector, 0);
-+	EXPECT_EQ(self->run.exception_error_code, 0);
-+	EXPECT_EQ(self->run.exception_addr, 0);
-+	ASSERT_EQ(eaccept_op.ret, 0);
-+	ASSERT_EQ(self->run.function, EEXIT);
-+
-+	return 0;
-+}
-+
-+static int trim_remove_range(struct _test_data_enclave *self, void *addr,
-+			     unsigned long size, struct __test_metadata *_metadata)
-+{
-+	int ret, errno_save;
-+	struct sgx_enclave_remove_pages remove_ioc;
-+	struct sgx_enclave_modify_types modt_ioc;
-+	unsigned long offset;
-+	unsigned long count;
-+
-+	if ((uint64_t)addr <= self->encl.encl_base)
-+		return -1;
-+	offset = (uint64_t)addr - self->encl.encl_base;
-+
-+	memset(&modt_ioc, 0, sizeof(modt_ioc));
-+	modt_ioc.offset = offset;
-+	modt_ioc.length = size;
-+	modt_ioc.page_type = SGX_PAGE_TYPE_TRIM;
-+	count = 0;
-+	do {
-+		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
-+
-+		errno_save = ret == -1 ? errno : 0;
-+		if (errno_save != EAGAIN)
-+			break;
-+		EXPECT_EQ(modt_ioc.result, 0);
-+
-+		count += modt_ioc.count;
-+		modt_ioc.offset += modt_ioc.count;
-+		modt_ioc.length -= modt_ioc.count;
-+		modt_ioc.result = 0;
-+		modt_ioc.count = 0;
-+	} while (modt_ioc.length != 0);
-+
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
-+	EXPECT_EQ(modt_ioc.result, 0);
-+	count += modt_ioc.count;
-+	EXPECT_EQ(count, size);
-+
-+	EXPECT_EQ(eaccept_range(self, addr, size,
-+				SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED,
-+				   _metadata), 0);
-+
-+	/* Complete page removal. */
-+	memset(&remove_ioc, 0, sizeof(remove_ioc));
-+	remove_ioc.offset = offset;
-+	remove_ioc.length = size;
-+	count = 0;
-+	do {
-+		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
-+
-+		errno_save = ret == -1 ? errno : 0;
-+		if (errno_save != EAGAIN)
-+			break;
-+
-+		count += remove_ioc.count;
-+		remove_ioc.offset += remove_ioc.count;
-+		remove_ioc.length -= remove_ioc.count;
-+		remove_ioc.count = 0;
-+	} while (remove_ioc.length != 0);
-+
-+	EXPECT_EQ(ret, 0);
-+	EXPECT_EQ(errno_save, 0);
-+	count += remove_ioc.count;
-+	EXPECT_EQ(count, size);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Compare performance with and without madvise call before EACCEPT'ing
-+ * different size of regions.
-+ */
-+TEST_F_TIMEOUT(enclave, augment_via_madvise, TIMEOUT_DEFAULT)
-+{
-+	unsigned long advise_size = PAGE_SIZE;
-+	unsigned long max_advise_size = get_total_epc_mem() * 3UL;
-+	int speed_up_percent;
-+	clock_t start;
-+	double time_used1, time_used2;
-+	size_t total_size = 0;
-+	unsigned long i;
-+	void *addr;
-+
-+	if (!sgx2_supported())
-+		SKIP(return, "SGX2 not supported");
-+
-+	ASSERT_TRUE(setup_test_encl_dynamic(ENCL_HEAP_SIZE_DEFAULT,
-+					    max_advise_size, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
-+	for (i = 0; i < self->encl.nr_segments; i++) {
-+		struct encl_segment *seg = &self->encl.segment_tbl[i];
-+
-+		total_size += seg->size;
-+	}
-+
-+	for (i = 1; i < 52 && advise_size < max_advise_size; i++) {
-+		addr = mmap((void *)self->encl.encl_base + total_size, advise_size,
-+			    PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED,
-+					self->encl.fd, 0);
-+		EXPECT_NE(addr, MAP_FAILED);
-+
-+		start = clock();
-+		EXPECT_EQ(eaccept_range(self, addr, advise_size,
-+					SGX_SECINFO_R | SGX_SECINFO_W
-+								| SGX_SECINFO_REG
-+								| SGX_SECINFO_PENDING,
-+								_metadata), 0);
-+		time_used1 = (double)clock() - start;
-+
-+		EXPECT_EQ(trim_remove_range(self, addr, advise_size, _metadata), 0);
-+
-+		start = clock();
-+		EXPECT_EQ(madvise(addr, advise_size, MADV_WILLNEED), 0);
-+		EXPECT_EQ(eaccept_range(self, addr, advise_size,
-+					SGX_SECINFO_R | SGX_SECINFO_W
-+								| SGX_SECINFO_REG
-+								| SGX_SECINFO_PENDING,
-+								_metadata), 0);
-+		time_used2 = (double)clock() - start;
-+
-+		speed_up_percent = (int)((time_used1 - time_used2) / time_used1 * 100);
-+		TH_LOG("madvise speed up for eaug'ing %10ld pages: %d%%",
-+		       advise_size / PAGE_SIZE, speed_up_percent);
-+		EXPECT_GE(speed_up_percent, 0);
-+		EXPECT_EQ(trim_remove_range(self, addr, advise_size, _metadata), 0);
-+	    munmap(addr, advise_size);
-+		advise_size = (advise_size << 1UL);
-+	}
-+	encl_delete(&self->encl);
-+}
-+
- /*
-  * SGX2 page type modification test in two phases:
-  * Phase 1:
--- 
-2.25.1
+   broonie/spi.git for-next
+
+Thanks!
+
+[27/35] Documentation: spi: correct spelling
+        commit: 0f6d2cee58f1ff2ebf66f0bceb113d79f66ecb07
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
