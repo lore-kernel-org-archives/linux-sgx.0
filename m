@@ -2,236 +2,254 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704F6C636BD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01749C27C76
 	for <linux-sgx@archiver.kernel.org>; Sat, 28 Jan 2023 04:55:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229530AbjA1Ezd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 27 Jan 2023 23:55:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50334 "EHLO
+        id S232858AbjA1Eze (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 27 Jan 2023 23:55:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232858AbjA1Ezc (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 27 Jan 2023 23:55:32 -0500
+        with ESMTP id S232788AbjA1Ezd (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 27 Jan 2023 23:55:33 -0500
 Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 955E484B6D
-        for <linux-sgx@vger.kernel.org>; Fri, 27 Jan 2023 20:55:31 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB7884B40
+        for <linux-sgx@vger.kernel.org>; Fri, 27 Jan 2023 20:55:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674881731; x=1706417731;
+  t=1674881732; x=1706417732;
   h=from:to:subject:date:message-id:in-reply-to:references:
    mime-version:content-transfer-encoding;
-  bh=wlN/uSnSjwjEpS3YvW3a0wz+q6wEfy8nG8PcVPLMdWo=;
-  b=alMhStwxmIg0stYNf68IViU/cfkLxsZYzhWWrsHQ+kdR2/qupcGwtRUl
-   j8VvyGrhJBx4DEYbtTwWRty33d/YwLffGPqRjwk6RHLTWKF0Jcy3t3H98
-   4kVLCQOgKWbgHJ4FGTIw3xjNg0SdyupWiPpkITNCKnLJhuiEg7mjxfd4t
-   mTm2oQ2aiiq7lUet6PDyoxMeHF3QmSuX/zf/BQJ0Nw7RrKQ8HjnkbdtBp
-   ofuENBCs7G6JsTuVfaWOrP1Kn4AOuC3e7jYmyKmC5VoNJlT/jFbQROF5/
-   qSwxDiZOATtiRNVyGaHmZNkHp2Krf9MJxQSfFs/6ptx5np0mtDaG/+WRe
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10603"; a="413484078"
+  bh=p7VuF4MeZw62oHxoOnYf/joNE+7SSumiSsIIev3eA8I=;
+  b=jaEE8v8RpCsTKc31qsAxYupAQ+lClkyflbbAimFVd8URlgWzqe+dtK4N
+   X6SAlq3sY4NTExAi32K5Ef+mbhCvzGW405JXo+Y5bLXFjECuTGm/J6LeT
+   h59XJK3EkZv3bi+H0M8n4zw67BNQ8A51rXsHoq0Wsfx7HwhOet9ZyXoiw
+   suh6zK6DaLMJqL0uHFDBWjctLAit9sfobU4Vas+H/UkSVtx/kInlxP7/r
+   zHrhMWp0dlC9ZKJ58vyLJiyU/8Y6PGeY4HMiQW1gKcdqSg1WVXGRllzMs
+   SWwB22lLCZjf4NSvL3PcFWdnItKlTTfVR16o/iRFpEEc0Cew7DGHx6JSr
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10603"; a="413484080"
 X-IronPort-AV: E=Sophos;i="5.97,253,1669104000"; 
-   d="scan'208";a="413484078"
+   d="scan'208";a="413484080"
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
   by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2023 20:55:29 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10603"; a="640942047"
+X-IronPort-AV: E=McAfee;i="6500,9779,10603"; a="640942051"
 X-IronPort-AV: E=Sophos;i="5.97,253,1669104000"; 
-   d="scan'208";a="640942047"
+   d="scan'208";a="640942051"
 Received: from b4969161e530.jf.intel.com ([10.165.56.46])
   by orsmga006.jf.intel.com with ESMTP; 27 Jan 2023 20:55:29 -0800
 From:   Haitao Huang <haitao.huang@linux.intel.com>
 To:     linux-sgx@vger.kernel.org, jarkko@kernel.org,
         dave.hansen@linux.intel.com, reinette.chatre@intel.com,
         vijay.dhanraj@intel.com
-Subject: [RFC PATCH v4 3/4] selftests/sgx: add len field for EACCEPT op
-Date:   Fri, 27 Jan 2023 20:55:28 -0800
-Message-Id: <20230128045529.15749-4-haitao.huang@linux.intel.com>
+Subject: [RFC PATCH v4 4/4] selftests/sgx: Add test for madvise(..., WILLNEED)
+Date:   Fri, 27 Jan 2023 20:55:29 -0800
+Message-Id: <20230128045529.15749-5-haitao.huang@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230128045529.15749-3-haitao.huang@linux.intel.com>
+In-Reply-To: <20230128045529.15749-4-haitao.huang@linux.intel.com>
 References: <20230128045529.15749-1-haitao.huang@linux.intel.com>
  <20230128045529.15749-2-haitao.huang@linux.intel.com>
  <20230128045529.15749-3-haitao.huang@linux.intel.com>
+ <20230128045529.15749-4-haitao.huang@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-So we can EACCEPT multiple pages inside enclave without EEXIT,
-preparing for testing with MADV_WILLNEED for ranges bigger than
-a single page.
+Measure and compare run time for EAUG'ing different number
+of EPC pages with/without madvise(..., WILLNEED) call.
 
 Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
 ---
- tools/testing/selftests/sgx/defines.h   |  1 +
- tools/testing/selftests/sgx/main.c      | 15 +++++++++++++++
- tools/testing/selftests/sgx/test_encl.c | 18 ++++++++++++------
- 3 files changed, 28 insertions(+), 6 deletions(-)
+ tools/testing/selftests/sgx/main.c | 167 +++++++++++++++++++++++++++++
+ 1 file changed, 167 insertions(+)
 
-diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
-index d8587c971941..8578e773d3d8 100644
---- a/tools/testing/selftests/sgx/defines.h
-+++ b/tools/testing/selftests/sgx/defines.h
-@@ -60,6 +60,7 @@ struct encl_op_eaccept {
- 	struct encl_op_header header;
- 	uint64_t epc_addr;
- 	uint64_t flags;
-+	uint64_t len;
- 	uint64_t ret;
- };
- 
 diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index e596b45bc5f8..e457f2d35461 100644
+index e457f2d35461..e3432e73af69 100644
 --- a/tools/testing/selftests/sgx/main.c
 +++ b/tools/testing/selftests/sgx/main.c
-@@ -493,6 +493,7 @@ TEST_F_TIMEOUT(enclave, unclobbered_vdso_oversubscribed_remove, TIMEOUT_DEFAULT)
- 
- 	eaccept_op.flags = SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED;
- 	eaccept_op.header.type = ENCL_OP_EACCEPT;
-+	eaccept_op.len = PAGE_SIZE;
- 
- 	TH_LOG("Entering enclave to run EACCEPT for each page of %zd bytes may take a while ...",
- 	       heap->size);
-@@ -916,6 +917,7 @@ TEST_F(enclave, epcm_permissions)
- 	 * EPCM permissions changed from kernel, need to EACCEPT from enclave.
- 	 */
- 	eaccept_op.epc_addr = data_start;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.flags = SGX_SECINFO_R | SGX_SECINFO_REG | SGX_SECINFO_PR;
- 	eaccept_op.ret = 0;
- 	eaccept_op.header.type = ENCL_OP_EACCEPT;
-@@ -1092,6 +1094,7 @@ TEST_F(enclave, augment)
- 	self->run.tcs = self->encl.encl_base + PAGE_SIZE;
- 
- 	eaccept_op.epc_addr = self->encl.encl_base + total_size;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_REG | SGX_SECINFO_PENDING;
- 	eaccept_op.ret = 0;
- 	eaccept_op.header.type = ENCL_OP_EACCEPT;
-@@ -1194,6 +1197,7 @@ TEST_F(enclave, augment_via_eaccept)
- 	 * without a #PF). All should be transparent to userspace.
- 	 */
- 	eaccept_op.epc_addr = self->encl.encl_base + total_size;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_REG | SGX_SECINFO_PENDING;
- 	eaccept_op.ret = 0;
- 	eaccept_op.header.type = ENCL_OP_EACCEPT;
-@@ -1299,6 +1303,7 @@ TEST_F_TIMEOUT(enclave, augment_via_eaccept_long, TIMEOUT_DEFAULT)
- 	 * without a #PF). All should be transparent to userspace.
- 	 */
- 	eaccept_op.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_REG | SGX_SECINFO_PENDING;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.ret = 0;
- 	eaccept_op.header.type = ENCL_OP_EACCEPT;
- 
-@@ -1451,6 +1456,7 @@ TEST_F(enclave, tcs_create)
- 	 */
- 
- 	eaccept_op.epc_addr = (unsigned long)stack_end;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_REG | SGX_SECINFO_PENDING;
- 	eaccept_op.ret = 0;
- 	eaccept_op.header.type = ENCL_OP_EACCEPT;
-@@ -1471,6 +1477,7 @@ TEST_F(enclave, tcs_create)
- 	EXPECT_EQ(eaccept_op.ret, 0);
- 
- 	eaccept_op.epc_addr = (unsigned long)ssa;
-+	eaccept_op.len = PAGE_SIZE;
- 
- 	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
- 
-@@ -1481,6 +1488,7 @@ TEST_F(enclave, tcs_create)
- 	EXPECT_EQ(eaccept_op.ret, 0);
- 
- 	eaccept_op.epc_addr = (unsigned long)tcs;
-+	eaccept_op.len = PAGE_SIZE;
- 
- 	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
- 
-@@ -1533,6 +1541,7 @@ TEST_F(enclave, tcs_create)
- 
- 	/* EACCEPT new TCS page from enclave. */
- 	eaccept_op.epc_addr = (unsigned long)tcs;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.flags = SGX_SECINFO_TCS | SGX_SECINFO_MODIFIED;
- 	eaccept_op.ret = 0;
- 	eaccept_op.header.type = ENCL_OP_EACCEPT;
-@@ -1601,6 +1610,7 @@ TEST_F(enclave, tcs_create)
- 	self->run.tcs = self->encl.encl_base;
- 
- 	eaccept_op.epc_addr = (unsigned long)stack_end;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.flags = SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED;
- 	eaccept_op.ret = 0;
- 	eaccept_op.header.type = ENCL_OP_EACCEPT;
-@@ -1614,6 +1624,7 @@ TEST_F(enclave, tcs_create)
- 	EXPECT_EQ(eaccept_op.ret, 0);
- 
- 	eaccept_op.epc_addr = (unsigned long)tcs;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.ret = 0;
- 
- 	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
-@@ -1625,6 +1636,7 @@ TEST_F(enclave, tcs_create)
- 	EXPECT_EQ(eaccept_op.ret, 0);
- 
- 	eaccept_op.epc_addr = (unsigned long)ssa;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.ret = 0;
- 
- 	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
-@@ -1653,6 +1665,7 @@ TEST_F(enclave, tcs_create)
- 	 * trigger dynamic add of regular page at that location.
- 	 */
- 	eaccept_op.epc_addr = (unsigned long)tcs;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_REG | SGX_SECINFO_PENDING;
- 	eaccept_op.ret = 0;
- 	eaccept_op.header.type = ENCL_OP_EACCEPT;
-@@ -2022,6 +2035,7 @@ TEST_F(enclave, remove_added_page_invalid_access_after_eaccept)
- 	EXPECT_EQ(ioc.count, 4096);
- 
- 	eaccept_op.epc_addr = (unsigned long)data_start;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.ret = 0;
- 	eaccept_op.flags = SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED;
- 	eaccept_op.header.type = ENCL_OP_EACCEPT;
-@@ -2112,6 +2126,7 @@ TEST_F(enclave, remove_untouched_page)
- 	 */
- 
- 	eaccept_op.epc_addr = data_start;
-+	eaccept_op.len = PAGE_SIZE;
- 	eaccept_op.flags = SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED;
- 	eaccept_op.ret = 0;
- 	eaccept_op.header.type = ENCL_OP_EACCEPT;
-diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
-index c0d6397295e3..439f1adbd357 100644
---- a/tools/testing/selftests/sgx/test_encl.c
-+++ b/tools/testing/selftests/sgx/test_encl.c
-@@ -37,12 +37,18 @@ static void do_encl_eaccept(void *_op)
- 	int rax;
- 
- 	secinfo.flags = op->flags;
--
--	asm volatile(".byte 0x0f, 0x01, 0xd7"
--				: "=a" (rax)
--				: "a" (EACCEPT),
--				  "b" (&secinfo),
--				  "c" (op->epc_addr));
-+	for (uint64_t addr = op->epc_addr;
-+			addr < op->epc_addr + op->len; addr += 4096) {
-+		asm volatile(".byte 0x0f, 0x01, 0xd7"
-+					: "=a" (rax)
-+					: "a" (EACCEPT),
-+					  "b" (&secinfo),
-+					  "c" (addr));
-+		if (rax) {
-+			op->ret = rax;
-+			return;
-+		}
-+	}
- 
- 	op->ret = rax;
+@@ -10,6 +10,7 @@
+ #include <stdint.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <time.h>
+ #include <unistd.h>
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
+@@ -1360,6 +1361,172 @@ TEST_F_TIMEOUT(enclave, augment_via_eaccept_long, TIMEOUT_DEFAULT)
+ 	munmap(addr, DYNAMIC_HEAP_SIZE);
  }
+ 
++static int eaccept_range(struct _test_data_enclave *self, void *addr,
++			 unsigned long size, uint64_t flags,
++						struct __test_metadata *_metadata)
++{
++	struct encl_op_eaccept eaccept_op;
++
++	self->run.exception_vector = 0;
++	self->run.exception_error_code = 0;
++	self->run.exception_addr = 0;
++
++	/*
++	 * Run EACCEPT on every page to trigger the #PF->EAUG->EACCEPT(again
++	 * without a #PF). All should be transparent to userspace.
++	 */
++	eaccept_op.flags = flags;
++	eaccept_op.ret = 0;
++	eaccept_op.header.type = ENCL_OP_EACCEPT;
++	eaccept_op.len = size;
++	eaccept_op.epc_addr = (uint64_t)(addr);
++
++	EXPECT_EQ(ENCL_CALL(&eaccept_op, &self->run, true), 0);
++
++	EXPECT_EQ(self->run.exception_vector, 0);
++	EXPECT_EQ(self->run.exception_error_code, 0);
++	EXPECT_EQ(self->run.exception_addr, 0);
++	ASSERT_EQ(eaccept_op.ret, 0);
++	ASSERT_EQ(self->run.function, EEXIT);
++
++	return 0;
++}
++
++static int trim_remove_range(struct _test_data_enclave *self, void *addr,
++			     unsigned long size, struct __test_metadata *_metadata)
++{
++	int ret, errno_save;
++	struct sgx_enclave_remove_pages remove_ioc;
++	struct sgx_enclave_modify_types modt_ioc;
++	unsigned long offset;
++	unsigned long count;
++
++	if ((uint64_t)addr <= self->encl.encl_base)
++		return -1;
++	offset = (uint64_t)addr - self->encl.encl_base;
++
++	memset(&modt_ioc, 0, sizeof(modt_ioc));
++	modt_ioc.offset = offset;
++	modt_ioc.length = size;
++	modt_ioc.page_type = SGX_PAGE_TYPE_TRIM;
++	count = 0;
++	do {
++		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_MODIFY_TYPES, &modt_ioc);
++
++		errno_save = ret == -1 ? errno : 0;
++		if (errno_save != EAGAIN)
++			break;
++		EXPECT_EQ(modt_ioc.result, 0);
++
++		count += modt_ioc.count;
++		modt_ioc.offset += modt_ioc.count;
++		modt_ioc.length -= modt_ioc.count;
++		modt_ioc.result = 0;
++		modt_ioc.count = 0;
++	} while (modt_ioc.length != 0);
++
++	EXPECT_EQ(ret, 0);
++	EXPECT_EQ(errno_save, 0);
++	EXPECT_EQ(modt_ioc.result, 0);
++	count += modt_ioc.count;
++	EXPECT_EQ(count, size);
++
++	EXPECT_EQ(eaccept_range(self, addr, size,
++				SGX_SECINFO_TRIM | SGX_SECINFO_MODIFIED,
++				   _metadata), 0);
++
++	/* Complete page removal. */
++	memset(&remove_ioc, 0, sizeof(remove_ioc));
++	remove_ioc.offset = offset;
++	remove_ioc.length = size;
++	count = 0;
++	do {
++		ret = ioctl(self->encl.fd, SGX_IOC_ENCLAVE_REMOVE_PAGES, &remove_ioc);
++
++		errno_save = ret == -1 ? errno : 0;
++		if (errno_save != EAGAIN)
++			break;
++
++		count += remove_ioc.count;
++		remove_ioc.offset += remove_ioc.count;
++		remove_ioc.length -= remove_ioc.count;
++		remove_ioc.count = 0;
++	} while (remove_ioc.length != 0);
++
++	EXPECT_EQ(ret, 0);
++	EXPECT_EQ(errno_save, 0);
++	count += remove_ioc.count;
++	EXPECT_EQ(count, size);
++
++	return 0;
++}
++
++/*
++ * Compare performance with and without madvise call before EACCEPT'ing
++ * different size of regions.
++ */
++TEST_F_TIMEOUT(enclave, augment_via_madvise, TIMEOUT_DEFAULT)
++{
++	unsigned long advise_size = PAGE_SIZE;
++	unsigned long max_advise_size = get_total_epc_mem() * 3UL;
++	int speed_up_percent;
++	clock_t start;
++	double time_used1, time_used2;
++	size_t total_size = 0;
++	unsigned long i;
++	void *addr;
++
++	if (!sgx2_supported())
++		SKIP(return, "SGX2 not supported");
++
++	ASSERT_TRUE(setup_test_encl_dynamic(ENCL_HEAP_SIZE_DEFAULT,
++					    max_advise_size, &self->encl, _metadata));
++
++	memset(&self->run, 0, sizeof(self->run));
++	self->run.tcs = self->encl.encl_base;
++
++	for (i = 0; i < self->encl.nr_segments; i++) {
++		struct encl_segment *seg = &self->encl.segment_tbl[i];
++
++		total_size += seg->size;
++	}
++
++	for (i = 1; i < 52 && advise_size < max_advise_size; i++) {
++		addr = mmap((void *)self->encl.encl_base + total_size, advise_size,
++			    PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED,
++					self->encl.fd, 0);
++		EXPECT_NE(addr, MAP_FAILED);
++
++		start = clock();
++		EXPECT_EQ(eaccept_range(self, addr, advise_size,
++					SGX_SECINFO_R | SGX_SECINFO_W
++								| SGX_SECINFO_REG
++								| SGX_SECINFO_PENDING,
++								_metadata), 0);
++		time_used1 = (double)clock() - start;
++
++		EXPECT_EQ(trim_remove_range(self, addr, advise_size, _metadata), 0);
++
++		start = clock();
++		EXPECT_EQ(madvise(addr, advise_size, MADV_WILLNEED), 0);
++		EXPECT_EQ(eaccept_range(self, addr, advise_size,
++					SGX_SECINFO_R | SGX_SECINFO_W
++								| SGX_SECINFO_REG
++								| SGX_SECINFO_PENDING,
++								_metadata), 0);
++		time_used2 = (double)clock() - start;
++
++		speed_up_percent = (int)((time_used1 - time_used2) / time_used1 * 100);
++		TH_LOG("madvise speed up for eaug'ing %10ld pages: %d%%",
++		       advise_size / PAGE_SIZE, speed_up_percent);
++		EXPECT_GE(speed_up_percent, 0);
++		EXPECT_EQ(trim_remove_range(self, addr, advise_size, _metadata), 0);
++	    munmap(addr, advise_size);
++		advise_size = (advise_size << 1UL);
++	}
++	encl_delete(&self->encl);
++}
++
+ /*
+  * SGX2 page type modification test in two phases:
+  * Phase 1:
 -- 
 2.25.1
 
