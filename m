@@ -2,135 +2,104 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F10C636D4
-	for <linux-sgx@archiver.kernel.org>; Tue, 31 Jan 2023 16:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A53C636D3
+	for <linux-sgx@archiver.kernel.org>; Sat,  4 Feb 2023 06:06:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231707AbjAaQ36 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 31 Jan 2023 11:29:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39482 "EHLO
+        id S232489AbjBDGGK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 4 Feb 2023 01:06:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231998AbjAaQ3T (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 31 Jan 2023 11:29:19 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95B0E56488;
-        Tue, 31 Jan 2023 08:29:09 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3F2E0B81DAE;
-        Tue, 31 Jan 2023 16:29:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 727A2C433EF;
-        Tue, 31 Jan 2023 16:28:50 +0000 (UTC)
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
-Cc:     Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Helge Deller <deller@gmx.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Len Brown <len.brown@intel.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Daniel Bristot de Oliveira <bristot@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Evgeniy Polyakov <zbr@ioremap.net>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>, alsa-devel@alsa-project.org,
-        coresight@lists.linaro.org, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, isdn4linux@listserv.isdn4linux.de,
-        keyrings@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-sgx@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-trace-devel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-mm@kvack.org,
-        openrisc@lists.librecores.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: (subset) [PATCH 00/35] Documentation: correct lots of spelling errors (series 1)
-Date:   Tue, 31 Jan 2023 16:28:48 +0000
-Message-Id: <167518251202.582976.5415495075435902323.b4-ty@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230127064005.1558-1-rdunlap@infradead.org>
-References: <20230127064005.1558-1-rdunlap@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S229449AbjBDGGJ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 4 Feb 2023 01:06:09 -0500
+X-Greylist: delayed 1594 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 03 Feb 2023 22:06:07 PST
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5AD6E611F2;
+        Fri,  3 Feb 2023 22:06:07 -0800 (PST)
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 3145cmjc010476;
+        Fri, 3 Feb 2023 23:38:48 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 3145clRD010475;
+        Fri, 3 Feb 2023 23:38:47 -0600
+Date:   Fri, 3 Feb 2023 23:38:46 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, xen-devel@lists.xen.org,
+        linux-sgx@vger.kernel.org, tboot-devel@lists.sourceforge.net
+Cc:     paul@paul-moore.com, casey@schaufler-ca.com, corbet@lwn.net
+Subject: Quixote/TSEM: A new security architecture and eco-system for Linux.
+Message-ID: <20230204053846.GA10404@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 03 Feb 2023 23:38:49 -0600 (CST)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 26 Jan 2023 22:39:30 -0800, Randy Dunlap wrote:
-> Correct many spelling errors in Documentation/ as reported by codespell.
-> 
-> Maintainers of specific kernel subsystems are only Cc-ed on their
-> respective patches, not the entire series. [if all goes well]
-> 
-> These patches are based on linux-next-20230125.
-> 
-> [...]
+Good evening, I hope the week has gone well for everyone.
 
-Applied to arm64 (for-next/misc), thanks!
+On behalf of the Quixote team: Izzy the Golden Retriever, Maria, John
+and myself; I am pleased to announce the initial release of the
+Quixote/TSEM Trust Orchestration System.  We believe it uniquely
+positions Linux to demonstrate a new approach to security and security
+co-processor architectures.
 
-[01/35] Documentation: arm64: correct spelling
-        https://git.kernel.org/arm64/c/a70f00e7f1a3
+Quixote/TSEM is based on the notion, that like all other physical
+phenomenon, the security state of a platform or workload can be
+mathematically modeled.  The objective is to provide for Linux
+security what Docker did for Linux namespace technology.
 
--- 
-Catalin
+There are two major components to this architecture.
 
+TSEM is the Trusted Security Event Modeling system.  It is a new Linux
+Security Module implementation, that at a conceptual level, is a
+blending of integrity measurement and mandatory access controls.  It
+treats the LSM hooks as the basis set for a functional description of
+the security state of a system.
+
+Quixote is the userspace software stack that makes the TSEM LSM
+useful.  It implements the concept of a Trust Orchestration System
+(TOS).  A trust orchestration environment is designed to keep a
+platform or workload in a known trust state.  It thus implements the
+notion of prospective trust rather than the retrospective trust model
+available with TPM based architectures.
+
+A patch series implementing the TSEM LSM has been submitted to the
+linux-security-module list for review and inclusion in the upstream
+kernel.
+
+The source code for the Quixote TOS and pre-compiled binaries for the
+userspace tooling can be found at the following URL:
+
+ftp://ftp.enjellic.com/pub/Quixote
+
+The source release includes a selection of TMA's that include Xen, SGX
+and micro-controller implementations.
+
+The kernel patches include a documentation file, that we believe,
+thoroughly discusses the rationale and implementation of the new
+architecture.  To avoid further indemnifying my reputation for
+loquaciousness in e-mail, I will defer interested parties to that
+document for further discussion.  The document is also included in the
+Quixote source code release for those who choose to download that.
+
+In addition to initiating a discussion on a different approach to
+security, we hope that this release keeps Casey Schaufler from turning
+more blue than he already is.  Given that I had mentioned to him two
+months ago that a new LSM would become available, "in a couple of
+weeks", that may influence conversations on changes to the Linux LSM
+architecture that are being discussed.  Such is the state of software
+development.... :-)
+
+I would be more than happy to field any additional questions that may
+be forthcoming.
+
+Best wishes for a pleasant weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
