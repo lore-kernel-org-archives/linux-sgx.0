@@ -2,44 +2,34 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9709C6FD1B
-	for <linux-sgx@archiver.kernel.org>; Tue,  7 Mar 2023 16:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E64BC678D5
+	for <linux-sgx@archiver.kernel.org>; Tue,  7 Mar 2023 17:38:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230242AbjCGQSm (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 7 Mar 2023 11:18:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49224 "EHLO
+        id S231991AbjCGRi4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 7 Mar 2023 12:38:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230236AbjCGQSV (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 7 Mar 2023 11:18:21 -0500
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E98E3A83;
-        Tue,  7 Mar 2023 08:18:05 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: lina@asahilina.net)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 048F541DF4;
-        Tue,  7 Mar 2023 16:17:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-        s=default; t=1678205882;
-        bh=Qw94FegwAslJUaCniB68UUeUX0OwCWRdd88BzdgPXQE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=Bq5PvOWNwJHYFmQhlxM7mXUiwYE4dpW4OGTiXLi0dz4416AAQi8EIVK020edvpeoI
-         MRmpbh+Fg9QzKeLgMX2oVPVeJGkAA+yCUHZfyQRMuLdLMzMybsWEgSllQqjrK2obvb
-         uuhWDg57cQUvWnPK9qbJbKJlj6ztFWRi5xyfm4xXtfdQTksQxfx7yahzy47cDf6IHl
-         EmJ0kxZYA6+x3n9X9YkPOtyYRB9otB/Czkj+vCGPFKh85Dc4nPmn+46I+5huY5GE9+
-         DmJT+qSOcFyA0rh43AJ7DTVxDsXimY9L8YcZ51TS+cAM/7x4yspjeM8gSRXAEK2IPc
-         D+HcWcb6Nl4gw==
-Message-ID: <687b54e7-b9a6-f37b-e5e6-8972e3670cc1@asahilina.net>
-Date:   Wed, 8 Mar 2023 01:17:54 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH RFC 00/18] Rust DRM subsystem abstractions (& preview AGX
- driver)
-Content-Language: en-US
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        with ESMTP id S231872AbjCGRia (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 7 Mar 2023 12:38:30 -0500
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E95CC3B20E;
+        Tue,  7 Mar 2023 09:34:32 -0800 (PST)
+Date:   Tue, 07 Mar 2023 17:34:21 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1678210468; x=1678469668;
+        bh=8OZWBaubQuoarrG6jpZ95qDxehDJejucdLPuF5MOp3M=;
+        h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+         Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+         Message-ID:BIMI-Selector;
+        b=bUt03tBYnJoUKg8MnJvg7z9HQpfFvZX7S4++QQTsXHM1NqB94GwS0lmrXUP64L3Fa
+         vflhoh4N9ws9+4MmnfcFzK+ci9z91GcRiGi+h8TdGp6/7ibuiV4eeXOmXMXAdtLLzG
+         +IsUKYbiNy4En5xtoajOEkZ7tt0HmKaC2X2DDXlxW7ew8xFvWInzetjP3MzKxS5zSe
+         tk/16eVsaDX7+dJn7TstItNAVOVIh5obsrqqhU4f2kt1AcB7W+UyG1GETwQwDoV6G2
+         6wvELg9dPl7X4c6RQaC4DftQcjWRzSpd/+yRJv9CvBJUZKRCiWp11pabvglmXVXwnT
+         DF8zVB+62PaBg==
+To:     Asahi Lina <lina@asahilina.net>
+From:   =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         David Airlie <airlied@gmail.com>,
@@ -48,13 +38,12 @@ To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        =?UTF-8?Q?Bj=c3=b6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
         Luben Tuikov <luben.tuikov@amd.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         Karol Herbst <kherbst@redhat.com>,
         Ella Stanforth <ella@iglunix.org>,
         Faith Ekstrand <faith.ekstrand@collabora.com>,
@@ -62,199 +51,310 @@ Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
-References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
-From:   Asahi Lina <lina@asahilina.net>
-In-Reply-To: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH RFC 01/18] rust: drm: ioctl: Add DRM ioctl abstraction
+Message-ID: <D9Cyx-9kbjaeb8QVBFqapDyctoDdVyu5uXEJDR41sdXUDXM1VgdRicV5huJDwfC3-T2J-R_DYHH8JZ1_aRdgbeYZFT78J9QveeeYbiTq4yU=@protonmail.com>
+In-Reply-To: <20230307-rust-drm-v1-1-917ff5bc80a8@asahilina.net>
+References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net> <20230307-rust-drm-v1-1-917ff5bc80a8@asahilina.net>
+Feedback-ID: 27884398:user:proton
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-That was supposed to have Markdown-style section headings, but I forgot
-that b4 considers a leading # as a comment... sorry for the abrupt topic
-changes...
+------- Original Message -------
+On Tuesday, March 7th, 2023 at 15:25, Asahi Lina <lina@asahilina.net> wrote=
+:
 
-The intended headings are below.
+> DRM drivers need to be able to declare which driver-specific ioctls they
+> support. This abstraction adds the required types and a helper macro to
+> generate the ioctl definition inside the DRM driver.
+>=20
+> Note that this macro is not usable until further bits of the
+> abstraction are in place (but it will not fail to compile on its own, if
+> not called).
+>=20
+> Signed-off-by: Asahi Lina lina@asahilina.net
+>=20
+> ---
+>  drivers/gpu/drm/Kconfig         |   7 ++
+>  rust/bindings/bindings_helper.h |   2 +
+>  rust/kernel/drm/ioctl.rs        | 147 ++++++++++++++++++++++++++++++++++=
+++++++
+>  rust/kernel/drm/mod.rs          |   5 ++
+>  rust/kernel/lib.rs              |   2 +
+>  5 files changed, 163 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> index dc0f94f02a82..dab8f0f9aa96 100644
+> --- a/drivers/gpu/drm/Kconfig
+> +++ b/drivers/gpu/drm/Kconfig
+> @@ -27,6 +27,13 @@ menuconfig DRM
+>  =09  details.  You should also select and configure AGP
+>  =09  (/dev/agpgart) support if it is available for your platform.
+>=20
+> +# Rust abstractions cannot be built as modules currently, so force them =
+as
+> +# bool by using these intermediate symbols. In the future these could be
+> +# tristate once abstractions themselves can be built as modules.
+> +config RUST_DRM
+> +=09bool "Rust support for the DRM subsystem"
+> +=09depends on DRM=3Dy
+> +
+>  config DRM_MIPI_DBI
+>  =09tristate
+>  =09depends on DRM
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
+per.h
+> index 91bb7906ca5a..2687bef1676f 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -6,6 +6,7 @@
+>   * Sorted alphabetically.
+>   */
+>=20
+> +#include <drm/drm_ioctl.h>
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+>  #include <linux/dma-mapping.h>
+> @@ -23,6 +24,7 @@
+>  #include <linux/sysctl.h>
+>  #include <linux/timekeeping.h>
+>  #include <linux/xarray.h>
+> +#include <uapi/drm/drm.h>
+>=20
+>  /* `bindgen` gets confused at certain things. */
+>  const gfp_t BINDINGS_GFP_KERNEL =3D GFP_KERNEL;
+> diff --git a/rust/kernel/drm/ioctl.rs b/rust/kernel/drm/ioctl.rs
+> new file mode 100644
+> index 000000000000..10304efbd5f1
+> --- /dev/null
+> +++ b/rust/kernel/drm/ioctl.rs
+> @@ -0,0 +1,147 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +#![allow(non_snake_case)]
+> +
+> +//! DRM IOCTL definitions.
+> +//!
+> +//! C header: [`include/linux/drm/drm_ioctl.h`](../../../../include/linu=
+x/drm/drm_ioctl.h)
+> +
+> +use crate::ioctl;
+> +
+> +const BASE: u32 =3D bindings::DRM_IOCTL_BASE as u32;
+> +
+> +/// Construct a DRM ioctl number with no argument.
+> +pub const fn IO(nr: u32) -> u32 {
+> +    ioctl::_IO(BASE, nr)
+> +}
+> +
+> +/// Construct a DRM ioctl number with a read-only argument.
+> +pub const fn IOR<T>(nr: u32) -> u32 {
+> +    ioctl::_IOR::<T>(BASE, nr)
+> +}
+> +
+> +/// Construct a DRM ioctl number with a write-only argument.
+> +pub const fn IOW<T>(nr: u32) -> u32 {
+> +    ioctl::_IOW::<T>(BASE, nr)
+> +}
+> +
+> +/// Construct a DRM ioctl number with a read-write argument.
+> +pub const fn IOWR<T>(nr: u32) -> u32 {
+> +    ioctl::_IOWR::<T>(BASE, nr)
+> +}
+> +
+> +/// Descriptor type for DRM ioctls. Use the `declare_drm_ioctls!{}` macr=
+o to construct them.
+> +pub type DrmIoctlDescriptor =3D bindings::drm_ioctl_desc;
+> +
+> +/// This is for ioctl which are used for rendering, and require that the=
+ file descriptor is either
+> +/// for a render node, or if it=E2=80=99s a legacy/primary node, then it=
+ must be authenticated.
+> +pub const AUTH: u32 =3D bindings::drm_ioctl_flags_DRM_AUTH;
+> +
+> +/// This must be set for any ioctl which can change the modeset or displ=
+ay state. Userspace must
+> +/// call the ioctl through a primary node, while it is the active master=
+.
+> +///
+> +/// Note that read-only modeset ioctl can also be called by unauthentica=
+ted clients, or when a
+> +/// master is not the currently active one.
+> +pub const MASTER: u32 =3D bindings::drm_ioctl_flags_DRM_MASTER;
+> +
+> +/// Anything that could potentially wreak a master file descriptor needs=
+ to have this flag set.
+> +///
+> +/// Current that=E2=80=99s only for the SETMASTER and DROPMASTER ioctl, =
+which e.g. logind can call to force
+> +/// a non-behaving master (display compositor) into compliance.
+> +///
+> +/// This is equivalent to callers with the SYSADMIN capability.
+> +pub const ROOT_ONLY: u32 =3D bindings::drm_ioctl_flags_DRM_ROOT_ONLY;
+> +
+> +/// Whether drm_ioctl_desc.func should be called with the DRM BKL held o=
+r not. Enforced as the
+> +/// default for all modern drivers, hence there should never be a need t=
+o set this flag.
+> +///
+> +/// Do not use anywhere else than for the VBLANK_WAIT IOCTL, which is th=
+e only legacy IOCTL which
+> +/// needs this.
+> +pub const UNLOCKED: u32 =3D bindings::drm_ioctl_flags_DRM_UNLOCKED;
+> +
+> +/// This is used for all ioctl needed for rendering only, for drivers wh=
+ich support render nodes.
+> +/// This should be all new render drivers, and hence it should be always=
+ set for any ioctl with
+> +/// `AUTH` set. Note though that read-only query ioctl might have this s=
+et, but have not set
+> +/// DRM_AUTH because they do not require authentication.
+> +pub const RENDER_ALLOW: u32 =3D bindings::drm_ioctl_flags_DRM_RENDER_ALL=
+OW;
+> +
+> +/// Declare the DRM ioctls for a driver.
+> +///
+> +/// Each entry in the list should have the form:
+> +///
+> +/// `(ioctl_number, argument_type, flags, user_callback),`
+> +///
+> +/// `argument_type` is the type name within the `bindings` crate.
+> +/// `user_callback` should have the following prototype:
+> +///
+> +/// ```
+> +/// fn foo(device: &kernel::drm::device::Device<Self>,
+> +///        data: &mut bindings::argument_type,
+> +///        file: &kernel::drm::file::File<Self::File>,
+> +/// )
+> +/// ```
+> +/// where `Self` is the drm::drv::Driver implementation these ioctls are=
+ being declared within.
+> +///
+> +/// # Examples
+> +///
+> +/// ```
+> +/// kernel::declare_drm_ioctls! {
+> +///     (FOO_GET_PARAM, drm_foo_get_param, ioctl::RENDER_ALLOW, my_get_p=
+aram_handler),
+> +/// }
+> +/// ```
+> +///
+> +#[macro_export]
+> +macro_rules! declare_drm_ioctls {
+> +    ( $(($cmd:ident, $struct:ident, $flags:expr, $func:expr)),* $(,)? ) =
+=3D> {
+> +        const IOCTLS: &'static [$crate::drm::ioctl::DrmIoctlDescriptor] =
+=3D {
+> +            const _:() =3D {
+> +                let i: u32 =3D $crate::bindings::DRM_COMMAND_BASE;
+> +                // Assert that all the IOCTLs are in the right order and=
+ there are no gaps,
+> +                // and that the sizeof of the specified type is correct.
+> +                $(
+> +                    let cmd: u32 =3D $crate::macros::concat_idents!($cra=
+te::bindings::DRM_IOCTL_, $cmd);
+> +                    ::core::assert!(i =3D=3D $crate::ioctl::_IOC_NR(cmd)=
+);
+> +                    ::core::assert!(core::mem::size_of::<$crate::binding=
+s::$struct>() =3D=3D $crate::ioctl::_IOC_SIZE(cmd));
+> +                    let i: u32 =3D i + 1;
+> +                )*
+> +            };
+> +
+> +            let ioctls =3D &[$(
+> +                $crate::bindings::drm_ioctl_desc {
+> +                    cmd: $crate::macros::concat_idents!($crate::bindings=
+::DRM_IOCTL_, $cmd) as u32,
+> +                    func: {
+> +                        #[allow(non_snake_case)]
+> +                        unsafe extern "C" fn $cmd(
+> +                                raw_dev: *mut $crate::bindings::drm_devi=
+ce,
+> +                                raw_data: *mut ::core::ffi::c_void,
+> +                                raw_file_priv: *mut $crate::bindings::dr=
+m_file,
+> +                        ) -> core::ffi::c_int {
+> +                            // SAFETY: We never drop this, and the DRM c=
+ore ensures the device lives
+> +                            // while callbacks are being called.
+> +                            //
+> +                            // FIXME: Currently there is nothing enforci=
+ng that the types of the
+> +                            // dev/file match the current driver these i=
+octls are being declared
+> +                            // for, and it's not clear how to enforce th=
+is within the type system.
+> +                            let dev =3D ::core::mem::ManuallyDrop::new(u=
+nsafe {
+> +                                $crate::drm::device::Device::from_raw(ra=
+w_dev)
+> +                            });
+> +                            // SAFETY: This is just the ioctl argument, =
+which hopefully has the right type
+> +                            // (we've done our best checking the size).
 
-On 07/03/2023 23.25, Asahi Lina wrote:
-> Hi everyone!
-> 
-> This is my first take on the Rust abstractions for the DRM
-> subsystem. It includes the abstractions themselves, some minor
-> prerequisite changes to the C side, as well as the drm-asahi GPU driver
-> (for reference on how the abstractions are used, but not necessarily
-> intended to land together).
-> 
-> These patches apply on top of the tree at [1], which is based on
-> 6.3-rc1 with a large number of Rust abstraction/support commits added on
-> top. Most of these are not prerequisites for the DRM abstractions
-> themselves, but rather only of the driver.
-> 
-> * #1-12 introduce the abstractions, module by module, with minor C
->   changes before the dependent abstraction.
->   * Patch 10 is a little addition to drm_sched that I ended up needing,
->     but I can pull it out of the abstraction into its own patch if
->     needed.
-> * #13-14 add a minor feature to drm/gem and its abstraction used
->   by the driver.
-> * #15-16 introduce the (unstable) asahi UAPI. This is obviously not
->   ready for merge yet, but comments are welcome!
-> * #17 adds a Rust helper macro to handle GPU core/firmware differences.
->   This probably belongs in the driver at this point, but right now it
->   has to live in rust/macros since there is no mechanism for per-driver
->   proc macros.
-> * #18 adds the driver proper, in one big commit, for reference purposes.
+In the rust tree there is the ReadableFromBytes [1] trait which indicates t=
+hat it is safe to read arbitrary bytes into the type. Maybe you could add i=
+t as bound on the argument type when it lands in rust-next? This way you ca=
+n't end up with for example a struct containing a bool with the byte value =
+2, which is UB.
 
-## Background
+https://rust-for-linux.github.io/docs/kernel/io_buffer/trait.ReadableFromBy=
+tes.html [1]
 
-> I've been working since mid last year on an Apple AGX GPU driver for
-> Linux, using the (at the time) out-of-tree Rust support. As part of this
-> effort, I've been writing safe Rust abstractions for portions of the DRM
-> subsystem.
-> 
-> Now that Rust itself is upstream, I'd like to get all the abstractions
-> upstreamed so we can eventually get the driver upstreamed!
-> 
-> These abstractions have been used by the driver since our release in
-> December [2], in a simpler synchronous-submission form:
-> 
-> * drm::ioctl
-> * drm::device
-> * drm::drv
-> * drm::file
-> * drm::{gem, gem::shmem}
-> * drm::mm
-> 
-> This series adds these too, which are used by the explicit sync refactor
-> of the driver (the version in this series):
-> 
-> * drm::syncobj
-> * drm::sched
-> * dma_fence
-> 
-> The major dependencies for the DRM abstractions themselves are:
-> 
-> * [3] rust: error: Add missing wrappers to convert to/from kernel error codes
-> * [4] rust: Miscellaneous macro improvements
-> * [5] rust: Add a Sealed trait
-> * [6] rust: device: Add a minimal RawDevice trait
-> * [7] rust: Enable the new_uninit feature for kernel and driver crates
-> * [8] rust: ioctl: Add ioctl number manipulation functions
-> * [9] rust: sync: Arc: Any downcasting and assume_init()
-> *     rust: Add `container_of` and `offset_of` macros
-> *     kernel::sync::mutex and dependencies
-> 
-> Most of these (the ones with links) have already been submitted, and I
-> expect all of them to land for 6.4 (the mutex one will likely be last,
-> since there is some refactoring that will happen over the current state
-> to make it more ergonomic to use). The mutex dep is only necessary for
-> drm::mm and dma_fence, and transitively drm::syncobj and drm::sched.
+> +                            let data =3D unsafe { &mut *(raw_data as *mu=
+t $crate::bindings::$struct) };
+> +                            // SAFETY: This is just the DRM file structu=
+re
+> +                            let file =3D unsafe { $crate::drm::file::Fil=
+e::from_raw(raw_file_priv) };
+> +
+> +                            match $func(&*dev, data, &file) {
+> +                                Err(e) =3D> e.to_kernel_errno(),
+> +                                Ok(i) =3D> i.try_into().unwrap_or(ERANGE=
+.to_kernel_errno()),
+> +                            }
+> +                        }
+> +                        Some($cmd)
+> +                    },
+> +                    flags: $flags,
+> +                    name: $crate::c_str!(::core::stringify!($cmd)).as_ch=
+ar_ptr(),
+> +                }
+> +            ),*];
+> +            ioctls
+> +        };
+> +    };
+> +}
+> diff --git a/rust/kernel/drm/mod.rs b/rust/kernel/drm/mod.rs
+> new file mode 100644
+> index 000000000000..9ec6d7cbcaf3
+> --- /dev/null
+> +++ b/rust/kernel/drm/mod.rs
+> @@ -0,0 +1,5 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +
+> +//! DRM subsystem abstractions.
+> +
+> +pub mod ioctl;
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 7903490816bf..cb23d24c6718 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -37,6 +37,8 @@ mod build_assert;
+>  pub mod delay;
+>  pub mod device;
+>  pub mod driver;
+> +#[cfg(CONFIG_RUST_DRM)]
+> +pub mod drm;
+>  pub mod error;
+>  pub mod io_buffer;
+>  pub mod io_mem;
+>=20
+> --
+> 2.35.1
 
-## State
-
-> Things work! We've had most of the abstractions in production edge
-> kernels with the driver, and the new explicit sync stuff has passed
-> quite a few torture tests (this is how we found the drm_sched issue,
-> patch 11).
-> 
-> The abstractions are intended to be safe (safety review very welcome!).
-> While writing them, I tried to avoid making any changes to the C side
-> unless absolutely necessary. I understand that it will probably make
-> sense to adjust the C side to make some things easier, but I wanted to
-> start from this as a baseline.
-> 
-> Known issues:
-> 
-> - The existing Rust integration does not currently allow building
->   abstractions as modules, so the Rust abstractions are only available
->   for DRM components that are built in. I added some extra Kconfig
->   symbols to deal with this, so a driver built as a module can depende
->   on having those built in. This should go away in the future (but may
->   not be ready in time for submission... I understand this probably
->   shouldn't be a blocker though?).
-> 
-> - DRM relies heavily on the "subclassing" pattern for driver objects,
->   and this doesn't map well to Rust. I tried several approaches for
->   various bits, so we can see how they work out. In particular, whether
->   wrapper types should pretend to be smart pointers and Deref to their
->   inner driver-specific types, and whether they should be marked as
->   method receivers (Yuck, internal rustc implementation hacks! But
->   Arc<T> already does the same thing and it makes usage in
->   driver-implemented callbacks as `self` possible) are things I'd love
->   to discuss ^^.
-> 
-> - Only what I need for my driver is implemented (plus a small amount of
->   obvious extras where better API completeness makes sense). I think the
->   general idea with Rust abstractions is that we add things as they
->   become necessary.
-> 
-> - The plain GEM vs. GEM-shmem duality ended up with quite a hairy type
->   hierarchy. I'd love to figure out how to make this simpler...
-> 
-> - drm::mm ends up requiring a built-in mutex in the abstraction, instead
->   of delegating that to the user with the usual Rust mutability rules.
->   This is because nodes can be dropped at any time, and those operations
->   need to be synchronized. We could try to avoid forbidding those drops
->   or mark the node type !Send, but that would make it a lot less
->   ergonomic to use...
-> 
-> I'm looking for feedback on the abstractions of all kinds, so we can
-> move towards an upstreamable version. Optimistically, I'd love to get
-> this upstream for 6.5, and the driver for 6.6.
-> 
-> Please feel free to ask any questions about the Rust bits, since I know
-> a lot of this is new to many of the C folks!
-
-## About the drm-asahi driver
-
-> This is a fairly complete driver for Apple AGX G13 and G14 series GPUs.
-> 
-> The driver today supports the Apple M1, M1 Pro, M1 Max, M1 Ultra, and M2
-> SoCs, across two firmware revisions each. It has an explicit sync UAPI
-> heavily inspired by the upcoming Intel Xe UAPI, designed with Vulkan
-> support in mind. On the Mesa side we currently have a Gallium driver
-> that is mostly already upstream (missing the UAPI bits mostly) and
-> passes the dEQP GLES2/EGL tests, with most of GLES3.0 passing in
-> downstream work-in-progress branches. This is a reverse engineered
-> community driver (we have no hardware documentation of any kind, other
-> than some hints from aspects shared with PowerVR).
-> 
-> While developing the driver, I tried to make use of Rust's safety and
-> lifetime features to provide not just CPU-side safety, but also
-> partial firmware-ABI safety. Thanks to this, it has turned out to be
-> a very stable driver even though GPU firmware crashes are fatal (no
-> restart capability, need to reboot!) and the FW/driver interface is a
-> huge mess of unsafe shared memory structures with complex pointer
-> chains. There are over 70 ABI types and 3000+ lines of firmware ABI type
-> definitions that vary between firmware builds and GPU cores...
-> 
-> In a simpler blocking-submission form, it has been shipping in Asahi
-> Linux edge kernels since December [2], with lots of users and zero (!)
-> reported oopses (and only a couple reports of GPU firmware crashes,
-> though that issue should now be fixed). It has survived OOM scenarios
-> (Rust makes error cleanup easy!), UAPI-level fuzzing, countless broken
-> Mesa builds, uptimes of 40+ days, and more.
-> 
-> The explicit sync refactor significantly increases performance (and
-> potential problems), but this version has survived a lot of torture
-> with dEQP/piglit tests and some manual corner case testing.
-> 
-> In other words, Rust works! ^^
-> 
-> There are some design notes on the driver and further links at [10].
-
-## Links
-
-> [1] https://github.com/AsahiLinux/linux.git drm-rfc-base-20230307
-> [2] https://asahilinux.org/2022/12/gpu-drivers-now-in-asahi-linux/
-> [3] https://lore.kernel.org/rust-for-linux/20230224-rust-error-v1-0-f8f9a9a87303@asahilina.net/T/
-> [4] https://lore.kernel.org/rust-for-linux/20230224-rust-macros-v1-0-b39fae46e102@asahilina.net/T/
-> [5] https://lore.kernel.org/rust-for-linux/20230224-rust-iopt-rtkit-v1-0-49ced3391295@asahilina.net/T/#m515bad2cff7f5a46f55897e6b73c6c2f1fb2c638
-> [6] https://lore.kernel.org/rust-for-linux/20230224-rust-iopt-rtkit-v1-0-49ced3391295@asahilina.net/T/#m4c64e390c43b3ff1b8470fc8b37eaf87f6e12c94
-> [7] https://lore.kernel.org/rust-for-linux/CQV7ZNT6LMXI.1XG4YXSH8I7JK@vincent-arch/T/
-> [8] https://lore.kernel.org/rust-for-linux/61f734d6-1497-755f-3632-3f261b890846@asahilina.net/T/
-> [9] https://lore.kernel.org/rust-for-linux/20230224-rust-arc-v1-0-568eea613a41@asahilina.net/T/
-> [10] https://github.com/AsahiLinux/docs/wiki/SW:AGX-driver-notes
-
-~~ Lina
+Cheers,
+Bjorn
