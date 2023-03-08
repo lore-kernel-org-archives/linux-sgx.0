@@ -2,44 +2,69 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 347B6C64EC4
-	for <linux-sgx@archiver.kernel.org>; Wed,  8 Mar 2023 15:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA046C678D5
+	for <linux-sgx@archiver.kernel.org>; Wed,  8 Mar 2023 15:20:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231627AbjCHPTH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 8 Mar 2023 10:19:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57066 "EHLO
+        id S232136AbjCHPU6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 8 Mar 2023 10:20:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232102AbjCHPSd (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 8 Mar 2023 10:18:33 -0500
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3FC24108E;
-        Wed,  8 Mar 2023 07:18:30 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: lina@asahilina.net)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 622BA41F78;
-        Wed,  8 Mar 2023 15:18:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-        s=default; t=1678288709;
-        bh=LmsELnvNppKSIw1uomPRrZaTWF5g2NJzpFeIFnsgn7U=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=uVC2jkrfjynzQsvbHySQcGCPBDD9vbROb59eRCFeeK0zHteVuDaP6C66Myomr6ebM
-         wcZNCfcUMgFYTj0A+Z/rIZPCJgq7MnRspLTSC9sVCRbHfu63XvS5MSTtYd/lS4JjcH
-         iJGKN6nAAkyQSWzR3MohpsI6j8burzsd1HZWV/Y/52Su2g4eg6NoP1j5yDSTSHwOhf
-         Zu8b4F4wXYXhav8jDRjTja4TUIjRa3HyCFtSB0H4ickQZf+MKApr55owkDRzWJlQq1
-         XNw5xC+L3KtOCfrhU0ISWaAFU277dHEDb4MeYA/KeWwgZEyFu+ZD64oyltslT1BMKA
-         qCvhRk7brj5Qw==
-Message-ID: <3320e497-09c0-6eb6-84c5-bab2e63f28ec@asahilina.net>
-Date:   Thu, 9 Mar 2023 00:18:20 +0900
+        with ESMTP id S231946AbjCHPUb (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 8 Mar 2023 10:20:31 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75FD3CB65D
+        for <linux-sgx@vger.kernel.org>; Wed,  8 Mar 2023 07:19:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678288776;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZgwktT8M+kuZL3ds+rvp4biP/Gs8JikDQD7POfmJAag=;
+        b=GE9eMPDRSHcHTPazoeplCgn7BIlUAkUlOaMRButkidIDZvAoO91eAnQK/rp3ohGen+Oqyt
+        NtCIcqrSnJeNZWhADg+RJlY35UxPBlrDtwyg/ebmDsLxDHSNU4Aj0rD4yUvc6nKJlhF55F
+        BM3vy0bNEDEtJNvKAGeWBnRt5mkhG+o=
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
+ [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-595-mzd3Y4r9NF2ARdcorSHrow-1; Wed, 08 Mar 2023 10:19:35 -0500
+X-MC-Unique: mzd3Y4r9NF2ARdcorSHrow-1
+Received: by mail-vs1-f69.google.com with SMTP id d5-20020a056102040500b004214c07da17so6066295vsq.0
+        for <linux-sgx@vger.kernel.org>; Wed, 08 Mar 2023 07:19:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678288770;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZgwktT8M+kuZL3ds+rvp4biP/Gs8JikDQD7POfmJAag=;
+        b=S0+sACxM9QIAFn2XN0RZmZdDot8vu8IX4GtZFbzq+ICP0A7y2aenVH1j6Ulkg7OZso
+         0j3pAChOYhOlfEC9lJLsCV4MjnrROoix8xzJfjIps2SYRE/lsPybCpH08Wl3sq9iD+ag
+         nOoNdd12IWCjC6h+it37HQ7nFlfxAMbUiqswMT/cmy5UfznR3vlZeWT2wThwtx13/QDJ
+         +X4PWsv5/FsEXMFdj+GhVYVxXfq/MVTUx5DaUxRbgik7Fa9CApdl7lqXcmhzFP2+unUx
+         4oYqKgiyAz38kr6Qg/WYRXARQeKwPmPA13TblUNOSQXwGgBBdiLWCvIszgOisIztuHij
+         xB0A==
+X-Gm-Message-State: AO0yUKWki02W8HDHLNW61jV4+qgECp6E2mx3mepoVsc9yRD8G7CN6jm9
+        mOpJyqdoEx8s8GfyJ2DqsLutfDqu655XdPyi7b3s1DY6m5wjG9pjOvMad1FEK9J7gRF+3ey0J07
+        9q6Y1wABcKlQsycXdsqYS4JApawce9YIJueSi
+X-Received: by 2002:a67:e94c:0:b0:421:c4a7:872b with SMTP id p12-20020a67e94c000000b00421c4a7872bmr9893513vso.6.1678288770286;
+        Wed, 08 Mar 2023 07:19:30 -0800 (PST)
+X-Google-Smtp-Source: AK7set+LFkvKeeVI3ttwm6kpFUQRkNGkfJ8qbDCG4jHcdwVIQ4SiuFcDQxKvoIfsyVYsxcEJcY4MnTcZLVjC63cvuTo=
+X-Received: by 2002:a67:e94c:0:b0:421:c4a7:872b with SMTP id
+ p12-20020a67e94c000000b00421c4a7872bmr9893505vso.6.1678288769989; Wed, 08 Mar
+ 2023 07:19:29 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH RFC 11/18] drm/scheduler: Clean up jobs when the scheduler
- is torn down
-Content-Language: en-US
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
+ <20230307-rust-drm-v1-10-917ff5bc80a8@asahilina.net> <cd788ccf-0cf1-85d5-1bf8-efc259bd7e11@amd.com>
+ <CACO55tsnCMQt8UW5_UCY139kpZOdNXbMkBkFfUiB12jW5UgVmA@mail.gmail.com>
+ <0d6cd23b-8c9e-067d-97ff-aa35dbbcf9bf@amd.com> <CACO55tumNMYrcJ0LhnLfTK4DmGLHD-bt3xpXyoPe98V2wmgXQg@mail.gmail.com>
+ <269c4fb7-60f6-6778-444d-15703febea58@amd.com>
+In-Reply-To: <269c4fb7-60f6-6778-444d-15703febea58@amd.com>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Wed, 8 Mar 2023 16:19:17 +0100
+Message-ID: <CACO55tuVVnC-_iVmX=SGGVF=0t6kqqr0Cy0pGe3YoppBgUbiXw@mail.gmail.com>
+Subject: Re: [PATCH RFC 10/18] drm/scheduler: Add can_run_job callback
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc:     Asahi Lina <lina@asahilina.net>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
@@ -49,173 +74,178 @@ To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        =?UTF-8?Q?Bj=c3=b6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
         Luben Tuikov <luben.tuikov@amd.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Karol Herbst <kherbst@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         Ella Stanforth <ella@iglunix.org>,
         Faith Ekstrand <faith.ekstrand@collabora.com>,
         Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
-References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-11-917ff5bc80a8@asahilina.net>
- <bbd7c5ee-c2f0-3e19-757d-a9aff1a26d3d@linux.intel.com>
- <585fa052-4eff-940e-b307-2415c315686a@amd.com>
-From:   Asahi Lina <lina@asahilina.net>
-In-Reply-To: <585fa052-4eff-940e-b307-2415c315686a@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 08/03/2023 19.03, Christian König wrote:
-> Am 08.03.23 um 10:57 schrieb Maarten Lankhorst:
->>
->> On 2023-03-07 15:25, Asahi Lina wrote:
->>> drm_sched_fini() currently leaves any pending jobs dangling, which
->>> causes segfaults and other badness when job completion fences are
->>> signaled after the scheduler is torn down.
->>>
->>> Explicitly detach all jobs from their completion callbacks and free
->>> them. This makes it possible to write a sensible safe abstraction for
->>> drm_sched, without having to externally duplicate the tracking of
->>> in-flight jobs.
->>>
->>> This shouldn't regress any existing drivers, since calling
->>> drm_sched_fini() with any pending jobs is broken and this change should
->>> be a no-op if there are no pending jobs.
->>>
->>> Signed-off-by: Asahi Lina <lina@asahilina.net>
->>> ---
->>>   drivers/gpu/drm/scheduler/sched_main.c | 27 
->>> +++++++++++++++++++++++++--
->>>   1 file changed, 25 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/scheduler/sched_main.c 
->>> b/drivers/gpu/drm/scheduler/sched_main.c
->>> index 5c0add2c7546..0aab1e0aebdd 100644
->>> --- a/drivers/gpu/drm/scheduler/sched_main.c
->>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
->>> @@ -1119,10 +1119,33 @@ EXPORT_SYMBOL(drm_sched_init);
->>>   void drm_sched_fini(struct drm_gpu_scheduler *sched)
->>>   {
->>>       struct drm_sched_entity *s_entity;
->>> +    struct drm_sched_job *s_job, *tmp;
->>>       int i;
->>>   -    if (sched->thread)
->>> -        kthread_stop(sched->thread);
->>> +    if (!sched->thread)
->>> +        return;
->>> +
->>> +    /*
->>> +     * Stop the scheduler, detaching all jobs from their hardware 
->>> callbacks
->>> +     * and cleaning up complete jobs.
->>> +     */
->>> +    drm_sched_stop(sched, NULL);
->>> +
->>> +    /*
->>> +     * Iterate through the pending job list and free all jobs.
->>> +     * This assumes the driver has either guaranteed jobs are 
->>> already stopped, or that
->>> +     * otherwise it is responsible for keeping any necessary data 
->>> structures for
->>> +     * in-progress jobs alive even when the free_job() callback is 
->>> called early (e.g. by
->>> +     * putting them in its own queue or doing its own refcounting).
->>> +     */
->>> +    list_for_each_entry_safe(s_job, tmp, &sched->pending_list, list) {
->>> +        spin_lock(&sched->job_list_lock);
->>> +        list_del_init(&s_job->list);
->>> +        spin_unlock(&sched->job_list_lock);
->>> +        sched->ops->free_job(s_job);
->>> +    }
->>
->> I would stop the kthread first, then delete all jobs without spinlock 
->> since nothing else can race against sched_fini?
->>
->> If you do need the spinlock, It would need to guard 
->> list_for_each_entry too.
-> 
-> Well this case here actually should not happen in the first place.
+On Wed, Mar 8, 2023 at 4:09=E2=80=AFPM Christian K=C3=B6nig <christian.koen=
+ig@amd.com> wrote:
+>
+> Am 08.03.23 um 15:43 schrieb Karol Herbst:
+> > [SNIP]
+> > "further"? There was no discussion at all,
+>
+> Yeah, well that is exactly what I wanted to archive.
+>
+> >   you just started off like
+> > that. If you think somebody misses that connection, you can point out
+> > to documentation/videos whatever so the contributor can understand
+> > what's wrong with an approach. You did that, so that's fine. It's just
+> > starting off _any_ discussion with a "Well complete NAK" is terrible
+> > style. I'd feel uncomfortable if that happened to me and I'm sure
+> > there are enough people like that that we should be more reasonable
+> > with our replies. Just.. don't.
+> >
+> > We are all humans here and people react negatively to such things. And
+> > if people do it on purpose it just makes it worse.
+>
+> I completely see your point, I just don't know how to improve it.
+>
+> I don't stop people like this because I want to make them uncomfortable
+> but because I want to prevent further discussions on that topic.
+>
+> In other words how can I make people notice that this is something
+> fundamental while still being polite?
+>
 
-"This should not happen in the first place" is how you end up with C
-APIs that have corner cases that lead to kernel oopses...
+I think a little improvement over this would be to at least wait a few
+replies before resorting to those strong statements. Just before it
+becomes a risk in just wasting time.
 
-The idea with Rust abstractions is that it needs to be actually
-impossible to create memory safety problems for the user of the
-abstraction, you can't impose arbitrary constraints like "you must wait
-for all jobs to finish before destroying the scheduler"... it needs to
-be intrinsically safe.
+> >>>> This is clearly going against the idea of having jobs only depend on
+> >>>> fences and nothing else which is mandatory for correct memory manage=
+ment.
+> >>>>
+> >>> I'm sure it's all documented and there is a design document on how
+> >>> things have to look like you can point out? Might help to get a bette=
+r
+> >>> understanding on how things should be.
+> >> Yeah, that's the problematic part. We have documented this very
+> >> extensively:
+> >> https://www.kernel.org/doc/html/v5.9/driver-api/dma-buf.html#indefinit=
+e-dma-fences
+> >>
+> >> And both Jason and Daniel gave talks about the underlying problem and
+> > fyi:
+> > s/Jason/Faith/g
+>
+> +1. I wasn't aware of that.
+>
+> >> try to come up with patches to raise warnings when that happens, but
+> >> people still keep coming up with the same idea over and over again.
+> >>
+> > Yes, and we'll have to tell them over and over again. Nothing wrong
+> > with that. That's just part of maintaining such a big subsystem. And
+> > that's definitely not a valid reason to phrase things like above.
+> >
+> >> It's just that the technical relationship between preventing jobs from
+> >> running and with that preventing dma_fences from signaling and the cor=
+e
+> >> memory management with page faults and shrinkers waiting for those
+> >> fences is absolutely not obvious.
+> >>
+> >> We had at least 10 different teams from different companies falling in=
+to
+> >> the same trap already and either the patches were rejected of hand or
+> >> had to painfully reverted or mitigated later on.
+> >>
+> > Sure, but that's just part of the job. And pointing out fundamental
+> > mistakes early on is important, but the situation won't get any better
+> > by being like that. Yes, we'll have to repeat the same words over and
+> > over again, and yes that might be annoying, but that's just how it is.
+>
+> Well I have no problem explaining people why a solution doesn't work.
+>
+> But what usually happens is that people don't realize that they need to
+> back of from a design and completely start over.
+>
+> Regards,
+> Christian.
+>
+> >
+> >> Regards,
+> >> Christian.
+> >>
+> >>>> If the hw is busy with something you need to return the fence for th=
+is
+> >>>> from the prepare_job callback so that the scheduler can be notified =
+when
+> >>>> the hw is available again.
+> >>>>
+> >>>> Regards,
+> >>>> Christian.
+> >>>>
+> >>>>> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> >>>>> ---
+> >>>>>     drivers/gpu/drm/scheduler/sched_main.c | 10 ++++++++++
+> >>>>>     include/drm/gpu_scheduler.h            |  8 ++++++++
+> >>>>>     2 files changed, 18 insertions(+)
+> >>>>>
+> >>>>> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/d=
+rm/scheduler/sched_main.c
+> >>>>> index 4e6ad6e122bc..5c0add2c7546 100644
+> >>>>> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> >>>>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> >>>>> @@ -1001,6 +1001,16 @@ static int drm_sched_main(void *param)
+> >>>>>                 if (!entity)
+> >>>>>                         continue;
+> >>>>>
+> >>>>> +             if (sched->ops->can_run_job) {
+> >>>>> +                     sched_job =3D to_drm_sched_job(spsc_queue_pee=
+k(&entity->job_queue));
+> >>>>> +                     if (!sched_job) {
+> >>>>> +                             complete_all(&entity->entity_idle);
+> >>>>> +                             continue;
+> >>>>> +                     }
+> >>>>> +                     if (!sched->ops->can_run_job(sched_job))
+> >>>>> +                             continue;
+> >>>>> +             }
+> >>>>> +
+> >>>>>                 sched_job =3D drm_sched_entity_pop_job(entity);
+> >>>>>
+> >>>>>                 if (!sched_job) {
+> >>>>> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_schedule=
+r.h
+> >>>>> index 9db9e5e504ee..bd89ea9507b9 100644
+> >>>>> --- a/include/drm/gpu_scheduler.h
+> >>>>> +++ b/include/drm/gpu_scheduler.h
+> >>>>> @@ -396,6 +396,14 @@ struct drm_sched_backend_ops {
+> >>>>>         struct dma_fence *(*prepare_job)(struct drm_sched_job *sche=
+d_job,
+> >>>>>                                          struct drm_sched_entity *s=
+_entity);
+> >>>>>
+> >>>>> +     /**
+> >>>>> +      * @can_run_job: Called before job execution to check whether=
+ the
+> >>>>> +      * hardware is free enough to run the job.  This can be used =
+to
+> >>>>> +      * implement more complex hardware resource policies than the
+> >>>>> +      * hw_submission limit.
+> >>>>> +      */
+> >>>>> +     bool (*can_run_job)(struct drm_sched_job *sched_job);
+> >>>>> +
+> >>>>>         /**
+> >>>>>              * @run_job: Called to execute the job once all of the =
+dependencies
+> >>>>>              * have been resolved.  This may be called multiple tim=
+es, if
+> >>>>>
+>
 
-> Jobs depend on their device, so as long as there are jobs there should 
-> also be a reference to the scheduler.
-
-These schedulers are created dynamically per userspace queue. The memory
-management and reference counting involved make it safe to destroy the
-scheduler even when behind the scenes hardware jobs are still running,
-as long as drm_sched itself doesn't crash on fences firing without a
-scheduler (which is what this patch fixes).
-
-This is the power of Rust: it forces you to architect your code in a way
-that you don't have complex high-level dependencies that span the entire
-driver and are difficult to prove hold. In my driver, you can kill a
-process and that destroys the drm_sched, closes all GEM objects,
-everything, even if the GPU is still running jobs from that process. The
-worst that can happen is that the GPU faults as in-use userspace buffers
-are unmapped out from under the running user job, but that's fine (GPU
-faults are recoverable). The actual firmware resources, queues, etc. in
-use are all kept alive until the commands finish executing (or fault,
-which is just an abnormal completion), even if the userspace process
-that owned them is long gone. I've tested this extensively by doing
-things like large-resolution glmark runs in a loop that get `kill -9`'d
-repeatedly, and it works very well! Tons of GPU faults but no firmware
-crashes, no oopses, nothing. And the firmware *will* crash irrecoverably
-if anything goes wrong with its shared memory structures, so that it
-doesn't is pretty good evidence that all this works!
-
-> What could be is that you have allocated a scheduler instance 
-> dynamically, but even then you should first tear down all entities and 
-> then the scheduler.
-
-This is about creating a safe Rust abstraction, so we can't impose
-requirements on users like that, the abstraction has to take care of it.
-Unfortunately, the jobs cannot depend on the scheduler at the
-abstraction level. I tried that (putting a reference counted reference
-to the scheduler in the job abstraction), but it doesn't work because a
-job completing can end up dropping the last reference to the scheduler,
-and then you end up trying to stop and clean up the scheduler from a
-callback called from the scheduler kthread itself, which deadlocks. We
-could throw those cleanups into a workqueue or something, but that's
-just adding bandages around the problem that the drm_sched interface
-today is just not safe without this patch...
-
-Right now, it is not possible to create a safe Rust abstraction for
-drm_sched without doing something like duplicating all job tracking in
-the abstraction, or the above backreference + deferred cleanup mess, or
-something equally silly. So let's just fix the C side please ^^
-
-So far, drm_sched is the only DRM API that has had such a fundamental
-API safety issue that I had to make a change like this to the C to make
-the Rust abstraction possible/reasonable... drm_sched has also been by
-far the hardest DRM component API to understand from a safety point of
-view, with the most inconsistent documentation about what the
-ownership/freeing rules are, and what objects need to outlive what other
-objects (I had to just read the code to figure most of this out). That's
-also one nice outcome of writing Rust abstractions: it forces us to make
-all these rules and invariants explicit, instead of leaving them as
-unwritten assumptions (almost nobody consistently documents this in C
-APIs...).
-
-If I got it right, anyone using the Rust drm_sched abstraction doesn't
-have to worry about this any more because if they do something that
-would oops with it, their code won't compile. But I need this patch to
-be able to make that guarantee...
-
-~~ Lina
