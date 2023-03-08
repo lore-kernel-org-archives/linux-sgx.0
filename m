@@ -2,44 +2,51 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DACC678D5
-	for <linux-sgx@archiver.kernel.org>; Wed,  8 Mar 2023 09:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BA7C678D5
+	for <linux-sgx@archiver.kernel.org>; Wed,  8 Mar 2023 09:58:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbjCHJmO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 8 Mar 2023 04:42:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53036 "EHLO
+        id S230170AbjCHJ6d (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 8 Mar 2023 04:58:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230199AbjCHJmC (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 8 Mar 2023 04:42:02 -0500
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC3CCB56D9;
-        Wed,  8 Mar 2023 01:41:44 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: lina@asahilina.net)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id C77F841DF4;
-        Wed,  8 Mar 2023 09:41:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-        s=default; t=1678268501;
-        bh=vBxMB571C2rYbZLVgeBfcGW/6kjKGp2NbaNwD343XB8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=CZvuPPNTVPZ5UeTvxDAPbq9istc0FQHAa695VyMpBbgJYwBKq3BYCxH5vGYEznwtD
-         UsWvCb0Ck28/YE43ouuknNNtGFuJNUkPqCqzeTq0B0WPCl3ukEFiPQ6YtGUBmgH6FP
-         JVxP/pFvVRc7toKHMIxyf/6IBkguOIsyZLC3baI8xwmQVvp2ZAZUWBaWDGdY7Lp2u8
-         7NRARO6WbHzFBDxxIcKxob80EOdD2n5kb7qWnM6/OipZBy36VF9gJQUUpOm8fOOoFw
-         6pGiB0Lx3DCNA5Xv/Xq8ckvcr4AF7O0bnR2ObjTc6cxxhcJXFAYmvJlvCXiMctnt6v
-         nxYUr1kjdPP2g==
-Message-ID: <a075d886-0820-b6fb-fcd0-45bfdc75e37d@asahilina.net>
-Date:   Wed, 8 Mar 2023 18:41:32 +0900
+        with ESMTP id S230063AbjCHJ6X (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 8 Mar 2023 04:58:23 -0500
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D0031A970;
+        Wed,  8 Mar 2023 01:58:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678269498; x=1709805498;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pZyVPEEWN847EU+VtMs2axVi8WRcs92TdSJoLK4IpVI=;
+  b=fRj1IzWttEPMeUfunFSeMQLnNDyy0H4WaKmtJAxybsWFSWgF0CkP+XXX
+   y7o0mir8IWFb2QbECVfaPg+2j7PahS9dP8oKjtumDshTMiB/ZuuIY4Vn3
+   V5DofzSIDiIqRF/MLhzDT/UyAbolynXPTKNJqyIHMp5VnfaWh72xlB6d/
+   i8G+zqv2QXba81wdQ02CsrWI/sTZaPgItKcooN79mtEBurA79K6KZn7bP
+   ky+ARgOAwGKFA5OLIh88ZWRJ7CU8lC+ku6jmOeG1LFp7aDoZ/7hhMSiL6
+   i9AXXHMum8W2plRtBqIuuTaSzfzY8WtbSefzuhtlee5al81d4iiS6xoTM
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="398693153"
+X-IronPort-AV: E=Sophos;i="5.98,243,1673942400"; 
+   d="scan'208";a="398693153"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2023 01:58:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="787059832"
+X-IronPort-AV: E=Sophos;i="5.98,243,1673942400"; 
+   d="scan'208";a="787059832"
+Received: from lcojocar-mobl.ger.corp.intel.com (HELO [10.251.219.243]) ([10.251.219.243])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2023 01:57:49 -0800
+Message-ID: <bbd7c5ee-c2f0-3e19-757d-a9aff1a26d3d@linux.intel.com>
+Date:   Wed, 8 Mar 2023 10:57:47 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH RFC 10/18] drm/scheduler: Add can_run_job callback
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.8.0
+Subject: Re: [PATCH RFC 11/18] drm/scheduler: Clean up jobs when the scheduler
+ is torn down
 Content-Language: en-US
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+To:     Asahi Lina <lina@asahilina.net>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         David Airlie <airlied@gmail.com>,
@@ -50,6 +57,7 @@ To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
         =?UTF-8?Q?Bj=c3=b6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
         Luben Tuikov <luben.tuikov@amd.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>
@@ -62,62 +70,79 @@ Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
 References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-10-917ff5bc80a8@asahilina.net>
- <cd788ccf-0cf1-85d5-1bf8-efc259bd7e11@amd.com>
-From:   Asahi Lina <lina@asahilina.net>
-In-Reply-To: <cd788ccf-0cf1-85d5-1bf8-efc259bd7e11@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+ <20230307-rust-drm-v1-11-917ff5bc80a8@asahilina.net>
+From:   Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+In-Reply-To: <20230307-rust-drm-v1-11-917ff5bc80a8@asahilina.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 08/03/2023 17.46, Christian König wrote:
-> Am 07.03.23 um 15:25 schrieb Asahi Lina:
->> Some hardware may require more complex resource utilization accounting
->> than the simple job count supported by drm_sched internally. Add a
->> can_run_job callback to allow drivers to implement more logic before
->> deciding whether to run a GPU job.
-> 
-> Well complete NAK.
-> 
-> This is clearly going against the idea of having jobs only depend on 
-> fences and nothing else which is mandatory for correct memory management.
-> 
-> If the hw is busy with something you need to return the fence for this 
-> from the prepare_job callback so that the scheduler can be notified when 
-> the hw is available again.
 
-I think you misunderstood the intent here... This isn't about job
-dependencies, it's about in-flight resource limits.
+On 2023-03-07 15:25, Asahi Lina wrote:
+> drm_sched_fini() currently leaves any pending jobs dangling, which
+> causes segfaults and other badness when job completion fences are
+> signaled after the scheduler is torn down.
+>
+> Explicitly detach all jobs from their completion callbacks and free
+> them. This makes it possible to write a sensible safe abstraction for
+> drm_sched, without having to externally duplicate the tracking of
+> in-flight jobs.
+>
+> This shouldn't regress any existing drivers, since calling
+> drm_sched_fini() with any pending jobs is broken and this change should
+> be a no-op if there are no pending jobs.
+>
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> ---
+>   drivers/gpu/drm/scheduler/sched_main.c | 27 +++++++++++++++++++++++++--
+>   1 file changed, 25 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> index 5c0add2c7546..0aab1e0aebdd 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1119,10 +1119,33 @@ EXPORT_SYMBOL(drm_sched_init);
+>   void drm_sched_fini(struct drm_gpu_scheduler *sched)
+>   {
+>   	struct drm_sched_entity *s_entity;
+> +	struct drm_sched_job *s_job, *tmp;
+>   	int i;
+>   
+> -	if (sched->thread)
+> -		kthread_stop(sched->thread);
+> +	if (!sched->thread)
+> +		return;
+> +
+> +	/*
+> +	 * Stop the scheduler, detaching all jobs from their hardware callbacks
+> +	 * and cleaning up complete jobs.
+> +	 */
+> +	drm_sched_stop(sched, NULL);
+> +
+> +	/*
+> +	 * Iterate through the pending job list and free all jobs.
+> +	 * This assumes the driver has either guaranteed jobs are already stopped, or that
+> +	 * otherwise it is responsible for keeping any necessary data structures for
+> +	 * in-progress jobs alive even when the free_job() callback is called early (e.g. by
+> +	 * putting them in its own queue or doing its own refcounting).
+> +	 */
+> +	list_for_each_entry_safe(s_job, tmp, &sched->pending_list, list) {
+> +		spin_lock(&sched->job_list_lock);
+> +		list_del_init(&s_job->list);
+> +		spin_unlock(&sched->job_list_lock);
+> +		sched->ops->free_job(s_job);
+> +	}
 
-drm_sched already has a hw_submission_limit that specifies the number of
-submissions that can be in flight, but that doesn't work for us because
-each job from drm_sched's point of view consists of multiple commands
-split among 3 firmware queues. The firmware can only support up to 128
-work commands in flight per queue (barriers don't count), otherwise it
-overflows a fixed-size buffer.
+I would stop the kthread first, then delete all jobs without spinlock 
+since nothing else can race against sched_fini?
 
-So we need more complex accounting of how many underlying commands are
-in flight per queue to determine whether it is safe to run a new job,
-and that is what this callback accomplishes. This has to happen even
-when individual jobs have no buffer/resource dependencies between them
-(which is what the fences would express).
+If you do need the spinlock, It would need to guard list_for_each_entry too.
 
-You can see the driver implementation of that callback in
-drivers/gpu/drm/asahi/queue/mod.rs (QueueJob::can_run()), which then
-calls into drivers/gpu/drm/asahi/workqueue.rs (Job::can_submit()) that
-does the actual available slot count checks.
-
-The can_run_job logic is written to mirror the hw_submission_limit logic
-(just a bit later in the sched main loop since we need to actually pick
-a job to do the check), and just like for that case, completion of any
-job in the same scheduler will cause another run of the main loop and
-another check (which is exactly what we want here).
-
-This case (potentially scheduling more than the FW job limit) is rare
-but handling it is necessary, since otherwise the entire job
-completion/tracking logic gets screwed up on the firmware end and queues
-end up stuck (I've managed to trigger this before).
-
-~~ Lina
+> +
+> +	kthread_stop(sched->thread);
+>   
+>   	for (i = DRM_SCHED_PRIORITY_COUNT - 1; i >= DRM_SCHED_PRIORITY_MIN; i--) {
+>   		struct drm_sched_rq *rq = &sched->sched_rq[i];
+>
