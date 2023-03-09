@@ -2,41 +2,42 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1A2C74A4B
-	for <linux-sgx@archiver.kernel.org>; Thu,  9 Mar 2023 09:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F29C61DA4
+	for <linux-sgx@archiver.kernel.org>; Thu,  9 Mar 2023 09:45:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230281AbjCIJPZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 9 Mar 2023 04:15:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41456 "EHLO
+        id S230191AbjCIJpM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 9 Mar 2023 04:45:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231236AbjCIJPK (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 9 Mar 2023 04:15:10 -0500
+        with ESMTP id S231370AbjCIJo0 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 9 Mar 2023 04:44:26 -0500
 Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D74864265;
-        Thu,  9 Mar 2023 01:15:06 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5384CE4DA4;
+        Thu,  9 Mar 2023 01:44:10 -0800 (PST)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: lina@asahilina.net)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 8699741F78;
-        Thu,  9 Mar 2023 09:14:57 +0000 (UTC)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id 3E0B042037;
+        Thu,  9 Mar 2023 09:44:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-        s=default; t=1678353304;
-        bh=5NvQExJBE/2u/mwalmBIy0G1FlF3VvdxJMh+roXHaLw=;
+        s=default; t=1678355048;
+        bh=r/f0kwzIUzQc4guiLm2MeOcHgerUPhPdEcBDwL8JCok=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=KbySdjG9+l7bYziRG7wlG0Uny+k+kSCwHuz0PRkGZSuiH0e2GjLTVETfhUFxliLN9
-         0BgYaDMv6QGsz/z9oI3hs3XE9Us2YKlYl526TjYqlP6x4PcqpDoDN2n1ReOAXKQukZ
-         xgEWb3sefmBsFzJqIO9TYEt/8g6+Eo3SYTuk8tM1NCers6bdARbpAvPl+2VLDf1d+o
-         n1baBbYKEeRxORaDt87nOEUNCIH249QGBDwbawpQ1U3+QqD7lXMyAQpnUQbijSSujD
-         KNEYqNjWXpWm2bbFi8/ZJwNPg7g8x0IkK+FVPXZC5uzG74iwtS0jtnDVLTy9rjYM1N
-         XCJh32fO005nw==
-Message-ID: <d36046e6-acf5-89a3-46b4-1c813ca925c8@asahilina.net>
-Date:   Thu, 9 Mar 2023 18:14:55 +0900
+        b=DrVFocyAP2o3v1LJypWk5YdWooZAL0/BxJ85CaJflk0WH9/S5lp4HfdBhJJgb9+oa
+         G0ie5fFvCNP6nWH7IDUsUlXqkDwRAV89ziWYc113CtAQN/zz/2Ewy+KUCeUd53VEpQ
+         gEejUaQWIo7oEi39ONfemuTfWTm3tfRQVgKq9FrkFTrCc/xHx5UWTaNnKj8UZDFrAR
+         Tc+WFzknmT5Fx+FLirAjQQQL3k1wsYhb4I90ZJiD5Ln9qbr9gJYIv26GK36Fo+mbaO
+         1VQ+BFDYKONjUzZOTOQzxS41KAv4+D8mrIg0fqlw62RRV9tCtjB8lKrTHy35j7fX4q
+         BPBWOo88t1BmQ==
+Message-ID: <9403e89d-a78f-8abd-2869-20da23d89475@asahilina.net>
+Date:   Thu, 9 Mar 2023 18:43:59 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH RFC 10/18] drm/scheduler: Add can_run_job callback
+Subject: Re: [PATCH RFC 11/18] drm/scheduler: Clean up jobs when the scheduler
+ is torn down
 Content-Language: en-US
 To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -62,174 +63,201 @@ Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
 References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-10-917ff5bc80a8@asahilina.net>
- <cd788ccf-0cf1-85d5-1bf8-efc259bd7e11@amd.com>
- <a075d886-0820-b6fb-fcd0-45bfdc75e37d@asahilina.net>
- <2b1060e9-86ba-7e16-14f1-5b5fa63de719@amd.com>
- <9f76bb68-b462-b138-d0ad-d27c972530d4@asahilina.net>
- <a39c6b40-f190-002d-ae1c-8b58c6442df2@amd.com>
- <4bbfc1a3-cfc3-87f4-897b-b6637bac3bd0@asahilina.net>
- <b0aa78b2-b432-200a-8953-a80c462fa6ee@amd.com>
- <c0624252-070e-bd44-2116-93a1d63a1359@asahilina.net>
- <d1fccceb-ca77-f653-17fc-63168e0da884@amd.com>
- <9c3dc2ad-11e4-6004-7230-8ca752e3d9f7@asahilina.net>
- <d544748c-8a2b-7c08-f199-182a56af22be@amd.com>
- <3e5e0120-50fd-51c0-d817-5b1dc4c14e97@asahilina.net>
- <f93448e6-4133-8a49-a12e-7a7012cb5409@amd.com>
+ <20230307-rust-drm-v1-11-917ff5bc80a8@asahilina.net>
+ <bbd7c5ee-c2f0-3e19-757d-a9aff1a26d3d@linux.intel.com>
+ <585fa052-4eff-940e-b307-2415c315686a@amd.com>
+ <3320e497-09c0-6eb6-84c5-bab2e63f28ec@asahilina.net>
+ <7b39ef96-3ec5-c492-6e1b-bf065b7c90a2@amd.com>
+ <0f14c1ae-0c39-106c-9563-7c1c672154c0@asahilina.net>
+ <e18500b5-21a0-77fd-8434-86258cefce5a@amd.com>
+ <8696d00a-c642-b080-c19a-b0e619e4b585@asahilina.net>
+ <5f0814a3-4be3-a609-d3b3-dd51a4f459a1@amd.com>
 From:   Asahi Lina <lina@asahilina.net>
-In-Reply-To: <f93448e6-4133-8a49-a12e-7a7012cb5409@amd.com>
+In-Reply-To: <5f0814a3-4be3-a609-d3b3-dd51a4f459a1@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 09/03/2023 17.05, Christian König wrote:
-> Am 09.03.23 um 07:30 schrieb Asahi Lina:
->> On 09/03/2023 05.14, Christian König wrote:
->>>> I think you mean wake_up_interruptible(). That would be
->>>> drm_sched_job_done(), on the fence callback when a job completes, which
->>>> as I keep saying is the same logic used for
->>>> hw_rq_count/hw_submission_limit tracking.
->>> As the documentation to wait_event says:
+On 09/03/2023 17.42, Christian König wrote:
+> Am 08.03.23 um 20:37 schrieb Asahi Lina:
+>> On 09/03/2023 03.12, Christian König wrote:
+>>> Am 08.03.23 um 18:32 schrieb Asahi Lina:
+>>>> [SNIP]
+>>>> Yes but... none of this cleans up jobs that are already submitted by the
+>>>> scheduler and in its pending list, with registered completion callbacks,
+>>>> which were already popped off of the entities.
+>>>>
+>>>> *That* is the problem this patch fixes!
+>>> Ah! Yes that makes more sense now.
 >>>
->>>    * wake_up() has to be called after changing any variable that could
->>>    * change the result of the wait condition.
+>>>>> We could add a warning when users of this API doesn't do this
+>>>>> correctly, but cleaning up incorrect API use is clearly something we
+>>>>> don't want here.
+>>>> It is the job of the Rust abstractions to make incorrect API use that
+>>>> leads to memory unsafety impossible. So even if you don't want that in
+>>>> C, it's my job to do that for Rust... and right now, I just can't
+>>>> because drm_sched doesn't provide an API that can be safely wrapped
+>>>> without weird bits of babysitting functionality on top (like tracking
+>>>> jobs outside or awkwardly making jobs hold a reference to the scheduler
+>>>> and defer dropping it to another thread).
+>>> Yeah, that was discussed before but rejected.
 >>>
->>> So what you essentially try to do here is to skip that and say
->>> drm_sched_job_done() would call that anyway, but when you read any
->>> variable to determine that state then as far as I can see nothing is
->>> guarantying that order.
->> The driver needs to guarantee that any changes to that state precede a
->> job completion fence signal of course, that's the entire idea of the
->> API. It's supposed to represent a check for per-scheduler (or more
->> specific, but not more global) resources that are released on job
->> completion. Of course if you misuse the API you could cause a problem,
->> but what I'm trying to say is that the API as designed and when used as
->> intended does work properly.
->>
->> Put another way: job completions always need to cause the sched main
->> loop to run an iteration anyway (otherwise we wouldn't make forward
->> progress), and job completions are exactly the signal that the
->> can_run_job() condition may have changed.
->>
->>> The only other possibility how you could use the callback correctly
->>> would be to call drm_fence_is_signaled() to query the state of your hw
->>> submission from the same fence which is then signaled. But then the
->>> question is once more why you don't give that fence directly to the
->>> scheduler?
->> But the driver is supposed to guarantee that the ordering is always 1.
->> resources freed, 2. fence signaled. So you don't need to check for the
->> fence, you can just check for the resource state.
+>>> The argument was that upper layer needs to wait for the hw to become
+>>> idle before the scheduler can be destroyed anyway.
+>> Unfortunately, that's not a requirement you can encode in the Rust type
+>> system easily as far as I know, and Rust safety rules mean we need to
+>> make it safe even if the upper layer doesn't do this... (or else we have
+>> to mark the entire drm_sched abstraction unsafe, but that would be a pity).
 > 
-> Yeah, but this is exactly what the dma_fence framework tried to prevent. 
-> We try very hard to avoid such side channel signaling :)
-
-Right, and it's fine, I can use the fences directly easily enough. I'm
-just trying to explain why my original idea works too, even if it's not
-the best solution for other reasons!
-
-Of course I don't have the context of what other drivers are doing or
-did historically and what the pitfalls are, so I can't know what the
-"right" solution for any of this is in that context. I did my best to
-understand the drm_sched code and come up with a solution that works
-(which it does) without any more info. When I saw the hw submission
-limit stuff, I thought "okay, I need the same thing but with slightly
-more complex logic, so let's add a callback so the driver can customize
-it and do its own inflight counting".
-
-After this discussion, I can see that this is equivalent to doing the
-same check in prepare_job() followed by returning the oldest running
-job's fence (as long as there's no race there... it should be fine if
-the fence reference is taken first, before the resource check, or if
-everything is done within the same critical section taking the firmware
-queue lock), so I'm happy to switch to that and drop this patch.
-
-But keep in mind none of this is documented, and there's no way for us
-driver authors to understand what we're supposed to do without
-documentation. As I said I spent a long time trying to understand
-drm_sched, and then my original attempt missed the drm_sched_fini()
-issue with dangling jobs and Alyssa managed to hit an oops on the test
-branch, I guessed what the problem was from her trace, figured out a way
-to reproduce it (the kill-loop glmark2 thing), and fixed it in the next
-patch in this series. So even trying my best to figure out how to do
-this, reading the code and what scarce docs there are, I managed to miss
-something that caused a potential oops on the first try. If I can't even
-get the API usage right after spending hours on it trying really hard
-not to (because it's not just about my driver, I need the Rust
-abstraction to be safe for any driver), there's no way I'm going to
-divine what approaches to resource/dependency signaling are
-problematic/easy to abuse... the most I can hope for is "I got the
-wrapper right and the API/driver interaction is correct and guarantees
-forward progress if the driver follows the rules".
-
-So when I submit something, and you reply with "Well complete NAK",
-that's just not nice. Honestly, I was kind of upset when I got that
-email. It sounded as if you were saying my solution was completely
-broken and couldn't work, but no matter how I looked at it I couldn't
-figure out how it's broken. And then it took several emails to even
-understand what you were suggesting with the prepare_job callback (and
-yes, that works too and is probably harder to abuse than a new
-callback). I'm trying really hard to make this all work and be correct,
-and of course I make mistakes too... but then I look at the code and no
-matter what I can come up with it seems to work and be correct, what am
-I supposed to do? I'm happy to learn and figure out better approaches
-for everything that lead to better drivers, but I need an actual
-explanation of the issues, not just a NAK...
-
-I also would appreciate it if people give me the benefit of the doubt
-and let me explain what I'm doing and how I'm doing it and how this
-hardware works, because the whole thing is subtle to the core and very
-different to other GPUs. Honestly, I don't think any reviewer that
-hasn't spent hours poring over the driver/abstraction code could
-confidently say that a certain subtle sync issue exists at a first pass
-(other than for really obvious bad code sequences). I'm happy to look
-into issues and I definitely want to know what cases to look at and what
-to check for and fix anything we find... but isn't it better if we work
-together instead of shouting "this is broken" at the first hint of
-possible trouble?
-
-> But putting that issue aside for a moment. What I don't get is when you 
-> have such intra queue dependencies, then why can't you check that at a 
-> much higher level?
+> Yeah, that should really not be something we should do.
 > 
-> In other words even userspace should be able to predict that for it's 
-> submissions X amount of resources are needed and when all of my 
-> submissions run in parallel that won't work.
+> But you could make the scheduler depend on your fw context object, don't 
+> you?
 
-Technically yes, but we can't trust userspace to honor this, since
-overflowing the firmware queue breaks everything, so the kernel has to
-do the check... plus we're trying to insulate userspace from the details
-of how work is queued at the firmware. We need to support multiple
-firmware versions including future ones we can't predict yet without
-breaking UAPI, so the less the UAPI depends on firmware details, the
-better. That's why at the UAPI level, this is boiled down to a simpler
-"max commands per submission" limit that gets passed in the params
-struct, which is conservative, and then the kernel can deal with the
-actual in-flight count tracking and only submit things to the hardware
-when they fit.
+Yes, and that would fix the problem for this driver, but it wouldn't
+make the abstraction safe. The thing is we have to make it *impossible*
+to misuse drm_sched in such a way that it crashes, at the Rust
+abstraction level. If we start depending on the driver following rules
+like that, that means the drm_sched abstraction has to be marked unsafe.
 
-In the future we could even support job splitting on the kernel side and
-remove the max commands per submission limit altogether (though it
-probably still makes sense to have for other reasons, like bounding how
-much kernel/firmware memory a single queue can consume, so I'm not sure
-this is even worth doing at all).
+> Detaching the scheduler from the underlying hw fences is certainly 
+> possible, but we removed that functionality because some people people 
+> tried to force push some Windows recovery module into Linux. We are in 
+> the process of reverting that and cleaning things up once more, but that 
+> will take a while.
 
-> Asking the firmware for a status is usually a magnitudes slower than 
-> just computing it before submission.
+Okay, but I don't see why that should block the Rust abstractions... I
+don't even need a new API to do that, all I need is to know that
+drm_sched_fini() will do it so it won't crash when the hw fences
+complete later, as this patch does.
 
-I'm not asking the firmware for status, I'm just asking my own firmware
-queue code how many slots are currently free in each backing queue.
-That's just based on internal driver state, there is no firmware round trip!
+> Instead of detaching you could also block for the hw to become idle, but 
+> if you do that synchronous on process termination you run into trouble 
+> as well.
 
-I could technically compute this before submission and figure out how
-much work has been queued and pre-populate fences that ensure we never
-exceed the max, but honestly that's a lot more code to track job sizes
-and I don't think it makes sense when I can just ask "Do we have space?
-No? Okay, return the oldest running job fence for now and try again when
-it completes" in prepare_job(). Maybe it's faster in pathological cases
-to do something fancier, but let's wait until Vulkan works and we can
-run real AAA games and see where the bottlenecks are before going down
-the optimization road ^^
+Yes, but again this something that can only be done at the driver level
+so it doesn't solve the safe abstraction problem...
+
+>> The firmware queue is itself reference counted and any firmware queue
+>> that has acquired an event notification resource (that is, which is busy
+>> with running or upcoming jobs) hands off a reference to itself into the
+>> event subsystem, so it can get notified of job completions by the
+>> firmware. Then once it becomes idle it unregisters itself, and at that
+>> point if it has no owning userspace queue, that would be the last
+>> reference and it gets dropped. So we don't tear down firmware queues
+>> until they are idle.
+> 
+> And could those fw queue not reference the scheduler?
+
+Yes but again, that rule can't be encoded in the abstraction... so that
+makes it unsafe. The goal is to have a safe abstraction, which means
+that all the rules that you need to follow to avoid memory safety issues
+are checked by the Rust compiler.
+
+>> I actually don't know of any way to actively abort jobs on the firmware,
+>> so this is pretty much the only option I have. I've even seen
+>> long-running compute jobs on macOS run to completion even if you kill
+>> the submitting process, so there might be no way to do this at all.
+>> Though in practice since we unmap everything from the VM anyway when the
+>> userspace stuff gets torn down, almost any normal GPU work is going to
+>> immediately fault at that point (macOS doesn't do this because macOS
+>> effectively does implicit sync with BO tracking at the kernel level...).
+> 
+> Oh, that is an interesting information. How does macOS do explicit sync 
+> then or isn't that supported at all?
+
+They have the equivalent of sync objects at the UAPI level, but they
+also have the implicit stuff and their UAPI seems to always pass a BO
+list to the kernel as far as we could tell, even though it still works
+without it. I think it's a weird hybrid of explicit+implicit sync. From
+the Metal docs:
+
+> By default, Metal tracks the write hazards and synchronizes the resources
+> (see Resource Fundamentals) you create from an MTLDevice and directly bind
+> to a pipeline. However, Metal doesn’t, by default, track resources you
+> allocate from an MTLHeap (see Memory Heaps).
+
+So it's both, and you can override it...
+
+At the firmware level, I've never seen Metal use queue barriers yet like
+I do (other than the vertex->fragment ones), so either they always do
+CPU round trips for cross-subqueue sync (render<->compute) or we just
+haven't figured out the magic combination to get it to do that yet.
+Honestly, I suspect they just always do it on the CPU. macOS is pretty
+ugly behind the scenes and it's pretty obvious a lot of their own driver
+was rushed (the firmware seems to support quite a few features the
+driver doesn't... maybe it even has a job abort mechanism, we just
+haven't found it yet).
+
+Of course, our goal is to do things better than macOS (and we already do
+some things better!) but getting confident enough about firmware/HW
+details to diverge from what macOS does is tricky and a slow process...
+
+>> By the way, I don't really use the hardware recovery stuff right now.
+>> I'm not even sure if there is a sensible way I could use it, since as I
+>> said we can't exactly abort jobs. I know there are ways to lock up the
+>> firmware/GPU, but so far those have all been things the kernel driver
+>> can prevent, and I'm not even sure if there is any way to recover from
+>> that anyway. The firmware itself has its own timeouts and recovery for
+>> "normal" problems. From the point of view of the driver and everything
+>> above it, in-flight commands during a GPU fault or timeout are just
+>> marked complete by the firmware, after a firmware recovery cycle where
+>> the driver gets notified of the problem (that's when we mark the
+>> commands failed so we can propagate the error).
+> 
+> Yeah, that's exactly what we are telling our fw people for years that we 
+> need this as well.
+
+Yeah, the ugly bit is that the firmware does a full GPU recovery even on
+simple page faults (which could be handled more gracefully) so even
+stuff like that can possibly break concurrent GPU work.
+
+On the other hand, macOS configures things so page faults are ignored
+and silently return all-00 on reads for shader accesses, which is how
+they implement sparse buffers/textures... and we'll probably have to do
+that to improve reliability against app faults if nothing else. But
+right now the driver enables explicit page faults for everything so we
+can debug Mesa (it's a kernel module param, GPU global and I haven't
+found a way to change it after initial load unfortunately, but it might
+be possible).
+
+I think there's also a way to do actual page fault handling (like swap
+in pages and resume the GPU), but that's one of those firmware features
+Apple's driver just never uses as far as I can tell. There's so much
+unexplored territory...
+
+> 
+>> There is no re-submission or anything, userspace just gets told of the problem but
+>> the queue survives.
+> 
+>> In the future it might be possible to re-submit innocent commands
+> 
+> Long story short: Don't do this! This is what the Windows drivers have 
+> been doing and it creates tons of problems.
+> 
+> Just signal the problem back to userspace and let the user space driver 
+> decide what to do.
+> 
+> The background is that most graphics applications (games etc..) then 
+> rather start on the next frame instead of submitting the current one 
+> again while compute applications make sure that the abort and tell the 
+> user that the calculations might be corrupted and need to be redone.
+
+Then we're good with what we're currently doing, since we already notify
+userspace like that!
+
+Actually I wanted to ask about error notifications. Right now we have an
+out-of-band mechanism to provide detailed fault info to userspace which
+works fine, but in principle it's optional. However, I also mark the hw
+ fences as errored when a fault happens (with an errno that describes
+the overall situation), but that never makes it into the drm_sched job
+complete fence. I looked at the drm_sched code and I didn't see any
+error propagation. Is that supposed to work, or am I supposed to
+directly mark the drm_sched side fence as complete, or did I
+misunderstand all this? I get the feeling maybe existing drivers just
+rely on the recovery/timeout/etc paths to mark jobs as errored (since
+those do it explicitly) and never need error forwarding from the hw fence?
 
 ~~ Lina
