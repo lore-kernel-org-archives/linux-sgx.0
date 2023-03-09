@@ -2,42 +2,41 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E87BBC74A4B
-	for <linux-sgx@archiver.kernel.org>; Thu,  9 Mar 2023 05:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8ABC64EC4
+	for <linux-sgx@archiver.kernel.org>; Thu,  9 Mar 2023 05:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229636AbjCIFZ3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 9 Mar 2023 00:25:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55562 "EHLO
+        id S229817AbjCIFfR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 9 Mar 2023 00:35:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbjCIFZ2 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 9 Mar 2023 00:25:28 -0500
+        with ESMTP id S229702AbjCIFer (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 9 Mar 2023 00:34:47 -0500
 Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9531D82A8E;
-        Wed,  8 Mar 2023 21:25:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E96E53599;
+        Wed,  8 Mar 2023 21:32:55 -0800 (PST)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: lina@asahilina.net)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id DD45542037;
-        Thu,  9 Mar 2023 05:25:13 +0000 (UTC)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id E169542037;
+        Thu,  9 Mar 2023 05:32:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-        s=default; t=1678339521;
-        bh=AqKhfVbrCgFD4lko5eegMh8R3NTuYq179Kx+ape/AUw=;
+        s=default; t=1678339974;
+        bh=vxS54uTlGMR5PzLTnPcns+95VipCQ+Izczvmh+Eu4cc=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=Wx2g6hHKeCsXfkUgKO1J8pnackR4HNu+sLnMeFYf24PIEcG3Dr33trh9lN1i7NCYH
-         iBXJX4d1fX4S9wXV87qH+AvPl3dzcsbiKtejK806oWJHYyRm1eGW50G8xuSxHfHI90
-         OGepcjoxSmmGebCwmACxpon1dVMSfoC3C63+EZv+4Vm3TnKk2IvwKX6Q2qTyJYsz/t
-         5+dvsMlkXmq1LOhoNPBODzISgSa4rqkkMhvr0r+Dbc3br4rSjTAL1uL1RdnjAHCiq4
-         Yn/+w25IH6X8rrPCfs/hGRb5U4eY46B8GERplcPGPsP0U1EjoPg7u5myHLU5UtvHHY
-         zV/fpXAc/uWlA==
-Message-ID: <488728fc-ada2-20a3-79be-8109d891a8cb@asahilina.net>
-Date:   Thu, 9 Mar 2023 14:25:10 +0900
+        b=r1C05zelm2ip3ely1YRxB+0WCulNo9AUwrUESJxQv2yj7gW7cyqSVF5NJf0d9LtGP
+         zBOVwJVY6yoLBsYWmKSu7CEyZojI9S42pTyme0FnYLoUVXFizgjoHE2PynxMbZsFpS
+         Ntl9VZwbrUCyrmruackUcRXRfZh+ZhVsETUxLtKY+rXYUEmUjrgWL9NfoosLLPoYeL
+         6ZrufQazfcWRHnkMRbvvwde5y4FCVBWa1rbnbqAMiVpi0TDBSNGCq3blEmhtQ489se
+         SYJ9MTtHZLNIiXGQAWvAbGG5mXxhTztPoEdiF+uOUmV7VNA709JYANjos6FWlkOwcU
+         meO9fF+DG6/Ng==
+Message-ID: <93a57598-9deb-85f2-ebd9-8605404c1ef8@asahilina.net>
+Date:   Thu, 9 Mar 2023 14:32:45 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH RFC 06/18] rust: drm: gem: shmem: Add DRM shmem helper
- abstraction
+Subject: Re: [PATCH RFC 01/18] rust: drm: ioctl: Add DRM ioctl abstraction
 Content-Language: en-US
 To:     =?UTF-8?Q?Ma=c3=adra_Canal?= <mcanal@igalia.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -63,92 +62,107 @@ Cc:     linaro-mm-sig@lists.linaro.org, rust-for-linux@vger.kernel.org,
         Faith Ekstrand <faith.ekstrand@collabora.com>,
         linux-media@vger.kernel.org
 References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-6-917ff5bc80a8@asahilina.net>
- <ff51483e-2d72-3a7b-0632-58ea36cc3d8e@igalia.com>
+ <20230307-rust-drm-v1-1-917ff5bc80a8@asahilina.net>
+ <c047e11f-33d0-6af4-21c3-adb384b68d8b@igalia.com>
 From:   Asahi Lina <lina@asahilina.net>
-In-Reply-To: <ff51483e-2d72-3a7b-0632-58ea36cc3d8e@igalia.com>
+In-Reply-To: <c047e11f-33d0-6af4-21c3-adb384b68d8b@igalia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 08/03/2023 22.38, Maíra Canal wrote:
+On 08/03/2023 00.32, Maíra Canal wrote:
 > On 3/7/23 11:25, Asahi Lina wrote:
->> The DRM shmem helper includes common code useful for drivers which
->> allocate GEM objects as anonymous shmem. Add a Rust abstraction for
->> this. Drivers can choose the raw GEM implementation or the shmem layer,
->> depending on their needs.
+>> DRM drivers need to be able to declare which driver-specific ioctls they
+>> support. This abstraction adds the required types and a helper macro to
+>> generate the ioctl definition inside the DRM driver.
+>>
+>> Note that this macro is not usable until further bits of the
+>> abstraction are in place (but it will not fail to compile on its own, if
+>> not called).
 >>
 >> Signed-off-by: Asahi Lina <lina@asahilina.net>
 >> ---
->>   drivers/gpu/drm/Kconfig         |   5 +
+>>   drivers/gpu/drm/Kconfig         |   7 ++
 >>   rust/bindings/bindings_helper.h |   2 +
->>   rust/helpers.c                  |  67 +++++++
->>   rust/kernel/drm/gem/mod.rs      |   3 +
->>   rust/kernel/drm/gem/shmem.rs    | 381 ++++++++++++++++++++++++++++++++++++++++
->>   5 files changed, 458 insertions(+)
+>>   rust/kernel/drm/ioctl.rs        | 147 ++++++++++++++++++++++++++++++++++++++++
+>>   rust/kernel/drm/mod.rs          |   5 ++
+>>   rust/kernel/lib.rs              |   2 +
+>>   5 files changed, 163 insertions(+)
 >>
+>> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+>> index dc0f94f02a82..dab8f0f9aa96 100644
+>> --- a/drivers/gpu/drm/Kconfig
+>> +++ b/drivers/gpu/drm/Kconfig
+>> @@ -27,6 +27,13 @@ menuconfig DRM
+>>   	  details.  You should also select and configure AGP
+>>   	  (/dev/agpgart) support if it is available for your platform.
+>>   
 > 
 > [...]
 > 
->> +unsafe extern "C" fn gem_create_object<T: DriverObject>(
->> +    raw_dev: *mut bindings::drm_device,
->> +    size: usize,
->> +) -> *mut bindings::drm_gem_object {
->> +    // SAFETY: GEM ensures the device lives as long as its objects live,
->> +    // so we can conjure up a reference from thin air and never drop it.
->> +    let dev = ManuallyDrop::new(unsafe { device::Device::from_raw(raw_dev) });
 >> +
->> +    let inner = match T::new(&*dev, size) {
->> +        Ok(v) => v,
->> +        Err(e) => return e.to_ptr(),
->> +    };
->> +
->> +    let p = unsafe {
->> +        bindings::krealloc(
->> +            core::ptr::null(),
->> +            Object::<T>::SIZE,
->> +            bindings::GFP_KERNEL | bindings::__GFP_ZERO,
->> +        ) as *mut Object<T>
->> +    };
->> +
->> +    if p.is_null() {
->> +        return ENOMEM.to_ptr();
->> +    }
->> +
->> +    // SAFETY: p is valid as long as the alloc succeeded
->> +    unsafe {
->> +        addr_of_mut!((*p).dev).write(dev);
->> +        addr_of_mut!((*p).inner).write(inner);
->> +    }
->> +
->> +    // SAFETY: drm_gem_shmem_object is safe to zero-init, and
->> +    // the rest of Object has been initialized
->> +    let new: &mut Object<T> = unsafe { &mut *(p as *mut _) };
->> +
->> +    new.obj.base.funcs = &Object::<T>::VTABLE;
->> +    &mut new.obj.base
->> +}
+>> +/// Declare the DRM ioctls for a driver.
+>> +///
+>> +/// Each entry in the list should have the form:
+>> +///
+>> +/// `(ioctl_number, argument_type, flags, user_callback),`
+>> +///
+>> +/// `argument_type` is the type name within the `bindings` crate.
+>> +/// `user_callback` should have the following prototype:
+>> +///
+>> +/// ```
+>> +/// fn foo(device: &kernel::drm::device::Device<Self>,
+>> +///        data: &mut bindings::argument_type,
+>> +///        file: &kernel::drm::file::File<Self::File>,
+>> +/// )
+>> +/// ```
+>> +/// where `Self` is the drm::drv::Driver implementation these ioctls are being declared within.
+>> +///
+>> +/// # Examples
+>> +///
+>> +/// ```
+>> +/// kernel::declare_drm_ioctls! {
+>> +///     (FOO_GET_PARAM, drm_foo_get_param, ioctl::RENDER_ALLOW, my_get_param_handler),
+>> +/// }
+>> +/// ```
+>> +///
+>> +#[macro_export]
+>> +macro_rules! declare_drm_ioctls {
+>> +    ( $(($cmd:ident, $struct:ident, $flags:expr, $func:expr)),* $(,)? ) => {
+>> +        const IOCTLS: &'static [$crate::drm::ioctl::DrmIoctlDescriptor] = {
+>> +            const _:() = {
+>> +                let i: u32 = $crate::bindings::DRM_COMMAND_BASE;
+>> +                // Assert that all the IOCTLs are in the right order and there are no gaps,
+>> +                // and that the sizeof of the specified type is correct.
 > 
-> It would be nice to allow to set wc inside the gem_create_object callback,
-> as some drivers do it so, like v3d, vc4, panfrost, lima...
+> I believe that not necessarily the IOCTLs need to be in the right order and
+> with no gaps. For example, armada_drm.h has a gap in between 0x00 and
+> 0x02 and exynos_drm.h also have gaps. Moreover, some drivers, like vgem and
+> virtgpu, start their IOCTLs with 0x01.
 
-This is actually a bit tricky to do safely, because we can't just have a
-callback that takes the drm_gem_shmem_object instance inside
-gem_create_object because it is not fully initialized yet from the point
-of view of the gem shmem API. Maybe we could have some sort of temporary
-proxy object that only lets you do safe things like set map_wc? Or maybe
-the new() callback could return something like a ShmemTemplate<T> type
-that contains both the inner data and some miscellaneous fields like the
-initial map_wc state?
+Yeah, we talked about this a bit... do you have any ideas about how to
+design this? I think it should be possible with a const function
+initializing an array entry by entry, we just need a two-pass macro
+(once to determine the max ioctl number, then again to actually output
+the implementation).
 
-I think we can also just wait until the first user before we do this
-though... the goal of the abstractions is to support the APIs we
-actually use. I know you need this for vgem, so please feel free to
-implement it as a separate patch! I think it's best if you get credit
-for the abstraction changes you need, so we can all work together on the
-design so it works for everyone's use cases instead of just having me
-make all the decisions ^^ (and it's fine if we have to refactor the APIs!)
+I'm not sure why drivers would have gaps in the ioctl numbers though...
+my idea was that new drivers shouldn't need that as far as I can tell
+(you can't remove APIs after the fact due to UAPI stability guarantees,
+so as long as you don't have gaps to begin with...). But I guess if
+we're reimplementing existing drivers in Rust we'll need this... though
+maybe it makes sense to just say it's not supported and require
+reimplementations that have holes to just explicitly add dummy ioctls
+that return EINVAL? We could even provide such a dummy generic ioctl
+handler on the abstraction side, so drivers just have to add it to the
+list, or make the macro take a special token that is used for
+placeholder ioctls that don't exist (which then creates the NULL
+function pointer that the drm core interprets as invalid)...
+
+Basically I'm not sure if it makes sense to fully support noncontiguous
+ioctl numbers automagically, or just say drivers need to explicitly list
+gaps. I'd love to hear the opinion of other DRM folks about this!
 
 ~~ Lina
