@@ -2,45 +2,44 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FDFC64EC4
-	for <linux-sgx@archiver.kernel.org>; Fri, 10 Mar 2023 06:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CFDC6FD19
+	for <linux-sgx@archiver.kernel.org>; Fri, 10 Mar 2023 09:22:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229721AbjCJGVf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 10 Mar 2023 01:21:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60382 "EHLO
+        id S230095AbjCJJWi (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 10 Mar 2023 04:22:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229767AbjCJGVd (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 10 Mar 2023 01:21:33 -0500
+        with ESMTP id S230098AbjCJJWT (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 10 Mar 2023 04:22:19 -0500
 Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126BCF28B1;
-        Thu,  9 Mar 2023 22:21:30 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C74AB10F871;
+        Fri, 10 Mar 2023 01:18:05 -0800 (PST)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: lina@asahilina.net)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 9B5B74249A;
-        Fri, 10 Mar 2023 06:21:21 +0000 (UTC)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id C911242458;
+        Fri, 10 Mar 2023 09:16:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-        s=default; t=1678429288;
-        bh=Su293xjC7HJqrmGn5asY9TEfKOlU5jJ/KKsqfzIhcss=;
+        s=default; t=1678439823;
+        bh=byVIkKMWTjR5Cmmkm2Sp0a3H/NhMOyuFcm8eO+lduw0=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=R8QzFV6o2vdGKfZFYwqrGUzUpvt8V7mpifvkivq1CdeGZ81gA6szdX2TQLPZg1Vis
-         ZUOnngxZUqRjp4CnEs/t36DNw2yaJ2YA34h0XwBMVKpx/9VfRrsFj3/zWM/9bnSZ4H
-         XAMA8AE6bhaTutEre8t+wC8UJWNuMceDib/bF8LxFY4yjzQXZLl/3LgFi03CLOyyaJ
-         4PyYU9fuNnkvWgswLo5icJqYJj/izs+JCuco33/A71lxWqAXX5z9VLtuFKa+ZcEZgH
-         tNW+/koH3ycaNXbShllRhrmoNIQQGA33VS2nh34xCXGQBNMbzbd+m11IWKd6CL/kRl
-         yQvngLiAhJMhA==
-Message-ID: <b61d0b3e-fc10-be79-1b37-6c7aa278d75f@asahilina.net>
-Date:   Fri, 10 Mar 2023 15:21:19 +0900
+        b=GFcv0+O/5n+8+AJuByxDlTv+ETZEtPpn0IGI1rL3l+wdJRFBLIFKEi20htg6gpqYC
+         gKhQFbAjkpgl8b9Bom9Oe2pDywjci1y671teftJpwKSbxBfKREWnx0ALiD+lQk48qL
+         x3u30njGL1YIyrKgvmGBM7/wku/rawL3uupmvSQ4qLNboPqku9ZMK+hun9JP8/mESk
+         SowUGQcrRTGiiUlgSYHV2LXRlhw78QOqbLOkV4SIGlelO/4ekH6D5av4SdSqx0xxXs
+         DQcfpvFXU/ONTz6Cnn05CtrYZukcnBM4gdVO0alOrehj5kbxxcFL5VSQ9SKkGpZxSh
+         Wox7Qpbe39hyQ==
+Message-ID: <146ef94e-d3ac-c978-025a-b3a9ec3026a6@asahilina.net>
+Date:   Fri, 10 Mar 2023 18:16:53 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH RFC 01/18] rust: drm: ioctl: Add DRM ioctl abstraction
+Subject: Re: [PATCH RFC 10/18] drm/scheduler: Add can_run_job callback
 Content-Language: en-US
-To:     Karol Herbst <kherbst@redhat.com>,
-        Faith Ekstrand <faith.ekstrand@collabora.com>
-Cc:     =?UTF-8?Q?Bj=c3=b6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+To:     Faith Ekstrand <faith.ekstrand@collabora.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
@@ -50,89 +49,244 @@ Cc:     =?UTF-8?Q?Bj=c3=b6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?UTF-8?Q?Bj=c3=b6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
         Luben Tuikov <luben.tuikov@amd.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Karol Herbst <kherbst@redhat.com>,
         Ella Stanforth <ella@iglunix.org>, Mary <mary@mary.zone>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         rust-for-linux@vger.kernel.org, linux-media@vger.kernel.org,
         linaro-mm-sig@lists.linaro.org, linux-sgx@vger.kernel.org,
         asahi@lists.linux.dev
 References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-1-917ff5bc80a8@asahilina.net>
- <D9Cyx-9kbjaeb8QVBFqapDyctoDdVyu5uXEJDR41sdXUDXM1VgdRicV5huJDwfC3-T2J-R_DYHH8JZ1_aRdgbeYZFT78J9QveeeYbiTq4yU=@protonmail.com>
- <11ce9291-c17f-e73d-fb5d-13d5386fe6be@asahilina.net>
- <c9e0c6fdcd642192a59a2fea95941a773ea7b3e3.camel@collabora.com>
- <CACO55tukF-+HWUHve0YUPbq4jPFgU3szuedKLjAw55h_3uX5gg@mail.gmail.com>
+ <20230307-rust-drm-v1-10-917ff5bc80a8@asahilina.net>
+ <cd788ccf-0cf1-85d5-1bf8-efc259bd7e11@amd.com>
+ <a075d886-0820-b6fb-fcd0-45bfdc75e37d@asahilina.net>
+ <2b1060e9-86ba-7e16-14f1-5b5fa63de719@amd.com>
+ <9f76bb68-b462-b138-d0ad-d27c972530d4@asahilina.net>
+ <a39c6b40-f190-002d-ae1c-8b58c6442df2@amd.com>
+ <4bbfc1a3-cfc3-87f4-897b-b6637bac3bd0@asahilina.net>
+ <b0aa78b2-b432-200a-8953-a80c462fa6ee@amd.com>
+ <c0624252-070e-bd44-2116-93a1d63a1359@asahilina.net>
+ <d1fccceb-ca77-f653-17fc-63168e0da884@amd.com>
+ <9c3dc2ad-11e4-6004-7230-8ca752e3d9f7@asahilina.net>
+ <d544748c-8a2b-7c08-f199-182a56af22be@amd.com>
+ <3e5e0120-50fd-51c0-d817-5b1dc4c14e97@asahilina.net>
+ <f93448e6-4133-8a49-a12e-7a7012cb5409@amd.com>
+ <d36046e6-acf5-89a3-46b4-1c813ca925c8@asahilina.net>
+ <f89fad4d05bc1e603fb166569e20102ceb09fb4c.camel@collabora.com>
 From:   Asahi Lina <lina@asahilina.net>
-In-Reply-To: <CACO55tukF-+HWUHve0YUPbq4jPFgU3szuedKLjAw55h_3uX5gg@mail.gmail.com>
+In-Reply-To: <f89fad4d05bc1e603fb166569e20102ceb09fb4c.camel@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 10/03/2023 05.39, Karol Herbst wrote:
-> On Thu, Mar 9, 2023 at 9:24 PM Faith Ekstrand
-> <faith.ekstrand@collabora.com> wrote:
->>
->> On Thu, 2023-03-09 at 15:04 +0900, Asahi Lina wrote:
->>> On 08/03/2023 02.34, Björn Roy Baron wrote:
->>>>> +                            // SAFETY: This is just the ioctl
->>>>> argument, which hopefully has the right type
->>>>> +                            // (we've done our best checking the
->>>>> size).
->>>>
->>>> In the rust tree there is the ReadableFromBytes [1] trait which
->>>> indicates that it is safe to read arbitrary bytes into the type.
->>>> Maybe you could add it as bound on the argument type when it lands
->>>> in rust-next? This way you can't end up with for example a struct
->>>> containing a bool with the byte value 2, which is UB.
->>>
->>> There's actually a much bigger story here, because that trait isn't
->>> really very useful without a way to auto-derive it. I need the same
->>> kind
->>> of guarantee for all the GPU firmware structs...
->>>
->>> There's one using only declarative macros [1] and one using proc
->>> macros
->>> [2]. And then, since ioctl arguments are declared in C UAPI header
->>> files, we need a way to be able to derive those traits for them...
->>> which
->>> I guess means bindgen changes?
->>
->> It'd be cool to be able to auto-verify that uAPI structs are all
->> tightly packed and use the right subset of types.  Maybe not possible
->> this iteration but it'd be cool to see in future.  I'd like to see it
->> for C as well, ideally.
->>
->> ~Faith
->>
+On 10/03/2023 03.50, Faith Ekstrand wrote:
+> Jumping in here quick... (Sorry, I was out yesterday and was ignoring
+> my e-mail on Tuesday so I could finally type some compiler code.)
 > 
-> I'm sure that with a macro you could verify that a struct definition
-> doesn't contain any gaps, just not sure on how one would enforce that.
-> Could add a trait which can only be implemented through a proc_macro?
-> Maybe we can have a proc_macro ensuring no gaps? Would be cool tech to
-> have indeed.
+> On Thu, 2023-03-09 at 18:14 +0900, Asahi Lina wrote:
+>> On 09/03/2023 17.05, Christian König wrote:
+>>> Am 09.03.23 um 07:30 schrieb Asahi Lina:
+>>>> On 09/03/2023 05.14, Christian König wrote:
+>>>>>> I think you mean wake_up_interruptible(). That would be
+>>>>>> drm_sched_job_done(), on the fence callback when a job
+>>>>>> completes, which
+>>>>>> as I keep saying is the same logic used for
+>>>>>> hw_rq_count/hw_submission_limit tracking.
+>>>>> As the documentation to wait_event says:
+>>>>>
+>>>>>    * wake_up() has to be called after changing any variable
+>>>>> that could
+>>>>>    * change the result of the wait condition.
+>>>>>
+>>>>> So what you essentially try to do here is to skip that and say
+>>>>> drm_sched_job_done() would call that anyway, but when you read
+>>>>> any
+>>>>> variable to determine that state then as far as I can see
+>>>>> nothing is
+>>>>> guarantying that order.
+>>>> The driver needs to guarantee that any changes to that state
+>>>> precede a
+>>>> job completion fence signal of course, that's the entire idea of
+>>>> the
+>>>> API. It's supposed to represent a check for per-scheduler (or
+>>>> more
+>>>> specific, but not more global) resources that are released on job
+>>>> completion. Of course if you misuse the API you could cause a
+>>>> problem,
+>>>> but what I'm trying to say is that the API as designed and when
+>>>> used as
+>>>> intended does work properly.
+>>>>
+>>>> Put another way: job completions always need to cause the sched
+>>>> main
+>>>> loop to run an iteration anyway (otherwise we wouldn't make
+>>>> forward
+>>>> progress), and job completions are exactly the signal that the
+>>>> can_run_job() condition may have changed.
+>>>>
+>>>>> The only other possibility how you could use the callback
+>>>>> correctly
+>>>>> would be to call drm_fence_is_signaled() to query the state of
+>>>>> your hw
+>>>>> submission from the same fence which is then signaled. But then
+>>>>> the
+>>>>> question is once more why you don't give that fence directly to
+>>>>> the
+>>>>> scheduler?
+>>>> But the driver is supposed to guarantee that the ordering is
+>>>> always 1.
+>>>> resources freed, 2. fence signaled. So you don't need to check
+>>>> for the
+>>>> fence, you can just check for the resource state.
+>>>
+>>> Yeah, but this is exactly what the dma_fence framework tried to
+>>> prevent. 
+>>> We try very hard to avoid such side channel signaling :)
+>>
+>> Right, and it's fine, I can use the fences directly easily enough.
+>> I'm
+>> just trying to explain why my original idea works too, even if it's
+>> not
+>> the best solution for other reasons!
+>>
+>> Of course I don't have the context of what other drivers are doing or
+>> did historically and what the pitfalls are, so I can't know what the
+>> "right" solution for any of this is in that context. I did my best to
+>> understand the drm_sched code and come up with a solution that works
+>> (which it does) without any more info. When I saw the hw submission
+>> limit stuff, I thought "okay, I need the same thing but with slightly
+>> more complex logic, so let's add a callback so the driver can
+>> customize
+>> it and do its own inflight counting".
+> 
+> So, I think there's a difference here between "impossible to implement
+> correctly", "likely to be implemented correctly", and "impossible to
+> implement incorrectly".  It's obviously possible to implement
+> correctly.  You can just always return true or do exactly the same
+> check or do some simple thing where you can guarantee that it will only
+> ever return false when there's a bunch of other stuff in the queue. 
+> That doesn't mean that it's likely to be implemented correctly by some
+> other driver.  Some idiot will come along and try to take advantage of
+> it and cause themselves horrible problems.
+> 
+> And, to be clear, for the purposes of this discussion, we're ALL
+> idiots, myself included.  If there's one thing the DRM community has
+> learned over the years, it's that drivers are so complex that we all
+> turn into idiots at some point, relative to the complexity of the code
+> and hardware behavior.  That's why things like dma_fence are written so
+> incredibly defensively and why we're so harsh about the rules.  It's
+> the rules and not our individual smarts that keep us from making
+> mistakes.  (Kinda like Rust, in a way.)  So while I appreciate the
+> frustration of "I'm just trying to do something that's clearly correct
+> here", that doesn't mean that then next person to come by and fix a bug
+> by tweaking that callback isn't going to screw it up irreparably.  That
+> person may even be you in 6 to 12 months after this e-mail thread is a
+> distant memory.
+> 
+> So, yes, does the implementation you have today work without deadlocks
+> or starvation?  Maybe it does.  I've not verified.  Is the suggested
+> callback a giant foot-gun in the already treacherous territory of
+> scheduling and fencing?  Yeah, it probably is and there's another way
+> to implement the same behavior which is likely safer in the long run.
 
-You just make the trait unsafe, as usual, then implement it via that
-macro. It's how the things I linked work ^^
+I understand that... I just wish the response had been along the lines
+of "this is a huge footgun for these reasons, and you don't need it
+because you can do it this other way instead", not "the concept is
+completely broken, NAK".
 
-The tricky thing with C UAPI definitions is just that we need to get
-bindgen to emit those macro instantiations around struct definitions
-somehow. Or maybe it could be done with a brute force text-based
-postprocessing pass? If we put all UAPI defs into their own crate, you
-could probably just do it with sed or a python script or something on
-the bindgen output to add it for all struct types...
+If the discussion were phrased around how the API can be used and
+abused, then I can understand what the concern is. But it was somehow
+always about me and what I'm doing...
 
-@Rust folks: Should I try creating a uapi crate for this? I think we can
-just mirror the bindings crate logic, and we don't need helpers or
-anything like that here, so it shouldn't be very difficult. Then I could
-(eventually) eliminate all usage of the full bindings crate in the
-driver, and also try experimenting with stuff like this to validate all
-UAPI types and implement special traits for them...
+> This is clearly going against the idea of having jobs only depend on 
+> fences and nothing else which is mandatory for correct memory management.
+
+That implies what I'm doing breaks memory management (and that it is
+obvious).
+
+> And to make it clear this is unfortunately a complete NAK to this 
+> approach! You can't do this!
+
+Again that I can't do it... and then we got an argument over whether the
+code is actually broken or not. But that doesn't even matter, since the
+issue is how easy the API is to use or misuse, not whether I actually
+misuse it...
+
+I'll switch to prepare_job() fences for the next version, so it's not an
+issue. Using that didn't even cross my mind because, knowing nothing
+about the intended usage here, the prepare_job() callback docs are quite
+obtuse:
+
+> Called when the scheduler is considering scheduling this job next> to get another struct dma_fence for this job to block on. Once i>
+returns NULL, run_job() may be called.
+> 
+> Can be NULL if no additional preparation to the dependencies are necessary.> Skipped when jobs are killed instead of run.
+
+What's a "dependency"? To me that sounded like execution dependencies,
+and we clearly express those in the jobs themselves ahead of time. But
+it turns out the purpose of this callback is to grab resources just in
+time before execution or block on them becoming available through a
+fence, and then it makes a lot more sense how to use it to do in-flight
+command count limiting.
+
+Aside: now that I understand this, I'm tempted to make the Rust
+signature for this return a Result<(), Fence>. Returning a fence is
+essentially the "error" case here, and that means in the implementation
+you can just do:
+
+if job.foo_res.is_none() {
+    job.foo_res = Some(foo.get_resource()?);
+}
+if job.bar_res.is_none() {
+    job.bar_res = Some(bar.get_resource()?);
+}
+
+As long as all the get_resource() calls return a Result<Resource, Fence>.
+
+There's even more undocumented subtlety here though, since as far as I
+can tell if all the resources aren't always grabbed in the same order,
+or more than one of a single resource is grabbed separately you could
+deadlock or even livelock?
+
+This is theoretical since right now I don't handle this properly at all
+other than the command count limit (I need the command struct fixup
+system for this to be reasonably possible), but for example, I'll need
+1-3 event IDs per job, and if I grab them one by one, you could end up
+deadlocking with all event IDs used by jobs waiting for more. And if I
+don't store them eagerly (so drop the IDs if you can't get all of them),
+then you can end up with livelocks where every scheduler is grabbing an
+ID, then dropping it when we can't get another one, which signals a
+fence for another blocked scheduler to grab another ID, which then drops
+it because it can't get more, etc. So I probably need to grab a number
+of event IDs atomically.
+
+> Also, in a weird way, I think these conversations are sometimes better
+> than documentation.  It took a while to get around to it all but
+> there's a lot of context that was brought together in this e-mail
+> thread that wouldn't have been in the docs no matter how good they are.
+> A lot of it isn't an isolated thing that should clearly be explained in
+> the run_job docs.  It's subtle interactions which happen when all the
+> pieces come together.  I see this complaint a lot about Vulkan as well.
+> There are behaviors which only become evident when you find the right 5
+> pieces of the spec and put them all together and squint.  It'd be good
+> to call those out sometimes but there's no way we can document all of
+> them.
+
+That's true, but I think we could improve things a lot even with just
+better docs and more hyperlinking between docs... For example, the GEM
+and DMA fence docs do have quite a bit of prose that gets you some
+context (even if it's a bit outdated and not complete). But drm_sched
+just has one paragraph and a list giving a high-level design, and then
+goes straight into function docs. It definitely takes putting together
+the sched, fence, dma_resv, etc. docs together to get the big picture,
+but if those docs all at least point at each other and are individually
+reasonably complete, then we'd have a chance ^^
 
 ~~ Lina
