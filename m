@@ -2,43 +2,45 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41186C64EC4
-	for <linux-sgx@archiver.kernel.org>; Thu,  9 Mar 2023 22:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FDFC64EC4
+	for <linux-sgx@archiver.kernel.org>; Fri, 10 Mar 2023 06:21:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbjCIWQP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 9 Mar 2023 17:16:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51582 "EHLO
+        id S229721AbjCJGVf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 10 Mar 2023 01:21:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbjCIWQO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 9 Mar 2023 17:16:14 -0500
+        with ESMTP id S229767AbjCJGVd (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 10 Mar 2023 01:21:33 -0500
 Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8722DF82A6;
-        Thu,  9 Mar 2023 14:16:12 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126BCF28B1;
+        Thu,  9 Mar 2023 22:21:30 -0800 (PST)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: lina@asahilina.net)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id DDF1D41F78;
-        Thu,  9 Mar 2023 22:16:02 +0000 (UTC)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id 9B5B74249A;
+        Fri, 10 Mar 2023 06:21:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-        s=default; t=1678400169;
-        bh=D1LBihcahwMJoH7Mv24Wzh3mf7BDUXSsboyOvAfYaZk=;
+        s=default; t=1678429288;
+        bh=Su293xjC7HJqrmGn5asY9TEfKOlU5jJ/KKsqfzIhcss=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=U5rPGqbILUs4xYVED2L7GdrO+8UP20HQL9gdc36q9Zw4lQhe0WTvNszEc8uxBL+uK
-         Yq13WY5Gzi3Z0Qbw6qhzERIafjZ4EPaPIHEYT5LOqPxdOoUSa/mKSCksQRDWW9eH28
-         q3G50GSmBZuajODKbXgwIH8GZr50QobhNGrz96dfcWKeS+kb6gFtan1f6CBsn2aCes
-         dFSl4x03PUZHGOTH1E+YbW2Xc3Fs7TtEt9MxAtwjo+fhkr9xObiW+sxkHYggyeSk1H
-         y6FtCSkfWUzczON4HYoFpJbiYP/fW8/xNX0iRt7JcRkQeHqKZj4jjewRbj8LG1JHJU
-         8IY/Wq1OE68Mg==
-Message-ID: <28fa3f97-4c7c-212e-2be2-fb1c05f7f576@asahilina.net>
-Date:   Fri, 10 Mar 2023 07:16:00 +0900
+        b=R8QzFV6o2vdGKfZFYwqrGUzUpvt8V7mpifvkivq1CdeGZ81gA6szdX2TQLPZg1Vis
+         ZUOnngxZUqRjp4CnEs/t36DNw2yaJ2YA34h0XwBMVKpx/9VfRrsFj3/zWM/9bnSZ4H
+         XAMA8AE6bhaTutEre8t+wC8UJWNuMceDib/bF8LxFY4yjzQXZLl/3LgFi03CLOyyaJ
+         4PyYU9fuNnkvWgswLo5icJqYJj/izs+JCuco33/A71lxWqAXX5z9VLtuFKa+ZcEZgH
+         tNW+/koH3ycaNXbShllRhrmoNIQQGA33VS2nh34xCXGQBNMbzbd+m11IWKd6CL/kRl
+         yQvngLiAhJMhA==
+Message-ID: <b61d0b3e-fc10-be79-1b37-6c7aa278d75f@asahilina.net>
+Date:   Fri, 10 Mar 2023 15:21:19 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH RFC 03/18] rust: drm: file: Add File abstraction
+Subject: Re: [PATCH RFC 01/18] rust: drm: ioctl: Add DRM ioctl abstraction
 Content-Language: en-US
-To:     Faith Ekstrand <faith.ekstrand@collabora.com>,
+To:     Karol Herbst <kherbst@redhat.com>,
+        Faith Ekstrand <faith.ekstrand@collabora.com>
+Cc:     =?UTF-8?Q?Bj=c3=b6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
@@ -48,180 +50,89 @@ To:     Faith Ekstrand <faith.ekstrand@collabora.com>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        =?UTF-8?Q?Bj=c3=b6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
         =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
         Luben Tuikov <luben.tuikov@amd.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Karol Herbst <kherbst@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         Ella Stanforth <ella@iglunix.org>, Mary <mary@mary.zone>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         rust-for-linux@vger.kernel.org, linux-media@vger.kernel.org,
         linaro-mm-sig@lists.linaro.org, linux-sgx@vger.kernel.org,
         asahi@lists.linux.dev
 References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-3-917ff5bc80a8@asahilina.net>
- <9ba89e97155400fb379f5101ccb8960d0bcbc025.camel@collabora.com>
+ <20230307-rust-drm-v1-1-917ff5bc80a8@asahilina.net>
+ <D9Cyx-9kbjaeb8QVBFqapDyctoDdVyu5uXEJDR41sdXUDXM1VgdRicV5huJDwfC3-T2J-R_DYHH8JZ1_aRdgbeYZFT78J9QveeeYbiTq4yU=@protonmail.com>
+ <11ce9291-c17f-e73d-fb5d-13d5386fe6be@asahilina.net>
+ <c9e0c6fdcd642192a59a2fea95941a773ea7b3e3.camel@collabora.com>
+ <CACO55tukF-+HWUHve0YUPbq4jPFgU3szuedKLjAw55h_3uX5gg@mail.gmail.com>
 From:   Asahi Lina <lina@asahilina.net>
-In-Reply-To: <9ba89e97155400fb379f5101ccb8960d0bcbc025.camel@collabora.com>
+In-Reply-To: <CACO55tukF-+HWUHve0YUPbq4jPFgU3szuedKLjAw55h_3uX5gg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 10/03/2023 06.16, Faith Ekstrand wrote:
-> On Tue, 2023-03-07 at 23:25 +0900, Asahi Lina wrote:
->> A DRM File is the DRM counterpart to a kernel file structure,
->> representing an open DRM file descriptor. Add a Rust abstraction to
->> allow drivers to implement their own File types that implement the
->> DriverFile trait.
+On 10/03/2023 05.39, Karol Herbst wrote:
+> On Thu, Mar 9, 2023 at 9:24 PM Faith Ekstrand
+> <faith.ekstrand@collabora.com> wrote:
 >>
->> Signed-off-by: Asahi Lina <lina@asahilina.net>
->> ---
->>  rust/bindings/bindings_helper.h |   1 +
->>  rust/kernel/drm/drv.rs          |   7 ++-
->>  rust/kernel/drm/file.rs         | 113
->> ++++++++++++++++++++++++++++++++++++++++
->>  rust/kernel/drm/mod.rs          |   1 +
->>  4 files changed, 120 insertions(+), 2 deletions(-)
+>> On Thu, 2023-03-09 at 15:04 +0900, Asahi Lina wrote:
+>>> On 08/03/2023 02.34, Björn Roy Baron wrote:
+>>>>> +                            // SAFETY: This is just the ioctl
+>>>>> argument, which hopefully has the right type
+>>>>> +                            // (we've done our best checking the
+>>>>> size).
+>>>>
+>>>> In the rust tree there is the ReadableFromBytes [1] trait which
+>>>> indicates that it is safe to read arbitrary bytes into the type.
+>>>> Maybe you could add it as bound on the argument type when it lands
+>>>> in rust-next? This way you can't end up with for example a struct
+>>>> containing a bool with the byte value 2, which is UB.
+>>>
+>>> There's actually a much bigger story here, because that trait isn't
+>>> really very useful without a way to auto-derive it. I need the same
+>>> kind
+>>> of guarantee for all the GPU firmware structs...
+>>>
+>>> There's one using only declarative macros [1] and one using proc
+>>> macros
+>>> [2]. And then, since ioctl arguments are declared in C UAPI header
+>>> files, we need a way to be able to derive those traits for them...
+>>> which
+>>> I guess means bindgen changes?
 >>
->> diff --git a/rust/bindings/bindings_helper.h
->> b/rust/bindings/bindings_helper.h
->> index 2a999138c4ae..7d7828faf89c 100644
->> --- a/rust/bindings/bindings_helper.h
->> +++ b/rust/bindings/bindings_helper.h
->> @@ -8,6 +8,7 @@
->>  
->>  #include <drm/drm_device.h>
->>  #include <drm/drm_drv.h>
->> +#include <drm/drm_file.h>
->>  #include <drm/drm_ioctl.h>
->>  #include <linux/delay.h>
->>  #include <linux/device.h>
->> diff --git a/rust/kernel/drm/drv.rs b/rust/kernel/drm/drv.rs
->> index 29a465515dc9..1dcb651e1417 100644
->> --- a/rust/kernel/drm/drv.rs
->> +++ b/rust/kernel/drm/drv.rs
->> @@ -144,6 +144,9 @@ pub trait Driver {
->>      /// Should be either `drm::gem::Object<T>` or
->> `drm::gem::shmem::Object<T>`.
->>      type Object: AllocImpl;
->>  
->> +    /// The type used to represent a DRM File (client)
->> +    type File: drm::file::DriverFile;
->> +
->>      /// Driver metadata
->>      const INFO: DriverInfo;
->>  
->> @@ -213,8 +216,8 @@ macro_rules! drm_device_register {
->>  impl<T: Driver> Registration<T> {
->>      const VTABLE: bindings::drm_driver = drm_legacy_fields! {
->>          load: None,
->> -        open: None, // TODO: File abstraction
->> -        postclose: None, // TODO: File abstraction
->> +        open: Some(drm::file::open_callback::<T::File>),
->> +        postclose: Some(drm::file::postclose_callback::<T::File>),
->>          lastclose: None,
->>          unload: None,
->>          release: None,
->> diff --git a/rust/kernel/drm/file.rs b/rust/kernel/drm/file.rs
->> new file mode 100644
->> index 000000000000..48751e93c38a
->> --- /dev/null
->> +++ b/rust/kernel/drm/file.rs
->> @@ -0,0 +1,113 @@
->> +// SPDX-License-Identifier: GPL-2.0 OR MIT
->> +
->> +//! DRM File objects.
->> +//!
->> +//! C header:
->> [`include/linux/drm/drm_file.h`](../../../../include/linux/drm/drm_fi
->> le.h)
->> +
->> +use crate::{bindings, drm, error::Result};
->> +use alloc::boxed::Box;
->> +use core::marker::PhantomData;
->> +use core::ops::Deref;
->> +
->> +/// Trait that must be implemented by DRM drivers to represent a DRM
->> File (a client instance).
->> +pub trait DriverFile {
->> +    /// The parent `Driver` implementation for this `DriverFile`.
->> +    type Driver: drm::drv::Driver;
->> +
->> +    /// Open a new file (called when a client opens the DRM device).
->> +    fn open(device: &drm::device::Device<Self::Driver>) ->
->> Result<Box<Self>>;
->> +}
->> +
->> +/// An open DRM File.
->> +///
->> +/// # Invariants
->> +/// `raw` is a valid pointer to a `drm_file` struct.
->> +#[repr(transparent)]
->> +pub struct File<T: DriverFile> {
->> +    raw: *mut bindings::drm_file,
->> +    _p: PhantomData<T>,
->> +}
->> +
->> +pub(super) unsafe extern "C" fn open_callback<T: DriverFile>(
->> +    raw_dev: *mut bindings::drm_device,
->> +    raw_file: *mut bindings::drm_file,
->> +) -> core::ffi::c_int {
->> +    let drm = core::mem::ManuallyDrop::new(unsafe {
->> drm::device::Device::from_raw(raw_dev) });
+>> It'd be cool to be able to auto-verify that uAPI structs are all
+>> tightly packed and use the right subset of types.  Maybe not possible
+>> this iteration but it'd be cool to see in future.  I'd like to see it
+>> for C as well, ideally.
+>>
+>> ~Faith
+>>
 > 
-> Maybe you can help educate me a bit here... This feels like a really
-> sketchy pattern.  We're creating a Device from a pointer, an operation
-> which inherently consumes a reference but then marking it ManuallyDrop
-> so drm_device_put() never gets called.  It took me a while but I think
-> I figured out what you're trying to do: Make it so all the Rust stuff
-> works with Device, not drm_device but it still feels really wrong.  It
-> works, it just feels like there's a lot of unsafe abstraction juggling
-> happening here and I expect this operation is going to be pretty common
-> in the Rust abstraction layer.
+> I'm sure that with a macro you could verify that a struct definition
+> doesn't contain any gaps, just not sure on how one would enforce that.
+> Could add a trait which can only be implemented through a proc_macro?
+> Maybe we can have a proc_macro ensuring no gaps? Would be cool tech to
+> have indeed.
 
-So I think this is going to be a pretty common pattern in this kind of
-abstraction. The problem is that, of course, in C there is no
-distinction between an owned reference and a borrowed one. Here we have
-a borrowed reference to a struct drm_device, and we need to turn it into
-a &Device (which is the Rust equivalent type). But for &Device to exist
-we need a Device to exist in the first place, and Device normally
-implies ownership of the underlying drm_device.
+You just make the trait unsafe, as usual, then implement it via that
+macro. It's how the things I linked work ^^
 
-We could just acquire a reference here, but then we're needlessly
-grabbing a ref only to drop it at the end of the function, which is
-pointless when the caller is holding another reference for us while the
-callback runs. And of course Rust likes to claim to offer zero-cost
-abstractions, so it would be kind of sad to have to do that... ^^
+The tricky thing with C UAPI definitions is just that we need to get
+bindgen to emit those macro instantiations around struct definitions
+somehow. Or maybe it could be done with a brute force text-based
+postprocessing pass? If we put all UAPI defs into their own crate, you
+could probably just do it with sed or a python script or something on
+the bindgen output to add it for all struct types...
 
-Just doing drm::device::Device::from_raw(raw_dev) is a ticking time
-bomb, because we haven't acquired a reference (which would normally be
-required). If that Device ever gets dropped, we've messed up the
-refcounting and stolen the caller's reference. We could try to ensure it
-gets passed to core::mem::forget in all paths out, but that gets
-error-prone very quickly when trying to cover error paths. So instead,
-we put it into a ManuallyDrop. That takes care of neutering the ref
-drop, so we don't have to worry about messing that up. Then the only
-remaining safety requirement is that that the ManuallyDrop<Device> never
-escape the callback function, and that's easy to ensure: we only pass a
-&ref to the user (which via auto-deref ends up being a &Device), and
-then nothing bad can happen. If the user wants an owned reference to the
-device to keep around, they can call .clone() on it and that's when the
-incref happens.
-
-Basically, ManuallyDrop<T> where T is a reference counted type
-represents a borrowed reference to a T coming from the C side. You can
-see another use of this pattern in gem::Object, which contains a
-ManuallyDrop<Device> that represents a borrowed reference to the device
-that owns that object. The DRM core (as far as I know!) guarantees that
-DRM devices outlive all of their GEM objects, so we can materialize a
-borrowed reference and as long as it never leaves the GEM object, it
-will be sound. Then we can take &Device references from it whenever we
-want, and the usual Rust borrow checker rules ensure we can't do
-something illegal.
+@Rust folks: Should I try creating a uapi crate for this? I think we can
+just mirror the bindings crate logic, and we don't need helpers or
+anything like that here, so it shouldn't be very difficult. Then I could
+(eventually) eliminate all usage of the full bindings crate in the
+driver, and also try experimenting with stuff like this to validate all
+UAPI types and implement special traits for them...
 
 ~~ Lina
