@@ -2,80 +2,80 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEBAC74A4B
-	for <linux-sgx@archiver.kernel.org>; Fri, 10 Mar 2023 18:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD174C678D5
+	for <linux-sgx@archiver.kernel.org>; Sat, 11 Mar 2023 05:41:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229940AbjCJS5m (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 10 Mar 2023 13:57:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47502 "EHLO
+        id S229806AbjCKFlT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 11 Mar 2023 00:41:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229800AbjCJS5l (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 10 Mar 2023 13:57:41 -0500
-Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33DEA12B671;
-        Fri, 10 Mar 2023 10:57:40 -0800 (PST)
-Received: by mail-qt1-x834.google.com with SMTP id cf14so6813135qtb.10;
-        Fri, 10 Mar 2023 10:57:40 -0800 (PST)
+        with ESMTP id S229968AbjCKFlK (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 11 Mar 2023 00:41:10 -0500
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5534F4014;
+        Fri, 10 Mar 2023 21:41:06 -0800 (PST)
+Received: by mail-qt1-x835.google.com with SMTP id l18so8179410qtp.1;
+        Fri, 10 Mar 2023 21:41:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678474659;
+        d=gmail.com; s=20210112; t=1678513266;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iYsCaNsSgngNKZcdLQcf6Ufpk9ToxZLFdwVZ9rpQa4I=;
-        b=X08bB+yklbWwlcTtt2aeNgmaxess2TPKnELiAEk9OTqJPHuz+3/M9Tmq+KpCSIfM0f
-         jD0APM2OhnjVRgXxux5Jran0ExHQPN0mQlneMTl6sIrkmKBwNPbgnNqDlrZ0e9vmTRda
-         vjNSQQJBQJ+r7zirpHMIeDU/udZbkxHbku0star9P0mSAMUORFbrWFRMAJcJzUAcYotm
-         Uti2604Hf+UKs07gy9+nPPywgNaEIbCrcDdotdF7kCvsZH9Eapmykh+3okNVcDPNrDdi
-         OD9nWY2u/J4phmSp18O6CqUa5+TewrEkVAjwF7LWgvHms4ak00DKbbJpNhxXOO7NCOM/
-         XZmg==
+        bh=hBnbrHjdJqCycEaPHLF3SoWIQqolVe0vVU3sGJzdcqg=;
+        b=JCrmDH75MWI6C4BQ6Nt6hJet7wA8eJiW8PPfMZAOC9Eb0zicSw4iJgBXqGFl4tbd07
+         kSBQhixAf+a1xmDOjNKCmPKrl6L0jyPy/MOtfMx9LA76vw9NYif240OF35sL3cMAdrB9
+         20UyOpDx/F6mf8b3T23HfOV7LfqSH7uVgI6mrf8fs1Q0T6nbzCSt+bd7gdRZXbXoB6nN
+         Oag00Y1PIbB6zIzFq+TWAH9VD4h1Ew4SVDYx0dtZxHQwgF/P2YuoacOmlGijGey0sRgp
+         pH3r+gp3XuwduyRHF4szq8xbf7fCxHENdRJr7mQhhZD/4GVsssboE4kBk98s6xNoZW7g
+         2BkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678474659;
+        d=1e100.net; s=20210112; t=1678513266;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iYsCaNsSgngNKZcdLQcf6Ufpk9ToxZLFdwVZ9rpQa4I=;
-        b=OBcX9bkB6YtUT8kUCBe78uPukkXgyOYVxoa+OP4PPMJoojySqzhgVYLnBVvriimSVb
-         e+Cn11dd19AQLI+EzAFcTjXT3bNi+NQCvfr7WCnJ3ZUNrpUdI8EtplVPyOw9xshy9q7n
-         /CBLHCXx9cgLWrVb8mcNg61K6ZvDzY/vgqgrRKLspaqBqI28jlwlBsOQz3ZF0ZcXqg+j
-         NCQIkGuaH4raVtG4OwNxVwQzo54nxjjnxBjYKtg/0b5SG7R0zSYQ27r0hbcnwT/SYQxW
-         VsK24+9rLCwuvXb4qRFSdJjdnqyiz52MkyETtSiNmGInCBvjpUR2Aiq00DG1EWzs6z5O
-         IGAg==
-X-Gm-Message-State: AO0yUKVXnjcyt0NwS0T9Vi2TRa+luiAoEuX+bdRfG8hvmtsQIrD+TrCQ
-        L9YQh4VlAxVK4pJECsHZNCY=
-X-Google-Smtp-Source: AK7set+4zSWuXwAS3gf17d063Xj+Ph3v0EPqWJGTs3qx7Dqyh0WAYgbNyBItJeOyToWCKILdkt9WAA==
-X-Received: by 2002:ac8:5e4a:0:b0:3b8:2ea9:a09c with SMTP id i10-20020ac85e4a000000b003b82ea9a09cmr11028163qtx.1.1678474659251;
-        Fri, 10 Mar 2023 10:57:39 -0800 (PST)
+        bh=hBnbrHjdJqCycEaPHLF3SoWIQqolVe0vVU3sGJzdcqg=;
+        b=YMZMdfnRiH8MTy6TCSryZEdGPCo/dKKlMW+NHDJSinYpkOcOco3vRgHt9tAY7ma8VU
+         Lx5/FchxuhPrO41MmANma53lmkQRoqRyC4g8oBhhOYEeDRyO9RU3DM/FF0AksBi3Y4Sg
+         jO/s2FmCTc+iY1a5a9/CidrVYnMuH0jiaEUWwnPRhjVyxP7G5ZDUJJidj2TqmkSNTyLn
+         0ozFAaWHvNwSG0zy3UqQTizye5UCr4R+aPo5Kcj480lHshCc3hcBYmrVOnv6YiGjpvRM
+         gIsM+5RmRVPCDrFT+yr6N+xxwJnopy5VwuQDMGJL1TByBywsEQoYEUDXP8rouamykrH5
+         Gm5g==
+X-Gm-Message-State: AO0yUKUEfOF3mHlI46+tz4Nhwr6B6dThhGGklid7jNCXtOWKRaztpmaV
+        0dMGC5VXIEuTJflc7ChV17M=
+X-Google-Smtp-Source: AK7set/plVrigjnAHyTng8mFOgTpletal/lAWhwq8z+Al90Y9yMeAfybv5E81mH4i9EeLrrAFNPPTg==
+X-Received: by 2002:a05:622a:182a:b0:3bf:cd42:7724 with SMTP id t42-20020a05622a182a00b003bfcd427724mr49636710qtc.11.1678513265735;
+        Fri, 10 Mar 2023 21:41:05 -0800 (PST)
 Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
-        by smtp.gmail.com with ESMTPSA id a8-20020aed2788000000b003b62e8b77e7sm342021qtd.68.2023.03.10.10.57.37
+        by smtp.gmail.com with ESMTPSA id h9-20020ac85e09000000b003ba2a15f93dsm1381649qtx.26.2023.03.10.21.41.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Mar 2023 10:57:38 -0800 (PST)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailauth.nyi.internal (Postfix) with ESMTP id BD05F27C0054;
-        Fri, 10 Mar 2023 13:57:37 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 10 Mar 2023 13:57:37 -0500
-X-ME-Sender: <xms:oH0LZKRLdsP7S-ODRUr5NQxPKLRM043tk4HBpFPML5ny56aOMc1WKA>
-    <xme:oH0LZPyoebzZatMZAuu6P_73GVuEHtNN69KxZr64O2-UPfZdk1ohaIHA1YNTOmA_r
-    KAkwArw5YzolSql6g>
-X-ME-Received: <xmr:oH0LZH2zT9VTIey8ILSfvM1iTiewrf9ia19JsONvub11ZyqXtExdx7oEEi8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvddukedguddujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhepfeduvddvleeigeeugfevffdvffduieeujeeivdduhfeljeeghfegffev
-    fffhkeffnecuffhomhgrihhnpehpthhrrdguvghvnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgv
-    rhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfh
-    gvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:oH0LZGAmUZAA0WaAkOpaN91r1NTQfHex41rDqaXOgp7XltObtE-y4Q>
-    <xmx:oH0LZDhbyzfoZ9B-1L4Zs_Qb4Brv9uR5ds8IbGPyn9TAqabJ4deWLw>
-    <xmx:oH0LZCrDEJ4ut9DJmmL9U5wz_K5XqnyQlUZYnc_Ay2xgLVJ4PQ1cMQ>
-    <xmx:oX0LZPDMVZoKkaOWLRxjIng7KbgqOLDTOoYJ_0CZLCFD9tpM_5bBfg>
+        Fri, 10 Mar 2023 21:41:05 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 799A327C0054;
+        Sat, 11 Mar 2023 00:41:04 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Sat, 11 Mar 2023 00:41:04 -0500
+X-ME-Sender: <xms:bhQMZBfymQwN8rpPD2I7inos-RmgCfUvR91xgSJj-Px65DbLzROxRw>
+    <xme:bhQMZPPZNhTZ8fqeWdzBYxy5q3nKRCA6MQ5bTsT0vdKXySaD6SMOcUY2A4GfVaF4R
+    P1aXaOiW7idfkQaVA>
+X-ME-Received: <xmr:bhQMZKh2j4CRc34OgSzc7zD9IHg1IyreWKH49AqSiafOVd15IptlpyxDJn0CFxLtXFlRxuXA21Fntiq7r8iDpGS0_h8QDVZr72c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdduledgkeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeefuddvvdelieeguefgveffvdffudeiueejiedvudfhleejgefhgeffveff
+    hfekffenucffohhmrghinhepphhtrhdruggvvhenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghr
+    shhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvg
+    hngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:bhQMZK_hc_mxP2PBVZaKsvEYZbv5qnMolvIg5gNaCSbqHa6VYq2CbQ>
+    <xmx:bhQMZNsVsl6HnB3_XXn1BcSra2Nh0ZQsFKDSptGHjauurJofQj_idQ>
+    <xmx:bhQMZJGsQOI_bpjrAdFslcuZpUS4v9HbNv-4iPwrqzy7x9s5B1Mw2g>
+    <xmx:cBQMZNd1EQ9WNauHj_wI5NjKkSljOiZ_2aFgNwPO5npgKD1jkWbpdQ>
 Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 10 Mar 2023 13:57:36 -0500 (EST)
-Date:   Fri, 10 Mar 2023 10:56:31 -0800
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 11 Mar 2023 00:41:02 -0500 (EST)
+Date:   Fri, 10 Mar 2023 21:41:00 -0800
 From:   Boqun Feng <boqun.feng@gmail.com>
 To:     Asahi Lina <lina@asahilina.net>
 Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -102,7 +102,7 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
 Subject: Re: [PATCH RFC 02/18] rust: drm: Add Device and Driver abstractions
-Message-ID: <ZAt9X8qDUHQ/YnW8@boqun-archlinux>
+Message-ID: <ZAwUbAWvPt9aavXp@Boquns-Mac-mini.local>
 References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
  <20230307-rust-drm-v1-2-917ff5bc80a8@asahilina.net>
 MIME-Version: 1.0
@@ -114,44 +114,97 @@ List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Tue, Mar 07, 2023 at 11:25:27PM +0900, Asahi Lina wrote:
-[...]
+> Add the initial abstractions for DRM drivers and devices. These go
+> together in one commit since they are fairly tightly coupled types.
+> 
+> A few things have been stubbed out, to be implemented as further bits of
+> the DRM subsystem are introduced.
+> 
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> ---
+>  rust/bindings/bindings_helper.h |   3 +
+>  rust/kernel/drm/device.rs       |  76 +++++++++
+>  rust/kernel/drm/drv.rs          | 339 ++++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/drm/mod.rs          |   2 +
+>  4 files changed, 420 insertions(+)
+> 
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> index 2687bef1676f..2a999138c4ae 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -6,10 +6,13 @@
+>   * Sorted alphabetically.
+>   */
+>  
+> +#include <drm/drm_device.h>
+> +#include <drm/drm_drv.h>
+>  #include <drm/drm_ioctl.h>
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+>  #include <linux/dma-mapping.h>
+> +#include <linux/fs.h>
+>  #include <linux/ioctl.h>
+>  #include <linux/io-pgtable.h>
+>  #include <linux/ktime.h>
+> diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
+> new file mode 100644
+> index 000000000000..6007f941137a
+> --- /dev/null
+> +++ b/rust/kernel/drm/device.rs
+> @@ -0,0 +1,76 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
 > +
-> +// SAFETY: `Device` only holds a pointer to a C device, which is safe to be used from any thread.
-> +unsafe impl<T: drm::drv::Driver> Send for Device<T> {}
+> +//! DRM device.
+> +//!
+> +//! C header: [`include/linux/drm/drm_device.h`](../../../../include/linux/drm/drm_device.h)
 > +
-> +// SAFETY: `Device` only holds a pointer to a C device, references to which are safe to be used
-> +// from any thread.
-> +unsafe impl<T: drm::drv::Driver> Sync for Device<T> {}
+> +use crate::{bindings, device, drm, types::ForeignOwnable};
+> +use core::marker::PhantomData;
 > +
+> +/// Represents a reference to a DRM device. The device is reference-counted and is guaranteed to
+> +/// not be dropped while this object is alive.
+> +pub struct Device<T: drm::drv::Driver> {
+> +    // Type invariant: ptr must be a valid and initialized drm_device,
+> +    // and this value must either own a reference to it or the caller
+> +    // must ensure that it is never dropped if the reference is borrowed.
+> +    pub(super) ptr: *mut bindings::drm_device,
+> +    _p: PhantomData<T>,
+> +}
+> +
+> +impl<T: drm::drv::Driver> Device<T> {
+> +    // Not intended to be called externally, except via declare_drm_ioctls!()
+> +    #[doc(hidden)]
+> +    pub unsafe fn from_raw(raw: *mut bindings::drm_device) -> Device<T> {
+> +        Device {
+> +            ptr: raw,
+> +            _p: PhantomData,
+> +        }
+> +    }
+> +
+> +    #[allow(dead_code)]
+> +    pub(crate) fn raw(&self) -> *const bindings::drm_device {
+> +        self.ptr
+> +    }
+> +
+> +    pub(crate) fn raw_mut(&mut self) -> *mut bindings::drm_device {
+> +        self.ptr
+> +    }
 
-Here is the mind model I use to check whether a type is `Send` or
-`Sync`
+Since you can always get a *mut bindings::drm_device safely from
 
-*	If an object of a type can be created on one thread and dropped
-	on the another thread, then it's `Send`.
+	a.raw() as *mut _
 
-*	If multiple threads can call the immutable functions (i.e.
-	functions with `&self`) of the same object of a type, then the
-	it's `Sync`.
-
-Maybe it's incomplete, but at least I find it useful to determine
-whether a type is `Send` or `Sync`: it's not just the struct
-representation, the behaviors (functions) of the struct also matter.
-
-If that looks reasonable to you, maybe update the "SAFETY" comments in
-the future version? Thanks ;-)
-
-(I know you brought this up in the meeting, sorry I guess I wasn't fully
-woken when answering you ;-))
+, this mutable version seems unnecesarry to me. In other words, no way
+to prevent getting a *mut bindings::drm_device from only &Device.
 
 Regards,
 Boqun
 
-> +// Make drm::Device work for dev_info!() and friends
-> +unsafe impl<T: drm::drv::Driver> device::RawDevice for Device<T> {
-> +    fn raw_device(&self) -> *mut bindings::device {
-> +        // SAFETY: ptr must be valid per the type invariant
-> +        unsafe { (*self.ptr).dev }
+> +
+> +    /// Returns a borrowed reference to the user data associated with this Device.
+> +    pub fn data(&self) -> <T::Data as ForeignOwnable>::Borrowed<'_> {
+> +        unsafe { T::Data::borrow((*self.ptr).dev_private) }
 > +    }
 > +}
+> +
 [...]
