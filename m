@@ -2,39 +2,41 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 033C7C6FD19
-	for <linux-sgx@archiver.kernel.org>; Mon, 13 Mar 2023 17:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBE8C61DA4
+	for <linux-sgx@archiver.kernel.org>; Mon, 13 Mar 2023 20:12:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229477AbjCMRui (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 13 Mar 2023 13:50:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45894 "EHLO
+        id S229642AbjCMUMF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 13 Mar 2023 16:12:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbjCMRuh (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 13 Mar 2023 13:50:37 -0400
+        with ESMTP id S229571AbjCMUMD (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 13 Mar 2023 16:12:03 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 274FC78CBB;
-        Mon, 13 Mar 2023 10:50:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8C5488896;
+        Mon, 13 Mar 2023 13:11:33 -0700 (PDT)
 Received: from 2603-8080-2102-63d7-c4a8-7e10-0391-f3ff.res6.spectrum.com (2603-8080-2102-63d7-c4a8-7e10-0391-f3ff.res6.spectrum.com [IPv6:2603:8080:2102:63d7:c4a8:7e10:391:f3ff])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: gfxstrand)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C57FB6602179;
-        Mon, 13 Mar 2023 17:50:02 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 140006603082;
+        Mon, 13 Mar 2023 20:11:18 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678729807;
-        bh=xAoSrt6ok3rZEBjY+weW5rQvZBVH8IFHlHFW3Km1xIE=;
+        s=mail; t=1678738283;
+        bh=/Hk85AyfI2+qDYVuOaAdIFIbZ8GVt1D5Rz/mY9nD+bc=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=oSWXTgrlnOu+4tRAuaTAhAxxQPeXH9BthRHi10Q9cQbXmnkh3bucEb9d2wQJZCWD1
-         1z2j9H6C9DXjOv5OEyK4Sj2jinbBdVER4qizvl/SDiNngN4X2GK8ibY5HMN/jUiM0K
-         Lgb6wuw6jRM3dxATRJR2vIIU09devvxy61sEzOWeK1nF1Hze8dC35r9dSuGxJ6P9Yc
-         ubFZnsGEb/WR1Wv+c0FzKfGuK2UsjxOC/6d/SCbm6mqA6pSMvvmy447L/+HmcuH2gC
-         fdCmebbYSohZS2wJXNt1zOCWQ2qcBzDZexbOxd7dTRFDn4ZnANbAx4hk0gT+L5AsRJ
-         FJff+kwAI+EYA==
-Message-ID: <5a0db63c043adc47b289b3f1d22935a0a63c926e.camel@collabora.com>
-Subject: Re: [PATCH RFC 03/18] rust: drm: file: Add File abstraction
+        b=krDlgSytWz0sq/iTTW2SXDHQwmmoR/jFvL+iPFDdhh+hBIMSZibRB3CXnlKa9F73H
+         qSp4p37r52VSbu5JqPRO+6CeH+2sk+i78khJsZnBycxcIrTvDo8qv/bjRU9Z5dwqsB
+         cytuIQG6xpVV5NAG3rsqqmDySlodqud00MVf9uaoYXvyHaDEEGF7Qmfg09x1oeVlTu
+         chvk9g2gtKNj4gr2PwF9BOt+P0uT+Yt8KVCPZdN6FUTOrgeTM6bnIG0xC4EG2F7ZdP
+         1k/YwrgTIB3VubeTEAqsHGvPSYtRE5FoqNHOqF6OHYR7YjT4P3FIs82xL5tPXu8Dj9
+         FYdqe2qpyxCNg==
+Message-ID: <4b7101104e6775a4cbe5a0be9ad7f27fe1e28cdb.camel@collabora.com>
+Subject: Re: [PATCH RFC 11/18] drm/scheduler: Clean up jobs when the
+ scheduler is torn down
 From:   Faith Ekstrand <faith.ekstrand@collabora.com>
 To:     Asahi Lina <lina@asahilina.net>,
+        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
@@ -46,7 +48,6 @@ To:     Asahi Lina <lina@asahilina.net>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
         =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Luben Tuikov <luben.tuikov@amd.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>
@@ -57,12 +58,21 @@ Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         rust-for-linux@vger.kernel.org, linux-media@vger.kernel.org,
         linaro-mm-sig@lists.linaro.org, linux-sgx@vger.kernel.org,
         asahi@lists.linux.dev
-Date:   Mon, 13 Mar 2023 12:49:57 -0500
-In-Reply-To: <28fa3f97-4c7c-212e-2be2-fb1c05f7f576@asahilina.net>
+Date:   Mon, 13 Mar 2023 15:11:14 -0500
+In-Reply-To: <25349030-5cc6-90a2-f1d2-4f9a67c4f194@asahilina.net>
 References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
-         <20230307-rust-drm-v1-3-917ff5bc80a8@asahilina.net>
-         <9ba89e97155400fb379f5101ccb8960d0bcbc025.camel@collabora.com>
-         <28fa3f97-4c7c-212e-2be2-fb1c05f7f576@asahilina.net>
+         <20230307-rust-drm-v1-11-917ff5bc80a8@asahilina.net>
+         <bbd7c5ee-c2f0-3e19-757d-a9aff1a26d3d@linux.intel.com>
+         <585fa052-4eff-940e-b307-2415c315686a@amd.com>
+         <3320e497-09c0-6eb6-84c5-bab2e63f28ec@asahilina.net>
+         <7b39ef96-3ec5-c492-6e1b-bf065b7c90a2@amd.com>
+         <0f14c1ae-0c39-106c-9563-7c1c672154c0@asahilina.net>
+         <e18500b5-21a0-77fd-8434-86258cefce5a@amd.com>
+         <8696d00a-c642-b080-c19a-b0e619e4b585@asahilina.net>
+         <5f0814a3-4be3-a609-d3b3-dd51a4f459a1@amd.com>
+         <9403e89d-a78f-8abd-2869-20da23d89475@asahilina.net>
+         <777dea65ef81c402d0765b1244b40633c483f4b2.camel@collabora.com>
+         <25349030-5cc6-90a2-f1d2-4f9a67c4f194@asahilina.net>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
@@ -71,225 +81,221 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, 2023-03-10 at 07:16 +0900, Asahi Lina wrote:
-> On 10/03/2023 06.16, Faith Ekstrand wrote:
-> > On Tue, 2023-03-07 at 23:25 +0900, Asahi Lina wrote:
-> > > A DRM File is the DRM counterpart to a kernel file structure,
-> > > representing an open DRM file descriptor. Add a Rust abstraction
-> > > to
-> > > allow drivers to implement their own File types that implement
-> > > the
-> > > DriverFile trait.
-> > >=20
-> > > Signed-off-by: Asahi Lina <lina@asahilina.net>
-> > > ---
-> > > =C2=A0rust/bindings/bindings_helper.h |=C2=A0=C2=A0 1 +
-> > > =C2=A0rust/kernel/drm/drv.rs=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 7 ++-
-> > > =C2=A0rust/kernel/drm/file.rs=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 113
-> > > ++++++++++++++++++++++++++++++++++++++++
-> > > =C2=A0rust/kernel/drm/mod.rs=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> > > =C2=A04 files changed, 120 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/rust/bindings/bindings_helper.h
-> > > b/rust/bindings/bindings_helper.h
-> > > index 2a999138c4ae..7d7828faf89c 100644
-> > > --- a/rust/bindings/bindings_helper.h
-> > > +++ b/rust/bindings/bindings_helper.h
-> > > @@ -8,6 +8,7 @@
-> > > =C2=A0
-> > > =C2=A0#include <drm/drm_device.h>
-> > > =C2=A0#include <drm/drm_drv.h>
-> > > +#include <drm/drm_file.h>
-> > > =C2=A0#include <drm/drm_ioctl.h>
-> > > =C2=A0#include <linux/delay.h>
-> > > =C2=A0#include <linux/device.h>
-> > > diff --git a/rust/kernel/drm/drv.rs b/rust/kernel/drm/drv.rs
-> > > index 29a465515dc9..1dcb651e1417 100644
-> > > --- a/rust/kernel/drm/drv.rs
-> > > +++ b/rust/kernel/drm/drv.rs
-> > > @@ -144,6 +144,9 @@ pub trait Driver {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 /// Should be either `drm::gem::Object<T>` o=
-r
-> > > `drm::gem::shmem::Object<T>`.
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 type Object: AllocImpl;
-> > > =C2=A0
-> > > +=C2=A0=C2=A0=C2=A0 /// The type used to represent a DRM File (client=
-)
-> > > +=C2=A0=C2=A0=C2=A0 type File: drm::file::DriverFile;
-> > > +
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 /// Driver metadata
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 const INFO: DriverInfo;
-> > > =C2=A0
-> > > @@ -213,8 +216,8 @@ macro_rules! drm_device_register {
-> > > =C2=A0impl<T: Driver> Registration<T> {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 const VTABLE: bindings::drm_driver =3D drm_l=
-egacy_fields! {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 load: None,
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 open: None, // TODO: File=
- abstraction
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 postclose: None, // TODO:=
- File abstraction
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 open: Some(drm::file::ope=
-n_callback::<T::File>),
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 postclose:
-> > > Some(drm::file::postclose_callback::<T::File>),
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lastclose: None,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unload: None,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 release: None,
-> > > diff --git a/rust/kernel/drm/file.rs b/rust/kernel/drm/file.rs
-> > > new file mode 100644
-> > > index 000000000000..48751e93c38a
-> > > --- /dev/null
-> > > +++ b/rust/kernel/drm/file.rs
-> > > @@ -0,0 +1,113 @@
-> > > +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> > > +
-> > > +//! DRM File objects.
-> > > +//!
-> > > +//! C header:
-> > > [`include/linux/drm/drm_file.h`](../../../../include/linux/drm/dr
-> > > m_fi
-> > > le.h)
-> > > +
-> > > +use crate::{bindings, drm, error::Result};
-> > > +use alloc::boxed::Box;
-> > > +use core::marker::PhantomData;
-> > > +use core::ops::Deref;
-> > > +
-> > > +/// Trait that must be implemented by DRM drivers to represent a
-> > > DRM
-> > > File (a client instance).
-> > > +pub trait DriverFile {
-> > > +=C2=A0=C2=A0=C2=A0 /// The parent `Driver` implementation for this
-> > > `DriverFile`.
-> > > +=C2=A0=C2=A0=C2=A0 type Driver: drm::drv::Driver;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0 /// Open a new file (called when a client opens t=
-he DRM
-> > > device).
-> > > +=C2=A0=C2=A0=C2=A0 fn open(device: &drm::device::Device<Self::Driver=
->) ->
-> > > Result<Box<Self>>;
-> > > +}
-> > > +
-> > > +/// An open DRM File.
-> > > +///
-> > > +/// # Invariants
-> > > +/// `raw` is a valid pointer to a `drm_file` struct.
-> > > +#[repr(transparent)]
-> > > +pub struct File<T: DriverFile> {
-> > > +=C2=A0=C2=A0=C2=A0 raw: *mut bindings::drm_file,
-> > > +=C2=A0=C2=A0=C2=A0 _p: PhantomData<T>,
-> > > +}
-> > > +
-> > > +pub(super) unsafe extern "C" fn open_callback<T: DriverFile>(
-> > > +=C2=A0=C2=A0=C2=A0 raw_dev: *mut bindings::drm_device,
-> > > +=C2=A0=C2=A0=C2=A0 raw_file: *mut bindings::drm_file,
-> > > +) -> core::ffi::c_int {
-> > > +=C2=A0=C2=A0=C2=A0 let drm =3D core::mem::ManuallyDrop::new(unsafe {
-> > > drm::device::Device::from_raw(raw_dev) });
+On Fri, 2023-03-10 at 18:58 +0900, Asahi Lina wrote:
+> On 10/03/2023 04.59, Faith Ekstrand wrote:
+> > On Thu, 2023-03-09 at 18:43 +0900, Asahi Lina wrote:
+> > > On 09/03/2023 17.42, Christian K=C3=B6nig wrote:
+> > > > Long story short: Don't do this! This is what the Windows
+> > > > drivers
+> > > > have=20
+> > > > been doing and it creates tons of problems.
 > >=20
-> > Maybe you can help educate me a bit here... This feels like a
-> > really
-> > sketchy pattern.=C2=A0 We're creating a Device from a pointer, an
-> > operation
-> > which inherently consumes a reference but then marking it
-> > ManuallyDrop
-> > so drm_device_put() never gets called.=C2=A0 It took me a while but I
-> > think
-> > I figured out what you're trying to do: Make it so all the Rust
-> > stuff
-> > works with Device, not drm_device but it still feels really wrong.=C2=
-=A0
-> > It
-> > works, it just feels like there's a lot of unsafe abstraction
-> > juggling
-> > happening here and I expect this operation is going to be pretty
-> > common
-> > in the Rust abstraction layer.
+> > Yeah, we tried to do a bit of that in the GL days.=C2=A0 It was a bad
+> > idea.
 >=20
-> So I think this is going to be a pretty common pattern in this kind
-> of
-> abstraction. The problem is that, of course, in C there is no
-> distinction between an owned reference and a borrowed one. Here we
-> have
-> a borrowed reference to a struct drm_device, and we need to turn it
-> into
-> a &Device (which is the Rust equivalent type). But for &Device to
-> exist
-> we need a Device to exist in the first place, and Device normally
-> implies ownership of the underlying drm_device.
-
-Thanks! Putting it in terms of borrow really helps clear up the
-difference.
-
-> We could just acquire a reference here, but then we're needlessly
-> grabbing a ref only to drop it at the end of the function, which is
-> pointless when the caller is holding another reference for us while
-> the
-> callback runs. And of course Rust likes to claim to offer zero-cost
-> abstractions, so it would be kind of sad to have to do that... ^^
-
-Yeah, I agree we don't want to take extra references.
-
-> Just doing drm::device::Device::from_raw(raw_dev) is a ticking time
-> bomb, because we haven't acquired a reference (which would normally
-> be
-> required). If that Device ever gets dropped, we've messed up the
-> refcounting and stolen the caller's reference. We could try to ensure
-> it
-> gets passed to core::mem::forget in all paths out, but that gets
-> error-prone very quickly when trying to cover error paths. So
-> instead,
-> we put it into a ManuallyDrop. That takes care of neutering the ref
-> drop, so we don't have to worry about messing that up. Then the only
-> remaining safety requirement is that that the ManuallyDrop<Device>
-> never
-> escape the callback function, and that's easy to ensure: we only pass
-> a
-> &ref to the user (which via auto-deref ends up being a &Device), and
-> then nothing bad can happen. If the user wants an owned reference to
-> the
-> device to keep around, they can call .clone() on it and that's when
-> the
-> incref happens.
->=20
-> Basically, ManuallyDrop<T> where T is a reference counted type
-> represents a borrowed reference to a T coming from the C side. You
-> can
-> see another use of this pattern in gem::Object, which contains a
-> ManuallyDrop<Device> that represents a borrowed reference to the
-> device
-> that owns that object. The DRM core (as far as I know!) guarantees
-> that
-> DRM devices outlive all of their GEM objects, so we can materialize a
-> borrowed reference and as long as it never leaves the GEM object, it
-> will be sound. Then we can take &Device references from it whenever
+> I think I should clarify: I was proposing re-queueing innocent jobs
+> from
+> innocent queues/VMs that were impacted by a fault. The reason is that
 > we
-> want, and the usual Rust borrow checker rules ensure we can't do
-> something illegal.
+> may be able to tweak firmware state to force it to do that safely,
+> during the firmware recovery cycle, such that an aborted job restarts
+> and then subsequent jobs/commands continue as normal. We can't leave
+> it
+> to userspace because if we do nothing, the affected job ends up
+> incomplete but then everything after it that is already queued still
+> runs, and that is definitely a recipe for a bigger mess if userspace
+> wants to seamlessly recover. The firmware recovery cycle is a
+> "stop-the-world" situation for the GPU (the firmware literally
+> busy-loops waiting for the driver to set a continue flag in
+> memory...),
+> so that's the only real chance that the driver gets to make decisions
+> about what is going to happen next.
 
-Ok, that all matches my understanding of what I thought was going on. I
-do wonder if it would be good to wrap this up in a
+Ok, that makes sense.  Yes, if you have other jobs on other queues and
+are able to recover everything that isn't in the faulting VM, that's a
+good thing.  I wasn't sure how hang/fault recovery worked on AGX.  In
+tat case, I don't think there's a dma_fence problem.  As long as you
+keep recovering and killing off any faulting contexts, eventually the
+good contexts should make progress and those fences should signal.
 
-struct DeviceBorrow {
-   dev: ManuallyDrop<Device>
-}
+Of course, the firmware recovery cycle may be complex and need (or at
+least appear to) memory allocation or similar and that's where
+everything gets hairy.  Hopefully, though, if you've already got the
+resources from the old context, you can re-use them after a bit of
+clean-up work and still get deterministic and reliable recovery cycles.
 
-impl DeviceBorrow {
-   pub unsafe fn from_raw(*mut bindings::drm_device) -> DeviceBorrow;
-}
+> Of course, that only works if individual possibly concurrently
+> running
+> commands are idempotent, but I think a lot of typical GPU work is?
 
-impl Deref<Device> for DeviceBorrow {
-   ...
-}
+No, that's not a valid assumption.  For a single 3D render pass which
+doesn't do any image or SSBO access, it may be possible to re-run it.=20
+However, that won't be true of compute work and isn't necessarily true
+of back-to-back passes. Lots of modern apps do temporal stuff where one
+frame depends on the previous and a re-run might screw that up. Also,
+with Vulkan's memory aliasing, it's hard to tell just from which
+resources are accessed whether or not a command buffer leaves its input
+memory undamaged.
 
-with documentation, etc.  Seeing a ManuallyDrop which is never dropped
-sets my rust senses tingling.  Maybe that's too much typing for each
-object?  I don't want to add a bunch of extra work but this seems like
-a pretty common pattern we're going to hit everywhere.
+> (E.g.
+> any render pass without side effects other than the render targets
+> and
+> where the background shader does no loads, or even render passes that
+> do
+> loads but where all draws are opaque, which are all things the
+> current
+> Gallium driver is intimately familiar with since Crazy Tiler
+> Optimizations=E2=84=A2 need that info to be provided anyway). So I was
+> wondering
+> whether it'd make sense to have such an idempotency/restartable flag
+> on
+> job submission, and then the driver would do its best to recover and
+> rerun it if it gets killed by an unrelated concurrent bad job.
+>=20
+> Then again this all depends on an investigation into what we *can* do
+> during firmware recovery that hasn't happened at all yet. It might be
+> that it isn't safe to do anything really, or that doing things
+> depends
+> on touching even deeper firmware state structs that we treat as
+> opaque
+> right now and we really don't want to have to touch...
+>=20
+> But maybe none of this is worth it in practice, it just sounded like
+> it
+> could be useful maybe?
+
+Maybe? It's not clear to me that such a flag would be useful or even
+practical to provide from the Mesa side.  Ideally, you'd be able to
+figure out when a fault happens, what VM it happened in and exactly
+what work was in-flight when it happened and only kill the one guilty
+VM.  However, it sounds like your understanding of the firmware is
+currently rough enough that doing so may not be practical.  In that
+case, the best thing to do is to kill any VMs which were on the GPU at
+the time and hope the individual apps are able to recover.
+
+> Now that I look at it, we have a lovely "what is this flag doing
+> anyway"
+> bit already passed from Mesa through to the firmware we called
+> ASAHI_RENDER_SET_WHEN_RELOADING_Z_OR_S which, now that I look at it,
+> is
+> actually getting set when any attachment (any color, Z, S) is not
+> being
+> cleared for that pass (so it's loaded). That could very well be an
+> "is
+> not idempotent" flag... and maybe that means the firmware does this
+> for
+> us already? Sounds like something to test... I might have some
+> 16Kx16K
+> GLmark runs to do concurrent with an evil faulting job now ^^ (and
+> then
+> that also means we need to set it when shaders have side effects and
+> stuff, which right now we don't).
+>=20
+> > > > Just signal the problem back to userspace and let the user
+> > > > space
+> > > > driver=20
+> > > > decide what to do.
+> > > >=20
+> > > > The background is that most graphics applications (games etc..)
+> > > > then=20
+> > > > rather start on the next frame instead of submitting the
+> > > > current
+> > > > one=20
+> > > > again while compute applications make sure that the abort and
+> > > > tell
+> > > > the=20
+> > > > user that the calculations might be corrupted and need to be
+> > > > redone.
+> >=20
+> > The guarantee that Vulkan makes is that, if you idle the GPU and
+> > you
+> > haven't gotten a DEVICE_LOST yet, your data is good.=C2=A0 If you get a
+> > DEVICE_LOST, all bets are off.=C2=A0 The problem is that, no matter how
+> > fast
+> > the error propagation may be in the kernel or userspace driver,
+> > errors
+> > can still show up in strange ways.=C2=A0 An OOB buffer access could end
+> > up
+> > modifying a shader binary which gets run 3 frames later and causes
+> > a
+> > corruption.=C2=A0 Once you've faulted, you really have no idea how far
+> > back
+> > is good or what memory is corrupted.=C2=A0 You have to assume that
+> > everything mapped to the GPU VA space is potentially toast.
+>=20
+> Yes of course, for the actually faulting VM all bets are off after a
+> fault (though we can try a bit harder at least... I have a READ_ONLY
+> BO
+> flag now, I should set it on the shader pools!).
+>=20
+> > > Actually I wanted to ask about error notifications. Right now we
+> > > have
+> > > an
+> > > out-of-band mechanism to provide detailed fault info to userspace
+> > > which
+> > > works fine, but in principle it's optional.
+> >=20
+> > This is fine, in principal.=C2=A0 Because of the nature of errors, asyn=
+c
+> > is
+> > fine as long as the error shows up eventually.=C2=A0 Faster is better,
+> > for
+> > sure, but error latency doesn't really matter in practice.
+> >=20
+> > > However, I also mark the hw
+> > > =C2=A0fences as errored when a fault happens (with an errno that
+> > > describes
+> > > the overall situation), but that never makes it into the
+> > > drm_sched
+> > > job
+> > > complete fence. I looked at the drm_sched code and I didn't see
+> > > any
+> > > error propagation. Is that supposed to work, or am I supposed to
+> > > directly mark the drm_sched side fence as complete, or did I
+> > > misunderstand all this? I get the feeling maybe existing drivers
+> > > just
+> > > rely on the recovery/timeout/etc paths to mark jobs as errored
+> > > (since
+> > > those do it explicitly) and never need error forwarding from the
+> > > hw
+> > > fence?
+> >=20
+> > The end behavior needs to be that all fences for all jobs submitted
+> > to
+> > the queue get signaled.=C2=A0 That's needed to satisfy the finite time
+> > guarantees of dma_fence.=C2=A0 Exactly how that happens (let the job
+> > run,
+> > abort all the jobs, etc.) is an implementation detail for the
+> > driver to
+> > decide.=C2=A0 If you want, you can also set a bit on the context (or
+> > queue)
+> > to mark it as dead and start returning EIO or similar from any
+> > ioctls
+> > trying to submit more work if you wanted.=C2=A0 Not required but you
+> > can.
+>=20
+> Fences have an error flag though, does that get reported to userspace
+> somehow? I thought it did, but maybe not, or maybe only drm_sched not
+> propagating it is the issue?
+>=20
+> In other words, absent my fancy stats reporting BO system, what is
+> the
+> normal way that an explicit sync driver signals to userspace that the
+> job associated with a syncobj has failed?
+
+One is via the return value from exec/submit.  Often there's also a
+query mechanism for more detailed information.  It's not particularly
+standard at the moment, I'm afraid.  I could point you at i915 but I
+wouldn't call that uAPI something to be emulated, in general.
+
+> (If there is no way, then I'll probably want to change the stats BO
+> system to be configurable, so if you ask for no stats/time info, you
+> only get overall job status and faults, which has less overhead.)
+
+There is an error but it doesn't automatically get propagated to
+userspace.  So, for instance, a SYNCOBJ_WAIT ioctl won't return an
+error if it sees a fence error.  It needs to get caught by the driver
+and returned through a driver ioctl somehow.
 
 ~Faith
+
