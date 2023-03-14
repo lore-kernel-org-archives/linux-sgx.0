@@ -2,371 +2,172 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C935FC6FD1D
-	for <linux-sgx@archiver.kernel.org>; Tue, 14 Mar 2023 02:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5F6C6FD1C
+	for <linux-sgx@archiver.kernel.org>; Tue, 14 Mar 2023 14:54:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230447AbjCNCIf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 13 Mar 2023 22:08:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51182 "EHLO
+        id S230502AbjCNOyf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 14 Mar 2023 10:54:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230444AbjCNCId (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 13 Mar 2023 22:08:33 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A0CDEFB8;
-        Mon, 13 Mar 2023 19:08:29 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id w23so15382396qtn.6;
-        Mon, 13 Mar 2023 19:08:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678759708;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EWTJH0CSLNac6UVipxWuVXfQaQBNmUQAslbEyp9pC7k=;
-        b=n9GX7fgKLXEEUCs308GhW0N9wL9c7lItfOWri36b1p4qKLfQX8nSK2JNFWDhziddb/
-         AG2xDnaJeKtvJSLJGf2ELiNQrebE5A6RKC3pvYYwyTBsQkUfwtPlbJNFVDEY3+I8FYOX
-         C9ipdeUIRneIBtaCZMFDgPzPWSMBSICHLsBp1/mJHpv7PYjlWjHgIzXOT/e7/5CwIpN0
-         ivpON3P9Hj6WTvo7Z+H2aav1CroOXkqWMLa09WEeSeA9rRRGccjT1r+IjUKV8Th37baN
-         095PMsTEDXI5JtoeqS7WLBp/SlK3HYUmZRoX8Q4qZYDdEw39Es36utttFc8lPfYT0YmQ
-         8KFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678759708;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EWTJH0CSLNac6UVipxWuVXfQaQBNmUQAslbEyp9pC7k=;
-        b=5fxAOUVGWk2HIX/B2vxgMhAsyxLkqylLjvb9Xexx8QzACQcd7wr8qCP06pXpfTjp/r
-         UBZVemPFHhbQfS5e16AvhhyLFp3J0YmUpJSH9dnTxvFYUmWd/8ZKza+8Cqaa92+YkGr/
-         OIHsRy1Shm1W1wP4yF5k90G/H+pE9F2awwDQ8/ONRXHDQdMUrFESOTkORZ0XVctObT7/
-         6LC/RrEfeDF313yPIZJ7ZswlAN8UVXAb/aTWINLFCfXTPwMUXc5QTUyPEowSC+so0bZE
-         TB9++t7ahlJ5sx+TGz/XKR/AdXq0CU5MYPXKs3fXbBK2zOM/QD5xYXCPs0qrQ1GXN5gu
-         YKFw==
-X-Gm-Message-State: AO0yUKVwiJYD1fc0MMEUdjT6n9ZB7gea+FYd8oeRugKSoYJvBEnjB09Y
-        TdflvrYxVw6YGPsQ9BOI0l4=
-X-Google-Smtp-Source: AK7set/2hv3q6fM3gm5E6q08d2RY+ZIQxFg1BAiQ2LhwTR2QsVn7phoYK2hVcgRM5RAlkcRMukImhA==
-X-Received: by 2002:a05:622a:4d1:b0:3b8:5bc6:deab with SMTP id q17-20020a05622a04d100b003b85bc6deabmr59233513qtx.8.1678759708045;
-        Mon, 13 Mar 2023 19:08:28 -0700 (PDT)
-Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
-        by smtp.gmail.com with ESMTPSA id y13-20020a37f60d000000b00745a27b4b30sm837945qkj.67.2023.03.13.19.08.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Mar 2023 19:08:27 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 8D3AE27C0054;
-        Mon, 13 Mar 2023 22:08:25 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 13 Mar 2023 22:08:26 -0400
-X-ME-Sender: <xms:GdcPZJt1YWkkqoCYsYDBkVPciDc8T6htlkbPl662zwk4Fjvvk5nUMw>
-    <xme:GdcPZCdxAovOAOsvq8KslU1q6mRf03lt6uelSCEuHQZd51DVM7y9rNTd3FuvDxr0s
-    0Iws7wunS22ZN0Z_w>
-X-ME-Received: <xmr:GdcPZMyPB3t3_-MbUVlPY3eDeI9Pm3y84orFviyII-Jivc6kYOfBl5jBU38>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvddvhedggedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    goufhushhpvggtthffohhmrghinhculdegledmnegfrhhlucfvnfffucdlfedmnecujfgu
-    rhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpeeuohhquhhnuc
-    fhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthht
-    vghrnhepteekvddvjeehvdfhvdetkeekffehveetiedtvdfhvdfhuddvteefgeegtdfggf
-    etnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdhiohenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvg
-    hsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheeh
-    hedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:GdcPZAPuXOrudqbZH1oRHHJIqo5O15dXvhOwWcrEOLBkSpwQfnqduw>
-    <xmx:GdcPZJ_Nb4gzwL0G7nqYXNkAYL3diWg3KQjjxns4i11ZFOArGJOCIg>
-    <xmx:GdcPZAUD0nv8GVxtZKDXmZBo8VBMtJTuftlKZEuxoNyk4QTgfdyqIA>
-    <xmx:GdcPZEsWc10LHl0QgSP2y3Qz_LsrA2Kd2pQxiWkqMc2fCFtBh5XUFA>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 13 Mar 2023 22:08:23 -0400 (EDT)
-Date:   Mon, 13 Mar 2023 19:07:09 -0700
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     Faith Ekstrand <faith.ekstrand@collabora.com>
-Cc:     Asahi Lina <lina@asahilina.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@gmail.com>,
-        Gary Guo <gary@garyguo.net>,
-        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Luben Tuikov <luben.tuikov@amd.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Karol Herbst <kherbst@redhat.com>,
-        Ella Stanforth <ella@iglunix.org>, Mary <mary@mary.zone>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        rust-for-linux@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org, linux-sgx@vger.kernel.org,
-        asahi@lists.linux.dev
-Subject: Re: [PATCH RFC 03/18] rust: drm: file: Add File abstraction
-Message-ID: <ZA/WzQj97lI2rNeK@boqun-archlinux>
-References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-3-917ff5bc80a8@asahilina.net>
- <9ba89e97155400fb379f5101ccb8960d0bcbc025.camel@collabora.com>
- <28fa3f97-4c7c-212e-2be2-fb1c05f7f576@asahilina.net>
- <5a0db63c043adc47b289b3f1d22935a0a63c926e.camel@collabora.com>
+        with ESMTP id S229957AbjCNOye (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 14 Mar 2023 10:54:34 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A6A4FF33
+        for <linux-sgx@vger.kernel.org>; Tue, 14 Mar 2023 07:54:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678805672; x=1710341672;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=M9X71Mv/s6swB6Fi/G8O9ABVVKNJl8mBIuWaORT1ans=;
+  b=ROplb7ZGwAYc+0gbOU6QFtiYu6qZ7wwAgQvJLpszZDUkwB+TyJZ+k8pi
+   ROliTb+xPUzt1BUWlhkGQknNh3ZUmUc9ec1vnOBt4CZf3j2XN2+yNs4Kk
+   xkPccdBBvUxekFxu1O/WGc/xSv9r+O3voPHKV3XIqvOhl64ZcqzHrdfAA
+   AIemFF54UTGIvpJ7W3U5BEMvJ2NIgNudhwxJ6NgrLJoNzQfU6U1j5IJp/
+   S22tTT1zRC+h+lAv4Vmrgq+iBJX8E4MC0SbF4TCSrxBraDgygEY9VhIdK
+   coNglh0USihCGN7CubiBzKzpxvhLY5McXTyQbSb4dNZY6J4yHWR6mcbsY
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="317094069"
+X-IronPort-AV: E=Sophos;i="5.98,260,1673942400"; 
+   d="scan'208";a="317094069"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2023 07:54:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="1008447071"
+X-IronPort-AV: E=Sophos;i="5.98,260,1673942400"; 
+   d="scan'208";a="1008447071"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.212.75.222])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 14 Mar 2023 07:54:31 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "jarkko@kernel.org" <jarkko@kernel.org>,
+        "Huang, Kai" <kai.huang@intel.com>
+Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+Subject: Re: [RFC PATCH v4 2/4] x86/sgx: Implement support for MADV_WILLNEED
+References: <3c7b4f7bf3e7c2a213662b1c9fdaa979050a9327.camel@intel.com>
+ <op.10dekzjhwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <39903b057751d963e4e9b2a8cd5271fe3c102509.camel@intel.com>
+ <op.10dk8lsjwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <c37bb20995f234aa724724a06c96c76f18252e66.camel@intel.com>
+ <op.10d2otjlwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <ef4087489625b0f8403c38e61348010dba62f623.camel@intel.com>
+ <op.10ey84qywjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <Y/AAbC/j04aUkd8R@kernel.org>
+ <op.10i8zfw3wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <Y/VBOkmi7VbVuzAh@kernel.org>
+ <op.10qusgctwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <5de607230294552829b075846a66688f65f3f74e.camel@intel.com>
+ <op.11iklswmwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <e65d5e589e404f37b3f9ea15a2fd8e132d9040a1.camel@intel.com>
+Date:   Tue, 14 Mar 2023 09:54:30 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5a0db63c043adc47b289b3f1d22935a0a63c926e.camel@collabora.com>
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.11sw04rxwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <e65d5e589e404f37b3f9ea15a2fd8e132d9040a1.camel@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Mar 13, 2023 at 12:49:57PM -0500, Faith Ekstrand wrote:
-> On Fri, 2023-03-10 at 07:16 +0900, Asahi Lina wrote:
-> > On 10/03/2023 06.16, Faith Ekstrand wrote:
-> > > On Tue, 2023-03-07 at 23:25 +0900, Asahi Lina wrote:
-> > > > A DRM File is the DRM counterpart to a kernel file structure,
-> > > > representing an open DRM file descriptor. Add a Rust abstraction
-> > > > to
-> > > > allow drivers to implement their own File types that implement
-> > > > the
-> > > > DriverFile trait.
-> > > > 
-> > > > Signed-off-by: Asahi Lina <lina@asahilina.net>
-> > > > ---
-> > > >  rust/bindings/bindings_helper.h |   1 +
-> > > >  rust/kernel/drm/drv.rs          |   7 ++-
-> > > >  rust/kernel/drm/file.rs         | 113
-> > > > ++++++++++++++++++++++++++++++++++++++++
-> > > >  rust/kernel/drm/mod.rs          |   1 +
-> > > >  4 files changed, 120 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/rust/bindings/bindings_helper.h
-> > > > b/rust/bindings/bindings_helper.h
-> > > > index 2a999138c4ae..7d7828faf89c 100644
-> > > > --- a/rust/bindings/bindings_helper.h
-> > > > +++ b/rust/bindings/bindings_helper.h
-> > > > @@ -8,6 +8,7 @@
-> > > >  
-> > > >  #include <drm/drm_device.h>
-> > > >  #include <drm/drm_drv.h>
-> > > > +#include <drm/drm_file.h>
-> > > >  #include <drm/drm_ioctl.h>
-> > > >  #include <linux/delay.h>
-> > > >  #include <linux/device.h>
-> > > > diff --git a/rust/kernel/drm/drv.rs b/rust/kernel/drm/drv.rs
-> > > > index 29a465515dc9..1dcb651e1417 100644
-> > > > --- a/rust/kernel/drm/drv.rs
-> > > > +++ b/rust/kernel/drm/drv.rs
-> > > > @@ -144,6 +144,9 @@ pub trait Driver {
-> > > >      /// Should be either `drm::gem::Object<T>` or
-> > > > `drm::gem::shmem::Object<T>`.
-> > > >      type Object: AllocImpl;
-> > > >  
-> > > > +    /// The type used to represent a DRM File (client)
-> > > > +    type File: drm::file::DriverFile;
-> > > > +
-> > > >      /// Driver metadata
-> > > >      const INFO: DriverInfo;
-> > > >  
-> > > > @@ -213,8 +216,8 @@ macro_rules! drm_device_register {
-> > > >  impl<T: Driver> Registration<T> {
-> > > >      const VTABLE: bindings::drm_driver = drm_legacy_fields! {
-> > > >          load: None,
-> > > > -        open: None, // TODO: File abstraction
-> > > > -        postclose: None, // TODO: File abstraction
-> > > > +        open: Some(drm::file::open_callback::<T::File>),
-> > > > +        postclose:
-> > > > Some(drm::file::postclose_callback::<T::File>),
-> > > >          lastclose: None,
-> > > >          unload: None,
-> > > >          release: None,
-> > > > diff --git a/rust/kernel/drm/file.rs b/rust/kernel/drm/file.rs
-> > > > new file mode 100644
-> > > > index 000000000000..48751e93c38a
-> > > > --- /dev/null
-> > > > +++ b/rust/kernel/drm/file.rs
-> > > > @@ -0,0 +1,113 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> > > > +
-> > > > +//! DRM File objects.
-> > > > +//!
-> > > > +//! C header:
-> > > > [`include/linux/drm/drm_file.h`](../../../../include/linux/drm/dr
-> > > > m_fi
-> > > > le.h)
-> > > > +
-> > > > +use crate::{bindings, drm, error::Result};
-> > > > +use alloc::boxed::Box;
-> > > > +use core::marker::PhantomData;
-> > > > +use core::ops::Deref;
-> > > > +
-> > > > +/// Trait that must be implemented by DRM drivers to represent a
-> > > > DRM
-> > > > File (a client instance).
-> > > > +pub trait DriverFile {
-> > > > +    /// The parent `Driver` implementation for this
-> > > > `DriverFile`.
-> > > > +    type Driver: drm::drv::Driver;
-> > > > +
-> > > > +    /// Open a new file (called when a client opens the DRM
-> > > > device).
-> > > > +    fn open(device: &drm::device::Device<Self::Driver>) ->
-> > > > Result<Box<Self>>;
-> > > > +}
-> > > > +
-> > > > +/// An open DRM File.
-> > > > +///
-> > > > +/// # Invariants
-> > > > +/// `raw` is a valid pointer to a `drm_file` struct.
-> > > > +#[repr(transparent)]
-> > > > +pub struct File<T: DriverFile> {
-> > > > +    raw: *mut bindings::drm_file,
-> > > > +    _p: PhantomData<T>,
-> > > > +}
-> > > > +
-> > > > +pub(super) unsafe extern "C" fn open_callback<T: DriverFile>(
-> > > > +    raw_dev: *mut bindings::drm_device,
-> > > > +    raw_file: *mut bindings::drm_file,
-> > > > +) -> core::ffi::c_int {
-> > > > +    let drm = core::mem::ManuallyDrop::new(unsafe {
-> > > > drm::device::Device::from_raw(raw_dev) });
-> > > 
-> > > Maybe you can help educate me a bit here... This feels like a
-> > > really
-> > > sketchy pattern.  We're creating a Device from a pointer, an
-> > > operation
-> > > which inherently consumes a reference but then marking it
-> > > ManuallyDrop
-> > > so drm_device_put() never gets called.  It took me a while but I
-> > > think
-> > > I figured out what you're trying to do: Make it so all the Rust
-> > > stuff
-> > > works with Device, not drm_device but it still feels really wrong. 
-> > > It
-> > > works, it just feels like there's a lot of unsafe abstraction
-> > > juggling
-> > > happening here and I expect this operation is going to be pretty
-> > > common
-> > > in the Rust abstraction layer.
-> > 
-> > So I think this is going to be a pretty common pattern in this kind
-> > of
-> > abstraction. The problem is that, of course, in C there is no
-> > distinction between an owned reference and a borrowed one. Here we
-> > have
-> > a borrowed reference to a struct drm_device, and we need to turn it
-> > into
-> > a &Device (which is the Rust equivalent type). But for &Device to
-> > exist
-> > we need a Device to exist in the first place, and Device normally
-> > implies ownership of the underlying drm_device.
-> 
-> Thanks! Putting it in terms of borrow really helps clear up the
-> difference.
-> 
-> > We could just acquire a reference here, but then we're needlessly
-> > grabbing a ref only to drop it at the end of the function, which is
-> > pointless when the caller is holding another reference for us while
-> > the
-> > callback runs. And of course Rust likes to claim to offer zero-cost
-> > abstractions, so it would be kind of sad to have to do that... ^^
-> 
-> Yeah, I agree we don't want to take extra references.
-> 
-> > Just doing drm::device::Device::from_raw(raw_dev) is a ticking time
-> > bomb, because we haven't acquired a reference (which would normally
-> > be
-> > required). If that Device ever gets dropped, we've messed up the
-> > refcounting and stolen the caller's reference. We could try to ensure
-> > it
-> > gets passed to core::mem::forget in all paths out, but that gets
-> > error-prone very quickly when trying to cover error paths. So
-> > instead,
-> > we put it into a ManuallyDrop. That takes care of neutering the ref
-> > drop, so we don't have to worry about messing that up. Then the only
-> > remaining safety requirement is that that the ManuallyDrop<Device>
-> > never
-> > escape the callback function, and that's easy to ensure: we only pass
-> > a
-> > &ref to the user (which via auto-deref ends up being a &Device), and
-> > then nothing bad can happen. If the user wants an owned reference to
-> > the
-> > device to keep around, they can call .clone() on it and that's when
-> > the
-> > incref happens.
-> > 
-> > Basically, ManuallyDrop<T> where T is a reference counted type
-> > represents a borrowed reference to a T coming from the C side. You
-> > can
-> > see another use of this pattern in gem::Object, which contains a
-> > ManuallyDrop<Device> that represents a borrowed reference to the
-> > device
-> > that owns that object. The DRM core (as far as I know!) guarantees
-> > that
-> > DRM devices outlive all of their GEM objects, so we can materialize a
-> > borrowed reference and as long as it never leaves the GEM object, it
-> > will be sound. Then we can take &Device references from it whenever
-> > we
-> > want, and the usual Rust borrow checker rules ensure we can't do
-> > something illegal.
-> 
-> Ok, that all matches my understanding of what I thought was going on. I
-> do wonder if it would be good to wrap this up in a
-> 
-> struct DeviceBorrow {
->    dev: ManuallyDrop<Device>
-> }
-> 
-> impl DeviceBorrow {
->    pub unsafe fn from_raw(*mut bindings::drm_device) -> DeviceBorrow;
-> }
-> 
-> impl Deref<Device> for DeviceBorrow {
->    ...
-> }
-> 
-> with documentation, etc.  Seeing a ManuallyDrop which is never dropped
-> sets my rust senses tingling.  Maybe that's too much typing for each
-> object?  I don't want to add a bunch of extra work but this seems like
-> a pretty common pattern we're going to hit everywhere.
-> 
+On Thu, 09 Mar 2023 05:31:29 -0600, Huang, Kai <kai.huang@intel.com> wrote:
+>>
+>> Then in v29, PROT_NONE mapping was disallowed for encl_fd before pages
+>> EADDed so user space has to mmap anonymously to reserve the range.The
+>> intent was still not to allow mmap before pages EADDed (the !page check
+>> was still there up to v38)
+>
+> Do you know the reason of disallowing PROT_NONE mapping against encl_fd?
+>
 
-I just want to mention, there is a different way to do the abstraction
-here:
+I think it was to allow user space to do anonymous mapping to reserve  
+address space for enclave.
+Before this point, you have to use PROT_NONE to reserve with encl_fd.  
+There might be an issue with how #PF and EPC swapping was handled or the  
+elegance of those flows that motivated the move but I can't remember. ABI  
+was not fixed at that time so it was OK to change.
 
-similar to https://lore.kernel.org/rust-for-linux/ZA9l0EHCRRr%2Fmyoq@boqun-archlinux
+> I dig v28 roughly but didn't find any clue.
+>
+> Basically no comments related to this were made to:
+>
+> 	[PATCH v28 11/22] x86/sgx: Linux Enclave Driver
+>
+>>
+>> Later version (around v39?) we switched to enforce the permissions in PF
+>> handler and mmap with any permissions before EADD is allowed, but may
+>> cause failure later on PF. I'm not sure it was intentional but pretty  
+>> sure
+>> no meaningful usage for doing mmap before ECREATE due to PF handler
+>> enforcement.
+>
+> IIUC this change around v39 re-allows mmap() against encl_fd before  
+> ECREATE?
+>
 
-* Define Device as tranparent represention of struct drm_device:
+I don't think so. There is no meaningful usage for that as I said.
 
-	#[repr(transparent)]
-	struct Device(Opaque<bindings::drm_device>);
+> IIUC the only enforcement is VMA's permission must be more restricted  
+> than
+> enclave page's permission.
+>
+> So, theoretically, we can mmap() encl_fd with  
+> PROT_READ|PROT_WRITE|PROT_EXEC,
+> and then mprotect() the address range based on the actual enclave pages  
+> (in
+> EADD) before actually doing EADD those pages?
+>
+>>
+>> I think that's the history behind it. Others more knowledgeable can
+>> correct me as needed.
+>
+> Thanks for the information.
+>
+>>
+>> Again, even if we redesign the whole thing to be less "weird", then
+>> requiring pgoff for each mmap would break existing user space code. And  
+>> I
+>> think explicitly block mmap before ECREATE make the API more consistent
+>> with the PF handler enforcement and original intent of sgx_encl_may_map.
+>
+> I think permission check in sgx_encl_may_map() isn't restricted related  
+> to the
+> vma->pgoff issue here.  They are basically two different topics, IIUC.
+>
 
-* impl `AlwaysRefCounted`[1] for `Device`, therefore we can use
-  `ARef<Device>`[2] as a smart pointer to `drm_device`.
+They are related because the intention was not allowing user space to do  
+arbitrary mmaping before EADD.
+So in the context of the gap you identified for this patch series, i.e,  
+mmap before ECREATE, it is relevant. My view is that we never intended and  
+there is no use case for allowing that to happen. So it naturally follows  
+that we fix that gap by not allowing those scenarios explicitly.
 
-* drm_device related methods are still implemented in `impl Device`
+> So I am still a little bit confused about where does "SGX driver uses
+> MAP_ANONYMOUS semantics for fd-based mmap()" come from.
+>
+> Anyway, we certainly don't want to break userspace.  However, IIUC, even  
+> from
+> now on we change the driver to depend on userspace to pass the correct  
+> pgoff in
+> mmap(), this won't break userspace, because old userspace which doesn't  
+> use
+> fadvice() and pgoff actually doesn't matter.  For new userspace which  
+> uses
+> fadvice(), it needs to pass the correct pgoff.
+>
+> I am not saying we should do this, but it doesn't seem we can break  
+> userspace?
+>
 
-* In `open_callback`, we can just get a `&Device` from `*mut
-  bindings::drm_device` unsafely, and that's all. Or introduce a helper
-  function if we want:
+I'll leave it for others to chime in on this.
+With my user space developer hat on, I would not like this because in one  
+place (mmap before madvise call) I have to pass pgoff and not in another  
+place (mmap after EADD). If you see really big issues on the current  
+MAP_ANONYMOUS + enclave_fd semantics, then we should fix the design. But  
+it should be in separate patches.
 
-    pub unsafe fn with_device<F>(ptr: *mut drm_device, f: F) -> Result
-    where
-      F: FnOnce(&Device) -> Result
-    {
-    	let d = unsafe { &*ptr };
-	f(d)
-    }
-
-The main difference is that we now treat a pointer to drm_device as a
-reference to the device, not the owner.
-
-It seems we need to also change our driver/device framework to use this
-approach, but it looks better to me.
-
-Regards,
-Boqun
-
-[1]: https://rust-for-linux.github.io/docs/kernel/trait.AlwaysRefCounted.html
-[2]: https://rust-for-linux.github.io/docs/kernel/struct.ARef.html
-
-> ~Faith
+Thanks
+Haitao
