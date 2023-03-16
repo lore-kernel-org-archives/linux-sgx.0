@@ -2,172 +2,285 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5F6C6FD1C
-	for <linux-sgx@archiver.kernel.org>; Tue, 14 Mar 2023 14:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEEAC6FD1F
+	for <linux-sgx@archiver.kernel.org>; Thu, 16 Mar 2023 13:40:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230502AbjCNOyf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 14 Mar 2023 10:54:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56130 "EHLO
+        id S229510AbjCPNkw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 16 Mar 2023 09:40:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229957AbjCNOye (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 14 Mar 2023 10:54:34 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A6A4FF33
-        for <linux-sgx@vger.kernel.org>; Tue, 14 Mar 2023 07:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678805672; x=1710341672;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=M9X71Mv/s6swB6Fi/G8O9ABVVKNJl8mBIuWaORT1ans=;
-  b=ROplb7ZGwAYc+0gbOU6QFtiYu6qZ7wwAgQvJLpszZDUkwB+TyJZ+k8pi
-   ROliTb+xPUzt1BUWlhkGQknNh3ZUmUc9ec1vnOBt4CZf3j2XN2+yNs4Kk
-   xkPccdBBvUxekFxu1O/WGc/xSv9r+O3voPHKV3XIqvOhl64ZcqzHrdfAA
-   AIemFF54UTGIvpJ7W3U5BEMvJ2NIgNudhwxJ6NgrLJoNzQfU6U1j5IJp/
-   S22tTT1zRC+h+lAv4Vmrgq+iBJX8E4MC0SbF4TCSrxBraDgygEY9VhIdK
-   coNglh0USihCGN7CubiBzKzpxvhLY5McXTyQbSb4dNZY6J4yHWR6mcbsY
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="317094069"
-X-IronPort-AV: E=Sophos;i="5.98,260,1673942400"; 
-   d="scan'208";a="317094069"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2023 07:54:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="1008447071"
-X-IronPort-AV: E=Sophos;i="5.98,260,1673942400"; 
-   d="scan'208";a="1008447071"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.212.75.222])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 14 Mar 2023 07:54:31 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "jarkko@kernel.org" <jarkko@kernel.org>,
-        "Huang, Kai" <kai.huang@intel.com>
-Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "Dhanraj, Vijay" <vijay.dhanraj@intel.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-Subject: Re: [RFC PATCH v4 2/4] x86/sgx: Implement support for MADV_WILLNEED
-References: <3c7b4f7bf3e7c2a213662b1c9fdaa979050a9327.camel@intel.com>
- <op.10dekzjhwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <39903b057751d963e4e9b2a8cd5271fe3c102509.camel@intel.com>
- <op.10dk8lsjwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <c37bb20995f234aa724724a06c96c76f18252e66.camel@intel.com>
- <op.10d2otjlwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <ef4087489625b0f8403c38e61348010dba62f623.camel@intel.com>
- <op.10ey84qywjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <Y/AAbC/j04aUkd8R@kernel.org>
- <op.10i8zfw3wjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <Y/VBOkmi7VbVuzAh@kernel.org>
- <op.10qusgctwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <5de607230294552829b075846a66688f65f3f74e.camel@intel.com>
- <op.11iklswmwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <e65d5e589e404f37b3f9ea15a2fd8e132d9040a1.camel@intel.com>
-Date:   Tue, 14 Mar 2023 09:54:30 -0500
+        with ESMTP id S230385AbjCPNkt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 16 Mar 2023 09:40:49 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B268DC081E
+        for <linux-sgx@vger.kernel.org>; Thu, 16 Mar 2023 06:40:46 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id w11so230235wmo.2
+        for <linux-sgx@vger.kernel.org>; Thu, 16 Mar 2023 06:40:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1678974045;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EczCGKLk4fBTHmXyHSJ7ilvmJkZQHqbhf3hkS/Fo9ig=;
+        b=PcXHkg2DYEsN4SGmyoKoPXIk7dghTl5j1DrVQd/I+VAlz8ytLioRVaYUlY0BsynH1D
+         Re0TvwlalBhQsYImYDkeNrZBpsj3te+fCYUSH+1Xmy/rxOPP2nbxuLR3tfsCx4KO/eoZ
+         h9Bz2UewqJAlReH7xWEXkMxtktP7ySRXi5cJc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678974045;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EczCGKLk4fBTHmXyHSJ7ilvmJkZQHqbhf3hkS/Fo9ig=;
+        b=HGA+/aoWhj9s7Q4e49dqEpC7iEwUSAqOEV/yySjnLb/amNvHGR6q1q61l+bdsqM0CO
+         qruUqw9+a5PNODFUtF0IVeId67mJ3YdYJjvqAIN4COq9NUlcYycqvkd75kzjJAFDRpzG
+         63ZkM6R+TmnMTmQXfo5mDfD1FXz502kYFDlyFawyWztjk+Yof9gh1ZLHHZgKk6nX6fXb
+         oV3Zu6tcAtq2ja2uj2S0LYfnmxk+AbW9ijMVoh2xUaBx7KUIn3R6Bu2w9t2b1Dtvf0Rj
+         dubNrDv9eXnXkeJGl+vUoadbm+DgV1+qub8HSaXUNofL+ySGuJHEPrvLlLa8JytYi0C9
+         UOfQ==
+X-Gm-Message-State: AO0yUKXlnqL8wswbbDPr7SCsC2XYzey8+wRZ18YjhsLZvQITwwTJIeX4
+        BtDDEO+zE42hvBM7ce5XdfdM0Q==
+X-Google-Smtp-Source: AK7set/fjat3yH3Fc06VMIK6e7qPeFsvuNYHOJTB0RKC8hvnm2dYtyI5Jh2XJJySBg2aaliqjCVONw==
+X-Received: by 2002:a05:600c:3b92:b0:3eb:42f6:ac55 with SMTP id n18-20020a05600c3b9200b003eb42f6ac55mr2688631wms.1.1678974044966;
+        Thu, 16 Mar 2023 06:40:44 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-33.fiber7.init7.net. [212.51.149.33])
+        by smtp.gmail.com with ESMTPSA id y16-20020a05600c365000b003ed23845666sm4915002wmq.45.2023.03.16.06.40.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Mar 2023 06:40:44 -0700 (PDT)
+Date:   Thu, 16 Mar 2023 14:40:42 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Karol Herbst <kherbst@redhat.com>
+Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Asahi Lina <lina@asahilina.net>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Luben Tuikov <luben.tuikov@amd.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Ella Stanforth <ella@iglunix.org>,
+        Faith Ekstrand <faith.ekstrand@collabora.com>,
+        Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        linux-sgx@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH RFC 10/18] drm/scheduler: Add can_run_job callback
+Message-ID: <ZBMcWuu+W2zfP64O@phenom.ffwll.local>
+Mail-Followup-To: Karol Herbst <kherbst@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Asahi Lina <lina@asahilina.net>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Luben Tuikov <luben.tuikov@amd.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Ella Stanforth <ella@iglunix.org>,
+        Faith Ekstrand <faith.ekstrand@collabora.com>,
+        Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        linux-sgx@vger.kernel.org, asahi@lists.linux.dev
+References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
+ <20230307-rust-drm-v1-10-917ff5bc80a8@asahilina.net>
+ <cd788ccf-0cf1-85d5-1bf8-efc259bd7e11@amd.com>
+ <CACO55tsnCMQt8UW5_UCY139kpZOdNXbMkBkFfUiB12jW5UgVmA@mail.gmail.com>
+ <0d6cd23b-8c9e-067d-97ff-aa35dbbcf9bf@amd.com>
+ <CACO55tumNMYrcJ0LhnLfTK4DmGLHD-bt3xpXyoPe98V2wmgXQg@mail.gmail.com>
+ <269c4fb7-60f6-6778-444d-15703febea58@amd.com>
+ <CACO55tuVVnC-_iVmX=SGGVF=0t6kqqr0Cy0pGe3YoppBgUbiXw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.11sw04rxwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <e65d5e589e404f37b3f9ea15a2fd8e132d9040a1.camel@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACO55tuVVnC-_iVmX=SGGVF=0t6kqqr0Cy0pGe3YoppBgUbiXw@mail.gmail.com>
+X-Operating-System: Linux phenom 6.1.0-5-amd64 
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 09 Mar 2023 05:31:29 -0600, Huang, Kai <kai.huang@intel.com> wrote:
->>
->> Then in v29, PROT_NONE mapping was disallowed for encl_fd before pages
->> EADDed so user space has to mmap anonymously to reserve the range.The
->> intent was still not to allow mmap before pages EADDed (the !page check
->> was still there up to v38)
->
-> Do you know the reason of disallowing PROT_NONE mapping against encl_fd?
->
+On Wed, Mar 08, 2023 at 04:19:17PM +0100, Karol Herbst wrote:
+> On Wed, Mar 8, 2023 at 4:09 PM Christian König <christian.koenig@amd.com> wrote:
+> >
+> > Am 08.03.23 um 15:43 schrieb Karol Herbst:
+> > > [SNIP]
+> > > "further"? There was no discussion at all,
+> >
+> > Yeah, well that is exactly what I wanted to archive.
+> >
+> > >   you just started off like
+> > > that. If you think somebody misses that connection, you can point out
+> > > to documentation/videos whatever so the contributor can understand
+> > > what's wrong with an approach. You did that, so that's fine. It's just
+> > > starting off _any_ discussion with a "Well complete NAK" is terrible
+> > > style. I'd feel uncomfortable if that happened to me and I'm sure
+> > > there are enough people like that that we should be more reasonable
+> > > with our replies. Just.. don't.
+> > >
+> > > We are all humans here and people react negatively to such things. And
+> > > if people do it on purpose it just makes it worse.
+> >
+> > I completely see your point, I just don't know how to improve it.
+> >
+> > I don't stop people like this because I want to make them uncomfortable
+> > but because I want to prevent further discussions on that topic.
+> >
+> > In other words how can I make people notice that this is something
+> > fundamental while still being polite?
 
-I think it was to allow user space to do anonymous mapping to reserve  
-address space for enclave.
-Before this point, you have to use PROT_NONE to reserve with encl_fd.  
-There might be an issue with how #PF and EPC swapping was handled or the  
-elegance of those flows that motivated the move but I can't remember. ABI  
-was not fixed at that time so it was OK to change.
+Ask them to improve the docs. Gets them on board, and for bonus point you
+- can check they actually get it when you review the doc patch
+- get scheduler docs for free
+- have an easily pasteable link for next time around instead of just an
+  aggressive NAK that helps no one really (aside from getting people
+  boiling).
 
-> I dig v28 roughly but didn't find any clue.
->
-> Basically no comments related to this were made to:
->
-> 	[PATCH v28 11/22] x86/sgx: Linux Enclave Driver
->
->>
->> Later version (around v39?) we switched to enforce the permissions in PF
->> handler and mmap with any permissions before EADD is allowed, but may
->> cause failure later on PF. I'm not sure it was intentional but pretty  
->> sure
->> no meaningful usage for doing mmap before ECREATE due to PF handler
->> enforcement.
->
-> IIUC this change around v39 re-allows mmap() against encl_fd before  
-> ECREATE?
->
+It's not really about being polite but making sure that efficient
+communiction happens and that you don't have to repeat yourself. In rare
+cases you get to type the docs themself when people are too dense to learn
+(like what I had to do with the various dma_fence docs).
 
-I don't think so. There is no meaningful usage for that as I said.
+> I think a little improvement over this would be to at least wait a few
+> replies before resorting to those strong statements. Just before it
+> becomes a risk in just wasting time.
 
-> IIUC the only enforcement is VMA's permission must be more restricted  
-> than
-> enclave page's permission.
->
-> So, theoretically, we can mmap() encl_fd with  
-> PROT_READ|PROT_WRITE|PROT_EXEC,
-> and then mprotect() the address range based on the actual enclave pages  
-> (in
-> EADD) before actually doing EADD those pages?
->
->>
->> I think that's the history behind it. Others more knowledgeable can
->> correct me as needed.
->
-> Thanks for the information.
->
->>
->> Again, even if we redesign the whole thing to be less "weird", then
->> requiring pgoff for each mmap would break existing user space code. And  
->> I
->> think explicitly block mmap before ECREATE make the API more consistent
->> with the PF handler enforcement and original intent of sgx_encl_may_map.
->
-> I think permission check in sgx_encl_may_map() isn't restricted related  
-> to the
-> vma->pgoff issue here.  They are basically two different topics, IIUC.
->
+See above what I'm trying to do. When the message doesn't sink in as
+either a proper doc patch or when linking to the doc patch for next time
+around (because let's face it, this entire concept of "dma_fence committed
+for execution" is extremely trick, there will be repeations of this
+question until we've sunset dma_fence, which is probably decades away).
 
-They are related because the intention was not allowing user space to do  
-arbitrary mmaping before EADD.
-So in the context of the gap you identified for this patch series, i.e,  
-mmap before ECREATE, it is relevant. My view is that we never intended and  
-there is no use case for allowing that to happen. So it naturally follows  
-that we fix that gap by not allowing those scenarios explicitly.
+If the learning does not happen, then it's the time to whack the big
+hammer (and if people don't get it, you can escalate to Dave&me, we have
+tools to make sure people get the message). But this really should be the
+end, not the start of the escalation chain :-)
 
-> So I am still a little bit confused about where does "SGX driver uses
-> MAP_ANONYMOUS semantics for fd-based mmap()" come from.
->
-> Anyway, we certainly don't want to break userspace.  However, IIUC, even  
-> from
-> now on we change the driver to depend on userspace to pass the correct  
-> pgoff in
-> mmap(), this won't break userspace, because old userspace which doesn't  
-> use
-> fadvice() and pgoff actually doesn't matter.  For new userspace which  
-> uses
-> fadvice(), it needs to pass the correct pgoff.
->
-> I am not saying we should do this, but it doesn't seem we can break  
-> userspace?
->
+Cheers, Daniel
 
-I'll leave it for others to chime in on this.
-With my user space developer hat on, I would not like this because in one  
-place (mmap before madvise call) I have to pass pgoff and not in another  
-place (mmap after EADD). If you see really big issues on the current  
-MAP_ANONYMOUS + enclave_fd semantics, then we should fix the design. But  
-it should be in separate patches.
+> 
+> > >>>> This is clearly going against the idea of having jobs only depend on
+> > >>>> fences and nothing else which is mandatory for correct memory management.
+> > >>>>
+> > >>> I'm sure it's all documented and there is a design document on how
+> > >>> things have to look like you can point out? Might help to get a better
+> > >>> understanding on how things should be.
+> > >> Yeah, that's the problematic part. We have documented this very
+> > >> extensively:
+> > >> https://www.kernel.org/doc/html/v5.9/driver-api/dma-buf.html#indefinite-dma-fences
+> > >>
+> > >> And both Jason and Daniel gave talks about the underlying problem and
+> > > fyi:
+> > > s/Jason/Faith/g
+> >
+> > +1. I wasn't aware of that.
+> >
+> > >> try to come up with patches to raise warnings when that happens, but
+> > >> people still keep coming up with the same idea over and over again.
+> > >>
+> > > Yes, and we'll have to tell them over and over again. Nothing wrong
+> > > with that. That's just part of maintaining such a big subsystem. And
+> > > that's definitely not a valid reason to phrase things like above.
+> > >
+> > >> It's just that the technical relationship between preventing jobs from
+> > >> running and with that preventing dma_fences from signaling and the core
+> > >> memory management with page faults and shrinkers waiting for those
+> > >> fences is absolutely not obvious.
+> > >>
+> > >> We had at least 10 different teams from different companies falling into
+> > >> the same trap already and either the patches were rejected of hand or
+> > >> had to painfully reverted or mitigated later on.
+> > >>
+> > > Sure, but that's just part of the job. And pointing out fundamental
+> > > mistakes early on is important, but the situation won't get any better
+> > > by being like that. Yes, we'll have to repeat the same words over and
+> > > over again, and yes that might be annoying, but that's just how it is.
+> >
+> > Well I have no problem explaining people why a solution doesn't work.
+> >
+> > But what usually happens is that people don't realize that they need to
+> > back of from a design and completely start over.
+> >
+> > Regards,
+> > Christian.
+> >
+> > >
+> > >> Regards,
+> > >> Christian.
+> > >>
+> > >>>> If the hw is busy with something you need to return the fence for this
+> > >>>> from the prepare_job callback so that the scheduler can be notified when
+> > >>>> the hw is available again.
+> > >>>>
+> > >>>> Regards,
+> > >>>> Christian.
+> > >>>>
+> > >>>>> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> > >>>>> ---
+> > >>>>>     drivers/gpu/drm/scheduler/sched_main.c | 10 ++++++++++
+> > >>>>>     include/drm/gpu_scheduler.h            |  8 ++++++++
+> > >>>>>     2 files changed, 18 insertions(+)
+> > >>>>>
+> > >>>>> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> > >>>>> index 4e6ad6e122bc..5c0add2c7546 100644
+> > >>>>> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> > >>>>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> > >>>>> @@ -1001,6 +1001,16 @@ static int drm_sched_main(void *param)
+> > >>>>>                 if (!entity)
+> > >>>>>                         continue;
+> > >>>>>
+> > >>>>> +             if (sched->ops->can_run_job) {
+> > >>>>> +                     sched_job = to_drm_sched_job(spsc_queue_peek(&entity->job_queue));
+> > >>>>> +                     if (!sched_job) {
+> > >>>>> +                             complete_all(&entity->entity_idle);
+> > >>>>> +                             continue;
+> > >>>>> +                     }
+> > >>>>> +                     if (!sched->ops->can_run_job(sched_job))
+> > >>>>> +                             continue;
+> > >>>>> +             }
+> > >>>>> +
+> > >>>>>                 sched_job = drm_sched_entity_pop_job(entity);
+> > >>>>>
+> > >>>>>                 if (!sched_job) {
+> > >>>>> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
+> > >>>>> index 9db9e5e504ee..bd89ea9507b9 100644
+> > >>>>> --- a/include/drm/gpu_scheduler.h
+> > >>>>> +++ b/include/drm/gpu_scheduler.h
+> > >>>>> @@ -396,6 +396,14 @@ struct drm_sched_backend_ops {
+> > >>>>>         struct dma_fence *(*prepare_job)(struct drm_sched_job *sched_job,
+> > >>>>>                                          struct drm_sched_entity *s_entity);
+> > >>>>>
+> > >>>>> +     /**
+> > >>>>> +      * @can_run_job: Called before job execution to check whether the
+> > >>>>> +      * hardware is free enough to run the job.  This can be used to
+> > >>>>> +      * implement more complex hardware resource policies than the
+> > >>>>> +      * hw_submission limit.
+> > >>>>> +      */
+> > >>>>> +     bool (*can_run_job)(struct drm_sched_job *sched_job);
+> > >>>>> +
+> > >>>>>         /**
+> > >>>>>              * @run_job: Called to execute the job once all of the dependencies
+> > >>>>>              * have been resolved.  This may be called multiple times, if
+> > >>>>>
+> >
+> 
 
-Thanks
-Haitao
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
