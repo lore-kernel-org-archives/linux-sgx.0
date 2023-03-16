@@ -2,285 +2,122 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEEAC6FD1F
-	for <linux-sgx@archiver.kernel.org>; Thu, 16 Mar 2023 13:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4327C7618A
+	for <linux-sgx@archiver.kernel.org>; Thu, 16 Mar 2023 19:13:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbjCPNkw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 16 Mar 2023 09:40:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38464 "EHLO
+        id S230135AbjCPTNI (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 16 Mar 2023 15:13:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230385AbjCPNkt (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 16 Mar 2023 09:40:49 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B268DC081E
-        for <linux-sgx@vger.kernel.org>; Thu, 16 Mar 2023 06:40:46 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id w11so230235wmo.2
-        for <linux-sgx@vger.kernel.org>; Thu, 16 Mar 2023 06:40:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1678974045;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EczCGKLk4fBTHmXyHSJ7ilvmJkZQHqbhf3hkS/Fo9ig=;
-        b=PcXHkg2DYEsN4SGmyoKoPXIk7dghTl5j1DrVQd/I+VAlz8ytLioRVaYUlY0BsynH1D
-         Re0TvwlalBhQsYImYDkeNrZBpsj3te+fCYUSH+1Xmy/rxOPP2nbxuLR3tfsCx4KO/eoZ
-         h9Bz2UewqJAlReH7xWEXkMxtktP7ySRXi5cJc=
+        with ESMTP id S230117AbjCPTNH (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 16 Mar 2023 15:13:07 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43C572CFDD
+        for <linux-sgx@vger.kernel.org>; Thu, 16 Mar 2023 12:12:58 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id t19-20020a5d8853000000b007530e3e2408so1389221ios.20
+        for <linux-sgx@vger.kernel.org>; Thu, 16 Mar 2023 12:12:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678974045;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EczCGKLk4fBTHmXyHSJ7ilvmJkZQHqbhf3hkS/Fo9ig=;
-        b=HGA+/aoWhj9s7Q4e49dqEpC7iEwUSAqOEV/yySjnLb/amNvHGR6q1q61l+bdsqM0CO
-         qruUqw9+a5PNODFUtF0IVeId67mJ3YdYJjvqAIN4COq9NUlcYycqvkd75kzjJAFDRpzG
-         63ZkM6R+TmnMTmQXfo5mDfD1FXz502kYFDlyFawyWztjk+Yof9gh1ZLHHZgKk6nX6fXb
-         oV3Zu6tcAtq2ja2uj2S0LYfnmxk+AbW9ijMVoh2xUaBx7KUIn3R6Bu2w9t2b1Dtvf0Rj
-         dubNrDv9eXnXkeJGl+vUoadbm+DgV1+qub8HSaXUNofL+ySGuJHEPrvLlLa8JytYi0C9
-         UOfQ==
-X-Gm-Message-State: AO0yUKXlnqL8wswbbDPr7SCsC2XYzey8+wRZ18YjhsLZvQITwwTJIeX4
-        BtDDEO+zE42hvBM7ce5XdfdM0Q==
-X-Google-Smtp-Source: AK7set/fjat3yH3Fc06VMIK6e7qPeFsvuNYHOJTB0RKC8hvnm2dYtyI5Jh2XJJySBg2aaliqjCVONw==
-X-Received: by 2002:a05:600c:3b92:b0:3eb:42f6:ac55 with SMTP id n18-20020a05600c3b9200b003eb42f6ac55mr2688631wms.1.1678974044966;
-        Thu, 16 Mar 2023 06:40:44 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-33.fiber7.init7.net. [212.51.149.33])
-        by smtp.gmail.com with ESMTPSA id y16-20020a05600c365000b003ed23845666sm4915002wmq.45.2023.03.16.06.40.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Mar 2023 06:40:44 -0700 (PDT)
-Date:   Thu, 16 Mar 2023 14:40:42 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Karol Herbst <kherbst@redhat.com>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Asahi Lina <lina@asahilina.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Luben Tuikov <luben.tuikov@amd.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Ella Stanforth <ella@iglunix.org>,
-        Faith Ekstrand <faith.ekstrand@collabora.com>,
-        Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
-        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        linux-sgx@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH RFC 10/18] drm/scheduler: Add can_run_job callback
-Message-ID: <ZBMcWuu+W2zfP64O@phenom.ffwll.local>
-Mail-Followup-To: Karol Herbst <kherbst@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Asahi Lina <lina@asahilina.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Luben Tuikov <luben.tuikov@amd.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Ella Stanforth <ella@iglunix.org>,
-        Faith Ekstrand <faith.ekstrand@collabora.com>,
-        Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
-        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        linux-sgx@vger.kernel.org, asahi@lists.linux.dev
-References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-10-917ff5bc80a8@asahilina.net>
- <cd788ccf-0cf1-85d5-1bf8-efc259bd7e11@amd.com>
- <CACO55tsnCMQt8UW5_UCY139kpZOdNXbMkBkFfUiB12jW5UgVmA@mail.gmail.com>
- <0d6cd23b-8c9e-067d-97ff-aa35dbbcf9bf@amd.com>
- <CACO55tumNMYrcJ0LhnLfTK4DmGLHD-bt3xpXyoPe98V2wmgXQg@mail.gmail.com>
- <269c4fb7-60f6-6778-444d-15703febea58@amd.com>
- <CACO55tuVVnC-_iVmX=SGGVF=0t6kqqr0Cy0pGe3YoppBgUbiXw@mail.gmail.com>
+        d=1e100.net; s=20210112; t=1678993977;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U7xPE9eHjZFiRatnko2u5b3DgPyVKb9Z04I4THxWcHA=;
+        b=hD5iA/+xoXvrRVeecoCPbXOKXP53BIfNNLUwA73UxABfkxcpeKaL+nDTCkd+gaPo3/
+         UN791qJqmkr+LSiMR7IachqsBUhI6Lgd8FLVKkg2JfOqcbdwky8HrmHnotkZ1ZyymuOC
+         temJPPDdLp/jMc3EkamQEoKmfcRbnZ4gpgcthnvonbUYIuDaTRbTA8e/n85xBBkbHw43
+         HpfHNwetS5whdokhw2yQ+p/FHjb+CtGBrCDmaE33XbNDSDkYTVOi2GgZnvuF0JJneiPz
+         E7UKbHZBOflD9MiTtuIaN2784YHROd1RsRv7hDgMzLvfXLt+Xc6JMizUWIoUUWqYPrHL
+         RByg==
+X-Gm-Message-State: AO0yUKW7xEQtdXbqoj8e3MJ+MdasP69sY86FVw86QxzzxvnoJmSGIAcU
+        lhibNm0s/FvJkRyTLdpDeRUTnxJ94JuqDH6WZ1ExgrAMisiF
+X-Google-Smtp-Source: AK7set8iENLiJJcuU7KGbv5SPcslX1Xx8ih7ZxAYfEeQTB2zuyrWs36a2NISGBtPQ+8fuCG/DGR7CBdQCLGobTFBZ47UUIQ60c/S
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACO55tuVVnC-_iVmX=SGGVF=0t6kqqr0Cy0pGe3YoppBgUbiXw@mail.gmail.com>
-X-Operating-System: Linux phenom 6.1.0-5-amd64 
+X-Received: by 2002:a5d:9a96:0:b0:745:c41a:8f0f with SMTP id
+ c22-20020a5d9a96000000b00745c41a8f0fmr69348iom.2.1678993977437; Thu, 16 Mar
+ 2023 12:12:57 -0700 (PDT)
+Date:   Thu, 16 Mar 2023 12:12:57 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009af47405f7093fc6@google.com>
+Subject: [syzbot] [kvm?] WARNING in kvm_arch_vcpu_ioctl_run (4)
+From:   syzbot <syzbot+8accb43ddc6bd1f5713a@syzkaller.appspotmail.com>
+To:     bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+        jarkko@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        mingo@redhat.com, pbonzini@redhat.com, seanjc@google.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Mar 08, 2023 at 04:19:17PM +0100, Karol Herbst wrote:
-> On Wed, Mar 8, 2023 at 4:09 PM Christian König <christian.koenig@amd.com> wrote:
-> >
-> > Am 08.03.23 um 15:43 schrieb Karol Herbst:
-> > > [SNIP]
-> > > "further"? There was no discussion at all,
-> >
-> > Yeah, well that is exactly what I wanted to archive.
-> >
-> > >   you just started off like
-> > > that. If you think somebody misses that connection, you can point out
-> > > to documentation/videos whatever so the contributor can understand
-> > > what's wrong with an approach. You did that, so that's fine. It's just
-> > > starting off _any_ discussion with a "Well complete NAK" is terrible
-> > > style. I'd feel uncomfortable if that happened to me and I'm sure
-> > > there are enough people like that that we should be more reasonable
-> > > with our replies. Just.. don't.
-> > >
-> > > We are all humans here and people react negatively to such things. And
-> > > if people do it on purpose it just makes it worse.
-> >
-> > I completely see your point, I just don't know how to improve it.
-> >
-> > I don't stop people like this because I want to make them uncomfortable
-> > but because I want to prevent further discussions on that topic.
-> >
-> > In other words how can I make people notice that this is something
-> > fundamental while still being polite?
+Hello,
 
-Ask them to improve the docs. Gets them on board, and for bonus point you
-- can check they actually get it when you review the doc patch
-- get scheduler docs for free
-- have an easily pasteable link for next time around instead of just an
-  aggressive NAK that helps no one really (aside from getting people
-  boiling).
+syzbot found the following issue on:
 
-It's not really about being polite but making sure that efficient
-communiction happens and that you don't have to repeat yourself. In rare
-cases you get to type the docs themself when people are too dense to learn
-(like what I had to do with the various dma_fence docs).
+HEAD commit:    ee3f96b16468 Merge tag 'nfsd-6.3-1' of git://git.kernel.or..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11622f64c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cab35c936731a347
+dashboard link: https://syzkaller.appspot.com/bug?extid=8accb43ddc6bd1f5713a
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15bd61acc80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17402eb0c80000
 
-> I think a little improvement over this would be to at least wait a few
-> replies before resorting to those strong statements. Just before it
-> becomes a risk in just wasting time.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a7ac3e540d6d/disk-ee3f96b1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/604b5042d73d/vmlinux-ee3f96b1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5a6d400b42b5/bzImage-ee3f96b1.xz
 
-See above what I'm trying to do. When the message doesn't sink in as
-either a proper doc patch or when linking to the doc patch for next time
-around (because let's face it, this entire concept of "dma_fence committed
-for execution" is extremely trick, there will be repeations of this
-question until we've sunset dma_fence, which is probably decades away).
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8accb43ddc6bd1f5713a@syzkaller.appspotmail.com
 
-If the learning does not happen, then it's the time to whack the big
-hammer (and if people don't get it, you can escalate to Dave&me, we have
-tools to make sure people get the message). But this really should be the
-end, not the start of the escalation chain :-)
+kvm_intel: KVM_SET_TSS_ADDR needs to be called before running vCPU
+kvm_intel: set kvm_intel.dump_invalid_vmcs=1 to dump internal KVM state.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5082 at arch/x86/kvm/x86.c:11060 kvm_arch_vcpu_ioctl_run+0x2464/0x2af0 arch/x86/kvm/x86.c:11060
+Modules linked in:
+CPU: 0 PID: 5082 Comm: syz-executor178 Not tainted 6.2.0-syzkaller-13115-gee3f96b16468 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/16/2023
+RIP: 0010:kvm_arch_vcpu_ioctl_run+0x2464/0x2af0 arch/x86/kvm/x86.c:11060
+Code: 74 c3 00 e9 2f de ff ff 48 c7 c7 80 45 78 8e e8 02 74 c3 00 e9 a9 dc ff ff e8 38 f8 71 00 0f 0b e9 6c e0 ff ff e8 2c f8 71 00 <0f> 0b e9 a4 e0 ff ff e8 20 f8 71 00 be 08 00 00 00 65 48 8b 1c 25
+RSP: 0018:ffffc90003b4fcb0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: ffff8880236e0000 RSI: ffffffff81130274 RDI: 0000000000000005
+RBP: ffff888021798000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
+R13: ffffc90003bfac90 R14: ffff88802319a8c0 R15: ffff8880217982ec
+FS:  000055555600f300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000073d95000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ kvm_vcpu_ioctl+0x574/0xfe0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4099
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:870 [inline]
+ __se_sys_ioctl fs/ioctl.c:856 [inline]
+ __x64_sys_ioctl+0x197/0x210 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7ff9dc1b2289
+Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcad58a378 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ff9dc1b2289
+RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000005
+RBP: 00007ff9dc175ce0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff9dc175d70
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
 
-Cheers, Daniel
 
-> 
-> > >>>> This is clearly going against the idea of having jobs only depend on
-> > >>>> fences and nothing else which is mandatory for correct memory management.
-> > >>>>
-> > >>> I'm sure it's all documented and there is a design document on how
-> > >>> things have to look like you can point out? Might help to get a better
-> > >>> understanding on how things should be.
-> > >> Yeah, that's the problematic part. We have documented this very
-> > >> extensively:
-> > >> https://www.kernel.org/doc/html/v5.9/driver-api/dma-buf.html#indefinite-dma-fences
-> > >>
-> > >> And both Jason and Daniel gave talks about the underlying problem and
-> > > fyi:
-> > > s/Jason/Faith/g
-> >
-> > +1. I wasn't aware of that.
-> >
-> > >> try to come up with patches to raise warnings when that happens, but
-> > >> people still keep coming up with the same idea over and over again.
-> > >>
-> > > Yes, and we'll have to tell them over and over again. Nothing wrong
-> > > with that. That's just part of maintaining such a big subsystem. And
-> > > that's definitely not a valid reason to phrase things like above.
-> > >
-> > >> It's just that the technical relationship between preventing jobs from
-> > >> running and with that preventing dma_fences from signaling and the core
-> > >> memory management with page faults and shrinkers waiting for those
-> > >> fences is absolutely not obvious.
-> > >>
-> > >> We had at least 10 different teams from different companies falling into
-> > >> the same trap already and either the patches were rejected of hand or
-> > >> had to painfully reverted or mitigated later on.
-> > >>
-> > > Sure, but that's just part of the job. And pointing out fundamental
-> > > mistakes early on is important, but the situation won't get any better
-> > > by being like that. Yes, we'll have to repeat the same words over and
-> > > over again, and yes that might be annoying, but that's just how it is.
-> >
-> > Well I have no problem explaining people why a solution doesn't work.
-> >
-> > But what usually happens is that people don't realize that they need to
-> > back of from a design and completely start over.
-> >
-> > Regards,
-> > Christian.
-> >
-> > >
-> > >> Regards,
-> > >> Christian.
-> > >>
-> > >>>> If the hw is busy with something you need to return the fence for this
-> > >>>> from the prepare_job callback so that the scheduler can be notified when
-> > >>>> the hw is available again.
-> > >>>>
-> > >>>> Regards,
-> > >>>> Christian.
-> > >>>>
-> > >>>>> Signed-off-by: Asahi Lina <lina@asahilina.net>
-> > >>>>> ---
-> > >>>>>     drivers/gpu/drm/scheduler/sched_main.c | 10 ++++++++++
-> > >>>>>     include/drm/gpu_scheduler.h            |  8 ++++++++
-> > >>>>>     2 files changed, 18 insertions(+)
-> > >>>>>
-> > >>>>> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> > >>>>> index 4e6ad6e122bc..5c0add2c7546 100644
-> > >>>>> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> > >>>>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> > >>>>> @@ -1001,6 +1001,16 @@ static int drm_sched_main(void *param)
-> > >>>>>                 if (!entity)
-> > >>>>>                         continue;
-> > >>>>>
-> > >>>>> +             if (sched->ops->can_run_job) {
-> > >>>>> +                     sched_job = to_drm_sched_job(spsc_queue_peek(&entity->job_queue));
-> > >>>>> +                     if (!sched_job) {
-> > >>>>> +                             complete_all(&entity->entity_idle);
-> > >>>>> +                             continue;
-> > >>>>> +                     }
-> > >>>>> +                     if (!sched->ops->can_run_job(sched_job))
-> > >>>>> +                             continue;
-> > >>>>> +             }
-> > >>>>> +
-> > >>>>>                 sched_job = drm_sched_entity_pop_job(entity);
-> > >>>>>
-> > >>>>>                 if (!sched_job) {
-> > >>>>> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-> > >>>>> index 9db9e5e504ee..bd89ea9507b9 100644
-> > >>>>> --- a/include/drm/gpu_scheduler.h
-> > >>>>> +++ b/include/drm/gpu_scheduler.h
-> > >>>>> @@ -396,6 +396,14 @@ struct drm_sched_backend_ops {
-> > >>>>>         struct dma_fence *(*prepare_job)(struct drm_sched_job *sched_job,
-> > >>>>>                                          struct drm_sched_entity *s_entity);
-> > >>>>>
-> > >>>>> +     /**
-> > >>>>> +      * @can_run_job: Called before job execution to check whether the
-> > >>>>> +      * hardware is free enough to run the job.  This can be used to
-> > >>>>> +      * implement more complex hardware resource policies than the
-> > >>>>> +      * hw_submission limit.
-> > >>>>> +      */
-> > >>>>> +     bool (*can_run_job)(struct drm_sched_job *sched_job);
-> > >>>>> +
-> > >>>>>         /**
-> > >>>>>              * @run_job: Called to execute the job once all of the dependencies
-> > >>>>>              * have been resolved.  This may be called multiple times, if
-> > >>>>>
-> >
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
