@@ -2,59 +2,58 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0F3C7619A
-	for <linux-sgx@archiver.kernel.org>; Wed,  5 Apr 2023 12:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1898C7619A
+	for <linux-sgx@archiver.kernel.org>; Wed,  5 Apr 2023 13:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238047AbjDEMgu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 5 Apr 2023 08:36:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47284 "EHLO
+        id S238312AbjDENk0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 5 Apr 2023 09:40:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238043AbjDEMgt (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 5 Apr 2023 08:36:49 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E681F3ABD
-        for <linux-sgx@vger.kernel.org>; Wed,  5 Apr 2023 05:36:47 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-5002f12ccfeso43448a12.0
-        for <linux-sgx@vger.kernel.org>; Wed, 05 Apr 2023 05:36:47 -0700 (PDT)
+        with ESMTP id S238308AbjDENkZ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 5 Apr 2023 09:40:25 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4616C2727
+        for <linux-sgx@vger.kernel.org>; Wed,  5 Apr 2023 06:40:23 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-4fd1f2a0f82so54342a12.1
+        for <linux-sgx@vger.kernel.org>; Wed, 05 Apr 2023 06:40:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1680698206; x=1683290206;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E6iWx9EB6J3L8iIop1bmZ+pNlziIEisMA1uL8RnykGc=;
-        b=Mhpu4CDBYYy7UnbecnwaJGBwUWEJJZkdvrEefXyX2r+r4FENpB1qkR+tX4rIEcLLNc
-         HUVfqZlrktiiC1UivQlXrKHRQSwPD9fmbGSjOmWfxRDbCoEgopYVA0XuQ3TzQrDsGHl8
-         V/sMzxOY9dAQhT6ShYmtLicdzfCt+/18NkPTo=
+        d=ffwll.ch; s=google; t=1680702022; x=1683294022;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b9JAWiy7ir3X1MkEG4eNi/e4F+J8Za1YQw6cD7xkcWQ=;
+        b=I5E2dILRk/qwr/JqR3XN+WpGsAtsDJaxeFQY1kUaSs0iN97G9an9tQIRfByNhSo3Fv
+         Ff7L1Qa6nX+1WNgzPrDJCXNhBjfKdK+ltAGeuDGEIOao3yXMv9PbqZW75aBC3kcWfhHT
+         GgTwkxsMaG6WpXcP3/tIq5SA+L5RLr7H0a6uQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680698206; x=1683290206;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E6iWx9EB6J3L8iIop1bmZ+pNlziIEisMA1uL8RnykGc=;
-        b=vFzwQoWlReCXlgcQ0aR7mfuWtwxLNYqgh46gfeFjfxRz0+wEHiOCN1LcMC/wb3DAps
-         DnyegKfsfehMKitglPtssiKG1/24tsgXuOxNuJTT1XiWU1sUl0TpYr60KU9MCefsJOND
-         i4zIQ1sq1GzImR+qpYf5BFiOcP6i4jTvXE88GUQz3rV40fzopztUDenUYIEWf0ENln2b
-         uvfbq4TWYIq72+3FqH/d8LffZdgy65IZ8hq8UGAsK6bSzsdNidzZIeyYdec/pGYxRgPf
-         X2uCWxh0grAaxaeI8AqY96CUORPk6QHEfvXL/YapRf6cfg11dT+KfrUXDPXLsC7VF/Ui
-         ElHA==
-X-Gm-Message-State: AAQBX9fmKc6YtATEXhRr3lQzEpiuV68X7l7ofqGzZmGluY6v+uLhv2Iw
-        9vWivtM9HHQAojsfsrFmoYNZUw==
-X-Google-Smtp-Source: AKy350YIBJGEKIbnfG5Qb41ZqY8oW3SBwxFUxtFvD5haG8Sd7EjZxbYnmEZUvlkuPcFwlyaw2lVQPg==
-X-Received: by 2002:a05:6402:d0e:b0:502:e50:3358 with SMTP id eb14-20020a0564020d0e00b005020e503358mr1779099edb.3.1680698206345;
-        Wed, 05 Apr 2023 05:36:46 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680702022; x=1683294022;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b9JAWiy7ir3X1MkEG4eNi/e4F+J8Za1YQw6cD7xkcWQ=;
+        b=Hsm1zpx1SnQ/krhLTzuGIN2K3kqt8LOktx5vI0vD7BcPYulalgpv60PGwqphf3DnRN
+         LwClmKLFTEK6YUW3grd/XpNFokaH+WsQkKal9oxMcJhXJcmPeM+C9W/hrVnuDvS7pAyf
+         XHKnTEHKs8ZBqjQ6Gu4AqqXebldbaZhHSEbnlvshUDj7h8nc0xS8IKEjsPz3wULB+Uh0
+         dWBnwPcuzsPecgBvvvrAg3hD8DShp/v1KpLfLVlrSedHseAJ2Sb1+xL5NUs8bgzskDqy
+         mn0WX4OsJS9UqU36clBYcuBdBLkeQdiT/TGmi0FiCYRGz3kgReHpuybOrYKX0rrffcfr
+         myNQ==
+X-Gm-Message-State: AAQBX9c2gwuyNQV8/ouSc9c7Gm6uwNlG5KQ1q/9nJLGRQuYDGmfi870+
+        FPbic3WnF13WH2b7YqtxWB6Dnw==
+X-Google-Smtp-Source: AKy350b3xCy9gL5DOFrdll8pOoEph0xjt04z4AL+Sh79KZNLfnPVo8bTbbVanjj+1/+QMr0G8qmUvA==
+X-Received: by 2002:a05:6402:4413:b0:502:1f7b:f0a6 with SMTP id y19-20020a056402441300b005021f7bf0a6mr2233711eda.0.1680702021702;
+        Wed, 05 Apr 2023 06:40:21 -0700 (PDT)
 Received: from phenom.ffwll.local (212-51-149-33.fiber7.init7.net. [212.51.149.33])
-        by smtp.gmail.com with ESMTPSA id q16-20020a50aa90000000b004af6c5f1805sm7265301edc.52.2023.04.05.05.36.45
+        by smtp.gmail.com with ESMTPSA id s25-20020a50d499000000b005027dd7c403sm6937947edi.66.2023.04.05.06.40.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 05:36:45 -0700 (PDT)
-Date:   Wed, 5 Apr 2023 14:36:43 +0200
+        Wed, 05 Apr 2023 06:40:21 -0700 (PDT)
+Date:   Wed, 5 Apr 2023 15:40:19 +0200
 From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Asahi Lina <lina@asahilina.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+To:     Asahi Lina <lina@asahilina.net>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Miguel Ojeda <ojeda@kernel.org>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@gmail.com>,
@@ -72,12 +71,10 @@ Cc:     Asahi Lina <lina@asahilina.net>,
         Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        linux-sgx@vger.kernel.org, asahi@lists.linux.dev,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH RFC 04/18] rust: drm: gem: Add GEM object abstraction
-Message-ID: <ZC1rW+ZktoC9fBaX@phenom.ffwll.local>
-Mail-Followup-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Asahi Lina <lina@asahilina.net>,
+        linux-sgx@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH RFC 10/18] drm/scheduler: Add can_run_job callback
+Message-ID: <ZC16Q8MhHEcutX1b@phenom.ffwll.local>
+Mail-Followup-To: Asahi Lina <lina@asahilina.net>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
@@ -100,92 +97,113 @@ Mail-Followup-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
 References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-4-917ff5bc80a8@asahilina.net>
- <ZC1WwJDr1iqSQnYs@phenom.ffwll.local>
- <CANiq72=h9qKrpkY2K962__rs-JLsmWxPXocx040ZeDSKGf_Brw@mail.gmail.com>
- <ZC1aEZpgZLkq8xTv@phenom.ffwll.local>
- <CANiq72=hoVw566orbDYcJyw2+SFfxpR1rdJVbbR3kkrjJUASww@mail.gmail.com>
+ <20230307-rust-drm-v1-10-917ff5bc80a8@asahilina.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=hoVw566orbDYcJyw2+SFfxpR1rdJVbbR3kkrjJUASww@mail.gmail.com>
-X-Operating-System: Linux phenom 6.1.0-7-amd64 
+In-Reply-To: <20230307-rust-drm-v1-10-917ff5bc80a8@asahilina.net>
+X-Operating-System: Linux phenom 6.1.0-7-amd64
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Apr 05, 2023 at 02:32:12PM +0200, Miguel Ojeda wrote:
-> On Wed, Apr 5, 2023 at 1:23 PM Daniel Vetter <daniel@ffwll.ch> wrote:
-> >
-> > Ok if this is just interim I think it's fine. Would still be good to have
-> > the MAINTAINERS entry though even just to cover the interim state. Least
-> > because I'm assuming that when things are split up you'd still want to
-> > keep the rust list on cc for the rust parts, even when they move into
-> > subsystems?
+On Tue, Mar 07, 2023 at 11:25:35PM +0900, Asahi Lina wrote:
+> Some hardware may require more complex resource utilization accounting
+> than the simple job count supported by drm_sched internally. Add a
+> can_run_job callback to allow drivers to implement more logic before
+> deciding whether to run a GPU job.
 > 
-> Sorry, I missed to reply the second part of your email -- replying here.
-> 
-> Currently, the subsystem's code is under `rust/` (though modules can
-> go already into other folders). One of the reasons was technical
-> simplicity, and a nice side effect is that we could bootstrap things
-> while getting C maintainers involved over time.
-> 
-> To accomplish that, the guidelines for contributing Rust code are that
-> the respective maintainers need to be at least Cc'd, even if the files
-> do not hit the `F:` fields for the time being -- see [1]. But, for us,
-> ideally, the maintainers will take the changes through their tree,
-> instead of going through the Rust one, since that is the end goal.
-> 
-> And, of course, if you already want to have `F:` fields for the Rust
-> code, that is even better! (Whether those should be in the same entry
-> or in a new one, it is up to you, of course, and whether it is a
-> different set of people / level of support / etc.)
-> 
-> Then, when the `kernel` crate split happens, we can move the code
-> directly under whatever folders it should be naturally, when their
-> maintainers are ready. For some subsystems, that may mean they do not
-> need any `F:` fields since they are already covered (e.g. if they did
-> not create a new entry for Rust code only). And for cases like yours,
-> where you already had `F:` fields, it means the move of the files can
-> be done right away as soon as the split happens.
-> 
-> In short, we would definitely welcome if you add `F:` fields already
-> (whether in existing or new entries) -- it would mean you are ahead of
-> the curve! :)
-> 
-> As for the mailing list, yes, for the time being, I ask that all
-> changes to please be sent to the Rust list, so that everybody that
-> wants to follow the Rust progress has everything in a single place, so
-> that we try to remain consistent in the beginning on e.g. coding
-> guidelines, so that Rust reviewers can help spot mistakes, and so on
-> and so forth.
-> 
-> But, as Rust grows in the kernel, as systems become non-experimental,
-> and as maintainers take ownership of the code, that should eventually
-> go away and let things be as usual with C code. Then the Rust
-> subsystem (and its list) will become smaller, and it will be the
-> subsystem (and the discussion place) for anything not covered by other
-> subsystems, such as core Rust abstractions and types, Rust
-> infrastructure and so on.
-> 
-> How does that sound?
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
 
-Yeah sounds all great!
+Ok scheduler rules, or trying to summarize the entire discussion:
 
-I think interim at least a separate rust drm entry
-would be good, to make sure we always cc both rust and dri-devel. Once
-it's too much for you and you generally trust the dri-devel folks to not
-design stupid interfaces, we can then drop that and only ping rust folks
-when needed. I do expect that's some years out though.
--Daniel
+dma_fence rules are very tricky. The two main chapters in the docs are
 
+https://dri.freedesktop.org/docs/drm/driver-api/dma-buf.html?highlight=dma_buf#dma-fence-cross-driver-contract
+https://dri.freedesktop.org/docs/drm/driver-api/dma-buf.html?highlight=dma_buf#indefinite-dma-fences
+
+Unforutunately I don't think it's possible to check this at compile time,
+thus far all we can do is validate at runtime. I've posted two patches for
+this:
+
+https://lore.kernel.org/dri-devel/20201023122216.2373294-17-daniel.vetter@ffwll.ch/
+https://lore.kernel.org/dri-devel/20201023122216.2373294-20-daniel.vetter@ffwll.ch/
+
+Unfortunately most drivers are buggy and get this completely wrong, so
+realistically we'd need to make this a per-driver opt-out and annotate all
+current drivers. Well except amdgpu is correct by now I think (they'd
+still need to test that). And Rob Clark is working on patches to fix up
+msm.
+
+I think best here is if you work together with Rob to make sure these
+annotations are mandatory for any rust drivers (I don't want new buggy
+drivers at least). Would also be great to improve the kerneldoc for all
+the driver hooks to explain these restrictions and link to the relevant
+kerneldocs (there's also one for the dma_fence signalling annotations
+which might be worth linking too).
+
+I don't see any way to make this explicit in rust types, it's really only
+something runtime tests (using lockdep) can catch. Somewhat disappointing.
+
+For the other things discussed here:
+
+- Option<Dma_Fence> as the return value for ->prepare_job makes sense to
+  me.
+
+- I don't see any way a driver can use ->can_run_job without breaking the
+  above rules, that really doesn't sound like a good idea to me.
+
+Cheers, Daniel
+
+> ---
+>  drivers/gpu/drm/scheduler/sched_main.c | 10 ++++++++++
+>  include/drm/gpu_scheduler.h            |  8 ++++++++
+>  2 files changed, 18 insertions(+)
 > 
-> [1] https://rust-for-linux.com/contributing#the-rust-subsystem (I may
-> reorganize this to be Rust's `P:` field, by the way)
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> index 4e6ad6e122bc..5c0add2c7546 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1001,6 +1001,16 @@ static int drm_sched_main(void *param)
+>  		if (!entity)
+>  			continue;
+>  
+> +		if (sched->ops->can_run_job) {
+> +			sched_job = to_drm_sched_job(spsc_queue_peek(&entity->job_queue));
+> +			if (!sched_job) {
+> +				complete_all(&entity->entity_idle);
+> +				continue;
+> +			}
+> +			if (!sched->ops->can_run_job(sched_job))
+> +				continue;
+> +		}
+> +
+>  		sched_job = drm_sched_entity_pop_job(entity);
+>  
+>  		if (!sched_job) {
+> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
+> index 9db9e5e504ee..bd89ea9507b9 100644
+> --- a/include/drm/gpu_scheduler.h
+> +++ b/include/drm/gpu_scheduler.h
+> @@ -396,6 +396,14 @@ struct drm_sched_backend_ops {
+>  	struct dma_fence *(*prepare_job)(struct drm_sched_job *sched_job,
+>  					 struct drm_sched_entity *s_entity);
+>  
+> +	/**
+> +	 * @can_run_job: Called before job execution to check whether the
+> +	 * hardware is free enough to run the job.  This can be used to
+> +	 * implement more complex hardware resource policies than the
+> +	 * hw_submission limit.
+> +	 */
+> +	bool (*can_run_job)(struct drm_sched_job *sched_job);
+> +
+>  	/**
+>           * @run_job: Called to execute the job once all of the dependencies
+>           * have been resolved.  This may be called multiple times, if
 > 
-> Cheers,
-> Miguel
+> -- 
+> 2.35.1
+> 
 
 -- 
 Daniel Vetter
