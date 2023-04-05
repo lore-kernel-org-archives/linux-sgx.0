@@ -2,65 +2,65 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B274C76188
-	for <linux-sgx@archiver.kernel.org>; Wed,  5 Apr 2023 14:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5514C76188
+	for <linux-sgx@archiver.kernel.org>; Wed,  5 Apr 2023 14:44:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238247AbjDEOWe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 5 Apr 2023 10:22:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48882 "EHLO
+        id S238383AbjDEOoT (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 5 Apr 2023 10:44:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237503AbjDEOW2 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 5 Apr 2023 10:22:28 -0400
+        with ESMTP id S238067AbjDEOoS (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 5 Apr 2023 10:44:18 -0400
 Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD6C45277
-        for <linux-sgx@vger.kernel.org>; Wed,  5 Apr 2023 07:22:00 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-5029d4d90fbso59968a12.0
-        for <linux-sgx@vger.kernel.org>; Wed, 05 Apr 2023 07:22:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30DB030FF
+        for <linux-sgx@vger.kernel.org>; Wed,  5 Apr 2023 07:44:17 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-5029d4d90fbso63433a12.0
+        for <linux-sgx@vger.kernel.org>; Wed, 05 Apr 2023 07:44:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1680704513; x=1683296513;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0hEm3Bu1ajK6bUPoSCMbJz7g4+4dYw9soC8zApe4hMc=;
-        b=dpunbt78Nu2bqL1/MCP1Yrvt88iEad8oMRiJF84xlTSiCngaKtk5FA3RBCcFzIOsOt
-         kgwObyB+ED+hE6Et0bKNge+WJMib2ruloC80JurL5XZQySHnCnIA1r4RRQrkxWk4kT7m
-         nMs2nmS1mHd/Ruhd8U1HtKNlbUAe6jhQh1GtU=
+        d=ffwll.ch; s=google; t=1680705855; x=1683297855;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9lLnJ1+P3Iu2mYgt/o+7cyTWl5Q1ydZ9Nz1cnrQ5Nmc=;
+        b=UJzXtPPwq73Eu+NmBlgfXI9JxlVitZ4kXrO0pETGtZxMEVTi1y5WaveTdET9Z1qul9
+         Rq1swKdnVflb+zz6G7f5yZdKkLbBRw/SLhrRIHaGaQOz0gUUHsYs1b1srMn29K4/4HYD
+         j+tBSrvp2UABDduixiEjXDgqUUDvyx/FKcfCE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680704513; x=1683296513;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0hEm3Bu1ajK6bUPoSCMbJz7g4+4dYw9soC8zApe4hMc=;
-        b=qH5pQ/P2G9RjkoNR4f9ZQDDQf15AKP/nlSj/ZwbuxkyM1Uupc6tflZgOjHfoRBHrUc
-         EHQc2mRAUMI/dEYC8LDUu9Qyc45m2NKdloZgdOCBpnR5SZ4aSa7RG7GtK4oavJ0+6ah5
-         hrHRr8PsAGAnW3zgpFsrABA03JqoX8Ljej1Pq5B+Xmmc6CSDqVLu7fc9ReAVX3+DgzTS
-         +PRyaBC9KA9V/c77ZkdX+MMwLXafGTizaVAYO022xRqZ4RwZW2wZy/9ykYPL//J34Spr
-         4BPtWFHxiUQNcaRKvZreR4igjh4LqOHXiI9U2ZpGdH14SAbfbzS5RugqXS+wgtDqxQJG
-         i5gQ==
-X-Gm-Message-State: AAQBX9eX7pOhx2q0kLLaNvNwP5zUsoqHA4Q/qKKrx9V1TojthmqdNCei
-        Xm0h+WSI53HyVJuGAOZElp3kmA==
-X-Google-Smtp-Source: AKy350bxxApiu6QlBT7LFjNT5HOmCcGl6WDZP6khnW7b0dJcrSCSEyjhjNy22KbR8irHrR8fUaM/Aw==
-X-Received: by 2002:a17:906:2093:b0:933:2e79:4632 with SMTP id 19-20020a170906209300b009332e794632mr2053178ejq.1.1680704513565;
-        Wed, 05 Apr 2023 07:21:53 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680705855; x=1683297855;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9lLnJ1+P3Iu2mYgt/o+7cyTWl5Q1ydZ9Nz1cnrQ5Nmc=;
+        b=spdqg7Iouxp3WnQvltFzY9iSkBTfNF8xUJdyrF0SNR8zX9xbLjrFfSfJ5TkjLba/l7
+         7290GLneank9FDzs7qATNnaa122R5eKUlu803FwfaNShIgKYovkBC0tWkCNu5dtA4/jA
+         /ymFXvKS5hHKqLY+Jyktt5PusLxCx8OjkdcOL193T6nIRhFyh67DkHrI6soVMEmMHjcz
+         var50+XxkGeMKdVm4mD1Hyvtt4gZOPpmpnei/1UP8EU92cleZ+ANh3zUa90v5dFqu+ac
+         N/q52VNo0yZPd0c1OhHlcbhSllUhQg6R56bggahgfeMxSGRF6K8MEMu/d75SgOpwuevI
+         3yVQ==
+X-Gm-Message-State: AAQBX9f9ebuiLrcd3MstCGGQmgOsE+LrF0v6XoIQt282D+JpvWrRBYF6
+        p0ShlSDVpzpRumc9bIyKfbxKCQ==
+X-Google-Smtp-Source: AKy350bDxZoWmLNeFdkBJ8tM2X67oz1ppfs8T2swdma6bs6jcrru0HiaIH7cchQxIu2ClUv18HSI+A==
+X-Received: by 2002:a05:6402:268e:b0:502:ffd:74a1 with SMTP id w14-20020a056402268e00b005020ffd74a1mr2119026edd.2.1680705855694;
+        Wed, 05 Apr 2023 07:44:15 -0700 (PDT)
 Received: from phenom.ffwll.local (212-51-149-33.fiber7.init7.net. [212.51.149.33])
-        by smtp.gmail.com with ESMTPSA id r6-20020a1709064d0600b0093034e71b94sm7467929eju.65.2023.04.05.07.21.52
+        by smtp.gmail.com with ESMTPSA id l2-20020a50c102000000b004fa012332ecsm7403362edf.1.2023.04.05.07.44.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 07:21:53 -0700 (PDT)
-Date:   Wed, 5 Apr 2023 16:21:50 +0200
+        Wed, 05 Apr 2023 07:44:15 -0700 (PDT)
+Date:   Wed, 5 Apr 2023 16:44:13 +0200
 From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc:     Asahi Lina <lina@asahilina.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+To:     Asahi Lina <lina@asahilina.net>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Miguel Ojeda <ojeda@kernel.org>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
         =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Luben Tuikov <luben.tuikov@amd.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -72,10 +72,10 @@ Cc:     Asahi Lina <lina@asahilina.net>,
         dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH RFC 10/18] drm/scheduler: Add can_run_job callback
-Message-ID: <ZC2D/pQsNgaoSzzh@phenom.ffwll.local>
-Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Asahi Lina <lina@asahilina.net>,
+Subject: Re: [PATCH RFC 18/18] drm/asahi: Add the Asahi driver for Apple AGX
+ GPUs
+Message-ID: <ZC2JPR3fGm0uE9yW@phenom.ffwll.local>
+Mail-Followup-To: Asahi Lina <lina@asahilina.net>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
@@ -85,6 +85,7 @@ Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
         =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Luben Tuikov <luben.tuikov@amd.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -97,131 +98,34 @@ Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
 References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-10-917ff5bc80a8@asahilina.net>
- <ZC16Q8MhHEcutX1b@phenom.ffwll.local>
- <20502c4c-c987-3117-119a-2fd38ae5f607@amd.com>
+ <20230307-rust-drm-v1-18-917ff5bc80a8@asahilina.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20502c4c-c987-3117-119a-2fd38ae5f607@amd.com>
+In-Reply-To: <20230307-rust-drm-v1-18-917ff5bc80a8@asahilina.net>
 X-Operating-System: Linux phenom 6.1.0-7-amd64 
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Apr 05, 2023 at 04:14:11PM +0200, Christian König wrote:
-> Am 05.04.23 um 15:40 schrieb Daniel Vetter:
-> > On Tue, Mar 07, 2023 at 11:25:35PM +0900, Asahi Lina wrote:
-> > > Some hardware may require more complex resource utilization accounting
-> > > than the simple job count supported by drm_sched internally. Add a
-> > > can_run_job callback to allow drivers to implement more logic before
-> > > deciding whether to run a GPU job.
-> > > 
-> > > Signed-off-by: Asahi Lina <lina@asahilina.net>
-> > Ok scheduler rules, or trying to summarize the entire discussion:
-> > 
-> > dma_fence rules are very tricky. The two main chapters in the docs are
-> > 
-> > https://dri.freedesktop.org/docs/drm/driver-api/dma-buf.html?highlight=dma_buf#dma-fence-cross-driver-contract
-> > https://dri.freedesktop.org/docs/drm/driver-api/dma-buf.html?highlight=dma_buf#indefinite-dma-fences
-> > 
-> > Unforutunately I don't think it's possible to check this at compile time,
-> > thus far all we can do is validate at runtime. I've posted two patches for
-> > this:
-> > 
-> > https://lore.kernel.org/dri-devel/20201023122216.2373294-17-daniel.vetter@ffwll.ch/
-> > https://lore.kernel.org/dri-devel/20201023122216.2373294-20-daniel.vetter@ffwll.ch/
-> > 
-> > Unfortunately most drivers are buggy and get this completely wrong, so
-> > realistically we'd need to make this a per-driver opt-out and annotate all
-> > current drivers. Well except amdgpu is correct by now I think (they'd
-> > still need to test that).
-> 
-> There is still one potential memory allocation in the run_job callback in
-> amdgpu which I wasn't able to fix yet.
-> 
-> But that one is purely academic and could potentially be trivially replaced
-> with using GFP_ATOMIC if we ever have to.
+On Tue, Mar 07, 2023 at 11:25:43PM +0900, Asahi Lina wrote:
+> +/// Look up a GEM object handle for a `File` and return an `ObjectRef` for it.
+> +pub(crate) fn lookup_handle(file: &DrmFile, handle: u32) -> Result<ObjectRef> {
+> +    Ok(ObjectRef::new(shmem::Object::lookup_handle(file, handle)?))
+> +}
 
-I think the modeset in the tdr code was more scary, and I'm not sure you
-really managed to get rid of absolutely everything in there yet.
+So maybe my expectations for rust typing is a bit too much, but I kinda
+expected this to be fully generic:
+
+- trait Driver (drm_driver) knows the driver's object type
+- a generic create_handle function could ensure that for drm_file (which
+  is always for a specific drm_device and hence Driver) can ensure at the
+  type level that you only put the right objects into the drm_file
+- a generic lookup_handle function on the drm_file knows the Driver trait
+  and so can give you back the right type right away.
+
+Why the wrapping, what do I miss?
 -Daniel
-
-> 
-> Christian.
-> 
-> >   And Rob Clark is working on patches to fix up
-> > msm.
-> > 
-> > I think best here is if you work together with Rob to make sure these
-> > annotations are mandatory for any rust drivers (I don't want new buggy
-> > drivers at least). Would also be great to improve the kerneldoc for all
-> > the driver hooks to explain these restrictions and link to the relevant
-> > kerneldocs (there's also one for the dma_fence signalling annotations
-> > which might be worth linking too).
-> > 
-> > I don't see any way to make this explicit in rust types, it's really only
-> > something runtime tests (using lockdep) can catch. Somewhat disappointing.
-> > 
-> > For the other things discussed here:
-> > 
-> > - Option<Dma_Fence> as the return value for ->prepare_job makes sense to
-> >    me.
-> > 
-> > - I don't see any way a driver can use ->can_run_job without breaking the
-> >    above rules, that really doesn't sound like a good idea to me.
-> > 
-> > Cheers, Daniel
-> > 
-> > > ---
-> > >   drivers/gpu/drm/scheduler/sched_main.c | 10 ++++++++++
-> > >   include/drm/gpu_scheduler.h            |  8 ++++++++
-> > >   2 files changed, 18 insertions(+)
-> > > 
-> > > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> > > index 4e6ad6e122bc..5c0add2c7546 100644
-> > > --- a/drivers/gpu/drm/scheduler/sched_main.c
-> > > +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> > > @@ -1001,6 +1001,16 @@ static int drm_sched_main(void *param)
-> > >   		if (!entity)
-> > >   			continue;
-> > > +		if (sched->ops->can_run_job) {
-> > > +			sched_job = to_drm_sched_job(spsc_queue_peek(&entity->job_queue));
-> > > +			if (!sched_job) {
-> > > +				complete_all(&entity->entity_idle);
-> > > +				continue;
-> > > +			}
-> > > +			if (!sched->ops->can_run_job(sched_job))
-> > > +				continue;
-> > > +		}
-> > > +
-> > >   		sched_job = drm_sched_entity_pop_job(entity);
-> > >   		if (!sched_job) {
-> > > diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-> > > index 9db9e5e504ee..bd89ea9507b9 100644
-> > > --- a/include/drm/gpu_scheduler.h
-> > > +++ b/include/drm/gpu_scheduler.h
-> > > @@ -396,6 +396,14 @@ struct drm_sched_backend_ops {
-> > >   	struct dma_fence *(*prepare_job)(struct drm_sched_job *sched_job,
-> > >   					 struct drm_sched_entity *s_entity);
-> > > +	/**
-> > > +	 * @can_run_job: Called before job execution to check whether the
-> > > +	 * hardware is free enough to run the job.  This can be used to
-> > > +	 * implement more complex hardware resource policies than the
-> > > +	 * hw_submission limit.
-> > > +	 */
-> > > +	bool (*can_run_job)(struct drm_sched_job *sched_job);
-> > > +
-> > >   	/**
-> > >            * @run_job: Called to execute the job once all of the dependencies
-> > >            * have been resolved.  This may be called multiple times, if
-> > > 
-> > > -- 
-> > > 2.35.1
-> > > 
-> 
-
 -- 
 Daniel Vetter
 Software Engineer, Intel Corporation
