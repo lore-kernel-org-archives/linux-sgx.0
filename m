@@ -2,227 +2,624 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F5E7C76196
-	for <linux-sgx@archiver.kernel.org>; Mon,  3 Apr 2023 21:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4266DC77B60
+	for <linux-sgx@archiver.kernel.org>; Wed,  5 Apr 2023 11:09:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbjDCV0u (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 3 Apr 2023 17:26:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46132 "EHLO
+        id S237738AbjDELI6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 5 Apr 2023 07:08:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232891AbjDCV0o (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 3 Apr 2023 17:26:44 -0400
-Received: from BN3PR00CU001.outbound.protection.outlook.com (mail-eastus2azon11020020.outbound.protection.outlook.com [52.101.56.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C3471997;
-        Mon,  3 Apr 2023 14:26:39 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DhCMyQr5xuP6OtD3jp6NJY2djEzIca2vr6vz29axAR/HJj/5n9vfl/Li/nHr/9dFngjKnyvkWbXKatdj00TLeKVwN2suDF3aTypQlE9HZLyWj0fiZoY4uCziyxLYYgoa+KJiBFeTFNvBOrI/Vtqobz9OMSTYyvuiUbER1IkxCROmleBI7v/9j/LQ5Go1o9IvisixbOW/7/YHHqoNlp/ptVJ6MTuXzoQTLBdU7ueE0P0IU0nDzLdOJerxQ5Gk6XnPkIONKleQnRrHVMqip1kIzKlSsHD12/tJgfAG9HKZ9pcSb0OcIlotjnDS18v4zu5gUddzYkjrirTcc1+hbEatjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gpDm2UMhLYE21j3CnCQkaJQgKP4U2zgaLFOXtrgPKbg=;
- b=SrMcCaFqY3gIgcct4zOGegZuPGvSme9vSwpUTQPn8L9/Quut482kJfESEZVI/t0bcyH1KpiETYj0k6sblJ4r3gs0iS660mypzYAz2mdIDy0FQS+nqIuqCaNHiQiSdwU2IoRNVJ+bNBU6u8R9JRWaGbG1buT9aO9DjYL+RxvKv1iCzzn/kbf0HtHWcBaX8+Cw2XY5owT/SUVFDpejErixP3CrtzZk5NxJppgquZCaIarhNrX5ySSyyEjMfySHhPyZf+LHc9GZ68Q9vQMlSkVyRwjmL6nhk7K2YNUAkXVe9eF2bT7RHQwH+SL3Yr77hIPLDs7QePPn/V8p0tlbe13r0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gpDm2UMhLYE21j3CnCQkaJQgKP4U2zgaLFOXtrgPKbg=;
- b=PIjqasJ45USSFg9BeODqeh0nBfxkVSKZC4s9HALsRxAQcRXm1ogMhuaI44c1VDRnG/5db5+aHFijY5aXnughCkLXLrBKF2iytYnOY9d6SzwnZjsSTPxMPd8HpBUAy9Ums5feMj1RuSL8r5q1cRjRdb3TbzuG7+ybDQDOC0gfqVQ=
-Received: from DM6PR21MB1177.namprd21.prod.outlook.com (2603:10b6:5:161::25)
- by PH7PR21MB3119.namprd21.prod.outlook.com (2603:10b6:510:1d3::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.8; Mon, 3 Apr
- 2023 21:26:36 +0000
-Received: from DM6PR21MB1177.namprd21.prod.outlook.com
- ([fe80::959c:6563:efae:29e4]) by DM6PR21MB1177.namprd21.prod.outlook.com
- ([fe80::959c:6563:efae:29e4%7]) with mapi id 15.20.6298.008; Mon, 3 Apr 2023
- 21:26:35 +0000
-From:   Anand Krishnamoorthi <anakrish@microsoft.com>
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "Bo Zhang (ACC)" <zhanb@microsoft.com>
-CC:     "zhiquan1.li@intel.com" <zhiquan1.li@intel.com>
-Subject: Re: [EXTERNAL] [PATCH v2 00/18]  Add Cgroup support for SGX EPC
- memory
-Thread-Topic: [EXTERNAL] [PATCH v2 00/18]  Add Cgroup support for SGX EPC
- memory
-Thread-Index: AQHZBn0ZUYTbjHaiT0mTf4KgoZqzI68a1mCq
-Date:   Mon, 3 Apr 2023 21:26:35 +0000
-Message-ID: <DM6PR21MB11778ABA54CD33A5822D5B24C4929@DM6PR21MB1177.namprd21.prod.outlook.com>
-References: <20221202183655.3767674-1-kristen@linux.intel.com>
-In-Reply-To: <20221202183655.3767674-1-kristen@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2023-04-03T21:26:34.842Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR21MB1177:EE_|PH7PR21MB3119:EE_
-x-ms-office365-filtering-correlation-id: cb29864e-6c09-4852-dcd0-08db348a1a73
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: XTChk0J106Vh0wCJVDhh43a/BQNlNw7XLMhzERd49cWhahhCWJRwiFwUbVSfv7I4P0Pn2zJM3b4w3CZZpGyORHkuyAIh0adH6rGEUYZ5nr8z5IgYbUFsxzalq3h/imZe9J6f+6VJT+jMA1Rrdf442EE6qvxEB6JMjYbdDoiAu8psg9jk0Nj9BIT2z1GM7crDQoPIdV7g2RjY6RWA9gEzK19vSInioDNg5odC8fdCkk9P+sMzRfEaalcL6FhAsYqwSZiqgQ6e3cQ0WN9s2J77G/g99rLf9h+lgJvZ9OtbLIukWM6+nqKebkxLvmrTO+OyMwuHKOISxakMS8g+oMDOPTkrxODvRBom4dsK4SXRtKaV3A/EI9JtuKSUby+dqnL8hWrDRFFaYVyXFpkHHBFlmyXJ6HUqyAFM85t/+g9vQjeAcan068dAKnKIUzRxsTa8HZ5Wb8m+he9sCFiBtubDWNDCBknOrA2B0o1aKCBPCIUdC7+1hOh2dgj7ku9N8Hi0bHgT150wp18nB2ZHG1eouQf1PEXHgLPbLWw/zy8eR3HtmMI2+B6x9KNt6zn/HQ5uLqbHagF/3Ue2Gc3nnb9uDaJUNxCpVV2LY/Rq38GERsrppkm1A+v187oWGRsOisPRsWW/OemxSG8LY3croXplzw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:cs;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR21MB1177.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(346002)(376002)(39860400002)(136003)(396003)(451199021)(55016003)(66476007)(76116006)(316002)(91956017)(4326008)(8676002)(66556008)(64756008)(66946007)(66446008)(478600001)(110136005)(6636002)(8936002)(786003)(52536014)(122000001)(41300700001)(82960400001)(82950400001)(38100700002)(5660300002)(53546011)(186003)(83380400001)(71200400001)(10290500003)(6506007)(9686003)(86362001)(33656002)(2906002)(8990500004)(38070700005)(7696005)(966005);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?Ph9WwFcYqVYQ/PihrOYR16NBeaT+IFACjs3vOljyRR7DOhXzUaVUhpU6Zf?=
- =?iso-8859-1?Q?LLer18ZJb7B7S/erVQw+5yMIp+cb47UUeK0UDEUontIxgoxq2pYggJ9cu2?=
- =?iso-8859-1?Q?Oi+Vi1xb6W3FH25WM+ki9zjCkO9EHVI6gcZ52uP6+iEhlV4yMYy2rkkYK5?=
- =?iso-8859-1?Q?KhX/cpxGkvJtwSMODTMkkgGCjicdH2rLM6JrK/uqTw+pJLWGLcX+s9qS2N?=
- =?iso-8859-1?Q?ooSF5OvOzXfCmm4ze4nYx+1fYPOTeBgEOfiI7NbELDi2wPIxLLtX5qKZFS?=
- =?iso-8859-1?Q?gJ6T2wDh9mhG1QfByYdTbiG3hFOKKCVbMGNge1WPJpNdgrmgz30QkaVWEB?=
- =?iso-8859-1?Q?kNLXT++Iz1mMiNaQ6T9TYIfmaM8nu/VouDSu/gRkUN9VjKl5E57mwtocy6?=
- =?iso-8859-1?Q?N4IQeSEMZgjpBKoEOQyJ91KwgcSS4HZ7jYu23CVtgGMs0peGr/Mv17NAcI?=
- =?iso-8859-1?Q?Zm8m8w8iqkcdoFholP62OvykOd0Q70BBxEV7KCPWQMd5mS1BuDHIoemViN?=
- =?iso-8859-1?Q?z9nMJKcunbEwogRmZQDtCrtA6aPCIznAMpohnU7VD5tM8zg6K9OZeIZuy+?=
- =?iso-8859-1?Q?uP586RHkW8iNeCwneeiYB71wALfp0uMnQR8/0to33rRXkZNyXfgvdyqflq?=
- =?iso-8859-1?Q?vjOiL4ivvPVfmV96J9JzMMnTwDi3cZ8p9fRGzSoHK1GpQoeYBD/FQL57N4?=
- =?iso-8859-1?Q?k4dL+0cDHief9nb9DVr3sehiUhHY69GSmU6BPEOSPXwS3ovbCnIhKOQw2j?=
- =?iso-8859-1?Q?PbPWrJMtMdppiHqyvxDFV8EnEZcuvWOsoTnbC1gKRuDfNcwkILULkKpLS4?=
- =?iso-8859-1?Q?AEOv4Czbs3zU3D8xRiFeknNYZNC8XllCaihLYIeQq5WeTEWVe7vKgvn40F?=
- =?iso-8859-1?Q?zgqHJ9i8MKIMGqNsrLulmguvj8n2lgv7Jgs0/+lOKpWcz3mupbA3Pv80sF?=
- =?iso-8859-1?Q?+Zm8g7dIavhDx6EM27v3b7KGrGPrBcO3s0ddgOyUUVjJLpj8yn+i6Xzvt/?=
- =?iso-8859-1?Q?nyAB54DkAYGBj61P/x4kxz/5UvTgDSHy3GxMDNI9w6IgkJLc7kXadJAHjz?=
- =?iso-8859-1?Q?yhzQBc7IZK2bWwEN+ifes5MHjjcEdbPYXyALrxdPDzPDJCeKh0tW7W7hpe?=
- =?iso-8859-1?Q?7rDRBdc8dV4t9UdUz7pYrJmnXOD+ZuprylUZm81sdBgCj8idA2y94XGAG8?=
- =?iso-8859-1?Q?nDWcEASFVcalid3RPx/duwiau00Osd4BGHPDp4zP401BFzM8W+JaDmIGOS?=
- =?iso-8859-1?Q?fb9CJa7//IBX1s7P/J77/Zk6iAAMi4EadIq469RYqpMhw6LPrOcQ+Nmz6I?=
- =?iso-8859-1?Q?M8DRUYUfTTCSadtx/4mLUMjjLlKw2vS+uo9uEDt8MkQlYTZGv9LDhJnqSU?=
- =?iso-8859-1?Q?a7vAeKjHf4mr7bfDlLTlhDarXy1NqmTEoOXOIgd1cB3sF+4IhSGIBkj7Dc?=
- =?iso-8859-1?Q?X22u+jYH1IKjJQqEM6z22HzdnaFwldBqmprDGxLrkNs/hV4/IqJ2ssGhQk?=
- =?iso-8859-1?Q?78LAm50UL7bHEVrIN9cROZpHkUCVP+odAyxoJWHOu7YZ1ifccLuhxLC3ED?=
- =?iso-8859-1?Q?55FCaXYMtSQkLgKMn/B1x6LqabWkdUGYoULbLuclKw0RtMAmIjlD56XmT3?=
- =?iso-8859-1?Q?X4YApRX5h+N1xVe+U+kXac3hyIgS1GoBiO7ikHZkJLxb8dfR/WeRYSo3bf?=
- =?iso-8859-1?Q?MSEiHG3QtCoyZ8KCqmAy28qsqhLEYc9lwYTwczAl?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S237635AbjDELI5 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 5 Apr 2023 07:08:57 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 551A855AF
+        for <linux-sgx@vger.kernel.org>; Wed,  5 Apr 2023 04:08:53 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-4fd1f2a0f82so32099a12.1
+        for <linux-sgx@vger.kernel.org>; Wed, 05 Apr 2023 04:08:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1680692932; x=1683284932;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SFDimBbN528TL8xt9crjcXDnbMBSLe3C0z50ivey3EI=;
+        b=ZNomdFYgbAEwHS2jPwlp6zYqVrRZxsDAwk5V2WI0djY96tXgNyWAUcBk+d4Ig3jZSa
+         /GyD+pZcpRiCtvWiO5oq3QOrvUIq4ZzCsTRXQ45v/ou8j5I9pqg2C8gln8rMS2uHXSl1
+         T+2M3J1iRHN/hmQdz/23+qloMcA17rvPKJWnQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680692932; x=1683284932;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SFDimBbN528TL8xt9crjcXDnbMBSLe3C0z50ivey3EI=;
+        b=pLIXzh8Mnu7Cb4Uz9pIMMULiKKPpamEJNtzIKByWce1bRj+enOZqzn3zWdq9F4hMRL
+         oICtvNWHjP028/VndiHKWhiLkDp3J/0jCdDFS6ZjzGu0+dqRfjHwp9dwZsCsINs1f5HJ
+         0MEkt6OBNUbXQrwlp/ObyPTIskbgi72LbT4vM17esFHjNJpjtaIOtQFBK9ETRn9fE9oN
+         9vzWCqFrG2J7QQlejw/m1ir/V1Iu+f3/xIBCdSxOvdobfqdid4f27TYCFrpK1PdjxMTV
+         IF16LIBD8R1n2MzvLq9CmpJS5Jrv+fopeFLp3OmSBcDYItfpvH3IhQDnJumbkdxXNXHA
+         2/OA==
+X-Gm-Message-State: AAQBX9dprmRZnbGwk4JlqFKWQ9GCBRDOhmHh9UxqgIuMdxSpAtaTiBCp
+        9I299ofZb3gwyvq2lth2nPB/jA==
+X-Google-Smtp-Source: AKy350a27WBCUNn2TaytucC4Gmeq2m4PHUBrkdMPqvS7Q1CetS4XugtCzzL7kpX+0BRzLav3s77hkQ==
+X-Received: by 2002:a05:6402:524e:b0:4fd:2978:d80 with SMTP id t14-20020a056402524e00b004fd29780d80mr1516218edd.1.1680692931632;
+        Wed, 05 Apr 2023 04:08:51 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-33.fiber7.init7.net. [212.51.149.33])
+        by smtp.gmail.com with ESMTPSA id t12-20020a170906608c00b0093d0867a65csm7327542ejj.175.2023.04.05.04.08.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Apr 2023 04:08:51 -0700 (PDT)
+Date:   Wed, 5 Apr 2023 13:08:48 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Asahi Lina <lina@asahilina.net>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Luben Tuikov <luben.tuikov@amd.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Karol Herbst <kherbst@redhat.com>,
+        Ella Stanforth <ella@iglunix.org>,
+        Faith Ekstrand <faith.ekstrand@collabora.com>,
+        Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        linux-sgx@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH RFC 04/18] rust: drm: gem: Add GEM object abstraction
+Message-ID: <ZC1WwJDr1iqSQnYs@phenom.ffwll.local>
+Mail-Followup-To: Asahi Lina <lina@asahilina.net>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Luben Tuikov <luben.tuikov@amd.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Karol Herbst <kherbst@redhat.com>,
+        Ella Stanforth <ella@iglunix.org>,
+        Faith Ekstrand <faith.ekstrand@collabora.com>,
+        Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        linux-sgx@vger.kernel.org, asahi@lists.linux.dev
+References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
+ <20230307-rust-drm-v1-4-917ff5bc80a8@asahilina.net>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR21MB1177.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb29864e-6c09-4852-dcd0-08db348a1a73
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Apr 2023 21:26:35.6788
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mfpgSiqG0CS67XYmMBv9uj660GcayB6zmMc8pCQHtrZ7TOEWe5OZZtAnyYwtKYNk5F3IvyMxcCiP0umHswwx3Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR21MB3119
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230307-rust-drm-v1-4-917ff5bc80a8@asahilina.net>
+X-Operating-System: Linux phenom 6.1.0-7-amd64
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Adding Bo Zhang to thread.
+Meta: I'm trying to unblock myself by limiting each reply to a narrow-ish
+topic. Otherwise it's just too much. Here's the first.
 
--Anand
+On Tue, Mar 07, 2023 at 11:25:29PM +0900, Asahi Lina wrote:
+> The DRM GEM subsystem is the DRM memory management subsystem used by
+> most modern drivers. Add a Rust abstraction to allow Rust DRM driver
+> implementations to use it.
+> 
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> ---
+>  rust/bindings/bindings_helper.h |   1 +
+>  rust/helpers.c                  |  23 +++
+>  rust/kernel/drm/drv.rs          |   4 +-
+>  rust/kernel/drm/gem/mod.rs      | 374 ++++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/drm/mod.rs          |   1 +
+>  5 files changed, 401 insertions(+), 2 deletions(-)
+> 
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> index 7d7828faf89c..7183dfe6473f 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -9,6 +9,7 @@
+>  #include <drm/drm_device.h>
+>  #include <drm/drm_drv.h>
+>  #include <drm/drm_file.h>
+> +#include <drm/drm_gem.h>
+>  #include <drm/drm_ioctl.h>
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+> diff --git a/rust/helpers.c b/rust/helpers.c
+> index 73b2ce607f27..78ec4162b03b 100644
+> --- a/rust/helpers.c
+> +++ b/rust/helpers.c
+> @@ -18,6 +18,7 @@
+>   * accidentally exposed.
+>   */
+>  
+> +#include <drm/drm_gem.h>
+>  #include <linux/bug.h>
+>  #include <linux/build_bug.h>
+>  #include <linux/device.h>
+> @@ -374,6 +375,28 @@ void rust_helper_init_completion(struct completion *c)
+>  }
+>  EXPORT_SYMBOL_GPL(rust_helper_init_completion);
+>  
+> +#ifdef CONFIG_DRM
+> +
+> +void rust_helper_drm_gem_object_get(struct drm_gem_object *obj)
+> +{
+> +	drm_gem_object_get(obj);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_drm_gem_object_get);
+> +
+> +void rust_helper_drm_gem_object_put(struct drm_gem_object *obj)
+> +{
+> +	drm_gem_object_put(obj);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_drm_gem_object_put);
+> +
+> +__u64 rust_helper_drm_vma_node_offset_addr(struct drm_vma_offset_node *node)
+> +{
+> +	return drm_vma_node_offset_addr(node);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_drm_vma_node_offset_addr);
+
+Uh all the rust helper wrappers for all the kernel in a single file does
+not sound good. Can we not split these up into each subsystem, and then
+maybe instead of sprinkling #ifdef all over a .c file Make the compilation
+of that file conditional on rust support (plus whatever other Kconfig gate
+the other c files has already)?
+
+Otherwise if rust adoption picks up there's going to be endless amounts of
+cross-subsystem conflicts.
+
+Also similarly, can we perhaps split up the bindings_helper.h file in a
+per-subsystem way?
 
 
-From: Kristen Carlson Accardi <kristen@linux.intel.com>
-Sent: Friday, December 2, 2022 10:36 AM
-To: jarkko@kernel.org <jarkko@kernel.org>; dave.hansen@linux.intel.com <dav=
-e.hansen@linux.intel.com>; tj@kernel.org <tj@kernel.org>; linux-kernel@vger=
-.kernel.org <linux-kernel@vger.kernel.org>; linux-sgx@vger.kernel.org <linu=
-x-sgx@vger.kernel.org>; cgroups@vger.kernel.org <cgroups@vger.kernel.org>
-Cc: zhiquan1.li@intel.com <zhiquan1.li@intel.com>
-Subject: [EXTERNAL] [PATCH v2 00/18] Add Cgroup support for SGX EPC memory
+> +
+> +#endif
+> +
+>  /*
+>   * We use `bindgen`'s `--size_t-is-usize` option to bind the C `size_t` type
+>   * as the Rust `usize` type, so we can use it in contexts where Rust
+> diff --git a/rust/kernel/drm/drv.rs b/rust/kernel/drm/drv.rs
+> index 1dcb651e1417..c138352cb489 100644
+> --- a/rust/kernel/drm/drv.rs
+> +++ b/rust/kernel/drm/drv.rs
+> @@ -126,7 +126,7 @@ pub struct AllocOps {
 
-Utilize the Miscellaneous cgroup controller to regulate the distribution
-of SGX EPC memory, which is a subset of system RAM that is used to provide
-SGX-enabled applications with protected memory, and is otherwise inaccessib=
-le.
+Similary I guess this needs to be all under rust for rust reasons. I'm
+assuming that the plan is that rust patches in here get acked/reviewed by
+rust people, but then merged through the drm subsystem? At least long term
+I think that's the least painful way.
 
-SGX EPC memory allocations are separate from normal RAM allocations,
-and is managed solely by the SGX subsystem. The existing cgroup memory
-controller cannot be used to limit or account for SGX EPC memory.
+Meaning we need a MAINTAINERS entry for rust/kernel/drm which adds
+dri-devel for review and the usual git repos somewhere earlier in the
+series.
+-Daniel
 
-This patchset implements the support for sgx_epc memory within the
-misc cgroup controller, and then utilizes the misc cgroup controller
-to provide support for setting the total system capacity, max limit
-per cgroup, and events.
+>  }
+>  
+>  /// Trait for memory manager implementations. Implemented internally.
+> -pub trait AllocImpl: Sealed {
+> +pub trait AllocImpl: Sealed + drm::gem::IntoGEMObject {
+>      /// The C callback operations for this memory manager.
+>      const ALLOC_OPS: AllocOps;
+>  }
+> @@ -263,7 +263,7 @@ impl<T: Driver> Registration<T> {
+>              drm,
+>              registered: false,
+>              vtable,
+> -            fops: Default::default(), // TODO: GEM abstraction
+> +            fops: drm::gem::create_fops(),
+>              _pin: PhantomPinned,
+>              _p: PhantomData,
+>          })
+> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+> new file mode 100644
+> index 000000000000..8a7d99613718
+> --- /dev/null
+> +++ b/rust/kernel/drm/gem/mod.rs
+> @@ -0,0 +1,374 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +
+> +//! DRM GEM API
+> +//!
+> +//! C header: [`include/linux/drm/drm_gem.h`](../../../../include/linux/drm/drm_gem.h)
+> +
+> +use alloc::boxed::Box;
+> +
+> +use crate::{
+> +    bindings,
+> +    drm::{device, drv, file},
+> +    error::{to_result, Result},
+> +    prelude::*,
+> +};
+> +use core::{mem, mem::ManuallyDrop, ops::Deref, ops::DerefMut};
+> +
+> +/// GEM object functions, which must be implemented by drivers.
+> +pub trait BaseDriverObject<T: BaseObject>: Sync + Send + Sized {
+> +    /// Create a new driver data object for a GEM object of a given size.
+> +    fn new(dev: &device::Device<T::Driver>, size: usize) -> Result<Self>;
+> +
+> +    /// Open a new handle to an existing object, associated with a File.
+> +    fn open(
+> +        _obj: &<<T as IntoGEMObject>::Driver as drv::Driver>::Object,
+> +        _file: &file::File<<<T as IntoGEMObject>::Driver as drv::Driver>::File>,
+> +    ) -> Result {
+> +        Ok(())
+> +    }
+> +
+> +    /// Close a handle to an existing object, associated with a File.
+> +    fn close(
+> +        _obj: &<<T as IntoGEMObject>::Driver as drv::Driver>::Object,
+> +        _file: &file::File<<<T as IntoGEMObject>::Driver as drv::Driver>::File>,
+> +    ) {
+> +    }
+> +}
+> +
+> +/// Trait that represents a GEM object subtype
+> +pub trait IntoGEMObject: Sized + crate::private::Sealed {
+> +    /// Owning driver for this type
+> +    type Driver: drv::Driver;
+> +
+> +    /// Returns a pointer to the raw `drm_gem_object` structure, which must be valid as long as
+> +    /// this owning object is valid.
+> +    fn gem_obj(&self) -> *mut bindings::drm_gem_object;
+> +
+> +    /// Returns a reference to the raw `drm_gem_object` structure, which must be valid as long as
+> +    /// this owning object is valid.
+> +    fn gem_ref(&self) -> &bindings::drm_gem_object {
+> +        // SAFETY: gem_obj() must be valid per the above requirement.
+> +        unsafe { &*self.gem_obj() }
+> +    }
+> +
+> +    /// Converts a pointer to a `drm_gem_object` into a pointer to this type.
+> +    fn from_gem_obj(obj: *mut bindings::drm_gem_object) -> *mut Self;
+> +}
+> +
+> +/// Trait which must be implemented by drivers using base GEM objects.
+> +pub trait DriverObject: BaseDriverObject<Object<Self>> {
+> +    /// Parent `Driver` for this object.
+> +    type Driver: drv::Driver;
+> +}
+> +
+> +unsafe extern "C" fn free_callback<T: DriverObject>(obj: *mut bindings::drm_gem_object) {
+> +    // SAFETY: All of our objects are Object<T>.
+> +    let this = crate::container_of!(obj, Object<T>, obj) as *mut Object<T>;
+> +
+> +    // SAFETY: The pointer we got has to be valid
+> +    unsafe { bindings::drm_gem_object_release(obj) };
+> +
+> +    // SAFETY: All of our objects are allocated via Box<>, and we're in the
+> +    // free callback which guarantees this object has zero remaining references,
+> +    // so we can drop it
+> +    unsafe { Box::from_raw(this) };
+> +}
+> +
+> +unsafe extern "C" fn open_callback<T: BaseDriverObject<U>, U: BaseObject>(
+> +    raw_obj: *mut bindings::drm_gem_object,
+> +    raw_file: *mut bindings::drm_file,
+> +) -> core::ffi::c_int {
+> +    // SAFETY: The pointer we got has to be valid.
+> +    let file = unsafe {
+> +        file::File::<<<U as IntoGEMObject>::Driver as drv::Driver>::File>::from_raw(raw_file)
+> +    };
+> +    let obj =
+> +        <<<U as IntoGEMObject>::Driver as drv::Driver>::Object as IntoGEMObject>::from_gem_obj(
+> +            raw_obj,
+> +        );
+> +
+> +    // SAFETY: from_gem_obj() returns a valid pointer as long as the type is
+> +    // correct and the raw_obj we got is valid.
+> +    match T::open(unsafe { &*obj }, &file) {
+> +        Err(e) => e.to_kernel_errno(),
+> +        Ok(()) => 0,
+> +    }
+> +}
+> +
+> +unsafe extern "C" fn close_callback<T: BaseDriverObject<U>, U: BaseObject>(
+> +    raw_obj: *mut bindings::drm_gem_object,
+> +    raw_file: *mut bindings::drm_file,
+> +) {
+> +    // SAFETY: The pointer we got has to be valid.
+> +    let file = unsafe {
+> +        file::File::<<<U as IntoGEMObject>::Driver as drv::Driver>::File>::from_raw(raw_file)
+> +    };
+> +    let obj =
+> +        <<<U as IntoGEMObject>::Driver as drv::Driver>::Object as IntoGEMObject>::from_gem_obj(
+> +            raw_obj,
+> +        );
+> +
+> +    // SAFETY: from_gem_obj() returns a valid pointer as long as the type is
+> +    // correct and the raw_obj we got is valid.
+> +    T::close(unsafe { &*obj }, &file);
+> +}
+> +
+> +impl<T: DriverObject> IntoGEMObject for Object<T> {
+> +    type Driver = T::Driver;
+> +
+> +    fn gem_obj(&self) -> *mut bindings::drm_gem_object {
+> +        &self.obj as *const _ as *mut _
+> +    }
+> +
+> +    fn from_gem_obj(obj: *mut bindings::drm_gem_object) -> *mut Object<T> {
+> +        crate::container_of!(obj, Object<T>, obj) as *mut Object<T>
+> +    }
+> +}
+> +
+> +/// Base operations shared by all GEM object classes
+> +pub trait BaseObject: IntoGEMObject {
+> +    /// Returns the size of the object in bytes.
+> +    fn size(&self) -> usize {
+> +        self.gem_ref().size
+> +    }
+> +
+> +    /// Creates a new reference to the object.
+> +    fn reference(&self) -> ObjectRef<Self> {
+> +        // SAFETY: Having a reference to an Object implies holding a GEM reference
+> +        unsafe {
+> +            bindings::drm_gem_object_get(self.gem_obj());
+> +        }
+> +        ObjectRef {
+> +            ptr: self as *const _,
+> +        }
+> +    }
+> +
+> +    /// Creates a new handle for the object associated with a given `File`
+> +    /// (or returns an existing one).
+> +    fn create_handle(
+> +        &self,
+> +        file: &file::File<<<Self as IntoGEMObject>::Driver as drv::Driver>::File>,
+> +    ) -> Result<u32> {
+> +        let mut handle: u32 = 0;
+> +        // SAFETY: The arguments are all valid per the type invariants.
+> +        to_result(unsafe {
+> +            bindings::drm_gem_handle_create(file.raw() as *mut _, self.gem_obj(), &mut handle)
+> +        })?;
+> +        Ok(handle)
+> +    }
+> +
+> +    /// Looks up an object by its handle for a given `File`.
+> +    fn lookup_handle(
+> +        file: &file::File<<<Self as IntoGEMObject>::Driver as drv::Driver>::File>,
+> +        handle: u32,
+> +    ) -> Result<ObjectRef<Self>> {
+> +        // SAFETY: The arguments are all valid per the type invariants.
+> +        let ptr = unsafe { bindings::drm_gem_object_lookup(file.raw() as *mut _, handle) };
+> +
+> +        if ptr.is_null() {
+> +            Err(ENOENT)
+> +        } else {
+> +            Ok(ObjectRef {
+> +                ptr: ptr as *const _,
+> +            })
+> +        }
+> +    }
+> +
+> +    /// Creates an mmap offset to map the object from userspace.
+> +    fn create_mmap_offset(&self) -> Result<u64> {
+> +        // SAFETY: The arguments are valid per the type invariant.
+> +        to_result(unsafe {
+> +            // TODO: is this threadsafe?
+> +            bindings::drm_gem_create_mmap_offset(self.gem_obj())
+> +        })?;
+> +        Ok(unsafe {
+> +            bindings::drm_vma_node_offset_addr(&self.gem_ref().vma_node as *const _ as *mut _)
+> +        })
+> +    }
+> +}
+> +
+> +impl<T: IntoGEMObject> BaseObject for T {}
+> +
+> +/// A base GEM object.
+> +#[repr(C)]
+> +pub struct Object<T: DriverObject> {
+> +    obj: bindings::drm_gem_object,
+> +    // The DRM core ensures the Device exists as long as its objects exist, so we don't need to
+> +    // manage the reference count here.
+> +    dev: ManuallyDrop<device::Device<T::Driver>>,
+> +    inner: T,
+> +}
+> +
+> +impl<T: DriverObject> Object<T> {
+> +    /// The size of this object's structure.
+> +    pub const SIZE: usize = mem::size_of::<Self>();
+> +
+> +    const OBJECT_FUNCS: bindings::drm_gem_object_funcs = bindings::drm_gem_object_funcs {
+> +        free: Some(free_callback::<T>),
+> +        open: Some(open_callback::<T, Object<T>>),
+> +        close: Some(close_callback::<T, Object<T>>),
+> +        print_info: None,
+> +        export: None,
+> +        pin: None,
+> +        unpin: None,
+> +        get_sg_table: None,
+> +        vmap: None,
+> +        vunmap: None,
+> +        mmap: None,
+> +        vm_ops: core::ptr::null_mut(),
+> +    };
+> +
+> +    /// Create a new GEM object.
+> +    pub fn new(dev: &device::Device<T::Driver>, size: usize) -> Result<UniqueObjectRef<Self>> {
+> +        let mut obj: Box<Self> = Box::try_new(Self {
+> +            // SAFETY: This struct is expected to be zero-initialized
+> +            obj: unsafe { mem::zeroed() },
+> +            // SAFETY: The drm subsystem guarantees that the drm_device will live as long as
+> +            // the GEM object lives, so we can conjure a reference out of thin air.
+> +            dev: ManuallyDrop::new(unsafe { device::Device::from_raw(dev.ptr) }),
+> +            inner: T::new(dev, size)?,
+> +        })?;
+> +
+> +        obj.obj.funcs = &Self::OBJECT_FUNCS;
+> +        to_result(unsafe {
+> +            bindings::drm_gem_object_init(dev.raw() as *mut _, &mut obj.obj, size)
+> +        })?;
+> +
+> +        let obj_ref = UniqueObjectRef {
+> +            ptr: Box::leak(obj),
+> +        };
+> +
+> +        Ok(obj_ref)
+> +    }
+> +
+> +    /// Returns the `Device` that owns this GEM object.
+> +    pub fn dev(&self) -> &device::Device<T::Driver> {
+> +        &self.dev
+> +    }
+> +}
+> +
+> +impl<T: DriverObject> crate::private::Sealed for Object<T> {}
+> +
+> +impl<T: DriverObject> Deref for Object<T> {
+> +    type Target = T;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        &self.inner
+> +    }
+> +}
+> +
+> +impl<T: DriverObject> DerefMut for Object<T> {
+> +    fn deref_mut(&mut self) -> &mut Self::Target {
+> +        &mut self.inner
+> +    }
+> +}
+> +
+> +impl<T: DriverObject> drv::AllocImpl for Object<T> {
+> +    const ALLOC_OPS: drv::AllocOps = drv::AllocOps {
+> +        gem_create_object: None,
+> +        prime_handle_to_fd: Some(bindings::drm_gem_prime_handle_to_fd),
+> +        prime_fd_to_handle: Some(bindings::drm_gem_prime_fd_to_handle),
+> +        gem_prime_import: None,
+> +        gem_prime_import_sg_table: None,
+> +        gem_prime_mmap: Some(bindings::drm_gem_prime_mmap),
+> +        dumb_create: None,
+> +        dumb_map_offset: None,
+> +        dumb_destroy: None,
+> +    };
+> +}
+> +
+> +/// A reference-counted shared reference to a base GEM object.
+> +pub struct ObjectRef<T: IntoGEMObject> {
+> +    // Invariant: the pointer is valid and initialized, and this ObjectRef owns a reference to it.
+> +    ptr: *const T,
+> +}
+> +
+> +/// SAFETY: GEM object references are safe to share between threads.
+> +unsafe impl<T: IntoGEMObject> Send for ObjectRef<T> {}
+> +unsafe impl<T: IntoGEMObject> Sync for ObjectRef<T> {}
+> +
+> +impl<T: IntoGEMObject> Clone for ObjectRef<T> {
+> +    fn clone(&self) -> Self {
+> +        self.reference()
+> +    }
+> +}
+> +
+> +impl<T: IntoGEMObject> Drop for ObjectRef<T> {
+> +    fn drop(&mut self) {
+> +        // SAFETY: Having an ObjectRef implies holding a GEM reference.
+> +        // The free callback will take care of deallocation.
+> +        unsafe {
+> +            bindings::drm_gem_object_put((*self.ptr).gem_obj());
+> +        }
+> +    }
+> +}
+> +
+> +impl<T: IntoGEMObject> Deref for ObjectRef<T> {
+> +    type Target = T;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        // SAFETY: The pointer is valid per the invariant
+> +        unsafe { &*self.ptr }
+> +    }
+> +}
+> +
+> +/// A unique reference to a base GEM object.
+> +pub struct UniqueObjectRef<T: IntoGEMObject> {
+> +    // Invariant: the pointer is valid and initialized, and this ObjectRef owns the only reference
+> +    // to it.
+> +    ptr: *mut T,
+> +}
+> +
+> +impl<T: IntoGEMObject> UniqueObjectRef<T> {
+> +    /// Downgrade this reference to a shared reference.
+> +    pub fn into_ref(self) -> ObjectRef<T> {
+> +        let ptr = self.ptr as *const _;
+> +        core::mem::forget(self);
+> +
+> +        ObjectRef { ptr }
+> +    }
+> +}
+> +
+> +impl<T: IntoGEMObject> Drop for UniqueObjectRef<T> {
+> +    fn drop(&mut self) {
+> +        // SAFETY: Having a UniqueObjectRef implies holding a GEM
+> +        // reference. The free callback will take care of deallocation.
+> +        unsafe {
+> +            bindings::drm_gem_object_put((*self.ptr).gem_obj());
+> +        }
+> +    }
+> +}
+> +
+> +impl<T: IntoGEMObject> Deref for UniqueObjectRef<T> {
+> +    type Target = T;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        // SAFETY: The pointer is valid per the invariant
+> +        unsafe { &*self.ptr }
+> +    }
+> +}
+> +
+> +impl<T: IntoGEMObject> DerefMut for UniqueObjectRef<T> {
+> +    fn deref_mut(&mut self) -> &mut Self::Target {
+> +        // SAFETY: The pointer is valid per the invariant
+> +        unsafe { &mut *self.ptr }
+> +    }
+> +}
+> +
+> +pub(super) fn create_fops() -> bindings::file_operations {
+> +    bindings::file_operations {
+> +        owner: core::ptr::null_mut(),
+> +        open: Some(bindings::drm_open),
+> +        release: Some(bindings::drm_release),
+> +        unlocked_ioctl: Some(bindings::drm_ioctl),
+> +        #[cfg(CONFIG_COMPAT)]
+> +        compat_ioctl: Some(bindings::drm_compat_ioctl),
+> +        #[cfg(not(CONFIG_COMPAT))]
+> +        compat_ioctl: None,
+> +        poll: Some(bindings::drm_poll),
+> +        read: Some(bindings::drm_read),
+> +        llseek: Some(bindings::noop_llseek),
+> +        mmap: Some(bindings::drm_gem_mmap),
+> +        ..Default::default()
+> +    }
+> +}
+> diff --git a/rust/kernel/drm/mod.rs b/rust/kernel/drm/mod.rs
+> index a767942d0b52..c44760a1332f 100644
+> --- a/rust/kernel/drm/mod.rs
+> +++ b/rust/kernel/drm/mod.rs
+> @@ -5,4 +5,5 @@
+>  pub mod device;
+>  pub mod drv;
+>  pub mod file;
+> +pub mod gem;
+>  pub mod ioctl;
+> 
+> -- 
+> 2.35.1
+> 
 
-This work was originally authored by Sean Christopherson a few years ago,
-and was modified to work with more recent kernels, and to utilize the
-misc cgroup controller rather than a custom controller. It is currently
-based on top of the MCA patches.
-
-Here's the MCA patchset for reference.
-https://lore.kernel.org/linux-sgx/2d52c8c4-8ed0-6df2-2911-da5b9fcc9ae4@inte=
-l.com/T/#t
-
-The patchset adds support for multiple LRUs to track both reclaimable
-EPC pages (i.e. pages the reclaimer knows about), as well as unreclaimable
-EPC pages (i.e. pages which the reclaimer isn't aware of, such as va pages)=
-.
-These pages are assigned to an LRU, as well as an enclave, so that an
-enclave's full EPC usage can be tracked, and limited to a max value. During
-OOM events, an enclave can be have its memory zapped, and all the EPC pages
-not tracked by the reclaimer can be freed.
-
-I appreciate your comments and feedback.
-
-Changelog:
-
-v2:
- * rename struct sgx_epc_lru to sgx_epc_lru_lists to be more clear
-   that this struct contains 2 lists.
- * use inline functions rather than macros for sgx_epc_page_list*
-   wrappers.
- * Remove flags macros and open code all flags.
- * Improve the commit message for RECLAIM_IN_PROGRESS patch to make
-   it more clear what the patch does.
- * remove notifier_block from misc cgroup changes and use a set
-   of ops for callbacks instead.
- * rename root_misc to misc_cg_root and parent_misc to misc_cg_parent
- * consolidate misc cgroup changes to 2 patches and remove most of
-   the previous helper functions.
-
-Kristen Carlson Accardi (7):
-  x86/sgx: Add 'struct sgx_epc_lru_lists' to encapsulate lru list(s)
-  x86/sgx: Use sgx_epc_lru_lists for existing active page list
-  x86/sgx: Track epc pages on reclaimable or unreclaimable lists
-  cgroup/misc: Add per resource callbacks for css events
-  cgroup/misc: Prepare for SGX usage
-  x86/sgx: Add support for misc cgroup controller
-  Docs/x86/sgx: Add description for cgroup support
-
-Sean Christopherson (11):
-  x86/sgx: Call cond_resched() at the end of sgx_reclaim_pages()
-  x86/sgx: Store struct sgx_encl when allocating new VA pages
-  x86/sgx: Introduce RECLAIM_IN_PROGRESS flag for EPC pages
-  x86/sgx: Use a list to track to-be-reclaimed pages during reclaim
-  x86/sgx: Allow reclaiming up to 32 pages, but scan 16 by default
-  x86/sgx: Return the number of EPC pages that were successfully
-    reclaimed
-  x86/sgx: Add option to ignore age of page during EPC reclaim
-  x86/sgx: Prepare for multiple LRUs
-  x86/sgx: Expose sgx_reclaim_pages() for use by EPC cgroup
-  x86/sgx: Add helper to grab pages from an arbitrary EPC LRU
-  x86/sgx: Add EPC OOM path to forcefully reclaim EPC
-
- Documentation/x86/sgx.rst            |  77 ++++
- arch/x86/Kconfig                     |  13 +
- arch/x86/kernel/cpu/sgx/Makefile     |   1 +
- arch/x86/kernel/cpu/sgx/encl.c       |  90 ++++-
- arch/x86/kernel/cpu/sgx/encl.h       |   4 +-
- arch/x86/kernel/cpu/sgx/epc_cgroup.c | 539 +++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/epc_cgroup.h |  59 +++
- arch/x86/kernel/cpu/sgx/ioctl.c      |  14 +-
- arch/x86/kernel/cpu/sgx/main.c       | 412 ++++++++++++++++----
- arch/x86/kernel/cpu/sgx/sgx.h        | 122 +++++-
- arch/x86/kernel/cpu/sgx/virt.c       |  28 +-
- include/linux/misc_cgroup.h          |  35 ++
- kernel/cgroup/misc.c                 |  76 +++-
- 13 files changed, 1341 insertions(+), 129 deletions(-)
- create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.c
- create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.h
-
---
-2.38.1
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
