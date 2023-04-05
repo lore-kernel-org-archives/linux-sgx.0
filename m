@@ -2,58 +2,59 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12430C7619A
-	for <linux-sgx@archiver.kernel.org>; Wed,  5 Apr 2023 12:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0F3C7619A
+	for <linux-sgx@archiver.kernel.org>; Wed,  5 Apr 2023 12:36:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237912AbjDEMdn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 5 Apr 2023 08:33:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45098 "EHLO
+        id S238047AbjDEMgu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 5 Apr 2023 08:36:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237787AbjDEMdm (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 5 Apr 2023 08:33:42 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04BBC2D43
-        for <linux-sgx@vger.kernel.org>; Wed,  5 Apr 2023 05:33:40 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-5005c57f95cso43694a12.1
-        for <linux-sgx@vger.kernel.org>; Wed, 05 Apr 2023 05:33:39 -0700 (PDT)
+        with ESMTP id S238043AbjDEMgt (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 5 Apr 2023 08:36:49 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E681F3ABD
+        for <linux-sgx@vger.kernel.org>; Wed,  5 Apr 2023 05:36:47 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-5002f12ccfeso43448a12.0
+        for <linux-sgx@vger.kernel.org>; Wed, 05 Apr 2023 05:36:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1680698018; x=1683290018;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mLn0ogcl0BF5IqyMl3PAUGbH0jpqq1AyfGbugR/InEw=;
-        b=Kj+iccolbVQfKM6jZP2rJr6vvKgZMe4H0SxVgfuZYTm3PnXPF0cVqAqxe80FPLqr+F
-         L2MfX8A/pL0ohBy6Oshpt/8+orS19AKvmmkHGmmxImCIAvDHKY0BgnTDUZGzcVxDepO9
-         EUSOhBxht69OnVyx6WqSCLMw6BX1kJjJ9TuYE=
+        d=ffwll.ch; s=google; t=1680698206; x=1683290206;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E6iWx9EB6J3L8iIop1bmZ+pNlziIEisMA1uL8RnykGc=;
+        b=Mhpu4CDBYYy7UnbecnwaJGBwUWEJJZkdvrEefXyX2r+r4FENpB1qkR+tX4rIEcLLNc
+         HUVfqZlrktiiC1UivQlXrKHRQSwPD9fmbGSjOmWfxRDbCoEgopYVA0XuQ3TzQrDsGHl8
+         V/sMzxOY9dAQhT6ShYmtLicdzfCt+/18NkPTo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680698018; x=1683290018;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mLn0ogcl0BF5IqyMl3PAUGbH0jpqq1AyfGbugR/InEw=;
-        b=DycnAeVrzr5VsqhuAeK77805x2PhCVHlYlObWvPXn1Mj3ycd1KUDmBQPbuXBjleo1U
-         fwTlmUHRZuasK2izIBWh00MrEMKXClbJZ3QA8FPz3/wLoY1e9ILYcZJ75r8mB/r8dp8N
-         rxFzTw6St6Che2XTe4+et0sw7XWqPVfZxgwFmMZ4Yz8ybj1Bl5r/qiKtoYxxZSpZtbJe
-         dXWRf0lzbppUApjXHQqC+fr54KsW/un7ZWA7RnIBhiymWmrDeVZI0VUhW3bhl2jCXdt7
-         D5xdmuNiELTEYgRFpfs4hENZ+5fLz4+WrubfeXvw7xBXs70dtb8iYZ8EUBiG3KTuq8Up
-         MnBA==
-X-Gm-Message-State: AAQBX9fuS1sJDE2TqIXDi8JRHSXsITkvO7gTQPBMKzG4g3/0581MXbsK
-        qYhTau4YilSXjEjUnxniYbPWlg==
-X-Google-Smtp-Source: AKy350ZhdduIanzLnwpHgJZbwRaxsW16jBrBpTeCLciV2XUS3BdaanzgWlA2CYXsm/8QSGFPkEXSjA==
-X-Received: by 2002:a05:6402:34c8:b0:502:367:d5b8 with SMTP id w8-20020a05640234c800b005020367d5b8mr1906388edc.4.1680698018440;
-        Wed, 05 Apr 2023 05:33:38 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680698206; x=1683290206;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E6iWx9EB6J3L8iIop1bmZ+pNlziIEisMA1uL8RnykGc=;
+        b=vFzwQoWlReCXlgcQ0aR7mfuWtwxLNYqgh46gfeFjfxRz0+wEHiOCN1LcMC/wb3DAps
+         DnyegKfsfehMKitglPtssiKG1/24tsgXuOxNuJTT1XiWU1sUl0TpYr60KU9MCefsJOND
+         i4zIQ1sq1GzImR+qpYf5BFiOcP6i4jTvXE88GUQz3rV40fzopztUDenUYIEWf0ENln2b
+         uvfbq4TWYIq72+3FqH/d8LffZdgy65IZ8hq8UGAsK6bSzsdNidzZIeyYdec/pGYxRgPf
+         X2uCWxh0grAaxaeI8AqY96CUORPk6QHEfvXL/YapRf6cfg11dT+KfrUXDPXLsC7VF/Ui
+         ElHA==
+X-Gm-Message-State: AAQBX9fmKc6YtATEXhRr3lQzEpiuV68X7l7ofqGzZmGluY6v+uLhv2Iw
+        9vWivtM9HHQAojsfsrFmoYNZUw==
+X-Google-Smtp-Source: AKy350YIBJGEKIbnfG5Qb41ZqY8oW3SBwxFUxtFvD5haG8Sd7EjZxbYnmEZUvlkuPcFwlyaw2lVQPg==
+X-Received: by 2002:a05:6402:d0e:b0:502:e50:3358 with SMTP id eb14-20020a0564020d0e00b005020e503358mr1779099edb.3.1680698206345;
+        Wed, 05 Apr 2023 05:36:46 -0700 (PDT)
 Received: from phenom.ffwll.local (212-51-149-33.fiber7.init7.net. [212.51.149.33])
-        by smtp.gmail.com with ESMTPSA id l2-20020a170906938200b00948a57aac08sm3761007ejx.204.2023.04.05.05.33.37
+        by smtp.gmail.com with ESMTPSA id q16-20020a50aa90000000b004af6c5f1805sm7265301edc.52.2023.04.05.05.36.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 05:33:37 -0700 (PDT)
-Date:   Wed, 5 Apr 2023 14:33:35 +0200
+        Wed, 05 Apr 2023 05:36:45 -0700 (PDT)
+Date:   Wed, 5 Apr 2023 14:36:43 +0200
 From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Asahi Lina <lina@asahilina.net>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Asahi Lina <lina@asahilina.net>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
         Miguel Ojeda <ojeda@kernel.org>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@gmail.com>,
@@ -71,11 +72,12 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        linux-sgx@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH RFC 09/18] rust: drm: syncobj: Add DRM Sync Object
- abstraction
-Message-ID: <ZC1qn/VCVpudivh9@phenom.ffwll.local>
-Mail-Followup-To: Asahi Lina <lina@asahilina.net>,
+        linux-sgx@vger.kernel.org, asahi@lists.linux.dev,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH RFC 04/18] rust: drm: gem: Add GEM object abstraction
+Message-ID: <ZC1rW+ZktoC9fBaX@phenom.ffwll.local>
+Mail-Followup-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Asahi Lina <lina@asahilina.net>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
@@ -98,204 +100,92 @@ Mail-Followup-To: Asahi Lina <lina@asahilina.net>,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
 References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-9-917ff5bc80a8@asahilina.net>
+ <20230307-rust-drm-v1-4-917ff5bc80a8@asahilina.net>
+ <ZC1WwJDr1iqSQnYs@phenom.ffwll.local>
+ <CANiq72=h9qKrpkY2K962__rs-JLsmWxPXocx040ZeDSKGf_Brw@mail.gmail.com>
+ <ZC1aEZpgZLkq8xTv@phenom.ffwll.local>
+ <CANiq72=hoVw566orbDYcJyw2+SFfxpR1rdJVbbR3kkrjJUASww@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230307-rust-drm-v1-9-917ff5bc80a8@asahilina.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72=hoVw566orbDYcJyw2+SFfxpR1rdJVbbR3kkrjJUASww@mail.gmail.com>
 X-Operating-System: Linux phenom 6.1.0-7-amd64 
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Mar 07, 2023 at 11:25:34PM +0900, Asahi Lina wrote:
-> DRM Sync Objects are a container for a DMA fence, and can be waited on
-> signaled, exported, and imported from userspace. Add a Rust abstraction
-> so Rust DRM drivers can support this functionality.
+On Wed, Apr 05, 2023 at 02:32:12PM +0200, Miguel Ojeda wrote:
+> On Wed, Apr 5, 2023 at 1:23 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > Ok if this is just interim I think it's fine. Would still be good to have
+> > the MAINTAINERS entry though even just to cover the interim state. Least
+> > because I'm assuming that when things are split up you'd still want to
+> > keep the rust list on cc for the rust parts, even when they move into
+> > subsystems?
 > 
-> Signed-off-by: Asahi Lina <lina@asahilina.net>
-> ---
->  rust/bindings/bindings_helper.h |  1 +
->  rust/helpers.c                  | 19 ++++++++++
->  rust/kernel/drm/mod.rs          |  1 +
->  rust/kernel/drm/syncobj.rs      | 77 +++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 98 insertions(+)
+> Sorry, I missed to reply the second part of your email -- replying here.
 > 
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index 705af292a5b4..b6696011f3a4 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -12,6 +12,7 @@
->  #include <drm/drm_gem.h>
->  #include <drm/drm_gem_shmem_helper.h>
->  #include <drm/drm_ioctl.h>
-> +#include <drm/drm_syncobj.h>
->  #include <linux/delay.h>
->  #include <linux/device.h>
->  #include <linux/dma-fence.h>
-> diff --git a/rust/helpers.c b/rust/helpers.c
-> index 8e906a7a7d8a..11965b1e2f4e 100644
-> --- a/rust/helpers.c
-> +++ b/rust/helpers.c
-> @@ -20,6 +20,7 @@
->  
->  #include <drm/drm_gem.h>
->  #include <drm/drm_gem_shmem_helper.h>
-> +#include <drm/drm_syncobj.h>
->  #include <linux/bug.h>
->  #include <linux/build_bug.h>
->  #include <linux/device.h>
-> @@ -461,6 +462,24 @@ __u64 rust_helper_drm_vma_node_offset_addr(struct drm_vma_offset_node *node)
->  }
->  EXPORT_SYMBOL_GPL(rust_helper_drm_vma_node_offset_addr);
->  
-> +void rust_helper_drm_syncobj_get(struct drm_syncobj *obj)
-> +{
-> +	drm_syncobj_get(obj);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_drm_syncobj_get);
-> +
-> +void rust_helper_drm_syncobj_put(struct drm_syncobj *obj)
-> +{
-> +	drm_syncobj_put(obj);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_drm_syncobj_put);
-> +
-> +struct dma_fence *rust_helper_drm_syncobj_fence_get(struct drm_syncobj *syncobj)
-> +{
-> +	return drm_syncobj_fence_get(syncobj);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_drm_syncobj_fence_get);
-> +
->  #ifdef CONFIG_DRM_GEM_SHMEM_HELPER
->  
->  void rust_helper_drm_gem_shmem_object_free(struct drm_gem_object *obj)
-> diff --git a/rust/kernel/drm/mod.rs b/rust/kernel/drm/mod.rs
-> index 73fab2dee3af..dae98826edfd 100644
-> --- a/rust/kernel/drm/mod.rs
-> +++ b/rust/kernel/drm/mod.rs
-> @@ -8,3 +8,4 @@ pub mod file;
->  pub mod gem;
->  pub mod ioctl;
->  pub mod mm;
-> +pub mod syncobj;
-> diff --git a/rust/kernel/drm/syncobj.rs b/rust/kernel/drm/syncobj.rs
-> new file mode 100644
-> index 000000000000..10eed05eb27a
-> --- /dev/null
-> +++ b/rust/kernel/drm/syncobj.rs
-> @@ -0,0 +1,77 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +
-> +//! DRM Sync Objects
-> +//!
-> +//! C header: [`include/linux/drm/drm_syncobj.h`](../../../../include/linux/drm/drm_syncobj.h)
-> +
-> +use crate::{bindings, dma_fence::*, drm, error::Result, prelude::*};
-> +
-> +/// A DRM Sync Object
-> +///
-> +/// # Invariants
-> +/// ptr is a valid pointer to a drm_syncobj and we own a reference to it.
-> +pub struct SyncObj {
-> +    ptr: *mut bindings::drm_syncobj,
-> +}
-> +
-> +impl SyncObj {
-> +    /// Looks up a sync object by its handle for a given `File`.
-> +    pub fn lookup_handle(file: &impl drm::file::GenericFile, handle: u32) -> Result<SyncObj> {
-> +        // SAFETY: The arguments are all valid per the type invariants.
-> +        let ptr = unsafe { bindings::drm_syncobj_find(file.raw() as *mut _, handle) };
+> Currently, the subsystem's code is under `rust/` (though modules can
+> go already into other folders). One of the reasons was technical
+> simplicity, and a nice side effect is that we could bootstrap things
+> while getting C maintainers involved over time.
+> 
+> To accomplish that, the guidelines for contributing Rust code are that
+> the respective maintainers need to be at least Cc'd, even if the files
+> do not hit the `F:` fields for the time being -- see [1]. But, for us,
+> ideally, the maintainers will take the changes through their tree,
+> instead of going through the Rust one, since that is the end goal.
+> 
+> And, of course, if you already want to have `F:` fields for the Rust
+> code, that is even better! (Whether those should be in the same entry
+> or in a new one, it is up to you, of course, and whether it is a
+> different set of people / level of support / etc.)
+> 
+> Then, when the `kernel` crate split happens, we can move the code
+> directly under whatever folders it should be naturally, when their
+> maintainers are ready. For some subsystems, that may mean they do not
+> need any `F:` fields since they are already covered (e.g. if they did
+> not create a new entry for Rust code only). And for cases like yours,
+> where you already had `F:` fields, it means the move of the files can
+> be done right away as soon as the split happens.
+> 
+> In short, we would definitely welcome if you add `F:` fields already
+> (whether in existing or new entries) -- it would mean you are ahead of
+> the curve! :)
+> 
+> As for the mailing list, yes, for the time being, I ask that all
+> changes to please be sent to the Rust list, so that everybody that
+> wants to follow the Rust progress has everything in a single place, so
+> that we try to remain consistent in the beginning on e.g. coding
+> guidelines, so that Rust reviewers can help spot mistakes, and so on
+> and so forth.
+> 
+> But, as Rust grows in the kernel, as systems become non-experimental,
+> and as maintainers take ownership of the code, that should eventually
+> go away and let things be as usual with C code. Then the Rust
+> subsystem (and its list) will become smaller, and it will be the
+> subsystem (and the discussion place) for anything not covered by other
+> subsystems, such as core Rust abstractions and types, Rust
+> infrastructure and so on.
+> 
+> How does that sound?
 
-Just an aside, but the semantics of this are nasty: You're not allowed to
-hold any locks while calling this. We have runtime checks for that (if you
-enable lockdep), but I don't see any way to encode that on the rust side
-and check it at compile time :-/
+Yeah sounds all great!
 
-> +
-> +        if ptr.is_null() {
-> +            Err(ENOENT)
-> +        } else {
-> +            Ok(SyncObj { ptr })
-> +        }
-> +    }
-> +
-> +    /// Returns the DMA fence associated with this sync object, if any.
-> +    pub fn fence_get(&self) -> Option<Fence> {
-> +        let fence = unsafe { bindings::drm_syncobj_fence_get(self.ptr) };
-> +        if fence.is_null() {
-> +            None
-> +        } else {
-> +            // SAFETY: The pointer is non-NULL and drm_syncobj_fence_get acquired an
-> +            // additional reference.
-> +            Some(unsafe { Fence::from_raw(fence) })
-> +        }
-> +    }
-> +
-> +    /// Replaces the DMA fence with a new one, or removes it if fence is None.
-> +    pub fn replace_fence(&self, fence: Option<&Fence>) {
-> +        unsafe {
-> +            bindings::drm_syncobj_replace_fence(
-> +                self.ptr,
-> +                fence.map_or(core::ptr::null_mut(), |a| a.raw()),
-> +            )
-> +        };
-> +    }
-> +
-> +    /// Adds a new timeline point to the syncobj.
-> +    pub fn add_point(&self, chain: FenceChain, fence: &Fence, point: u64) {
-> +        // SAFETY: All arguments should be valid per the respective type invariants.
-> +        // This takes over the FenceChain ownership.
-> +        unsafe { bindings::drm_syncobj_add_point(self.ptr, chain.into_raw(), fence.raw(), point) };
-> +    }
-> +}
-> +
-> +impl Drop for SyncObj {
-> +    fn drop(&mut self) {
-> +        // SAFETY: We own a reference to this syncobj.
-> +        unsafe { bindings::drm_syncobj_put(self.ptr) };
-> +    }
-> +}
-> +
-> +impl Clone for SyncObj {
-> +    fn clone(&self) -> Self {
-> +        // SAFETY: `ptr` is valid per the type invariant and we own a reference to it.
-> +        unsafe { bindings::drm_syncobj_get(self.ptr) };
-
-So yeah syncobj are refcounted because they're shareable uapi objects (you
-can pass them around as fd), but that really should be entirely the
-subsystems business, not for drivers.
-
-This is kinda like drm_file, which is also refcounted (by virtue of
-hanging of struct file), but the refcounting is entirely handled by the
-vfs and all drivers get is a borrowed reference, which nicely bounds the
-lifetime to the callback (which is usually an ioctl handler). I think we
-want the same semantics for syncobj, because if a driver is hanging onto a
-syncobj for longer than the ioctl. If my rust understanding is right we'd
-get that by dropping Clone here and relying on lookup_handle only being
-able to return stuff that's bound by the drm_file?
-
-People are talking about drivers holding onto syncobj for longer, but I'm
-still not sold on the idea that this is any good and doesn't just bend the
-dma_fence and syncobj rules a bit too much over the breaking point. For
-kernel drivers it really should be just a different way to lookup and
-return dma_fence from the ioctl, pretty much matching what you could also
-do with sync_file (but since syncobj provides generic compat ioctl to
-convert to/from sync_file drivders only need to handle syncobj).
+I think interim at least a separate rust drm entry
+would be good, to make sure we always cc both rust and dri-devel. Once
+it's too much for you and you generally trust the dri-devel folks to not
+design stupid interfaces, we can then drop that and only ping rust folks
+when needed. I do expect that's some years out though.
 -Daniel
 
-
-> +        SyncObj { ptr: self.ptr }
-> +    }
-> +}
-> +
-> +// SAFETY: drm_syncobj operations are internally locked.
-> +unsafe impl Sync for SyncObj {}
-> +unsafe impl Send for SyncObj {}
 > 
-> -- 
-> 2.35.1
+> [1] https://rust-for-linux.com/contributing#the-rust-subsystem (I may
+> reorganize this to be Rust's `P:` field, by the way)
 > 
+> Cheers,
+> Miguel
 
 -- 
 Daniel Vetter
