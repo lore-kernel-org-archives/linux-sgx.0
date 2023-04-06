@@ -2,57 +2,58 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CF5C76196
-	for <linux-sgx@archiver.kernel.org>; Thu,  6 Apr 2023 13:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37BD3C76196
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Apr 2023 14:15:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238342AbjDFNy2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 6 Apr 2023 09:54:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60118 "EHLO
+        id S239000AbjDFOP3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 6 Apr 2023 10:15:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237615AbjDFNyZ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 6 Apr 2023 09:54:25 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BBB493D2
-        for <linux-sgx@vger.kernel.org>; Thu,  6 Apr 2023 06:54:23 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-502aa0f24daso150189a12.1
-        for <linux-sgx@vger.kernel.org>; Thu, 06 Apr 2023 06:54:22 -0700 (PDT)
+        with ESMTP id S230064AbjDFOP2 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 6 Apr 2023 10:15:28 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D40DC7D9A
+        for <linux-sgx@vger.kernel.org>; Thu,  6 Apr 2023 07:15:23 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-93abb185e13so16600866b.0
+        for <linux-sgx@vger.kernel.org>; Thu, 06 Apr 2023 07:15:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1680789261;
+        d=ffwll.ch; s=google; t=1680790522; x=1683382522;
         h=in-reply-to:content-disposition:mime-version:references
          :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6IAw+w9FZQ7jDjRJq27qAY9c4XuwhViWVLB/Lio4RVQ=;
-        b=KUt1ik1nEQ7opDVbPc0+qo1l68PyDK102Q81UoQaowFU8oZQnUfLRTEOuJ9PSGKkF9
-         1A++BO2vwnWo6oGsrOMP/rydGG7O9rF5mope4P/Qj/zFDIW2ytENDapXtkf6DwjeImGW
-         MHY6SgpblxvywBYjXMGqP2wvATzKf0VPUDBZ8=
+        bh=9gUOzXpvbqkBTPvEq29bi5UEXn+lSYh1aCGbwW1ujfg=;
+        b=OS5wJj+iePq2BSMN+rP4D+kVR6a3XuxxakMa+YW5JrUrkY2ZxpHA4EEPRWgF6D52D/
+         IvJBJ0DPMm1mINA4He+EpIBSDB3MFCQAcLhiNTGRL+pY09JOZYg35M5NCE6pNYme9GOW
+         pzuFuf5n0Zf4qI+A06V9wx77kCMr4KZIMJ384=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680789261;
+        d=1e100.net; s=20210112; t=1680790522; x=1683382522;
         h=in-reply-to:content-disposition:mime-version:references
          :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6IAw+w9FZQ7jDjRJq27qAY9c4XuwhViWVLB/Lio4RVQ=;
-        b=qv7S6hBIK7GvhCkj7rrGXkUIk72EX67KigHdfMiH/WSPBKZBkZrLlCRGU7ZRrOgW3c
-         STIGX1TRXW+WWM27rNrhHT5WNBpL19pLuHEVzaousmSrFuV/PmFES1bUB/HN1bDy5N6a
-         96QsygS0c3Gu6nv5fRSoYysDhS5r9VqNfItJR8zY2EzruJBhGdQAEXgA+9K8k+rnjUBm
-         jiumURgtB6HAO4KCXryCCccAN5pv5mcWIbqEoH1vrqA8cXplR6vQZdnYwSAyuR5Av/7o
-         mu7cpgp4cjji4DBjAh9g+E3dl7biHIMiCzzS/1WBNtv/IqzscUXRZsrgwyfO7tHdaJX5
-         +RRQ==
-X-Gm-Message-State: AAQBX9dglbhPA/OjEkXZpWi+yp/ss/k9pIcTIAgifBv1xCIKAe3f3YwR
-        izJYMcq3FrQ4tkMcnKtvnzJVew==
-X-Google-Smtp-Source: AKy350ZFFNJj4gsovzONFkSByKDMlu/5sletbJfi957R7h+pF/JrehHotXoowZWg8fkRD5nMlej5Mg==
-X-Received: by 2002:a17:906:3f12:b0:947:8734:a058 with SMTP id c18-20020a1709063f1200b009478734a058mr4982175ejj.4.1680789261344;
-        Thu, 06 Apr 2023 06:54:21 -0700 (PDT)
+        bh=9gUOzXpvbqkBTPvEq29bi5UEXn+lSYh1aCGbwW1ujfg=;
+        b=WmlWyMHFk3y5T8ddtrs6ESoSjjs5YfUDCy7/Q8NOnqUANTjCUM2AlsJbSJmvqQitwx
+         q9+UnXGwmAcxZJhHAUIzlK7AzwI/6HP1r8UBmkNy+gnByBOB1JdOay7c7DS42lKRhFe3
+         tm8s5gfk/VYwneHS7te89Qfxe/3s71SZ8n81bP6j5ZyWn3FcUTu5iAp+jE3LAEcWh1VE
+         SzRd6MhejdA+IeWKMdY2D7Wshd7/QWIbZ8P8sBSpF4UhLM4SXW/vJiZ6FLR4W/k0SzQb
+         iJuPfQslXyAy9uvzgS6uD8S7QdixP97TacGyMqEv1E8PggZPzxzfbPrGJrjwzDnb529e
+         zb5g==
+X-Gm-Message-State: AAQBX9chbwTUQZKBsYvnjGW9/wf77DIBwkMiukYB81PlFn4NamIzspsa
+        q3B6RV9IDf7z/xk9C5MZUAJvWQ==
+X-Google-Smtp-Source: AKy350ZTHRZsrKlVcRMLXYYBq7XW32LPfEB461PDGrrSj0ir1getkI4aPU6HRwaRZS99zrUJYHeWFg==
+X-Received: by 2002:a17:906:51cd:b0:931:5145:c51f with SMTP id v13-20020a17090651cd00b009315145c51fmr4793748ejk.4.1680790522200;
+        Thu, 06 Apr 2023 07:15:22 -0700 (PDT)
 Received: from phenom.ffwll.local (212-51-149-33.fiber7.init7.net. [212.51.149.33])
-        by smtp.gmail.com with ESMTPSA id e4-20020a17090681c400b00925ce7c7705sm839581ejx.162.2023.04.06.06.54.20
+        by smtp.gmail.com with ESMTPSA id i19-20020a170906091300b00923f05b2931sm865012ejd.118.2023.04.06.07.15.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Apr 2023 06:54:20 -0700 (PDT)
-Date:   Thu, 6 Apr 2023 15:54:18 +0200
+        Thu, 06 Apr 2023 07:15:21 -0700 (PDT)
+Date:   Thu, 6 Apr 2023 16:15:19 +0200
 From:   Daniel Vetter <daniel@ffwll.ch>
 To:     Asahi Lina <lina@asahilina.net>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Miguel Ojeda <ojeda@kernel.org>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@gmail.com>,
@@ -71,15 +72,14 @@ Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
         dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [Linaro-mm-sig] Re: [PATCH RFC 18/18] drm/asahi: Add the Asahi
- driver for Apple AGX GPUs
-Message-ID: <ZC7PClluoKmfCMn6@phenom.ffwll.local>
+Subject: Re: [PATCH RFC 07/18] rust: drm: mm: Add DRM MM Range Allocator
+ abstraction
+Message-ID: <ZC7T92F7K9XTZPZ1@phenom.ffwll.local>
 Mail-Followup-To: Asahi Lina <lina@asahilina.net>,
-        David Airlie <airlied@gmail.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Miguel Ojeda <ojeda@kernel.org>,
+        David Airlie <airlied@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
@@ -98,143 +98,436 @@ Mail-Followup-To: Asahi Lina <lina@asahilina.net>,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
 References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-18-917ff5bc80a8@asahilina.net>
- <ZC2JPR3fGm0uE9yW@phenom.ffwll.local>
- <6200f93d-6d95-5d03-cc1c-22d7924d66eb@asahilina.net>
- <ZC6sPBuH3vz7vMO2@phenom.ffwll.local>
- <5330cde5-2d04-200f-d606-5467f20a5f7f@asahilina.net>
+ <20230307-rust-drm-v1-7-917ff5bc80a8@asahilina.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5330cde5-2d04-200f-d606-5467f20a5f7f@asahilina.net>
+In-Reply-To: <20230307-rust-drm-v1-7-917ff5bc80a8@asahilina.net>
 X-Operating-System: Linux phenom 6.1.0-7-amd64 
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 10:32:29PM +0900, Asahi Lina wrote:
-> On 06/04/2023 20.25, Daniel Vetter wrote:
-> > On Thu, Apr 06, 2023 at 02:02:55PM +0900, Asahi Lina wrote:
-> > > On 05/04/2023 23.44, Daniel Vetter wrote:
-> > > > On Tue, Mar 07, 2023 at 11:25:43PM +0900, Asahi Lina wrote:
-> > > > > +/// Look up a GEM object handle for a `File` and return an `ObjectRef` for it.
-> > > > > +pub(crate) fn lookup_handle(file: &DrmFile, handle: u32) -> Result<ObjectRef> {
-> > > > > +    Ok(ObjectRef::new(shmem::Object::lookup_handle(file, handle)?))
-> > > > > +}
-> > > > 
-> > > > So maybe my expectations for rust typing is a bit too much, but I kinda
-> > > > expected this to be fully generic:
-> > > > 
-> > > > - trait Driver (drm_driver) knows the driver's object type
-> > > > - a generic create_handle function could ensure that for drm_file (which
-> > > >     is always for a specific drm_device and hence Driver) can ensure at the
-> > > >     type level that you only put the right objects into the drm_file
-> > > > - a generic lookup_handle function on the drm_file knows the Driver trait
-> > > >     and so can give you back the right type right away.
-> > > > 
-> > > > Why the wrapping, what do I miss?
-> > > 
-> > > Sigh, so this is one of the many ways I'm trying to work around the "Rust
-> > > doesn't do subclasses" problem (so we can figure out what the best one is
-> > > ^^).
-> > > 
-> > > The generic shmem::Object::lookup_handle() call *is* fully generic and will
-> > > get you back a driver-specific object. But since Rust doesn't do
-> > > subclassing, what you get back isn't a driver-specific type T, but rather a
-> > > (reference to a) shmem::Object<T>. T represents the inner driver-specific
-> > > data/functionality (only), and the outer shmem::Object<T> includes the
-> > > actual drm_gem_shmem_object plus a T. This is backwards from C, where you
-> > > expect the opposite situation where T contains a shmem object, but that just
-> > > doesn't work with Rust because there's no way to build a safe API around
-> > > that model as far as I know.
-> > 
-> > Ah I think I just got confused. I did untangle (I think at least) the
-> > Object<T> trick, I guess the only thing that confused me here is why this
-> > is in the shmem module? Or is that the rust problem again?
-> > 
-> > I'd kinda have expected that we'd have a gem::Object<T> here that the
-> > lookup_handle function returns. So for the shmem case I guess that would
-> > then be gem::Object<shmem::Object<T>> for the driver type T with driver
-> > specific stuff? I guess not very pretty ...
+On Tue, Mar 07, 2023 at 11:25:32PM +0900, Asahi Lina wrote:
+> drm_mm provides a simple range allocator, useful for managing virtual
+> address ranges. Add a Rust abstraction to expose this module to Rust
+> drivers.
 > 
-> Ahh, uh... Yeah, so shmem objects are allocated their own way (the shmem
-> core expects to kfree them in drm_gem_shmem_free) and
-> bindings::drm_gem_shmem_object already contains a bindings::drm_gem_object.
-> Since the composition is already done in the C side, we can't just do it
-> again in Rust cleanly. That's why I have this weird setup with both a common
-> trait for common GEM functionality and separate actual types that both
-> implement it.
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
 
-Hm this is annoying. For a single driver it doesn't matter, but I do
-expect that once we have more, and especially once we have more libraries
-wrapped (ttm, gpuva, execbuf submit helpers, ...) then the common glue
-really becomes the gem_bo for many of these things.
+In the cover letter you mentioned the design open about embedded the lock
+into the rust wrappers.
 
-Could we have a GemObject trait which covers this? sole function is an
-unsafe one that gives you the raw C pointer :-) It still means that every
-gem memory manager library needs to impl that trait, but all the
-manager-agnostic bits in the wrappers would be generic? trait would then
-also have the right dependent type to ensure type safety in all this.
+I think for a first step that's perfectly fine.
 
-Maybe something to discuss in the next meeting with the rust folks.
+Longer term we might want to ramp up some "proof of locking"
+infrastructure in Rust, where callers can supply a lock guard and ideally
+rust validates at compile time that it's for the right type, and at
+runtime (like lockdep) that it's consistent and the callers don't mix up
+locks (like using different locks for the same drm_mm allocator).
 
-> Honestly the whole GEM codepath is untested other than the bits inherited by
-> shmem. I'm not sure I'll be able to verify that this all makes sense until
-> another Rust driver comes along that needs something other than shmem. I
-> just felt I had to do *something* for GEM since the hierarchy is there and I
-> needed shmem...
+There's a lot of libraries in the kernel that have this "caller ensures
+locking" pattern. drm/sched also has these requirements.
+
+There's two other things I'd like to bring up on this patch though, just
+because it's a good example. But they're both really general points that
+apply for all the rust wrappers.
+
+Documentation:
+
+In drm we try to document all the interfaces that drivers use with formal
+docs. Yes there's some areas that are not great for historical reasons,
+but for new stuff and new wrappers we're really trying:
+
+- This helps in telling internal (even across .c files or in rust across
+  modules within a crate) from stuff drivers access. Sure you have static
+  in C or pub in rust, but that doesn't tell you whether it's public all
+  the way to drivers.
+
+- ideally docs have a short intro section that explains the main concepts
+  and links to the main data structures and functions. Just to give
+  readers a good starting point to explore.
+
+- Linking all the things, so that readers can connect the different parts.
+  This is really important in C where e.g. get/put() or any such function
+  pairs all needed to be linked together. With rust I'm hoping that
+  rustdoc liberally sprinkles links already and we don't have to do this
+  as much.
+
+- Short explainers for parameters. For rust this also means type
+  parameters, for those even simplified examples of how drivers are
+  supposed to use them would help a lot in reading docs & understanding
+  concepts.
+
+- Ideally links from the rust to the sphinx side to linke relevant
+  chapters together. Often the bigger explanations are in .rst files with
+  DOT graphs (kms has a bunch I've added) or similar, and it doesn't make
+  that much sense to duplicate all that on the rust side I guess. But it
+  needs to be discoverable.
+
+This might be more a discussion topic for the rust people than you
+directly. Still needed for the merge-ready patches eventually.
+
+Refcounting vs borrowing:
+
+This is honestly much more the eyebrow raising one than the locking. Very
+often on the C side these datastructures all work with borrow semantics,
+and you need to explicitly upgrade to a full reference (kref_get or
+kref_get_unless_zero, depending whether it's a strong or weak reference)
+if you need the object outside of the mutex/lock guard section.
+
+Again I think for now it's ok, but the sales pitch of rust is that it
+enables borrow lifetime checking with no runtime cost. Plus viz the vm
+cleanup example, if you have too many strong backreferences the cleanup
+flow gets complicated. And it would suck if rust drivers have to add
+complexity like the openrefcount for the vm example simply because we
+can't model the borrow semantics well enough to be safe.
+
+So not something that's really bad here, but if we need to resort to full
+refcounting already for simple datastructures then I'm getting a bit
+worried about how well rust will cope with the really nasty borrowed
+reference tricks we're playing in other areas.
+
+Again more a topic for the rust folks I think than specifically here about
+drm_mm wrapping. Just to get things going I think this is fine.
+
+Cheers, Daniel
+
+
+> ---
+>  rust/kernel/drm/mm.rs  | 309 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/drm/mod.rs |   1 +
+>  2 files changed, 310 insertions(+)
 > 
-> This whole gem stuff is IMO the messiest part of the abstractions though, so
-> I'm happy to turn it on its head if it makes it better and someone has an
-> idea of how to do that ^^
-
-Yeah I still haven't worked up enough courage to type up my gem
-abstraction review :-/
-
-> > > Now the problem is from the higher layers I want object operations that
-> > > interact with the shmem::Object<T> (that is, they call generic GEM functions
-> > > on the object). Options so far:
-> > > 
-> > > 1. Add an outer wrapper and put that functionality there.
-> > > 2. Just have the functions on T as helpers, so you need to call T::foo(obj)
-> > > instead of obj.foo().
-> > > 3. Use the undocumented method receiver trait thing to make shmem::Object<T>
-> > > a valid `self` type, plus add auto-Deref to shmem::Object. Then obj.foo()
-> > > works.
-> > > 
-> > > #1 is what I use here. #2 is how the driver-specific File ioctl callbacks
-> > > are implemented, and also sched::Job<T>. #3 is used for fence callbacks
-> > > (FenceObject<T>). None of them are great, and I'd love to hear what people
-> > > think of the various options...
-> > > 
-> > > There are other unexplored options, like in this GEM case it could be
-> > > covered with a driver-internal auxiliary trait impl'd on shmem::Object<T>
-> > > buuut that doesn't work when you actually need callbacks on T itself to
-> > > circle back to shmem::Object<T>, as is the case with File/Job/FenceObject.
-> > 
-> > Ok I think I'm completely lost here. But I also havent' looked at how this
-> > is all really used in the driver, it's really just the shmem:: module in
-> > the lookup_handle function which looked strange to me.
+> diff --git a/rust/kernel/drm/mm.rs b/rust/kernel/drm/mm.rs
+> new file mode 100644
+> index 000000000000..83e27a7dcc7e
+> --- /dev/null
+> +++ b/rust/kernel/drm/mm.rs
+> @@ -0,0 +1,309 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +
+> +//! DRM MM range allocator
+> +//!
+> +//! C header: [`include/linux/drm/drm_mm.h`](../../../../include/linux/drm/drm_mm.h)
+> +
+> +use crate::{
+> +    bindings,
+> +    error::{to_result, Result},
+> +    str::CStr,
+> +    sync::{Arc, LockClassKey, LockIniter, Mutex, UniqueArc},
+> +    types::Opaque,
+> +};
+> +
+> +use alloc::boxed::Box;
+> +
+> +use core::{
+> +    marker::{PhantomData, PhantomPinned},
+> +    ops::Deref,
+> +    pin::Pin,
+> +};
+> +
+> +/// Type alias representing a DRM MM node.
+> +pub type Node<A, T> = Pin<Box<NodeData<A, T>>>;
+> +
+> +/// Trait which must be implemented by the inner allocator state type provided by the user.
+> +pub trait AllocInner<T> {
+> +    /// Notification that a node was dropped from the allocator.
+> +    fn drop_object(&mut self, _start: u64, _size: u64, _color: usize, _object: &mut T) {}
+> +}
+> +
+> +impl<T> AllocInner<T> for () {}
+> +
+> +/// Wrapper type for a `struct drm_mm` plus user AllocInner object.
+> +///
+> +/// # Invariants
+> +/// The `drm_mm` struct is valid and initialized.
+> +struct MmInner<A: AllocInner<T>, T>(Opaque<bindings::drm_mm>, A, PhantomData<T>);
+> +
+> +/// Represents a single allocated node in the MM allocator
+> +pub struct NodeData<A: AllocInner<T>, T> {
+> +    node: bindings::drm_mm_node,
+> +    mm: Arc<Mutex<MmInner<A, T>>>,
+> +    valid: bool,
+> +    /// A drm_mm_node needs to be pinned because nodes reference each other in a linked list.
+> +    _pin: PhantomPinned,
+> +    inner: T,
+> +}
+> +
+> +// SAFETY: Allocator ops take the mutex, and there are no mutable actions on the node.
+> +unsafe impl<A: Send + AllocInner<T>, T: Send> Send for NodeData<A, T> {}
+> +unsafe impl<A: Send + AllocInner<T>, T: Sync> Sync for NodeData<A, T> {}
+> +
+> +/// Available MM node insertion modes
+> +#[repr(u32)]
+> +pub enum InsertMode {
+> +    /// Search for the smallest hole (within the search range) that fits the desired node.
+> +    ///
+> +    /// Allocates the node from the bottom of the found hole.
+> +    Best = bindings::drm_mm_insert_mode_DRM_MM_INSERT_BEST,
+> +
+> +    /// Search for the lowest hole (address closest to 0, within the search range) that fits the
+> +    /// desired node.
+> +    ///
+> +    /// Allocates the node from the bottom of the found hole.
+> +    Low = bindings::drm_mm_insert_mode_DRM_MM_INSERT_LOW,
+> +
+> +    /// Search for the highest hole (address closest to U64_MAX, within the search range) that fits
+> +    /// the desired node.
+> +    ///
+> +    /// Allocates the node from the top of the found hole. The specified alignment for the node is
+> +    /// applied to the base of the node (`Node.start()`).
+> +    High = bindings::drm_mm_insert_mode_DRM_MM_INSERT_HIGH,
+> +
+> +    /// Search for the most recently evicted hole (within the search range) that fits the desired
+> +    /// node. This is appropriate for use immediately after performing an eviction scan and removing
+> +    /// the selected nodes to form a hole.
+> +    ///
+> +    /// Allocates the node from the bottom of the found hole.
+> +    Evict = bindings::drm_mm_insert_mode_DRM_MM_INSERT_EVICT,
+> +}
+> +
+> +/// A clonable, interlocked reference to the allocator state.
+> +///
+> +/// This is useful to perform actions on the user-supplied `AllocInner<T>` type given just a Node,
+> +/// without immediately taking the lock.
+> +#[derive(Clone)]
+> +pub struct InnerRef<A: AllocInner<T>, T>(Arc<Mutex<MmInner<A, T>>>);
+> +
+> +impl<A: AllocInner<T>, T> InnerRef<A, T> {
+> +    /// Operate on the user `AllocInner<T>` implementation, taking the lock.
+> +    pub fn with<RetVal>(&self, cb: impl FnOnce(&mut A) -> RetVal) -> RetVal {
+> +        let mut l = self.0.lock();
+> +        cb(&mut l.1)
+> +    }
+> +}
+> +
+> +impl<A: AllocInner<T>, T> NodeData<A, T> {
+> +    /// Returns the color of the node (an opaque value)
+> +    pub fn color(&self) -> usize {
+> +        self.node.color as usize
+> +    }
+> +
+> +    /// Returns the start address of the node
+> +    pub fn start(&self) -> u64 {
+> +        self.node.start
+> +    }
+> +
+> +    /// Returns the size of the node in bytes
+> +    pub fn size(&self) -> u64 {
+> +        self.node.size
+> +    }
+> +
+> +    /// Operate on the user `AllocInner<T>` implementation associated with this node's allocator.
+> +    pub fn with_inner<RetVal>(&self, cb: impl FnOnce(&mut A) -> RetVal) -> RetVal {
+> +        let mut l = self.mm.lock();
+> +        cb(&mut l.1)
+> +    }
+> +
+> +    /// Return a clonable, detached reference to the allocator inner data.
+> +    pub fn alloc_ref(&self) -> InnerRef<A, T> {
+> +        InnerRef(self.mm.clone())
+> +    }
+> +
+> +    /// Return a mutable reference to the inner data.
+> +    pub fn inner_mut(self: Pin<&mut Self>) -> &mut T {
+> +        // SAFETY: This is okay because inner is not structural
+> +        unsafe { &mut self.get_unchecked_mut().inner }
+> +    }
+> +}
+> +
+> +impl<A: AllocInner<T>, T> Deref for NodeData<A, T> {
+> +    type Target = T;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        &self.inner
+> +    }
+> +}
+> +
+> +impl<A: AllocInner<T>, T> Drop for NodeData<A, T> {
+> +    fn drop(&mut self) {
+> +        if self.valid {
+> +            let mut guard = self.mm.lock();
+> +
+> +            // Inform the user allocator that a node is being dropped.
+> +            guard
+> +                .1
+> +                .drop_object(self.start(), self.size(), self.color(), &mut self.inner);
+> +            // SAFETY: The MM lock is still taken, so we can safely remove the node.
+> +            unsafe { bindings::drm_mm_remove_node(&mut self.node) };
+> +        }
+> +    }
+> +}
+> +
+> +/// An instance of a DRM MM range allocator.
+> +pub struct Allocator<A: AllocInner<T>, T> {
+> +    mm: Arc<Mutex<MmInner<A, T>>>,
+> +    _p: PhantomData<T>,
+> +}
+> +
+> +impl<A: AllocInner<T>, T> Allocator<A, T> {
+> +    /// Create a new range allocator for the given start and size range of addresses.
+> +    ///
+> +    /// The user may optionally provide an inner object representing allocator state, which will
+> +    /// be protected by the same lock. If not required, `()` can be used.
+> +    pub fn new(
+> +        start: u64,
+> +        size: u64,
+> +        inner: A,
+> +        name: &'static CStr,
+> +        lock_key: &'static LockClassKey,
+> +    ) -> Result<Allocator<A, T>> {
+> +        // SAFETY: We call `Mutex::init_lock` below.
+> +        let mut mm: Pin<UniqueArc<Mutex<MmInner<A, T>>>> = UniqueArc::try_new(unsafe {
+> +            Mutex::new(MmInner(Opaque::uninit(), inner, PhantomData))
+> +        })?
+> +        .into();
+> +
+> +        mm.as_mut().init_lock(name, lock_key);
+> +
+> +        unsafe {
+> +            // SAFETY: The Opaque instance provides a valid pointer, and it is initialized after
+> +            // this call.
+> +            bindings::drm_mm_init(mm.lock().0.get(), start, size);
+> +        }
+> +
+> +        Ok(Allocator {
+> +            mm: mm.into(),
+> +            _p: PhantomData,
+> +        })
+> +    }
+> +
+> +    /// Insert a new node into the allocator of a given size.
+> +    ///
+> +    /// `node` is the user `T` type data to store into the node.
+> +    pub fn insert_node(&mut self, node: T, size: u64) -> Result<Node<A, T>> {
+> +        self.insert_node_generic(node, size, 0, 0, InsertMode::Best)
+> +    }
+> +
+> +    /// Insert a new node into the allocator of a given size, with configurable alignment,
+> +    /// color, and insertion mode.
+> +    ///
+> +    /// `node` is the user `T` type data to store into the node.
+> +    pub fn insert_node_generic(
+> +        &mut self,
+> +        node: T,
+> +        size: u64,
+> +        alignment: u64,
+> +        color: usize,
+> +        mode: InsertMode,
+> +    ) -> Result<Node<A, T>> {
+> +        self.insert_node_in_range(node, size, alignment, color, 0, u64::MAX, mode)
+> +    }
+> +
+> +    /// Insert a new node into the allocator of a given size, with configurable alignment,
+> +    /// color, insertion mode, and sub-range to allocate from.
+> +    ///
+> +    /// `node` is the user `T` type data to store into the node.
+> +    #[allow(clippy::too_many_arguments)]
+> +    pub fn insert_node_in_range(
+> +        &mut self,
+> +        node: T,
+> +        size: u64,
+> +        alignment: u64,
+> +        color: usize,
+> +        start: u64,
+> +        end: u64,
+> +        mode: InsertMode,
+> +    ) -> Result<Node<A, T>> {
+> +        let mut mm_node = Box::try_new(NodeData {
+> +            // SAFETY: This C struct should be zero-initialized.
+> +            node: unsafe { core::mem::zeroed() },
+> +            valid: false,
+> +            inner: node,
+> +            mm: self.mm.clone(),
+> +            _pin: PhantomPinned,
+> +        })?;
+> +
+> +        let guard = self.mm.lock();
+> +        // SAFETY: We hold the lock and all pointers are valid.
+> +        to_result(unsafe {
+> +            bindings::drm_mm_insert_node_in_range(
+> +                guard.0.get(),
+> +                &mut mm_node.node,
+> +                size,
+> +                alignment,
+> +                color as core::ffi::c_ulong,
+> +                start,
+> +                end,
+> +                mode as u32,
+> +            )
+> +        })?;
+> +
+> +        mm_node.valid = true;
+> +
+> +        Ok(Pin::from(mm_node))
+> +    }
+> +
+> +    /// Insert a node into the allocator at a fixed start address.
+> +    ///
+> +    /// `node` is the user `T` type data to store into the node.
+> +    pub fn reserve_node(
+> +        &mut self,
+> +        node: T,
+> +        start: u64,
+> +        size: u64,
+> +        color: usize,
+> +    ) -> Result<Node<A, T>> {
+> +        let mut mm_node = Box::try_new(NodeData {
+> +            // SAFETY: This C struct should be zero-initialized.
+> +            node: unsafe { core::mem::zeroed() },
+> +            valid: false,
+> +            inner: node,
+> +            mm: self.mm.clone(),
+> +            _pin: PhantomPinned,
+> +        })?;
+> +
+> +        mm_node.node.start = start;
+> +        mm_node.node.size = size;
+> +        mm_node.node.color = color as core::ffi::c_ulong;
+> +
+> +        let guard = self.mm.lock();
+> +        // SAFETY: We hold the lock and all pointers are valid.
+> +        to_result(unsafe { bindings::drm_mm_reserve_node(guard.0.get(), &mut mm_node.node) })?;
+> +
+> +        mm_node.valid = true;
+> +
+> +        Ok(Pin::from(mm_node))
+> +    }
+> +
+> +    /// Operate on the inner user type `A`, taking the allocator lock
+> +    pub fn with_inner<RetVal>(&self, cb: impl FnOnce(&mut A) -> RetVal) -> RetVal {
+> +        let mut guard = self.mm.lock();
+> +        cb(&mut guard.1)
+> +    }
+> +}
+> +
+> +impl<A: AllocInner<T>, T> Drop for MmInner<A, T> {
+> +    fn drop(&mut self) {
+> +        // SAFETY: If the MmInner is dropped then all nodes are gone (since they hold references),
+> +        // so it is safe to tear down the allocator.
+> +        unsafe {
+> +            bindings::drm_mm_takedown(self.0.get());
+> +        }
+> +    }
+> +}
+> +
+> +// MmInner is safely Send if the AllocInner user type is Send.
+> +unsafe impl<A: Send + AllocInner<T>, T> Send for MmInner<A, T> {}
+> diff --git a/rust/kernel/drm/mod.rs b/rust/kernel/drm/mod.rs
+> index c44760a1332f..73fab2dee3af 100644
+> --- a/rust/kernel/drm/mod.rs
+> +++ b/rust/kernel/drm/mod.rs
+> @@ -7,3 +7,4 @@ pub mod drv;
+>  pub mod file;
+>  pub mod gem;
+>  pub mod ioctl;
+> +pub mod mm;
 > 
-> Ah, sorry, I misunderstood what you were talking about in my previous email
-> then. That's just a default trait function. It comes from common
-> functionality in the gem module, but shmem::Object implements the trait so
-> it ends up offering it too (lookup_handle() is not duplicated, it only lives
-> in gem, shmem only has to implement going to/from the drm_gem_object pointer
-> so the rest of the methods can use it). That's part of why the type/trait
-> hierarchy is kind of messy here, it's so I can share functionality between
-> both types even though they are pre-composed on the C side.
+> -- 
+> 2.35.1
+> 
 
-Ok, so it's all already what I expect and I'm just confused with rust
-syntax.
-
-> In the end the object types are specialized for any given driver, so you're
-> always getting your own unique kind of object anyway. It's just that drivers
-> based on shmem will go through it to reach the common code and work with a
-> shmem::Object<T>, and drivers using raw gem will use gem::Object<T> instead.
-
-Ok, sounds all good.
--Daniel
 -- 
 Daniel Vetter
 Software Engineer, Intel Corporation
