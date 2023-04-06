@@ -2,64 +2,58 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5223C76188
-	for <linux-sgx@archiver.kernel.org>; Wed,  5 Apr 2023 19:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7C8C7618D
+	for <linux-sgx@archiver.kernel.org>; Thu,  6 Apr 2023 04:44:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233160AbjDET3K (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 5 Apr 2023 15:29:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50548 "EHLO
+        id S234789AbjDFEol (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 6 Apr 2023 00:44:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232191AbjDET3J (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 5 Apr 2023 15:29:09 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C86B46181
-        for <linux-sgx@vger.kernel.org>; Wed,  5 Apr 2023 12:29:06 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-947a47eb908so59785866b.0
-        for <linux-sgx@vger.kernel.org>; Wed, 05 Apr 2023 12:29:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1680722945;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HjS4xiLUH8Vl6mwX+ydicDNhQfS/HlIJ5pcb18flIFA=;
-        b=FBmtIvVfM4pGQI0Ecn5kpWqT9ewv/aw4Fo78eRrx1HwuZBp4iXUV5H057Luk2hvw2u
-         ulz9ur/hM3WMIFn4fbzHBA2uvVARF0Kv0zsR5L7enELuauqiMc0abH4qMusRV/lI+9z6
-         rMCS6thBW9YJ4KbSlkrUTkyEBTGwzwnZC74V4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680722945;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HjS4xiLUH8Vl6mwX+ydicDNhQfS/HlIJ5pcb18flIFA=;
-        b=YBjC9DZjkfoL9sBZFPwAicjSNTaov5e9wp5Fjn54vHELzE/Pj+tNJvOZClvUaQRQY9
-         HbWuSw+LUmbCXb8dP4alJ785Sx0KlRyTx/v6LVtCi2bd2K/SjPC6l6NpWU7qMWUkiYCU
-         Vf9zAZDVsnh8urZLbJfcJakIs6Imv6PZ4cPJR8qvyXvYmKaMo/GuD19VrMCy4tWCbfar
-         L52do/H5YpC/w36bUVjc2jJA5dAaM3dcv9F+E9lggq3yHSCCa49MGRYfrI8AvHCpiyt3
-         PRbLRG9RjE9AgFdfjpUS8PGgt8sTr9EsOrHK1PV9wTTgSID4YTuGLOJm/iO8QCHaw+BM
-         f6Qw==
-X-Gm-Message-State: AAQBX9fAJwOyUegpEJtj01TmZL82JyK9+gxIiXicQLlfl7tOZb+LchCb
-        SA9BOHWqfG+8FGAlo8NviqSYUA==
-X-Google-Smtp-Source: AKy350YXaXE3UsMcWjKsIKz3/lGkR1neWBZc+WNbMetS2a0zQrsKbODyiNsB5M3OyGWh53lfa89J9Q==
-X-Received: by 2002:a05:6402:524e:b0:500:3fd0:25a8 with SMTP id t14-20020a056402524e00b005003fd025a8mr3953373edd.0.1680722945234;
-        Wed, 05 Apr 2023 12:29:05 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-33.fiber7.init7.net. [212.51.149.33])
-        by smtp.gmail.com with ESMTPSA id cq5-20020a056402220500b005023ddb37eesm7596632edb.8.2023.04.05.12.29.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 12:29:04 -0700 (PDT)
-Date:   Wed, 5 Apr 2023 21:29:02 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Asahi Lina <lina@asahilina.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        with ESMTP id S234940AbjDFEoi (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 6 Apr 2023 00:44:38 -0400
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFF7E9ED8;
+        Wed,  5 Apr 2023 21:44:33 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: lina@asahilina.net)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id 93DFC4245E;
+        Thu,  6 Apr 2023 04:44:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+        s=default; t=1680756271;
+        bh=3ATn2J/vFlxbAJnulfzHHynd+iDH6ftF3NoRMRHpd10=;
+        h=Date:Subject:To:References:From:Cc:In-Reply-To;
+        b=FRbmxLHhRTWqrN/GypKdRiUsgh9NYpncpVBbLlPDfLlj91fKVeulR6Db7qEvbctc/
+         bDA1i26jPfonskgiaBpg5IKqNBmPdrzjYcW+pGVgNjc3HmUCo8TiejCmT36elq90//
+         1nveTSM3znRqSb5WBokJazPOZUAabEeLwcUCARuDLfE8POgzOu4uT+pGCKKOsCyDzU
+         gLH+/vBFGNhfMfmYhLpja9wISm7Wa2/wF1CyYGM1P7Q187CBKvak0P9P/vBfFt7HeV
+         b0QeK2jkPmmNU0NKWVZxyojAqfWXQLvZT7ota3vOZysTLXquMi8zVegLgmicRywF7c
+         CZO4+Twgg3FXw==
+Message-ID: <8d28f1d3-14b0-78c5-aa16-e81e2a8a3685@asahilina.net>
+Date:   Thu, 6 Apr 2023 13:44:22 +0900
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH RFC 18/18] drm/asahi: Add the Asahi driver for Apple AGX
+ GPUs
+Content-Language: en-US
+To:     David Airlie <airlied@gmail.com>
+References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
+ <20230307-rust-drm-v1-18-917ff5bc80a8@asahilina.net>
+ <ZC2HtBOaoUAzVCVH@phenom.ffwll.local>
+From:   Asahi Lina <lina@asahilina.net>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>,
         Miguel Ojeda <ojeda@kernel.org>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+        =?UTF-8?Q?Bj=c3=b6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
         Luben Tuikov <luben.tuikov@amd.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -71,81 +65,115 @@ To:     Asahi Lina <lina@asahilina.net>,
         dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         linux-sgx@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH RFC 12/18] rust: drm: sched: Add GPU scheduler abstraction
-Message-ID: <ZC3L/uinmOwI+FbI@phenom.ffwll.local>
-Mail-Followup-To: Asahi Lina <lina@asahilina.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Luben Tuikov <luben.tuikov@amd.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Karol Herbst <kherbst@redhat.com>,
-        Ella Stanforth <ella@iglunix.org>,
-        Faith Ekstrand <faith.ekstrand@collabora.com>,
-        Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
-        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        linux-sgx@vger.kernel.org, asahi@lists.linux.dev
-References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
- <20230307-rust-drm-v1-12-917ff5bc80a8@asahilina.net>
- <ZC2XBfJGAdNMQjpZ@phenom.ffwll.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZC2XBfJGAdNMQjpZ@phenom.ffwll.local>
-X-Operating-System: Linux phenom 6.1.0-7-amd64 
+In-Reply-To: <ZC2HtBOaoUAzVCVH@phenom.ffwll.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Apr 05, 2023 at 05:43:01PM +0200, Daniel Vetter wrote:
-> On Tue, Mar 07, 2023 at 11:25:37PM +0900, Asahi Lina wrote:
-> > +/// An armed DRM scheduler job (not yet submitted)
-> > +pub struct ArmedJob<'a, T: JobImpl>(Box<Job<T>>, PhantomData<&'a T>);
-> > +
-> > +impl<'a, T: JobImpl> ArmedJob<'a, T> {
-> > +    /// Returns the job fences
-> > +    pub fn fences(&self) -> JobFences<'_> {
-> > +        JobFences(unsafe { &mut *self.0.job.s_fence })
-> > +    }
-> > +
-> > +    /// Push the job for execution into the scheduler
-> > +    pub fn push(self) {
-> > +        // After this point, the job is submitted and owned by the scheduler
-> > +        let ptr = match self {
-> > +            ArmedJob(job, _) => Box::<Job<T>>::into_raw(job),
-> > +        };
+On 05/04/2023 23.37, Daniel Vetter wrote:
+> On Tue, Mar 07, 2023 at 11:25:43PM +0900, Asahi Lina wrote:
+>> +/// A generic monotonically incrementing ID used to uniquely identify object instances within the
+>> +/// driver.
+>> +pub(crate) struct ID(AtomicU64);
+>> +
+>> +impl ID {
+>> +    /// Create a new ID counter with a given value.
+>> +    fn new(val: u64) -> ID {
+>> +        ID(AtomicU64::new(val))
+>> +    }
+>> +
+>> +    /// Fetch the next unique ID.
+>> +    pub(crate) fn next(&self) -> u64 {
+>> +        self.0.fetch_add(1, Ordering::Relaxed)
+>> +    }
+>> +}
 > 
-> If I get this all right then this all makes sure that drivers can't use
-> the job after push and they don't forgot to call arm.
+> Continuing the theme of me commenting on individual things, I stumbled
+> over this because I noticed that there's a lot of id based lookups where I
+> don't expect them, and started chasing.
 > 
-> What I'm not seeing is how we force drivers to call push once they've
-> called arm? I haven't check what the code does, but from the docs it
-> sounds like if you don't call push then drop will get called. Which wreaks
-> the book-keeping on an armed job. Or is there someting that prevents
-> ArmedJob<T> from having the Drop trait and so the only way to not go boom
-> is by pushing it?
+> - For ids use xarray, not atomic counters. Yes I know dma_fence timelines
+>    gets this wrong, this goes back to an innocent time where we didn't
+>    allocate more than one timeline per engine, and no one fixed it since
+>    then. Yes u64 should be big enough for everyone :-/
 > 
-> Googling for "rust undroppable" seems to indicate that this isn't a thing
-> rust can do?
+> - Attaching ID spaces to drm_device is also not great. drm is full of
+>    these mistakes. Much better if their per drm_file and so private to each
+>    client.
+> 
+> - They shouldn't be used for anything else than uapi id -> kernel object
+>    lookup at the beginning of ioctl code, and nowhere else. At least from
+>    skimming it seems like these are used all over the driver codebase,
+>    which does freak me out. At least on the C side that's a clear indicator
+>    for a refcount/lockin/data structure model that's not thought out at
+>    all.
+> 
+> What's going on here, what do I miss?
 
-Another thing that I just realized: The driver must ensure that the
-arm->push sequence on a given drm_sched_entity isn't interrupte by another
-thread doing the same, i.e. you need to wrap it all in a lock, and it
-always needs to be the same lock for a given entity.
+These aren't UAPI IDs, they are driver-internal IDs (the UAPI IDs do use 
+xarray and are per-File). Most of them are just for debugging, so that 
+when I enable full debug spam I have some way to correlate different 
+things that are happening together (this subset of interleaved log lines 
+relate to the same submission). Basically just object names that are 
+easier to read (and less of a security leak) than pointers and 
+guaranteed not to repeat. You could get rid of most of them and it 
+wouldn't affect the driver design, it just makes it very hard to see 
+what's going on with debug logs ^^;
 
-I have no idea how to guarantee that, but I guess somehow we should?
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+There are only two that are ever used for non-debugging purposes: the VM 
+ID, and the File ID. Both are per-device global IDs attached to the VMs 
+(not the UAPI VM objects, but rather the underlyng MMU address space 
+managers they represent, including the kernel-internal ones) and to 
+Files themselves. They are used for destroying GEM objects: since the 
+objects are also device-global across multiple clients, I need a way to 
+do things like "clean up all mappings for this File" or "clean up all 
+mappings for this VM". There's an annoying circular reference between 
+GEM objects and their mappings, which is why this is explicitly coded 
+out in destroy paths instead of naturally happening via Drop semantics 
+(without that cleanup code, the circular reference leaks it).
+
+So e.g. when a File does a GEM close or explicitly asks for all mappings 
+of an object to be removed, it goes out to the (possibly shared) GEM 
+object and tells it to drop all mappings marked as owned by that unique 
+File ID. When an explicit "unmap all in VM" op happens, it asks the GEM 
+object to drop all mappings for that underlying VM ID. Similarly, when a 
+UAPI VM object is dropped (in the Drop impl, so both explicitly and when 
+the whole File/xarray is dropped and such), that does an explicit unmap 
+of a special dummy object it owns which would otherwise leak since it is 
+not tracked as a GEM object owned by that File and therefore not handled 
+by GEM closing. And again along the same lines, the allocators in 
+alloc.rs explicitly destroy the mappings for their backing GEM objects 
+on Drop. All this is due to that annoying circular reference between VMs 
+and GEM objects that I'm not sure how to fix.
+
+Note that if I *don't* do this (or forget to do it somewhere) the 
+consequence is just that we leak memory, and if you try to destroy the 
+wrong IDs somehow the worst that can happen is you unmap things you 
+shouldn't and fault the GPU (or, in the kernel or kernel-managed user VM 
+cases, potentially the firmware). Rust safety guarantees still keep 
+things from going entirely off the rails within the kernel, since 
+everything that matters is reference counted (which is why these 
+reference cycles are possible at all).
+
+This all started when I was looking at the panfrost driver for 
+reference. It does the same thing except it uses actual pointers to the 
+owning entities instead of IDs, and pointer comparison (see 
+panfrost_gem_close). Of course you could try do that in Rust too 
+(literally storing and comparing raw pointers that aren't owned 
+references), but then you're introducing a Pin<> requirement on those 
+objects to make their addresses stable and it feels way more icky and 
+error-prone than unique IDs (since addresses can be reused). panfrost 
+only has a single mmu (what I call the raw VM) per File while I have an 
+arbitrary number, which is why I end up with the extra 
+distinction/complexity of both File and VM IDs, but the concept is the same.
+
+Some of this is going to be refactored when I implement arbitrary VM 
+range mapping/unmapping, which would be a good time to improve this... 
+but is there something particularly wrong/broken about the way I'm doing 
+it now that I missed? I figured unique u64 IDs would be a pretty safe 
+way to identify entities and cleanup the mappings when needed.
+
+~~ Lina
+
