@@ -2,258 +2,233 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85982C77B6E
-	for <linux-sgx@archiver.kernel.org>; Thu, 13 Apr 2023 18:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0DBC77B72
+	for <linux-sgx@archiver.kernel.org>; Fri, 14 Apr 2023 23:27:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230369AbjDMSuH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 13 Apr 2023 14:50:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41688 "EHLO
+        id S229941AbjDNX11 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 14 Apr 2023 19:27:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230355AbjDMSt6 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 13 Apr 2023 14:49:58 -0400
-Received: from DM6FTOPR00CU001.outbound.protection.outlook.com (mail-cusazon11020021.outbound.protection.outlook.com [52.101.61.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C04DC139;
-        Thu, 13 Apr 2023 11:49:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XhF4r8LyxKxAXtPa6NwRpaDxqRpSTcOTKjRtKJ8svfn0F1Gqg6dmaUtNPwO0UFkm/G4cVQ/WvuFeEzQsbiFZZRjlmXjfZF7ArBxm9R65LwIYEWgPAwxQjLz5ECAZ8A488uGnV1bexdp4jiSDGvbFod15+isZjuSJxUFV3QNfHXznY/o5Ss07nEwa7YKUBN41/PFQzBLFpr5o6OQeFwQT/9fyXR9oyuqAWvvEm6GCYUrVth/o98qDBGnxcru10y5W753fxm65hvF3Yc63IAANzXnqzh06skCdBguywlku7yuQhXcBTKghHK0P+oAb/KvT+Ua93dfbmaSRZdo7YqdPaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zSeU7WM3i7f69mxVCaIcpB3O+Bol8d6mcfXtrac17vo=;
- b=Iu5+AaQvsJMEMDr0cYXszANPrZs/jFn3KU6F2ViwHpgYeWD3Rzi19ed5RAY8yleDY2ZD4JcGyaerI50mHNpf5tMWYKw4MsW4VIbsLhb0ABfLUXfMykgEY69e1WecUotU/Oyix1fHZaIa+0CXijlM3pDFhi7zqZIX28F3ey4chzPX5Ggg35sRepvqOQjl+4jbyZLuUr/Wsys/Q1JKXxdb0wVIEfhkdcKYKrB59qhFRMh4ZQrQExnGMtioQUvSmKEdw3w7OWk5A0UKq9FOPohtVHZMGY9txeVSuUwsC1T8cWnpl0uY5cnIlu/IRuX50AdNfMEqxYzoJw6fPPkaZkURgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zSeU7WM3i7f69mxVCaIcpB3O+Bol8d6mcfXtrac17vo=;
- b=f77AycrcCs3lTk4CIRjUKP60EEYKqKHU3Et69usXMzMGVrv7sXPhm4QuQ4ZCzXlfLuZaoXykc4mosTTt0DmS9uu851Lk6xxoOsua/SJSrL6j4o9dnrAw8vS1a/pdtUpyKmz0Lp1T7ngWLLYBXROXhvWuUNjC9aKfkVUNFqViv2U=
-Received: from DM6PR21MB1177.namprd21.prod.outlook.com (2603:10b6:5:161::25)
- by SJ0PR21MB4025.namprd21.prod.outlook.com (2603:10b6:a03:51a::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.2; Thu, 13 Apr
- 2023 18:49:53 +0000
-Received: from DM6PR21MB1177.namprd21.prod.outlook.com
- ([fe80::2b9a:492c:4c59:444d]) by DM6PR21MB1177.namprd21.prod.outlook.com
- ([fe80::2b9a:492c:4c59:444d%6]) with mapi id 15.20.6319.006; Thu, 13 Apr 2023
- 18:49:53 +0000
-From:   Anand Krishnamoorthi <anakrish@microsoft.com>
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "Bo Zhang (ACC)" <zhanb@microsoft.com>
-CC:     "zhiquan1.li@intel.com" <zhiquan1.li@intel.com>
-Subject: Re: [EXTERNAL] [PATCH v2 00/18]  Add Cgroup support for SGX EPC
- memory
-Thread-Topic: [EXTERNAL] [PATCH v2 00/18]  Add Cgroup support for SGX EPC
- memory
-Thread-Index: AQHZBn0ZUYTbjHaiT0mTf4KgoZqzI68a1mCqgA+Mvpg=
-Date:   Thu, 13 Apr 2023 18:49:53 +0000
-Message-ID: <DM6PR21MB11772A6ED915825854B419D6C4989@DM6PR21MB1177.namprd21.prod.outlook.com>
-References: <20221202183655.3767674-1-kristen@linux.intel.com>
- <DM6PR21MB11778ABA54CD33A5822D5B24C4929@DM6PR21MB1177.namprd21.prod.outlook.com>
-In-Reply-To: <DM6PR21MB11778ABA54CD33A5822D5B24C4929@DM6PR21MB1177.namprd21.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2023-04-13T18:49:52.740Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR21MB1177:EE_|SJ0PR21MB4025:EE_
-x-ms-office365-filtering-correlation-id: d6fec193-727a-4030-bde4-08db3c4fde5b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: CQ+/FarUKmKj2bkbaCJ/z8vbPeXqtqp8+XJNC8t/RBrGHXezVhZMIvFFN7Bw+vcXaY1SpjpLvDMY8uvzxWNUlqdwKbNCTZ5GpcC85B3D7y0U9o4Igx9QZkKsFTrqGddWinwhxjPtygS1BreDemECLOlGBy7nSTanyC1IQUaalStc/A7Ej52UGSJWKXBdCSztKAQ5lFvJSythfSCILhx77xN4KrLh5xXP4PoTeY+jnVqgHZxIoZivWHbPHNSWWHDX6BZMu+Pb96yXnD8Q5C3AGAOj5J+gZSP3wGjCjlQJfnQULgnXvGzI3jKY+D8Sr8rKdzCf662XZaQmBiZ9eO59x9dd4qy0RboIMwq5gJRqmkCzY/EmIglfd2ro31refgb12f84TwhRuhSadAEo2rstG6E9EaB2P8gIkIJeBsaLDEfOluFPAZAQaKEt+XX69LdnLpeBpCNwjpnSj3IPwWc9ZhwwMs6KtGLrqU5PF2+REz266VCthu62T/APWOI6XHEBWxJ/B0xZdebCn1aRvRmITSfEndslwzKZ9kQkBBLAM4k/wiFajS2lGNf5Ye2nT+EXNFKPNSJo9TnwYlsh+DWoXk53dSIqz0InnkPixAd6L5VfAhOMM2G5qdJK/V96tpuy6kz/vGMa+oOBHD3rkkBB6w==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:cs;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR21MB1177.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(346002)(39860400002)(396003)(376002)(366004)(451199021)(71200400001)(8676002)(38100700002)(8936002)(10290500003)(316002)(786003)(64756008)(82960400001)(41300700001)(82950400001)(91956017)(4326008)(66946007)(76116006)(66556008)(66446008)(66476007)(55016003)(6636002)(110136005)(478600001)(122000001)(8990500004)(186003)(33656002)(2906002)(53546011)(9686003)(6506007)(83380400001)(38070700005)(7696005)(966005)(52536014)(5660300002)(86362001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?lRgXp/nQ8N5/iO8WK/lYerzjE7pnm+4CWefoTOxxduletYCUNpuSNvbnAo?=
- =?iso-8859-1?Q?UBAehTh2tBdpNrrgCH3gLRsEtd9HQkQA67C1Qe13BQxIS9Y6zKQtC41osP?=
- =?iso-8859-1?Q?AG/jD4d925QmUjuWK0FE0RV8PTYTg6xCbXj4AXfkkpzbP6gq4umacd8WW5?=
- =?iso-8859-1?Q?behBy4Cq2sVTphV+X8Bt5XP/eDEACHBGmW5G8QAdUCSws/dOiy4jlHPMzK?=
- =?iso-8859-1?Q?2E02cZgMUYIm0sVsUu8fQZoWLo+CL2kSw2AOqIpnnkYyzqASbhBEMscIg5?=
- =?iso-8859-1?Q?f6LHPPdxic7e5dy0RReiuNS9Tjtq2BVvSH3via5ZlwznkzhuR6D69/RT6s?=
- =?iso-8859-1?Q?/pqQ/IcdR63JYliVWKEuG+J/Hcb2Z7kaExoiEIwVMweKAg7G6g7Tl0fdA9?=
- =?iso-8859-1?Q?1UIYyvHs6Gg3/2gvcAJcHXV6Yx82ilSWoTnsZLxmhXout8VyS5Ic/RTjsz?=
- =?iso-8859-1?Q?LCy7aFqDCcjitmt6SBYQWd7a7qUXb4Nmd1bnNNCuKQETItBNE3lqSgmNaV?=
- =?iso-8859-1?Q?Ai8X9hLVnphNSfkamZVbkJXFFHQCEpOnzOT5v9tyRf6U6o/cxZ8Sk1SoFr?=
- =?iso-8859-1?Q?xfafBO9tp7G4LGCg2DFhswC+1sCvPJedee20GKk7er4wGWogIujZVNN68/?=
- =?iso-8859-1?Q?BMjwn/1i/aCjA6LiOZYx+YFPMZFHdZs4pE11GYpXLvoHjgf+/JiX66rQQ4?=
- =?iso-8859-1?Q?ZwikU9GOTm2kGUidL/H5A0E1bpQMPi90iJGoYVMdfH/udikfLqfdmux36R?=
- =?iso-8859-1?Q?vnzdAXF3gd04WdOmUgdqqlKvqfpfVOLIAgIUvhB0XCTpoN11G+QJRZk8iK?=
- =?iso-8859-1?Q?0CnqL3yv2ITOPvJxaqsbjY5kOOJoz1lhPFGehxmQvmikHp1eQCt7tknAGd?=
- =?iso-8859-1?Q?TwAEDEaRtGEt2mIhHITkYIXQHgePr8lhdyD+88Hw/t6H0DC5Ip7WZWn8h0?=
- =?iso-8859-1?Q?VfBPzARZHFFCbKIZEYMyPtg/CcFmd6RbEVxj42lNTMWv60pbyEgxULaSuc?=
- =?iso-8859-1?Q?40n9AaLG8nnMSOiXmaGtcs4uZqMxBI/d/5uUho9Pio0VlSoUv771Gh5zHl?=
- =?iso-8859-1?Q?RsVjx5tabun5NTHifjeauMorfJyALfn9NghDkv5V6wRbTiXVJsiflX3fIj?=
- =?iso-8859-1?Q?YDQD+OpDZiTi+AMWPhYKDHyg2uCr2JgHaZ7vo1MsnU9Xh1pBsZ2OzSZ6Q7?=
- =?iso-8859-1?Q?XXe1zmZ5NEI5d/cQ4v9KuIbGHk9QaYmz0JH8RIlxeCrXmzIYGHu6bEf6d/?=
- =?iso-8859-1?Q?L95Klvn/tfTGR7exC51h1lflA5OVCLTRBGsjzRTrv6b2arkhd60Sr290b5?=
- =?iso-8859-1?Q?Kw6T6fdYShuluReicckigkgaKoPkzU6SF0FqpgOG5mYxu+l4sn6owkSWFp?=
- =?iso-8859-1?Q?Lh4CMQF3pOeA4WlBamcyoPXCd4jC0lmmtiAFtBdgguQzAY6DZ4Wz00thY/?=
- =?iso-8859-1?Q?Stb7M2z+3e1+Uqk2z7IoAzyEF6vWDYX27pC+rA5IiuOBO3ijdwJIEzmDq1?=
- =?iso-8859-1?Q?n/o/ZT7lKQQxbn5VSBOZikl0/5c0biVp83Z6ecmNTjMk/G2JRC89oEWdy5?=
- =?iso-8859-1?Q?phqOErZNklnb/EEXUZinNgYINLqV2DTgoMdmECsjCkadFhBgc5Bq8MMYag?=
- =?iso-8859-1?Q?rhtRMJtuCrTLMf6VyT7jkB++pMRXmcFnuAIml5ddDOJIjTdkNUMlyy1Wex?=
- =?iso-8859-1?Q?XUoTnDSxxN037hze+yjCl00vSr71U9kGdKPMiMbR?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S229574AbjDNX10 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 14 Apr 2023 19:27:26 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 795B319A8;
+        Fri, 14 Apr 2023 16:27:20 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id d8-20020a05600c3ac800b003ee6e324b19so10476559wms.1;
+        Fri, 14 Apr 2023 16:27:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681514839; x=1684106839;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d3R4ddapMeyDJ0P0S2alUCXwvGMhQM5Ib//pYtbrG/w=;
+        b=OrhEO0qzchVPk1vo055ED54OMMZb8uC8IB6ty9ne32vA6q3p/i/Loy2O7ARogcpEXP
+         VMVaphBrhp44h5SgSp3DZ86wOIgWT+rI9JuCyEHkx7RN6GDYQPpHsHBCjO6tnFVQMyyk
+         /ZaQuxTZw3jQdBiWDsQEXE1uUxxaMRv7AZ4rX22q46xssdyqszybHP/3DqZ2pThrTZYp
+         nQDLTIniF9Dx4toFV/cVOV+dNRjoeRZdONRyClaNL5yo6fOkNbB4dSCiRnE9kkJ7B/Gb
+         KdRBGi7M2dCX4QLRY2yfCUnIJWmhHw+cyyRH+ios/xJgAd1HGi7TJIf6/qdIk1pzmf24
+         lsdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681514839; x=1684106839;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d3R4ddapMeyDJ0P0S2alUCXwvGMhQM5Ib//pYtbrG/w=;
+        b=IYLYyA/6IGEqVSIp72edzo/POsHh7LWmTXeghmERq9qu6D7obbdJ/XDutqjD9y5qi+
+         lfqUhGVzQfrMGgBZ+TrhanLjb2mnt40YaNrapfvPEcjutpelu8HcPlAff77qKePbdyVQ
+         g9zlgleZBpN14Iv0qGbKwQaLMPz1pISL5C4l5yMwoZ3liQ0H4bBMEcJ87tGpYgNyOfVj
+         60wD6128k+MjASWw424RstvEcgJyvJ+CqnXRqBOPMW5UdhvToEXwj22Gi/11+Jh+EUYE
+         /A52FjhKGnYuidhW0S8Hmxfb8LPrdWpoWQH1MwyUpltxKhQh4pGHYHzbBc+UXc5pXgdO
+         Up7Q==
+X-Gm-Message-State: AAQBX9cnjnROnjUHMX6CnAisNa4fYNpdDUtY5I5BfQl14uMOzVQFTD/z
+        WGULUrO7phAhmoQbS9Tu2Sc=
+X-Google-Smtp-Source: AKy350ZbMOF2GsyN1dBdwKcvm/6rU6eKdB1U1gytVyqtzlM1SYX7jaGUQR4cn/FTMHkx57m03U4cxA==
+X-Received: by 2002:a7b:c7cd:0:b0:3ed:a82d:dffb with SMTP id z13-20020a7bc7cd000000b003eda82ddffbmr5377441wmk.40.1681514838694;
+        Fri, 14 Apr 2023 16:27:18 -0700 (PDT)
+Received: from lucifer.home (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
+        by smtp.googlemail.com with ESMTPSA id f17-20020adff8d1000000b002ef222822d5sm4546656wrq.74.2023.04.14.16.27.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Apr 2023 16:27:17 -0700 (PDT)
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>
+Subject: [PATCH 1/7] mm/gup: remove unused vmas parameter from get_user_pages()
+Date:   Sat, 15 Apr 2023 00:27:13 +0100
+Message-Id: <d40cb239d0ca01e51f7fc2a276398e8f4dedf9ff.1681508038.git.lstoakes@gmail.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <cover.1681508038.git.lstoakes@gmail.com>
+References: <cover.1681508038.git.lstoakes@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR21MB1177.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6fec193-727a-4030-bde4-08db3c4fde5b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Apr 2023 18:49:53.3519
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DhKO0ko6tVkh0gH9uwfDSEKH+O4mYkaIdqHw2eCBkd/xztdlQT1pBQTUos5qDbChjYY3tg+IE0zRWhvFmmJ99A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR21MB4025
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-For Azure, SGX cgroup support feature is very useful.
-It is needed to enforce the EPC resource limitation of Kubernetes pods on S=
-GX nodes.
+No invocation of get_user_pages() uses the vmas parameter, so remove
+it.
 
-Today, in Azure Kubernetes Service, each pod on SGX node claims a nominal E=
-PC memory requirement. K8s will track the unclaimed EPC memories on SGX nod=
-es to schedule pods.
-However, there's no enforcement on the node whether the pod uses more EPC m=
-emory than what it claims. If EPC is running out on the node, the kernel wi=
-ll do EPC paging, which will cause all pods suffering performance degradati=
-on.
+The GUP API is confusing and caveated. Recent changes have done much to
+improve that, however there is more we can do. Exporting vmas is a prime
+target as the caller has to be extremely careful to preclude their use
+after the mmap_lock has expired or otherwise be left with dangling
+pointers.
 
-Cgroup support for EPC will enforce EPC resource limitation on pod level, s=
-o that when a pod tries to use more EPC than what it claims, it will be EPC=
- paged while other pods are not affected.
+Removing the vmas parameter focuses the GUP functions upon their primary
+purpose - pinning (and outputting) pages as well as performing the actions
+implied by the input flags.
 
--Anand
+This is part of a patch series aiming to remove the vmas parameter
+altogether.
 
-From: Anand Krishnamoorthi <anakrish@microsoft.com>
-Sent: Monday, April 3, 2023 2:26 PM
-To: Kristen Carlson Accardi <kristen@linux.intel.com>; jarkko@kernel.org <j=
-arkko@kernel.org>; dave.hansen@linux.intel.com <dave.hansen@linux.intel.com=
->; tj@kernel.org <tj@kernel.org>; linux-kernel@vger.kernel.org <linux-kerne=
-l@vger.kernel.org>; linux-sgx@vger.kernel.org <linux-sgx@vger.kernel.org>; =
-cgroups@vger.kernel.org <cgroups@vger.kernel.org>; Bo Zhang (ACC) <zhanb@mi=
-crosoft.com>
-Cc: zhiquan1.li@intel.com <zhiquan1.li@intel.com>
-Subject: Re: [EXTERNAL] [PATCH v2 00/18] Add Cgroup support for SGX EPC mem=
-ory
+Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c     | 2 +-
+ drivers/gpu/drm/radeon/radeon_ttm.c | 2 +-
+ drivers/misc/sgi-gru/grufault.c     | 2 +-
+ include/linux/mm.h                  | 3 +--
+ mm/gup.c                            | 9 +++------
+ mm/gup_test.c                       | 5 ++---
+ virt/kvm/kvm_main.c                 | 4 ++--
+ 7 files changed, 11 insertions(+), 16 deletions(-)
 
-Adding Bo Zhang to thread.
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 21ca0a831b70..5d390df21440 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -214,7 +214,7 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
+ 	if (!(vma->vm_flags & VM_MAYEXEC))
+ 		return -EACCES;
+ 
+-	ret = get_user_pages(src, 1, 0, &src_page, NULL);
++	ret = get_user_pages(src, 1, 0, &src_page);
+ 	if (ret < 1)
+ 		return -EFAULT;
+ 
+diff --git a/drivers/gpu/drm/radeon/radeon_ttm.c b/drivers/gpu/drm/radeon/radeon_ttm.c
+index 1e8e287e113c..0597540f0dde 100644
+--- a/drivers/gpu/drm/radeon/radeon_ttm.c
++++ b/drivers/gpu/drm/radeon/radeon_ttm.c
+@@ -362,7 +362,7 @@ static int radeon_ttm_tt_pin_userptr(struct ttm_device *bdev, struct ttm_tt *ttm
+ 		struct page **pages = ttm->pages + pinned;
+ 
+ 		r = get_user_pages(userptr, num_pages, write ? FOLL_WRITE : 0,
+-				   pages, NULL);
++				   pages);
+ 		if (r < 0)
+ 			goto release_pages;
+ 
+diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
+index b836936e9747..378cf02a2aa1 100644
+--- a/drivers/misc/sgi-gru/grufault.c
++++ b/drivers/misc/sgi-gru/grufault.c
+@@ -185,7 +185,7 @@ static int non_atomic_pte_lookup(struct vm_area_struct *vma,
+ #else
+ 	*pageshift = PAGE_SHIFT;
+ #endif
+-	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0, &page, NULL) <= 0)
++	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0, &page) <= 0)
+ 		return -EFAULT;
+ 	*paddr = page_to_phys(page);
+ 	put_page(page);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 5d5ba1556ae9..faeed36c2d04 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2380,8 +2380,7 @@ long pin_user_pages_remote(struct mm_struct *mm,
+ 			   unsigned int gup_flags, struct page **pages,
+ 			   struct vm_area_struct **vmas, int *locked);
+ long get_user_pages(unsigned long start, unsigned long nr_pages,
+-			    unsigned int gup_flags, struct page **pages,
+-			    struct vm_area_struct **vmas);
++		    unsigned int gup_flags, struct page **pages);
+ long pin_user_pages(unsigned long start, unsigned long nr_pages,
+ 		    unsigned int gup_flags, struct page **pages,
+ 		    struct vm_area_struct **vmas);
+diff --git a/mm/gup.c b/mm/gup.c
+index 1f72a717232b..7e454d6b157e 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2251,8 +2251,6 @@ long get_user_pages_remote(struct mm_struct *mm,
+  * @pages:      array that receives pointers to the pages pinned.
+  *              Should be at least nr_pages long. Or NULL, if caller
+  *              only intends to ensure the pages are faulted in.
+- * @vmas:       array of pointers to vmas corresponding to each page.
+- *              Or NULL if the caller does not require them.
+  *
+  * This is the same as get_user_pages_remote(), just with a less-flexible
+  * calling convention where we assume that the mm being operated on belongs to
+@@ -2260,16 +2258,15 @@ long get_user_pages_remote(struct mm_struct *mm,
+  * obviously don't pass FOLL_REMOTE in here.
+  */
+ long get_user_pages(unsigned long start, unsigned long nr_pages,
+-		unsigned int gup_flags, struct page **pages,
+-		struct vm_area_struct **vmas)
++		    unsigned int gup_flags, struct page **pages)
+ {
+ 	int locked = 1;
+ 
+-	if (!is_valid_gup_args(pages, vmas, NULL, &gup_flags, FOLL_TOUCH))
++	if (!is_valid_gup_args(pages, NULL, NULL, &gup_flags, FOLL_TOUCH))
+ 		return -EINVAL;
+ 
+ 	return __get_user_pages_locked(current->mm, start, nr_pages, pages,
+-				       vmas, &locked, gup_flags);
++				       NULL, &locked, gup_flags);
+ }
+ EXPORT_SYMBOL(get_user_pages);
+ 
+diff --git a/mm/gup_test.c b/mm/gup_test.c
+index 8ae7307a1bb6..9ba8ea23f84e 100644
+--- a/mm/gup_test.c
++++ b/mm/gup_test.c
+@@ -139,8 +139,7 @@ static int __gup_test_ioctl(unsigned int cmd,
+ 						 pages + i);
+ 			break;
+ 		case GUP_BASIC_TEST:
+-			nr = get_user_pages(addr, nr, gup->gup_flags, pages + i,
+-					    NULL);
++			nr = get_user_pages(addr, nr, gup->gup_flags, pages + i);
+ 			break;
+ 		case PIN_FAST_BENCHMARK:
+ 			nr = pin_user_pages_fast(addr, nr, gup->gup_flags,
+@@ -161,7 +160,7 @@ static int __gup_test_ioctl(unsigned int cmd,
+ 						    pages + i, NULL);
+ 			else
+ 				nr = get_user_pages(addr, nr, gup->gup_flags,
+-						    pages + i, NULL);
++						    pages + i);
+ 			break;
+ 		default:
+ 			ret = -EINVAL;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index d255964ec331..2d2446df0900 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -2474,7 +2474,7 @@ static inline int check_user_page_hwpoison(unsigned long addr)
+ {
+ 	int rc, flags = FOLL_HWPOISON | FOLL_WRITE;
+ 
+-	rc = get_user_pages(addr, 1, flags, NULL, NULL);
++	rc = get_user_pages(addr, 1, flags, NULL);
+ 	return rc == -EHWPOISON;
+ }
+ 
+-- 
+2.40.0
 
--Anand
-
-
-From: Kristen Carlson Accardi <kristen@linux.intel.com>
-Sent: Friday, December 2, 2022 10:36 AM
-To: jarkko@kernel.org <jarkko@kernel.org>; dave.hansen@linux.intel.com <dav=
-e.hansen@linux.intel.com>; tj@kernel.org <tj@kernel.org>; linux-kernel@vger=
-.kernel.org <linux-kernel@vger.kernel.org>; linux-sgx@vger.kernel.org <linu=
-x-sgx@vger.kernel.org>; cgroups@vger.kernel.org <cgroups@vger.kernel.org>
-Cc: zhiquan1.li@intel.com <zhiquan1.li@intel.com>
-Subject: [EXTERNAL] [PATCH v2 00/18] Add Cgroup support for SGX EPC memory
-
-Utilize the Miscellaneous cgroup controller to regulate the distribution
-of SGX EPC memory, which is a subset of system RAM that is used to provide
-SGX-enabled applications with protected memory, and is otherwise inaccessib=
-le.
-
-SGX EPC memory allocations are separate from normal RAM allocations,
-and is managed solely by the SGX subsystem. The existing cgroup memory
-controller cannot be used to limit or account for SGX EPC memory.
-
-This patchset implements the support for sgx_epc memory within the
-misc cgroup controller, and then utilizes the misc cgroup controller
-to provide support for setting the total system capacity, max limit
-per cgroup, and events.
-
-This work was originally authored by Sean Christopherson a few years ago,
-and was modified to work with more recent kernels, and to utilize the
-misc cgroup controller rather than a custom controller. It is currently
-based on top of the MCA patches.
-
-Here's the MCA patchset for reference.
-https://lore.kernel.org/linux-sgx/2d52c8c4-8ed0-6df2-2911-da5b9fcc9ae4@inte=
-l.com/T/#t
-
-The patchset adds support for multiple LRUs to track both reclaimable
-EPC pages (i.e. pages the reclaimer knows about), as well as unreclaimable
-EPC pages (i.e. pages which the reclaimer isn't aware of, such as va pages)=
-.
-These pages are assigned to an LRU, as well as an enclave, so that an
-enclave's full EPC usage can be tracked, and limited to a max value. During
-OOM events, an enclave can be have its memory zapped, and all the EPC pages
-not tracked by the reclaimer can be freed.
-
-I appreciate your comments and feedback.
-
-Changelog:
-
-v2:
- * rename struct sgx_epc_lru to sgx_epc_lru_lists to be more clear
-   that this struct contains 2 lists.
- * use inline functions rather than macros for sgx_epc_page_list*
-   wrappers.
- * Remove flags macros and open code all flags.
- * Improve the commit message for RECLAIM_IN_PROGRESS patch to make
-   it more clear what the patch does.
- * remove notifier_block from misc cgroup changes and use a set
-   of ops for callbacks instead.
- * rename root_misc to misc_cg_root and parent_misc to misc_cg_parent
- * consolidate misc cgroup changes to 2 patches and remove most of
-   the previous helper functions.
-
-Kristen Carlson Accardi (7):
-  x86/sgx: Add 'struct sgx_epc_lru_lists' to encapsulate lru list(s)
-  x86/sgx: Use sgx_epc_lru_lists for existing active page list
-  x86/sgx: Track epc pages on reclaimable or unreclaimable lists
-  cgroup/misc: Add per resource callbacks for css events
-  cgroup/misc: Prepare for SGX usage
-  x86/sgx: Add support for misc cgroup controller
-  Docs/x86/sgx: Add description for cgroup support
-
-Sean Christopherson (11):
-  x86/sgx: Call cond_resched() at the end of sgx_reclaim_pages()
-  x86/sgx: Store struct sgx_encl when allocating new VA pages
-  x86/sgx: Introduce RECLAIM_IN_PROGRESS flag for EPC pages
-  x86/sgx: Use a list to track to-be-reclaimed pages during reclaim
-  x86/sgx: Allow reclaiming up to 32 pages, but scan 16 by default
-  x86/sgx: Return the number of EPC pages that were successfully
-    reclaimed
-  x86/sgx: Add option to ignore age of page during EPC reclaim
-  x86/sgx: Prepare for multiple LRUs
-  x86/sgx: Expose sgx_reclaim_pages() for use by EPC cgroup
-  x86/sgx: Add helper to grab pages from an arbitrary EPC LRU
-  x86/sgx: Add EPC OOM path to forcefully reclaim EPC
-
- Documentation/x86/sgx.rst            |  77 ++++
- arch/x86/Kconfig                     |  13 +
- arch/x86/kernel/cpu/sgx/Makefile     |   1 +
- arch/x86/kernel/cpu/sgx/encl.c       |  90 ++++-
- arch/x86/kernel/cpu/sgx/encl.h       |   4 +-
- arch/x86/kernel/cpu/sgx/epc_cgroup.c | 539 +++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/epc_cgroup.h |  59 +++
- arch/x86/kernel/cpu/sgx/ioctl.c      |  14 +-
- arch/x86/kernel/cpu/sgx/main.c       | 412 ++++++++++++++++----
- arch/x86/kernel/cpu/sgx/sgx.h        | 122 +++++-
- arch/x86/kernel/cpu/sgx/virt.c       |  28 +-
- include/linux/misc_cgroup.h          |  35 ++
- kernel/cgroup/misc.c                 |  76 +++-
- 13 files changed, 1341 insertions(+), 129 deletions(-)
- create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.c
- create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.h
-
---
-2.38.1
