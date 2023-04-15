@@ -2,53 +2,53 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9CCC77B71
-	for <linux-sgx@archiver.kernel.org>; Sat, 15 Apr 2023 09:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 674F0C77B77
+	for <linux-sgx@archiver.kernel.org>; Sat, 15 Apr 2023 12:09:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229762AbjDOJHZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 15 Apr 2023 05:07:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36404 "EHLO
+        id S229899AbjDOMJ1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 15 Apr 2023 08:09:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbjDOJHY (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 15 Apr 2023 05:07:24 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC15E49D7;
-        Sat, 15 Apr 2023 02:07:22 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3f09f954af5so1975115e9.0;
-        Sat, 15 Apr 2023 02:07:22 -0700 (PDT)
+        with ESMTP id S229557AbjDOMJY (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 15 Apr 2023 08:09:24 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A5385243;
+        Sat, 15 Apr 2023 05:09:23 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id v10so4945252wmn.5;
+        Sat, 15 Apr 2023 05:09:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681549641; x=1684141641;
+        d=gmail.com; s=20221208; t=1681560561; x=1684152561;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
         bh=7bl5SFQ2vJygxB6ULQ7owEqW0w5QgVbsAK3PYNhUFh4=;
-        b=Jkb/RwuyQAbnlJlQn7Ok9K6ysDcucnhfzgw7G5w8aSSVNjDR+WBPABDauc9LFLFBJo
-         zPGBJmaRq2et6/2hkuaVgdxHUT0/BJh4kgXgG33RNm0+V01GgqIiAQPxnnQqkRm7+U91
-         bqupoltukCsAJWxubjliYzRLKMFcneSZVHXpiqukgjB1AZ8HNc7/DDbrCX2h3m+VebEh
-         0VOtNMcN/tqU9WccT6t3PBFNxDtN3tUp4Urwsl6gYKm9p9Sioi1jr9hOVNcWlWsd1nIJ
-         Tfvcsd2vY2G0chLsgUjMxS3X4BDFKfEP/lO7IIXE/1sUPFhokQozktJLbZf74pr4l6ge
-         +csA==
+        b=X3wx/SDN/wkZLlSRmWoO4XjoTTfufgaCgXTVI/8MBUXN3C5Kkoa6Jp85DZjC2wf04W
+         5zmYu8D4+7x1XhIYxdSsCRIERvV0lFjGdN788237PxGzXXvNaYNGL4VtPXGRM957hh24
+         /Zmj3BNC7AwR1Eo8sblwN4P+Ze+O+oJrN1YeKxDSi7T796tpi4rBrqVu4ygIiSQ6V1ea
+         ntVuCJrPlMT0HzUauagKqw9sDcbJtmWoQD15O9UkaxHT6OvpdgMQmDMpIuRW3RLHxvLm
+         OFPvi6W6+FXczHkXNWBfzsZPOro21B2OrSa4OuRcmpQCbBgbpZ+S3Ye6U/TxjSSDu57M
+         mx2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681549641; x=1684141641;
+        d=1e100.net; s=20221208; t=1681560561; x=1684152561;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
         bh=7bl5SFQ2vJygxB6ULQ7owEqW0w5QgVbsAK3PYNhUFh4=;
-        b=D2OO5maPM7eB9JmM4JnJq+id1Rh4m0irw3BtwSH6+crTiY0i1iuXSJn2XCKEToQBiK
-         BTTzwjPWbkfTpHzfWdGDDQgUccnX9B+MoIwXBcD6lAMjkrvehMNA3lc2l9Og31Zl2qGv
-         4KlTV+RoQqd3S+QOe3NxdlP1L3WNpC4TBo8nb5fcbwoEmMDC9ZqIFJQWwc86bExvIrwi
-         MEn4ShNQMJdbpc07MtakMcP9bWpEA83FT6ryj8vof6irKnUiXhR8SKAwSTF999rXWiuN
-         +56zW5hw+FTx7qvPwOhVbHEE5XvtMJT6DHLMB0usWcm4y4yuyaS+2n7TEmnj9A9R0tQJ
-         m9sg==
-X-Gm-Message-State: AAQBX9eFePeES5Rn5DVdSJiRoKWob7pQX6eUTOBteT+14buGWMyxMqCr
-        D9LWOfwJK3bPbrvnbYDjzkQ=
-X-Google-Smtp-Source: AKy350bDsIOq+QVjyFcYtYVEwre4OPfcaLXNH7NtBAuDI7FhBws+yyvSTWBB4OPxXclOClKuPL/nAQ==
-X-Received: by 2002:a05:6000:189:b0:2f6:b273:ee26 with SMTP id p9-20020a056000018900b002f6b273ee26mr1034441wrx.14.1681549641195;
-        Sat, 15 Apr 2023 02:07:21 -0700 (PDT)
+        b=WdVFcMZnAQ4e7pQxd3V0wJ40xMoOIkcXDsY+HzR1i2XfhCZvXTMCFZBB4qSm+usuBl
+         jHecQ/bASF+ZHddpJooeLL8hVPOLEMV5mTODwJoEzJxLdOFJtluKD0kUeDJfDiE5iSYq
+         TvXlLE6vo/hLrxb2TXx4fE4YxKEWg/fAVElQJDezva1Rz1/hFva5MPsbobZ1FPGEtRd/
+         f2zU3ae1r2Y8u644hbD7uc0iuO8j+NQL+5JCg/oNdlpFDcOfaxPJ8fifUdrx5Gty1T64
+         jPI6OOLD6Nk0YXp6oGK1OwxAOcVZ4WN8QBu+2N52cckWlLn775cY9af5uLxV2kbhI84n
+         XUzA==
+X-Gm-Message-State: AAQBX9cc4V6vvOtJOdTUZqlGfkDgGgA/T8LUGXeCN8lM+uSEShwaXcyx
+        fKiq0H47lIu9Tq4KUPQprAM=
+X-Google-Smtp-Source: AKy350Yysqw/G21F2cEQ1bzpOiU/6gRNUP/bJK1jn3guibsBFaVe0RGWhuMX5MIUHG1wPs+pj7mvig==
+X-Received: by 2002:a05:600c:204c:b0:3f0:aeac:2f9c with SMTP id p12-20020a05600c204c00b003f0aeac2f9cmr4917397wmg.7.1681560561281;
+        Sat, 15 Apr 2023 05:09:21 -0700 (PDT)
 Received: from lucifer.home ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
-        by smtp.googlemail.com with ESMTPSA id u8-20020a5d6ac8000000b002eaac3a9beesm5359059wrw.8.2023.04.15.02.07.19
+        by smtp.googlemail.com with ESMTPSA id 15-20020a05600c230f00b003f16fdc6233sm134903wmo.47.2023.04.15.05.09.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Apr 2023 02:07:20 -0700 (PDT)
+        Sat, 15 Apr 2023 05:09:20 -0700 (PDT)
 From:   Lorenzo Stoakes <lstoakes@gmail.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>
@@ -67,12 +67,12 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Lorenzo Stoakes <lstoakes@gmail.com>
-Subject: [PATCH v2 1/7] mm/gup: remove unused vmas parameter from get_user_pages()
-Date:   Sat, 15 Apr 2023 10:07:09 +0100
-Message-Id: <56b3f7360ac4ba3af3f75903a873f1e48df652e0.1681547405.git.lstoakes@gmail.com>
+Subject: [PATCH v3 1/7] mm/gup: remove unused vmas parameter from get_user_pages()
+Date:   Sat, 15 Apr 2023 13:09:18 +0100
+Message-Id: <28967f170eceeebf2591a5e4370d0642e0516f9b.1681558407.git.lstoakes@gmail.com>
 X-Mailer: git-send-email 2.40.0
-In-Reply-To: <cover.1681547405.git.lstoakes@gmail.com>
-References: <cover.1681547405.git.lstoakes@gmail.com>
+In-Reply-To: <cover.1681558407.git.lstoakes@gmail.com>
+References: <cover.1681558407.git.lstoakes@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
