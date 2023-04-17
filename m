@@ -2,71 +2,51 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6413DC77B72
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Apr 2023 11:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE48C77B76
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Apr 2023 13:06:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231218AbjDQLNx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Apr 2023 07:13:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38672 "EHLO
+        id S231475AbjDQNGE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Apr 2023 09:06:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230414AbjDQLNv (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Apr 2023 07:13:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DA80125
-        for <linux-sgx@vger.kernel.org>; Mon, 17 Apr 2023 04:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681729809;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lQP0jhHOILHGUYqqiFPFEP0oFPfgZ69ufmXe3pOVD4k=;
-        b=Q+IiONeuiOrwTAepqyDJlsYuRKOqY0cvzTHrKMyfUQ0FLfOnrE0pzmNyZnv3tiVOmOUgwr
-        xgTS0xgJK7njJkyeV1DDUrUuLEGGtyLHjP1AGfI4VIGbZ1pqgsofbINBc0PcUXhazs6jF/
-        wc6/V+lYouKVhY3bPGH0yiaTEM2lcNU=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-426-hZUCs_JuMW2oYdi83tJF1A-1; Mon, 17 Apr 2023 06:55:33 -0400
-X-MC-Unique: hZUCs_JuMW2oYdi83tJF1A-1
-Received: by mail-wm1-f69.google.com with SMTP id hg24-20020a05600c539800b003f066c0b044so16434898wmb.0
-        for <linux-sgx@vger.kernel.org>; Mon, 17 Apr 2023 03:55:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681728932; x=1684320932;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lQP0jhHOILHGUYqqiFPFEP0oFPfgZ69ufmXe3pOVD4k=;
-        b=bEmHIKu6ZvFTtR4m7tJbgjCB81hF77OIsU0pw6/qTrh9Eb3TFjMNh2k4FILhIscjMh
-         3k7DdgIizqIyiRd/xJ/eKxNvkf+Est+zTSVdgwAjcZRLCnO4Gi82lmKWTknpyuOqrDPB
-         O5JrhY2Q61Rxb0mhPaSyuS6TpRgLIQk9P6V6CRc/hpIm5ubrb0mfQqZt+7G5bfZtM3HV
-         d9IbTYV5TdjyxrMGLyynWLYCieqCENae0FbNBL+4pyVZkN/y/ZJy3kXfqW5Fn4jvzOHV
-         ryOI8KxWwT14gSeqv2aGz5fB+eKQRhvuqyJHN+VjXekD19ACMqYiMAIUb/mT+w1HKGDU
-         qGYA==
-X-Gm-Message-State: AAQBX9ekOtTiIMbVPBfm0o06Gd3g04A1MORuUCSoY9PTVZV+Bz+92mI8
-        LGCxoZF4mkwEKOMvda2B2guc+Dsi8Eborpyj0dUTGdGxUNa1CYNZhpAc75BkX3JenrBev9x0j98
-        GuhbYM/GdCObZL3/vTSnk
-X-Received: by 2002:a05:600c:3793:b0:3f1:71b3:c6b5 with SMTP id o19-20020a05600c379300b003f171b3c6b5mr3472223wmr.26.1681728932429;
-        Mon, 17 Apr 2023 03:55:32 -0700 (PDT)
-X-Google-Smtp-Source: AKy350YH/86qIG88Tj0beqaD/3sOrt9ZF/SdVSy4Z1Oma4C+GIauFs3qJA38myjmhj9zrBrycpWLBQ==
-X-Received: by 2002:a05:600c:3793:b0:3f1:71b3:c6b5 with SMTP id o19-20020a05600c379300b003f171b3c6b5mr3472203wmr.26.1681728932040;
-        Mon, 17 Apr 2023 03:55:32 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c700:fc00:db07:68a9:6af5:ecdf? (p200300cbc700fc00db0768a96af5ecdf.dip0.t-ipconnect.de. [2003:cb:c700:fc00:db07:68a9:6af5:ecdf])
-        by smtp.gmail.com with ESMTPSA id c10-20020a7bc2aa000000b003f0ad8d1c69sm10484005wmk.25.2023.04.17.03.55.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Apr 2023 03:55:31 -0700 (PDT)
-Message-ID: <6ad9509c-11b6-9ada-0ee8-26cf40b3ac14@redhat.com>
-Date:   Mon, 17 Apr 2023 12:55:30 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v3 1/7] mm/gup: remove unused vmas parameter from
- get_user_pages()
-To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, x86@kernel.org,
+        with ESMTP id S231488AbjDQNFq (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Apr 2023 09:05:46 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2085.outbound.protection.outlook.com [40.107.92.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E2DC17A;
+        Mon, 17 Apr 2023 06:02:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EhhyV4d13AZi9hBxZu55PrxB2nRjfTjwwFM4jXFO2s7GskpYPyEA6680kaea105jFyg4zukjzl6fGBnDNci7H7ALDslkYbfHajhQM+biKJiCBejL2hWZw30j9uR7bLrddn2FnS1UPTOKjkMlnKChzibUjscMrcjfxRG6sWGM4EPtT1G96xxXmzblF3MQL1R5uZrNeYhSPc5v2Ei0Cw5MSSWDRSLanc0BPFSIl7YMD7D6OyMJCE6y6uEBpuQjG8MGErguGJ3VJ8bYYLKeaXvhqpXF+P70OQ6KRdOZfpIFoKeXcGyaDGc4MHBeCdowmEXZSs/m/RbrQJ5bUkDCCCYnUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=szPw/8osvmIcdPOk8gasD/fEYrOR++nVJ3WBNv+WaTE=;
+ b=PUwE8zjiqGIvhVg/xIplvvmtYTFI2S3r/2BHUbVKSjVsGkUph93hqFoHEVky/z3GiNI4aaW94YRvyyC9XlKAHDgQfA/kypBMx526eQynN6GT4SjYIkKe+0BXtnokhZWCV9VmGciwkx4yuy07keHIzpAWviwVMJBayHT3t4/+8CywB4O5SUtSOn3DPaadD8Spe7xLVJBxNMqfp5i+70HRmAhOGnX8yi0Im04L/9f6zykB4daDB48XvdcyPR9yC0eMbE6iXow6pAvkyfJDYZXka87r8G9AoDSM2UHMlZiH4pIaRkGsysRliF6pHFn25p0fOVpAe4sWUIjsqq1gOnSgiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=szPw/8osvmIcdPOk8gasD/fEYrOR++nVJ3WBNv+WaTE=;
+ b=FbCtql1U0Tz25xhTlr02MClN9WmaspoAetytleGAzvtvxekTVTntd4ddSvf2HWhFrHFBe6JI1Q04XgBaQByoujnwTOlZHL75WPvbeiSx9YCHsamtNeCNHkoJxa+9M6anGAg9a1FMh6Aze5RHOv52XhYkfz0MImHpQv17txGHN2Z+uGAzatrY7BXAsVRKOCWA6PFV7/FiZTAWJBFwNeklx57bI9xAkTcjzkEtldYj64T/d3/93vTJ4hnV/EBTurN+frUNlNlkXOC3v258S4SUDoIsEjcRiNamKEVSyiUrocjSclhZwNcu2pcisIe69omdQugEswQYFnW5J5xgEnKgRg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by DM4PR12MB5390.namprd12.prod.outlook.com (2603:10b6:5:389::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.38; Mon, 17 Apr
+ 2023 13:01:57 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::6045:ad97:10b7:62a2]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::6045:ad97:10b7:62a2%9]) with mapi id 15.20.6298.030; Mon, 17 Apr 2023
+ 13:01:56 +0000
+Date:   Mon, 17 Apr 2023 10:01:54 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>, x86@kernel.org,
         linux-sgx@vger.kernel.org, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -79,21 +59,70 @@ Cc:     Matthew Wilcox <willy@infradead.org>, x86@kernel.org,
         Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Paolo Bonzini <pbonzini@redhat.com>
-References: <cover.1681558407.git.lstoakes@gmail.com>
- <28967f170eceeebf2591a5e4370d0642e0516f9b.1681558407.git.lstoakes@gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <28967f170eceeebf2591a5e4370d0642e0516f9b.1681558407.git.lstoakes@gmail.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/7] mm/gup: remove unused vmas parameter from
+ get_user_pages()
+Message-ID: <ZD1DQrSLlMn4CUZX@nvidia.com>
+References: <cover.1681508038.git.lstoakes@gmail.com>
+ <d40cb239d0ca01e51f7fc2a276398e8f4dedf9ff.1681508038.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d40cb239d0ca01e51f7fc2a276398e8f4dedf9ff.1681508038.git.lstoakes@gmail.com>
+X-ClientProxiedBy: YT4PR01CA0409.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10b::14) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|DM4PR12MB5390:EE_
+X-MS-Office365-Filtering-Correlation-Id: 94c63563-ad8f-47b0-91c4-08db3f43ec79
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Yy3nF81DcVWFFMSf7CQ8qyBdIrTpdh52FBS6FUKtLREg0m1RrLYWezUJ2gjbhZEp31E4IK0jKyH5uXYHCCUT0x20ouE9TuG0gn8uTt6tCDHo1pZatXY/IfqfoErA7WC3N6KQTzoNnsySh2QDX3+zzceEBpoyVFsyxX9XcEuec5yOreVBfzzbTJFIESPfi9JKqMURQit+/uGf5j97zgw7hgKHLtwiAxA0/GNdErdwx/VtSq7qa5RHDLKEqJ1cULGSg85tARUiLwWx60bVFO5xnyB6M01sfnnN8nEaR0TmkB19vvr3PgiW81WoSJyIGuMqMqNPELmar7HOpYVeMFargf34np+YmcnUuUbHQkhOka7eyRLnE1EKOLcjDJTyqz75P/e1qAMgteUMl6pZh8GnsbsZ6UhPb1nqsfVmC2kDtfFnrLE9vzwxPDcgxYmMWxQUk5Ft5Tx+dBLOD4CR+Umvgix2wR3VaKtMdJl/zoK6shjcSy+uqHC3/heJ5kq9o7kG9SeBjuJ6ETC2mq8sT61tuOqot2pdL9ymkxgBTK13KygCGHLK0A6sT/eOTn5kRhZF
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(366004)(136003)(396003)(346002)(39860400002)(451199021)(2616005)(2906002)(26005)(6506007)(6512007)(86362001)(6486002)(8676002)(6916009)(54906003)(4326008)(478600001)(316002)(66556008)(66946007)(66476007)(7416002)(38100700002)(41300700001)(8936002)(5660300002)(36756003)(186003)(83380400001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IiiDLyEnosYn7kysTkoIkb6lsp5onG2a5s7RFiFSUQPU1f1H6ZHBOvckw3t1?=
+ =?us-ascii?Q?ikBX48odIWovJx4ink9iun5tVcj3x3zt3TLw9ebfJRC3/MWcDEbj6E+o/elw?=
+ =?us-ascii?Q?ioYUtAj2Z7VWCPqzvOmBBtjZPKqY8msbqqxngR5mFVYmAxJHh62ggoabeiyC?=
+ =?us-ascii?Q?s9ixG56yv1xNGjPPAV3JTau2F2GQqqImxJGSaVI6LXpP9Q2yWdgUQR0HJMqH?=
+ =?us-ascii?Q?u5zud9e7+pyZLeQlwelVLCYlFa9+Cey3IRkz5ybxuIvU7ndTeUrzYkRqxk4m?=
+ =?us-ascii?Q?wBQp06tx7P/IPRcqLMVBYakSV9LFxNSstTAq3LShaKDjye8PMKAamtbuZaXd?=
+ =?us-ascii?Q?wNretB1gWE5F7qDdmbr1XkdrdHXkmFCjWixytfbEccryzIdG8dBAIyDgdAJ6?=
+ =?us-ascii?Q?rZzL+J/ft1T+B31fV7dGgyTy9cGZkBWi7VVgAWgk/OcL5IvGPiD8QgsN4Rw9?=
+ =?us-ascii?Q?9Ee/htrHdR59zGp9N3rkjcBooM6tY6JKWDzGx3HuSS2VZn5o3oLIDQvPE0Yb?=
+ =?us-ascii?Q?fUffRgmnIvSI82JIssV9RMLPGe7I/l1Eir/QZKpTYqeptLMpfwXpKrn97HUq?=
+ =?us-ascii?Q?AxVa0u3rGXw2spp/b0UYH/6CTtV6lZ9854cZjlPtqsBb/uWF+agFIMdEs+3q?=
+ =?us-ascii?Q?9PS0nruUcAhnRwKBrh4wRI5euZ3hNDdbMVvsv8YIQ2wFdJnH16VIz/TlMTG7?=
+ =?us-ascii?Q?0w4HKO1jnySh2zm/dGz+xqPyADeJUIK9YCEmg3TlL93Qi/SG2ZA2WugWIwMp?=
+ =?us-ascii?Q?URPIgZQUSRx+S69pR2Ghna7pXvOfNuZsIhMoc9siFYBeXQ/+OXr0NTtEwOgs?=
+ =?us-ascii?Q?Q5Q5JcbuEiDp6Htd5s4hjGfnn2gufMtUbDGmcGCHjGJA7QwrI+XHp8CqjQhY?=
+ =?us-ascii?Q?31FuybFh7zciZPae1d846aOfsLD7QuBM7CzvYl8cvcnykayhXjK1EVUvdZX1?=
+ =?us-ascii?Q?G71pdaERLwfE9NgY2Njq+0wFdFoxtbDKveOygQOmN8A4kEnaQS9IHkkZakgR?=
+ =?us-ascii?Q?V1IUyV0pmFuJwxryahKEnFy5udgyBwSg5r58V5LaDNu0hyv+Tn8RX00xFvkZ?=
+ =?us-ascii?Q?4IaHiVh8PCfJnddajyTJDgHiZ0fVX4+fuJ6O1IdVFVzjztDRAwWSwu/er/zr?=
+ =?us-ascii?Q?aQ6gmogySkho1hNUxbJvrEvIYn6xuC/jWFlksN9bGnohBztygTcsICqgFkUH?=
+ =?us-ascii?Q?HfD5fhhEypD33Wv2fhCQe4JIjOysSvSKJM36xZSnjIK7YfRwKbnWni9vx8z5?=
+ =?us-ascii?Q?fMz65LjauVqJ321gOWte4cxa9KA3a/AcYIbWQzZCXDMzD0ssHTp1/FUgXwYP?=
+ =?us-ascii?Q?+YoPqvOI43omtV46vXGCrg5C9+pB/m2+VJwbodgHNJGD9uMvo8cQLfAvMQKT?=
+ =?us-ascii?Q?Ao5bZpnkJcu0IESxEJKOzY+u5zHE7zmpHUZVGhkKpi5D/mDWQWfYgFptZRAW?=
+ =?us-ascii?Q?5heB7a3V8DzeWD8HLIOQTudw+Zec835GBeW7jf8jcQo32NO2H7IIilRbUxqj?=
+ =?us-ascii?Q?shItB5MZcONmocJdvRiwmL31aNjrwJtROM52t/oWb0+6Izn2cs80XUStvqZi?=
+ =?us-ascii?Q?fNf+rBK9CzK5rw5ULwzKD2ac+RQeP4Llm7x2XYTx?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94c63563-ad8f-47b0-91c4-08db3f43ec79
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2023 13:01:56.8338
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0+0baHLvWHTdAip5gKuODZ98CnsDXYde+eVw3/kzGKTNb73pJjHUY0cRYBX8Htc0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5390
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 15.04.23 14:09, Lorenzo Stoakes wrote:
+On Sat, Apr 15, 2023 at 12:27:13AM +0100, Lorenzo Stoakes wrote:
 > No invocation of get_user_pages() uses the vmas parameter, so remove
 > it.
 > 
@@ -112,13 +141,16 @@ On 15.04.23 14:09, Lorenzo Stoakes wrote:
 > 
 > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
 > Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > ---
+>  arch/x86/kernel/cpu/sgx/ioctl.c     | 2 +-
+>  drivers/gpu/drm/radeon/radeon_ttm.c | 2 +-
+>  drivers/misc/sgi-gru/grufault.c     | 2 +-
+>  include/linux/mm.h                  | 3 +--
+>  mm/gup.c                            | 9 +++------
+>  mm/gup_test.c                       | 5 ++---
+>  virt/kvm/kvm_main.c                 | 4 ++--
+>  7 files changed, 11 insertions(+), 16 deletions(-)
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
--- 
-Thanks,
-
-David / dhildenb
-
+Jason
