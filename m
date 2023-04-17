@@ -2,58 +2,71 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 674F0C77B77
-	for <linux-sgx@archiver.kernel.org>; Sat, 15 Apr 2023 12:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6413DC77B72
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Apr 2023 11:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229899AbjDOMJ1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 15 Apr 2023 08:09:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43182 "EHLO
+        id S231218AbjDQLNx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Apr 2023 07:13:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbjDOMJY (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 15 Apr 2023 08:09:24 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A5385243;
-        Sat, 15 Apr 2023 05:09:23 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id v10so4945252wmn.5;
-        Sat, 15 Apr 2023 05:09:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681560561; x=1684152561;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7bl5SFQ2vJygxB6ULQ7owEqW0w5QgVbsAK3PYNhUFh4=;
-        b=X3wx/SDN/wkZLlSRmWoO4XjoTTfufgaCgXTVI/8MBUXN3C5Kkoa6Jp85DZjC2wf04W
-         5zmYu8D4+7x1XhIYxdSsCRIERvV0lFjGdN788237PxGzXXvNaYNGL4VtPXGRM957hh24
-         /Zmj3BNC7AwR1Eo8sblwN4P+Ze+O+oJrN1YeKxDSi7T796tpi4rBrqVu4ygIiSQ6V1ea
-         ntVuCJrPlMT0HzUauagKqw9sDcbJtmWoQD15O9UkaxHT6OvpdgMQmDMpIuRW3RLHxvLm
-         OFPvi6W6+FXczHkXNWBfzsZPOro21B2OrSa4OuRcmpQCbBgbpZ+S3Ye6U/TxjSSDu57M
-         mx2g==
+        with ESMTP id S230414AbjDQLNv (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Apr 2023 07:13:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DA80125
+        for <linux-sgx@vger.kernel.org>; Mon, 17 Apr 2023 04:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681729809;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=lQP0jhHOILHGUYqqiFPFEP0oFPfgZ69ufmXe3pOVD4k=;
+        b=Q+IiONeuiOrwTAepqyDJlsYuRKOqY0cvzTHrKMyfUQ0FLfOnrE0pzmNyZnv3tiVOmOUgwr
+        xgTS0xgJK7njJkyeV1DDUrUuLEGGtyLHjP1AGfI4VIGbZ1pqgsofbINBc0PcUXhazs6jF/
+        wc6/V+lYouKVhY3bPGH0yiaTEM2lcNU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-426-hZUCs_JuMW2oYdi83tJF1A-1; Mon, 17 Apr 2023 06:55:33 -0400
+X-MC-Unique: hZUCs_JuMW2oYdi83tJF1A-1
+Received: by mail-wm1-f69.google.com with SMTP id hg24-20020a05600c539800b003f066c0b044so16434898wmb.0
+        for <linux-sgx@vger.kernel.org>; Mon, 17 Apr 2023 03:55:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681560561; x=1684152561;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7bl5SFQ2vJygxB6ULQ7owEqW0w5QgVbsAK3PYNhUFh4=;
-        b=WdVFcMZnAQ4e7pQxd3V0wJ40xMoOIkcXDsY+HzR1i2XfhCZvXTMCFZBB4qSm+usuBl
-         jHecQ/bASF+ZHddpJooeLL8hVPOLEMV5mTODwJoEzJxLdOFJtluKD0kUeDJfDiE5iSYq
-         TvXlLE6vo/hLrxb2TXx4fE4YxKEWg/fAVElQJDezva1Rz1/hFva5MPsbobZ1FPGEtRd/
-         f2zU3ae1r2Y8u644hbD7uc0iuO8j+NQL+5JCg/oNdlpFDcOfaxPJ8fifUdrx5Gty1T64
-         jPI6OOLD6Nk0YXp6oGK1OwxAOcVZ4WN8QBu+2N52cckWlLn775cY9af5uLxV2kbhI84n
-         XUzA==
-X-Gm-Message-State: AAQBX9cc4V6vvOtJOdTUZqlGfkDgGgA/T8LUGXeCN8lM+uSEShwaXcyx
-        fKiq0H47lIu9Tq4KUPQprAM=
-X-Google-Smtp-Source: AKy350Yysqw/G21F2cEQ1bzpOiU/6gRNUP/bJK1jn3guibsBFaVe0RGWhuMX5MIUHG1wPs+pj7mvig==
-X-Received: by 2002:a05:600c:204c:b0:3f0:aeac:2f9c with SMTP id p12-20020a05600c204c00b003f0aeac2f9cmr4917397wmg.7.1681560561281;
-        Sat, 15 Apr 2023 05:09:21 -0700 (PDT)
-Received: from lucifer.home ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
-        by smtp.googlemail.com with ESMTPSA id 15-20020a05600c230f00b003f16fdc6233sm134903wmo.47.2023.04.15.05.09.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Apr 2023 05:09:20 -0700 (PDT)
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        d=1e100.net; s=20221208; t=1681728932; x=1684320932;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lQP0jhHOILHGUYqqiFPFEP0oFPfgZ69ufmXe3pOVD4k=;
+        b=bEmHIKu6ZvFTtR4m7tJbgjCB81hF77OIsU0pw6/qTrh9Eb3TFjMNh2k4FILhIscjMh
+         3k7DdgIizqIyiRd/xJ/eKxNvkf+Est+zTSVdgwAjcZRLCnO4Gi82lmKWTknpyuOqrDPB
+         O5JrhY2Q61Rxb0mhPaSyuS6TpRgLIQk9P6V6CRc/hpIm5ubrb0mfQqZt+7G5bfZtM3HV
+         d9IbTYV5TdjyxrMGLyynWLYCieqCENae0FbNBL+4pyVZkN/y/ZJy3kXfqW5Fn4jvzOHV
+         ryOI8KxWwT14gSeqv2aGz5fB+eKQRhvuqyJHN+VjXekD19ACMqYiMAIUb/mT+w1HKGDU
+         qGYA==
+X-Gm-Message-State: AAQBX9ekOtTiIMbVPBfm0o06Gd3g04A1MORuUCSoY9PTVZV+Bz+92mI8
+        LGCxoZF4mkwEKOMvda2B2guc+Dsi8Eborpyj0dUTGdGxUNa1CYNZhpAc75BkX3JenrBev9x0j98
+        GuhbYM/GdCObZL3/vTSnk
+X-Received: by 2002:a05:600c:3793:b0:3f1:71b3:c6b5 with SMTP id o19-20020a05600c379300b003f171b3c6b5mr3472223wmr.26.1681728932429;
+        Mon, 17 Apr 2023 03:55:32 -0700 (PDT)
+X-Google-Smtp-Source: AKy350YH/86qIG88Tj0beqaD/3sOrt9ZF/SdVSy4Z1Oma4C+GIauFs3qJA38myjmhj9zrBrycpWLBQ==
+X-Received: by 2002:a05:600c:3793:b0:3f1:71b3:c6b5 with SMTP id o19-20020a05600c379300b003f171b3c6b5mr3472203wmr.26.1681728932040;
+        Mon, 17 Apr 2023 03:55:32 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c700:fc00:db07:68a9:6af5:ecdf? (p200300cbc700fc00db0768a96af5ecdf.dip0.t-ipconnect.de. [2003:cb:c700:fc00:db07:68a9:6af5:ecdf])
+        by smtp.gmail.com with ESMTPSA id c10-20020a7bc2aa000000b003f0ad8d1c69sm10484005wmk.25.2023.04.17.03.55.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Apr 2023 03:55:31 -0700 (PDT)
+Message-ID: <6ad9509c-11b6-9ada-0ee8-26cf40b3ac14@redhat.com>
+Date:   Mon, 17 Apr 2023 12:55:30 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v3 1/7] mm/gup: remove unused vmas parameter from
+ get_user_pages()
+To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>, x86@kernel.org,
+Cc:     Matthew Wilcox <willy@infradead.org>, x86@kernel.org,
         linux-sgx@vger.kernel.org, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -65,171 +78,47 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         Dimitri Sivanich <dimitri.sivanich@hpe.com>,
         Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>
-Subject: [PATCH v3 1/7] mm/gup: remove unused vmas parameter from get_user_pages()
-Date:   Sat, 15 Apr 2023 13:09:18 +0100
-Message-Id: <28967f170eceeebf2591a5e4370d0642e0516f9b.1681558407.git.lstoakes@gmail.com>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <cover.1681558407.git.lstoakes@gmail.com>
+        Paolo Bonzini <pbonzini@redhat.com>
 References: <cover.1681558407.git.lstoakes@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <28967f170eceeebf2591a5e4370d0642e0516f9b.1681558407.git.lstoakes@gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <28967f170eceeebf2591a5e4370d0642e0516f9b.1681558407.git.lstoakes@gmail.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-No invocation of get_user_pages() uses the vmas parameter, so remove
-it.
+On 15.04.23 14:09, Lorenzo Stoakes wrote:
+> No invocation of get_user_pages() uses the vmas parameter, so remove
+> it.
+> 
+> The GUP API is confusing and caveated. Recent changes have done much to
+> improve that, however there is more we can do. Exporting vmas is a prime
+> target as the caller has to be extremely careful to preclude their use
+> after the mmap_lock has expired or otherwise be left with dangling
+> pointers.
+> 
+> Removing the vmas parameter focuses the GUP functions upon their primary
+> purpose - pinning (and outputting) pages as well as performing the actions
+> implied by the input flags.
+> 
+> This is part of a patch series aiming to remove the vmas parameter
+> altogether.
+> 
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
 
-The GUP API is confusing and caveated. Recent changes have done much to
-improve that, however there is more we can do. Exporting vmas is a prime
-target as the caller has to be extremely careful to preclude their use
-after the mmap_lock has expired or otherwise be left with dangling
-pointers.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Removing the vmas parameter focuses the GUP functions upon their primary
-purpose - pinning (and outputting) pages as well as performing the actions
-implied by the input flags.
-
-This is part of a patch series aiming to remove the vmas parameter
-altogether.
-
-Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/cpu/sgx/ioctl.c     | 2 +-
- drivers/gpu/drm/radeon/radeon_ttm.c | 2 +-
- drivers/misc/sgi-gru/grufault.c     | 2 +-
- include/linux/mm.h                  | 3 +--
- mm/gup.c                            | 9 +++------
- mm/gup_test.c                       | 5 ++---
- virt/kvm/kvm_main.c                 | 2 +-
- 7 files changed, 10 insertions(+), 15 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 21ca0a831b70..5d390df21440 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -214,7 +214,7 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
- 	if (!(vma->vm_flags & VM_MAYEXEC))
- 		return -EACCES;
- 
--	ret = get_user_pages(src, 1, 0, &src_page, NULL);
-+	ret = get_user_pages(src, 1, 0, &src_page);
- 	if (ret < 1)
- 		return -EFAULT;
- 
-diff --git a/drivers/gpu/drm/radeon/radeon_ttm.c b/drivers/gpu/drm/radeon/radeon_ttm.c
-index 1e8e287e113c..0597540f0dde 100644
---- a/drivers/gpu/drm/radeon/radeon_ttm.c
-+++ b/drivers/gpu/drm/radeon/radeon_ttm.c
-@@ -362,7 +362,7 @@ static int radeon_ttm_tt_pin_userptr(struct ttm_device *bdev, struct ttm_tt *ttm
- 		struct page **pages = ttm->pages + pinned;
- 
- 		r = get_user_pages(userptr, num_pages, write ? FOLL_WRITE : 0,
--				   pages, NULL);
-+				   pages);
- 		if (r < 0)
- 			goto release_pages;
- 
-diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
-index b836936e9747..378cf02a2aa1 100644
---- a/drivers/misc/sgi-gru/grufault.c
-+++ b/drivers/misc/sgi-gru/grufault.c
-@@ -185,7 +185,7 @@ static int non_atomic_pte_lookup(struct vm_area_struct *vma,
- #else
- 	*pageshift = PAGE_SHIFT;
- #endif
--	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0, &page, NULL) <= 0)
-+	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0, &page) <= 0)
- 		return -EFAULT;
- 	*paddr = page_to_phys(page);
- 	put_page(page);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 37554b08bb28..b14cc4972d0b 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2380,8 +2380,7 @@ long pin_user_pages_remote(struct mm_struct *mm,
- 			   unsigned int gup_flags, struct page **pages,
- 			   struct vm_area_struct **vmas, int *locked);
- long get_user_pages(unsigned long start, unsigned long nr_pages,
--			    unsigned int gup_flags, struct page **pages,
--			    struct vm_area_struct **vmas);
-+		    unsigned int gup_flags, struct page **pages);
- long pin_user_pages(unsigned long start, unsigned long nr_pages,
- 		    unsigned int gup_flags, struct page **pages,
- 		    struct vm_area_struct **vmas);
-diff --git a/mm/gup.c b/mm/gup.c
-index 1f72a717232b..7e454d6b157e 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -2251,8 +2251,6 @@ long get_user_pages_remote(struct mm_struct *mm,
-  * @pages:      array that receives pointers to the pages pinned.
-  *              Should be at least nr_pages long. Or NULL, if caller
-  *              only intends to ensure the pages are faulted in.
-- * @vmas:       array of pointers to vmas corresponding to each page.
-- *              Or NULL if the caller does not require them.
-  *
-  * This is the same as get_user_pages_remote(), just with a less-flexible
-  * calling convention where we assume that the mm being operated on belongs to
-@@ -2260,16 +2258,15 @@ long get_user_pages_remote(struct mm_struct *mm,
-  * obviously don't pass FOLL_REMOTE in here.
-  */
- long get_user_pages(unsigned long start, unsigned long nr_pages,
--		unsigned int gup_flags, struct page **pages,
--		struct vm_area_struct **vmas)
-+		    unsigned int gup_flags, struct page **pages)
- {
- 	int locked = 1;
- 
--	if (!is_valid_gup_args(pages, vmas, NULL, &gup_flags, FOLL_TOUCH))
-+	if (!is_valid_gup_args(pages, NULL, NULL, &gup_flags, FOLL_TOUCH))
- 		return -EINVAL;
- 
- 	return __get_user_pages_locked(current->mm, start, nr_pages, pages,
--				       vmas, &locked, gup_flags);
-+				       NULL, &locked, gup_flags);
- }
- EXPORT_SYMBOL(get_user_pages);
- 
-diff --git a/mm/gup_test.c b/mm/gup_test.c
-index 8ae7307a1bb6..9ba8ea23f84e 100644
---- a/mm/gup_test.c
-+++ b/mm/gup_test.c
-@@ -139,8 +139,7 @@ static int __gup_test_ioctl(unsigned int cmd,
- 						 pages + i);
- 			break;
- 		case GUP_BASIC_TEST:
--			nr = get_user_pages(addr, nr, gup->gup_flags, pages + i,
--					    NULL);
-+			nr = get_user_pages(addr, nr, gup->gup_flags, pages + i);
- 			break;
- 		case PIN_FAST_BENCHMARK:
- 			nr = pin_user_pages_fast(addr, nr, gup->gup_flags,
-@@ -161,7 +160,7 @@ static int __gup_test_ioctl(unsigned int cmd,
- 						    pages + i, NULL);
- 			else
- 				nr = get_user_pages(addr, nr, gup->gup_flags,
--						    pages + i, NULL);
-+						    pages + i);
- 			break;
- 		default:
- 			ret = -EINVAL;
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index d255964ec331..7f31e0a4adb5 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2474,7 +2474,7 @@ static inline int check_user_page_hwpoison(unsigned long addr)
- {
- 	int rc, flags = FOLL_HWPOISON | FOLL_WRITE;
- 
--	rc = get_user_pages(addr, 1, flags, NULL, NULL);
-+	rc = get_user_pages(addr, 1, flags, NULL);
- 	return rc == -EHWPOISON;
- }
- 
 -- 
-2.40.0
+Thanks,
+
+David / dhildenb
 
