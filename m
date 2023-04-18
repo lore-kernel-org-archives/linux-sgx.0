@@ -2,155 +2,171 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE48C77B76
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Apr 2023 13:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 358E3C77B76
+	for <linux-sgx@archiver.kernel.org>; Tue, 18 Apr 2023 08:45:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231475AbjDQNGE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Apr 2023 09:06:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54822 "EHLO
+        id S231341AbjDRIpk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 18 Apr 2023 04:45:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231488AbjDQNFq (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Apr 2023 09:05:46 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2085.outbound.protection.outlook.com [40.107.92.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E2DC17A;
-        Mon, 17 Apr 2023 06:02:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EhhyV4d13AZi9hBxZu55PrxB2nRjfTjwwFM4jXFO2s7GskpYPyEA6680kaea105jFyg4zukjzl6fGBnDNci7H7ALDslkYbfHajhQM+biKJiCBejL2hWZw30j9uR7bLrddn2FnS1UPTOKjkMlnKChzibUjscMrcjfxRG6sWGM4EPtT1G96xxXmzblF3MQL1R5uZrNeYhSPc5v2Ei0Cw5MSSWDRSLanc0BPFSIl7YMD7D6OyMJCE6y6uEBpuQjG8MGErguGJ3VJ8bYYLKeaXvhqpXF+P70OQ6KRdOZfpIFoKeXcGyaDGc4MHBeCdowmEXZSs/m/RbrQJ5bUkDCCCYnUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=szPw/8osvmIcdPOk8gasD/fEYrOR++nVJ3WBNv+WaTE=;
- b=PUwE8zjiqGIvhVg/xIplvvmtYTFI2S3r/2BHUbVKSjVsGkUph93hqFoHEVky/z3GiNI4aaW94YRvyyC9XlKAHDgQfA/kypBMx526eQynN6GT4SjYIkKe+0BXtnokhZWCV9VmGciwkx4yuy07keHIzpAWviwVMJBayHT3t4/+8CywB4O5SUtSOn3DPaadD8Spe7xLVJBxNMqfp5i+70HRmAhOGnX8yi0Im04L/9f6zykB4daDB48XvdcyPR9yC0eMbE6iXow6pAvkyfJDYZXka87r8G9AoDSM2UHMlZiH4pIaRkGsysRliF6pHFn25p0fOVpAe4sWUIjsqq1gOnSgiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=szPw/8osvmIcdPOk8gasD/fEYrOR++nVJ3WBNv+WaTE=;
- b=FbCtql1U0Tz25xhTlr02MClN9WmaspoAetytleGAzvtvxekTVTntd4ddSvf2HWhFrHFBe6JI1Q04XgBaQByoujnwTOlZHL75WPvbeiSx9YCHsamtNeCNHkoJxa+9M6anGAg9a1FMh6Aze5RHOv52XhYkfz0MImHpQv17txGHN2Z+uGAzatrY7BXAsVRKOCWA6PFV7/FiZTAWJBFwNeklx57bI9xAkTcjzkEtldYj64T/d3/93vTJ4hnV/EBTurN+frUNlNlkXOC3v258S4SUDoIsEjcRiNamKEVSyiUrocjSclhZwNcu2pcisIe69omdQugEswQYFnW5J5xgEnKgRg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by DM4PR12MB5390.namprd12.prod.outlook.com (2603:10b6:5:389::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.38; Mon, 17 Apr
- 2023 13:01:57 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::6045:ad97:10b7:62a2]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::6045:ad97:10b7:62a2%9]) with mapi id 15.20.6298.030; Mon, 17 Apr 2023
- 13:01:56 +0000
-Date:   Mon, 17 Apr 2023 10:01:54 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+        with ESMTP id S230312AbjDRIpj (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Apr 2023 04:45:39 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBEAF40E1
+        for <linux-sgx@vger.kernel.org>; Tue, 18 Apr 2023 01:45:37 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f1745b7132so3533435e9.1
+        for <linux-sgx@vger.kernel.org>; Tue, 18 Apr 2023 01:45:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1681807536; x=1684399536;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oT5P+C8jhcnVktHuaT8CaiAl2LYwjoUSuguqcQQFtp4=;
+        b=FanzCFjomRlpL2OEofMz+oVxq6i4uNv2gnUp26WfZ6CbrvGoNxpyzRO9DB2aHjvVIJ
+         4FuOuc/fGLggIde9ottv4hvvZ79pRU1XLEWxMvks+oPAJDypRw0e29W4MMGhJ9zamOBp
+         J180c50wDd4N8ucvs5m1gzu/gaE1gGElKXC40=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681807536; x=1684399536;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oT5P+C8jhcnVktHuaT8CaiAl2LYwjoUSuguqcQQFtp4=;
+        b=JP2kuDhQE9qaNk3+fGObndORSNxehnXMhZETfwGlelxvPIE/W3xQTnUl7ZmI2JYZAq
+         JsEd0OOCReqRAIXJZIZnbhrPRIIhA2omnf/da9oopZxenyTWPS4TYiBovPFx9rvLZBe7
+         Q+aLbbQ+CEI471Wfc9m7Mt7vq+ncY0B7qE3Pf8MGOg5sExHRjzH5d3aQDelhDW3MUbrz
+         IWM7mlz7eLs54SSuIZBDRU+NKoZfn/eME5K1+xFhStn+vC19MEmH9CCjSsNClPpuoSWM
+         YDuypDF6/Cb3ZwmGt+e7y3h7W8K0PUuOyBSV2xy97hFaK+OW+C690kZoUOTIMlvDjgz3
+         iJNQ==
+X-Gm-Message-State: AAQBX9eDuTqRTYfZ+29BRFFJXWhyeHebDmpUpWmy0KV/jRg9wER3r2rm
+        mkY5ESq+ILxIKg+So18l+cY+ig==
+X-Google-Smtp-Source: AKy350YvSEYDzOeKn9KFoIbnr6WuwyMxchvWtx3lAPsn13XE0E7uVmL1Lmr9GjC6iusO9jxxDaLSeA==
+X-Received: by 2002:a05:600c:3d18:b0:3f1:7490:e595 with SMTP id bh24-20020a05600c3d1800b003f17490e595mr3737876wmb.2.1681807536442;
+        Tue, 18 Apr 2023 01:45:36 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-33.fiber7.init7.net. [212.51.149.33])
+        by smtp.gmail.com with ESMTPSA id u7-20020a7bcb07000000b003ee70225ed2sm14293806wmj.15.2023.04.18.01.45.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Apr 2023 01:45:35 -0700 (PDT)
+Date:   Tue, 18 Apr 2023 10:45:33 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Asahi Lina <lina@asahilina.net>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
         David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH 1/7] mm/gup: remove unused vmas parameter from
- get_user_pages()
-Message-ID: <ZD1DQrSLlMn4CUZX@nvidia.com>
-References: <cover.1681508038.git.lstoakes@gmail.com>
- <d40cb239d0ca01e51f7fc2a276398e8f4dedf9ff.1681508038.git.lstoakes@gmail.com>
+        Miguel Ojeda <ojeda@kernel.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Luben Tuikov <luben.tuikov@amd.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Karol Herbst <kherbst@redhat.com>,
+        Ella Stanforth <ella@iglunix.org>,
+        Faith Ekstrand <faith.ekstrand@collabora.com>,
+        Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        linux-sgx@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH RFC 12/18] rust: drm: sched: Add GPU scheduler abstraction
+Message-ID: <ZD5YrQ52Yn1np8ve@phenom.ffwll.local>
+Mail-Followup-To: Asahi Lina <lina@asahilina.net>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Luben Tuikov <luben.tuikov@amd.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Karol Herbst <kherbst@redhat.com>,
+        Ella Stanforth <ella@iglunix.org>,
+        Faith Ekstrand <faith.ekstrand@collabora.com>,
+        Mary <mary@mary.zone>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        linux-sgx@vger.kernel.org, asahi@lists.linux.dev
+References: <20230307-rust-drm-v1-0-917ff5bc80a8@asahilina.net>
+ <20230307-rust-drm-v1-12-917ff5bc80a8@asahilina.net>
+ <ZC2XBfJGAdNMQjpZ@phenom.ffwll.local>
+ <ZC3L/uinmOwI+FbI@phenom.ffwll.local>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d40cb239d0ca01e51f7fc2a276398e8f4dedf9ff.1681508038.git.lstoakes@gmail.com>
-X-ClientProxiedBy: YT4PR01CA0409.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10b::14) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|DM4PR12MB5390:EE_
-X-MS-Office365-Filtering-Correlation-Id: 94c63563-ad8f-47b0-91c4-08db3f43ec79
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Yy3nF81DcVWFFMSf7CQ8qyBdIrTpdh52FBS6FUKtLREg0m1RrLYWezUJ2gjbhZEp31E4IK0jKyH5uXYHCCUT0x20ouE9TuG0gn8uTt6tCDHo1pZatXY/IfqfoErA7WC3N6KQTzoNnsySh2QDX3+zzceEBpoyVFsyxX9XcEuec5yOreVBfzzbTJFIESPfi9JKqMURQit+/uGf5j97zgw7hgKHLtwiAxA0/GNdErdwx/VtSq7qa5RHDLKEqJ1cULGSg85tARUiLwWx60bVFO5xnyB6M01sfnnN8nEaR0TmkB19vvr3PgiW81WoSJyIGuMqMqNPELmar7HOpYVeMFargf34np+YmcnUuUbHQkhOka7eyRLnE1EKOLcjDJTyqz75P/e1qAMgteUMl6pZh8GnsbsZ6UhPb1nqsfVmC2kDtfFnrLE9vzwxPDcgxYmMWxQUk5Ft5Tx+dBLOD4CR+Umvgix2wR3VaKtMdJl/zoK6shjcSy+uqHC3/heJ5kq9o7kG9SeBjuJ6ETC2mq8sT61tuOqot2pdL9ymkxgBTK13KygCGHLK0A6sT/eOTn5kRhZF
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(366004)(136003)(396003)(346002)(39860400002)(451199021)(2616005)(2906002)(26005)(6506007)(6512007)(86362001)(6486002)(8676002)(6916009)(54906003)(4326008)(478600001)(316002)(66556008)(66946007)(66476007)(7416002)(38100700002)(41300700001)(8936002)(5660300002)(36756003)(186003)(83380400001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IiiDLyEnosYn7kysTkoIkb6lsp5onG2a5s7RFiFSUQPU1f1H6ZHBOvckw3t1?=
- =?us-ascii?Q?ikBX48odIWovJx4ink9iun5tVcj3x3zt3TLw9ebfJRC3/MWcDEbj6E+o/elw?=
- =?us-ascii?Q?ioYUtAj2Z7VWCPqzvOmBBtjZPKqY8msbqqxngR5mFVYmAxJHh62ggoabeiyC?=
- =?us-ascii?Q?s9ixG56yv1xNGjPPAV3JTau2F2GQqqImxJGSaVI6LXpP9Q2yWdgUQR0HJMqH?=
- =?us-ascii?Q?u5zud9e7+pyZLeQlwelVLCYlFa9+Cey3IRkz5ybxuIvU7ndTeUrzYkRqxk4m?=
- =?us-ascii?Q?wBQp06tx7P/IPRcqLMVBYakSV9LFxNSstTAq3LShaKDjye8PMKAamtbuZaXd?=
- =?us-ascii?Q?wNretB1gWE5F7qDdmbr1XkdrdHXkmFCjWixytfbEccryzIdG8dBAIyDgdAJ6?=
- =?us-ascii?Q?rZzL+J/ft1T+B31fV7dGgyTy9cGZkBWi7VVgAWgk/OcL5IvGPiD8QgsN4Rw9?=
- =?us-ascii?Q?9Ee/htrHdR59zGp9N3rkjcBooM6tY6JKWDzGx3HuSS2VZn5o3oLIDQvPE0Yb?=
- =?us-ascii?Q?fUffRgmnIvSI82JIssV9RMLPGe7I/l1Eir/QZKpTYqeptLMpfwXpKrn97HUq?=
- =?us-ascii?Q?AxVa0u3rGXw2spp/b0UYH/6CTtV6lZ9854cZjlPtqsBb/uWF+agFIMdEs+3q?=
- =?us-ascii?Q?9PS0nruUcAhnRwKBrh4wRI5euZ3hNDdbMVvsv8YIQ2wFdJnH16VIz/TlMTG7?=
- =?us-ascii?Q?0w4HKO1jnySh2zm/dGz+xqPyADeJUIK9YCEmg3TlL93Qi/SG2ZA2WugWIwMp?=
- =?us-ascii?Q?URPIgZQUSRx+S69pR2Ghna7pXvOfNuZsIhMoc9siFYBeXQ/+OXr0NTtEwOgs?=
- =?us-ascii?Q?Q5Q5JcbuEiDp6Htd5s4hjGfnn2gufMtUbDGmcGCHjGJA7QwrI+XHp8CqjQhY?=
- =?us-ascii?Q?31FuybFh7zciZPae1d846aOfsLD7QuBM7CzvYl8cvcnykayhXjK1EVUvdZX1?=
- =?us-ascii?Q?G71pdaERLwfE9NgY2Njq+0wFdFoxtbDKveOygQOmN8A4kEnaQS9IHkkZakgR?=
- =?us-ascii?Q?V1IUyV0pmFuJwxryahKEnFy5udgyBwSg5r58V5LaDNu0hyv+Tn8RX00xFvkZ?=
- =?us-ascii?Q?4IaHiVh8PCfJnddajyTJDgHiZ0fVX4+fuJ6O1IdVFVzjztDRAwWSwu/er/zr?=
- =?us-ascii?Q?aQ6gmogySkho1hNUxbJvrEvIYn6xuC/jWFlksN9bGnohBztygTcsICqgFkUH?=
- =?us-ascii?Q?HfD5fhhEypD33Wv2fhCQe4JIjOysSvSKJM36xZSnjIK7YfRwKbnWni9vx8z5?=
- =?us-ascii?Q?fMz65LjauVqJ321gOWte4cxa9KA3a/AcYIbWQzZCXDMzD0ssHTp1/FUgXwYP?=
- =?us-ascii?Q?+YoPqvOI43omtV46vXGCrg5C9+pB/m2+VJwbodgHNJGD9uMvo8cQLfAvMQKT?=
- =?us-ascii?Q?Ao5bZpnkJcu0IESxEJKOzY+u5zHE7zmpHUZVGhkKpi5D/mDWQWfYgFptZRAW?=
- =?us-ascii?Q?5heB7a3V8DzeWD8HLIOQTudw+Zec835GBeW7jf8jcQo32NO2H7IIilRbUxqj?=
- =?us-ascii?Q?shItB5MZcONmocJdvRiwmL31aNjrwJtROM52t/oWb0+6Izn2cs80XUStvqZi?=
- =?us-ascii?Q?fNf+rBK9CzK5rw5ULwzKD2ac+RQeP4Llm7x2XYTx?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94c63563-ad8f-47b0-91c4-08db3f43ec79
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2023 13:01:56.8338
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0+0baHLvWHTdAip5gKuODZ98CnsDXYde+eVw3/kzGKTNb73pJjHUY0cRYBX8Htc0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5390
+In-Reply-To: <ZC3L/uinmOwI+FbI@phenom.ffwll.local>
+X-Operating-System: Linux phenom 6.1.0-7-amd64 
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat, Apr 15, 2023 at 12:27:13AM +0100, Lorenzo Stoakes wrote:
-> No invocation of get_user_pages() uses the vmas parameter, so remove
-> it.
+On Wed, Apr 05, 2023 at 09:29:02PM +0200, Daniel Vetter wrote:
+> On Wed, Apr 05, 2023 at 05:43:01PM +0200, Daniel Vetter wrote:
+> > On Tue, Mar 07, 2023 at 11:25:37PM +0900, Asahi Lina wrote:
+> > > +/// An armed DRM scheduler job (not yet submitted)
+> > > +pub struct ArmedJob<'a, T: JobImpl>(Box<Job<T>>, PhantomData<&'a T>);
+> > > +
+> > > +impl<'a, T: JobImpl> ArmedJob<'a, T> {
+> > > +    /// Returns the job fences
+> > > +    pub fn fences(&self) -> JobFences<'_> {
+> > > +        JobFences(unsafe { &mut *self.0.job.s_fence })
+> > > +    }
+> > > +
+> > > +    /// Push the job for execution into the scheduler
+> > > +    pub fn push(self) {
+> > > +        // After this point, the job is submitted and owned by the scheduler
+> > > +        let ptr = match self {
+> > > +            ArmedJob(job, _) => Box::<Job<T>>::into_raw(job),
+> > > +        };
+> > 
+> > If I get this all right then this all makes sure that drivers can't use
+> > the job after push and they don't forgot to call arm.
+> > 
+> > What I'm not seeing is how we force drivers to call push once they've
+> > called arm? I haven't check what the code does, but from the docs it
+> > sounds like if you don't call push then drop will get called. Which wreaks
+> > the book-keeping on an armed job. Or is there someting that prevents
+> > ArmedJob<T> from having the Drop trait and so the only way to not go boom
+> > is by pushing it?
+> > 
+> > Googling for "rust undroppable" seems to indicate that this isn't a thing
+> > rust can do?
 > 
-> The GUP API is confusing and caveated. Recent changes have done much to
-> improve that, however there is more we can do. Exporting vmas is a prime
-> target as the caller has to be extremely careful to preclude their use
-> after the mmap_lock has expired or otherwise be left with dangling
-> pointers.
+> Another thing that I just realized: The driver must ensure that the
+> arm->push sequence on a given drm_sched_entity isn't interrupte by another
+> thread doing the same, i.e. you need to wrap it all in a lock, and it
+> always needs to be the same lock for a given entity.
 > 
-> Removing the vmas parameter focuses the GUP functions upon their primary
-> purpose - pinning (and outputting) pages as well as performing the actions
-> implied by the input flags.
-> 
-> This is part of a patch series aiming to remove the vmas parameter
-> altogether.
-> 
-> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-> Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  arch/x86/kernel/cpu/sgx/ioctl.c     | 2 +-
->  drivers/gpu/drm/radeon/radeon_ttm.c | 2 +-
->  drivers/misc/sgi-gru/grufault.c     | 2 +-
->  include/linux/mm.h                  | 3 +--
->  mm/gup.c                            | 9 +++------
->  mm/gup_test.c                       | 5 ++---
->  virt/kvm/kvm_main.c                 | 4 ++--
->  7 files changed, 11 insertions(+), 16 deletions(-)
+> I have no idea how to guarantee that, but I guess somehow we should?
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Ok I was wrong here, pushing the job is optional, but the locking rules
+are still the same.
 
-Jason
+I think we can solve this in rust with:
+- passing &mut Entity to a new submit_job function. that way locking rules
+  are left to the driver, which I think is best.
+- the submit_job also takes a closure, and passes the armed job as a &mut
+  ArmedJob to it. That way we guarantee that the armed job never survives
+  longer than the mutex guard (or whatever trick the driver is using) for
+  the Entity
+- that closure probably should have Result return type which submit_job
+  just passes on, because some drivers (when you support userptr that is)
+  need to be able to bail out. since the ArmedJob is borred it shouldn't
+  be able to escape through the return value
+- only ArmedJob has push_job
+
+I think with that we fully uphold the drm_sched arm/push_job contract on
+the rust side?
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
