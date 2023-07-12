@@ -2,54 +2,52 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD640EB64DD
-	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jul 2023 23:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA07EC04FE0
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jul 2023 23:03:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231867AbjGLXCs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 12 Jul 2023 19:02:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50548 "EHLO
+        id S232997AbjGLXCw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 12 Jul 2023 19:02:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232439AbjGLXCQ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 12 Jul 2023 19:02:16 -0400
+        with ESMTP id S232732AbjGLXCS (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 12 Jul 2023 19:02:18 -0400
 Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A49411D;
-        Wed, 12 Jul 2023 16:02:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FB2418E;
+        Wed, 12 Jul 2023 16:02:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689202934; x=1720738934;
+  t=1689202937; x=1720738937;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=daxYHRT3QA1Zpwip8LWDoQLP3b3KzCxxiKp1osHbrTA=;
-  b=bW2xzc32J98NefciNve4vJGMp7SJ1nVl0kN+Z7dMuOaI3KjLp6zkYv6v
-   KYg4PF0SAUFcRMroS1WnyU+o4XykaqPuyTapgWPvhPDm1oZ6C1QP/SDsk
-   7bN34rONoXRLDYXP4TyN0jUTey03RnSsop2Bxgy50s+75OY3jcsTz9F4k
-   RyiUXdXeYvF2Xc++gmEhWsZ46Kic7nVBrlojO8EmQay1H56/80T60++61
-   8dfecJsKwD0WN8PV8PnYHQU3b7bV9xw5aIJaj7b5x2z/YXgLcvHuQqG1B
-   3BXd38YuXKJn2LgNQywngGsKSIBaCvlCJQZaaO8ZGZDfuAZCug3URWTnf
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="428774129"
+  bh=gtPme0IuXCAV4jbp0xb73aBMQFtTiscdTlcYYwDyGg8=;
+  b=LU/fwLB0h47yZrs3fFKLbojxHgRpYrQ6iIvzDpxHqSnhwm5C1Bb8lLs3
+   ZZ6eclaF+n5kv3WCCBcwpdZ6Bbk/iqdD9EfLa77GTJO+z9mNYI+HXbDjw
+   Y85VOTZTDQegwUXEfgzDNOdIbhgoO/gOSGk9uKinxNZv1aKMEMqUMzaWh
+   hGKMsgb9vB9RX1YA2Nsepz7A34ZIoWfQXbWMU+jLkSuXjDid1mudOwH+y
+   JVcIWZvhc9ffHBl1yLv1/kt7JjkPJ6DpegqdUBLCCM/KmrxWFJNudHqC9
+   o+PNaBrus11gnGpxuGjD4b4J7cOq/j/q9dX6kGwTfYHJNt7hAV1lC+qxO
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="428774166"
 X-IronPort-AV: E=Sophos;i="6.01,200,1684825200"; 
-   d="scan'208";a="428774129"
+   d="scan'208";a="428774166"
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2023 16:02:13 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2023 16:02:15 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="835338635"
+X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="835338649"
 X-IronPort-AV: E=Sophos;i="6.01,200,1684825200"; 
-   d="scan'208";a="835338635"
+   d="scan'208";a="835338649"
 Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by fmsmga002.fm.intel.com with ESMTP; 12 Jul 2023 16:02:12 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 12 Jul 2023 16:02:15 -0700
 From:   Haitao Huang <haitao.huang@linux.intel.com>
 To:     jarkko@kernel.org, dave.hansen@linux.intel.com, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+        cgroups@vger.kernel.org, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
 Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com
-Subject: [PATCH v3 14/28] x86/sgx: Expose sgx_reclaim_pages() for use by EPC cgroup
-Date:   Wed, 12 Jul 2023 16:01:48 -0700
-Message-Id: <20230712230202.47929-15-haitao.huang@linux.intel.com>
+        zhiquan1.li@intel.com, kristen@linux.intel.com
+Subject: [PATCH v3 18/28] cgroup/misc: Fix an overflow
+Date:   Wed, 12 Jul 2023 16:01:52 -0700
+Message-Id: <20230712230202.47929-19-haitao.huang@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230712230202.47929-1-haitao.huang@linux.intel.com>
 References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
@@ -59,82 +57,42 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Overflow may happen in misc_cg_try_charge if new_usage becomes above
+INT_MAX, for example, on platforms with large SGX EPC sizes.
 
-Expose the top-level reclaim function as sgx_reclaim_epc_pages() for use
-by the upcoming EPC cgroup, which will initiate reclaim to enforce
-changes to high/max limits.
+Change type of new_usage to long from int and check overflow.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
 Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 10 +++++-----
- arch/x86/kernel/cpu/sgx/sgx.h  |  1 +
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ kernel/cgroup/misc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index a829555b9675..e9c9e0d97300 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -289,7 +289,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
- }
+diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
+index fe3e8a0eb7ed..ff9f900981a3 100644
+--- a/kernel/cgroup/misc.c
++++ b/kernel/cgroup/misc.c
+@@ -143,7 +143,7 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg,
+ 	struct misc_cg *i, *j;
+ 	int ret;
+ 	struct misc_res *res;
+-	int new_usage;
++	long new_usage;
  
- /**
-- * sgx_reclaim_pages() - Reclaim EPC pages from the consumers
-+ * sgx_reclaim_epc_pages() - Reclaim EPC pages from the consumers
-  * @nr_to_scan:		 Number of EPC pages to scan for reclaim
-  * @ignore_age:		 Reclaim a page even if it is young
-  *
-@@ -305,7 +305,7 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
-  * problematic as it would increase the lock contention too much, which would
-  * halt forward progress.
-  */
--static size_t sgx_reclaim_pages(size_t nr_to_scan, bool ignore_age)
-+size_t sgx_reclaim_epc_pages(size_t nr_to_scan, bool ignore_age)
- {
- 	struct sgx_backing backing[SGX_NR_TO_SCAN_MAX];
- 	struct sgx_epc_page *epc_page, *tmp;
-@@ -409,7 +409,7 @@ static bool sgx_should_reclaim(unsigned long watermark)
- void sgx_reclaim_direct(void)
- {
- 	if (sgx_should_reclaim(SGX_NR_LOW_PAGES))
--		sgx_reclaim_pages(SGX_NR_TO_SCAN, false);
-+		sgx_reclaim_epc_pages(SGX_NR_TO_SCAN, false);
- }
+ 	if (!(valid_type(type) && cg && READ_ONCE(misc_res_capacity[type])))
+ 		return -EINVAL;
+@@ -153,10 +153,10 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg,
  
- static int ksgxd(void *p)
-@@ -432,7 +432,7 @@ static int ksgxd(void *p)
- 				     sgx_should_reclaim(SGX_NR_HIGH_PAGES));
- 
- 		if (sgx_should_reclaim(SGX_NR_HIGH_PAGES))
--			sgx_reclaim_pages(SGX_NR_TO_SCAN, false);
-+			sgx_reclaim_epc_pages(SGX_NR_TO_SCAN, false);
- 
- 		cond_resched();
- 	}
-@@ -607,7 +607,7 @@ struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
- 			break;
+ 	for (i = cg; i; i = parent_misc(i)) {
+ 		res = &i->res[type];
+-
+ 		new_usage = atomic_long_add_return(amount, &res->usage);
+ 		if (new_usage > READ_ONCE(res->max) ||
+-		    new_usage > READ_ONCE(misc_res_capacity[type])) {
++		    new_usage > READ_ONCE(misc_res_capacity[type]) ||
++		    new_usage < 0) {
+ 			ret = -EBUSY;
+ 			goto err_charge;
  		}
- 
--		sgx_reclaim_pages(SGX_NR_TO_SCAN, false);
-+		sgx_reclaim_epc_pages(SGX_NR_TO_SCAN, false);
- 		cond_resched();
- 	}
- 
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index f26ed4c0d12f..98d3b15341b1 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -175,6 +175,7 @@ void sgx_reclaim_direct(void);
- void sgx_record_epc_page(struct sgx_epc_page *page, unsigned long flags);
- int sgx_drop_epc_page(struct sgx_epc_page *page);
- struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim);
-+size_t sgx_reclaim_epc_pages(size_t nr_to_scan, bool ignore_age);
- 
- void sgx_ipi_cb(void *info);
- 
 -- 
 2.25.1
 
