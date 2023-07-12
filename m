@@ -2,181 +2,173 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5D3EB64DA
-	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jul 2023 23:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A48EC001DF
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jul 2023 23:02:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230179AbjGLXCN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 12 Jul 2023 19:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50434 "EHLO
+        id S232425AbjGLXCO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 12 Jul 2023 19:02:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230207AbjGLXCF (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 12 Jul 2023 19:02:05 -0400
+        with ESMTP id S230429AbjGLXCG (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 12 Jul 2023 19:02:06 -0400
 Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6995E12E;
-        Wed, 12 Jul 2023 16:02:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C31BA18E;
+        Wed, 12 Jul 2023 16:02:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689202924; x=1720738924;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=fv4whj2dnXPamKsW7KTxNhGYSWLDObWoLRFefuR/Qrk=;
-  b=W9CFJKLS7fMsSfkUiK0ecMOTIjV3BB1PEKsXU6md6AzKfoFv5BJROeIA
-   FB1+sAeif8tVM9qPhAgq3d6VmnSrIBD+oK+bB3cs7kPvQLgwDaYdWs0wT
-   GenO8edlv4DtoUd2tbNQOmNRRwPWiu3sHhaMKf/4IbneijVpeU+L4s8/E
-   jGBFB7lRBTQmbwIiVrM7cZytD9wadYvepkZ0B4q1JhHkvouF4p6ce3FUj
-   MiZkqS8WGlApyjXSNBB6wSJy9ngDJEuWFmKMWdWexIl0cgDKyqs1eUKT0
-   +b/0wdWXIRgGJZZFPrqWK3nQVRoJDDsnjEnFaAwYvBQJHyLMiLGkCyGiN
+  t=1689202925; x=1720738925;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=YaqmO5zwAAno/VG9svXY8o2blO0PZnu2ossyoP+/A04=;
+  b=MDlDClxbT7f5pTgQZSoVCz2ncGXd+K+B4CivkTQP7LUKcRiNiPm7YG2G
+   nxoDozHPrgxATZjgyZ9fq0bKEqgX41Ff02j6UTKPZ5e/ieD3GsulLB0Et
+   tLkx9jq2hZU8ngPPpiOMgUVAdR74l/ASxvRAMeSWStmkOeuWBojENXV/E
+   GvGsb6hBbUK+/tn0SICu1kRmh1O5i9j9o+jjqCIg+kB6FCiRy1wMjMpv9
+   qHt0I7WdbY+kz2FUC51w5Pog4lJYBvYz9At7K67rCczsHC1qs5+KALSvk
+   gMntWZYN0C9Hr/67kJbqlx5bLnqb6AyB4+bzEcijQCaBeJVysG4hm6UoR
    g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="428773832"
+X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="428773851"
 X-IronPort-AV: E=Sophos;i="6.01,200,1684825200"; 
-   d="scan'208";a="428773832"
+   d="scan'208";a="428773851"
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2023 16:02:03 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2023 16:02:05 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="835338578"
+X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="835338586"
 X-IronPort-AV: E=Sophos;i="6.01,200,1684825200"; 
-   d="scan'208";a="835338578"
+   d="scan'208";a="835338586"
 Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by fmsmga002.fm.intel.com with ESMTP; 12 Jul 2023 16:02:03 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 12 Jul 2023 16:02:04 -0700
 From:   Haitao Huang <haitao.huang@linux.intel.com>
 To:     jarkko@kernel.org, dave.hansen@linux.intel.com, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org
+        cgroups@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
 Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
-        zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
-        zhanb@microsoft.com, anakrish@microsoft.com,
-        mikko.ylinen@linux.intel.com
-Subject: [PATCH v3 00/28]  Add Cgroup support for SGX EPC memory
-Date:   Wed, 12 Jul 2023 16:01:34 -0700
-Message-Id: <20230712230202.47929-1-haitao.huang@linux.intel.com>
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com
+Subject: [PATCH v3 02/28] x86/sgx: Add EPC page flags to identify owner type
+Date:   Wed, 12 Jul 2023 16:01:36 -0700
+Message-Id: <20230712230202.47929-3-haitao.huang@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230712230202.47929-1-haitao.huang@linux.intel.com>
+References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-SGX EPC memory allocations are separate from normal RAM allocations, and is
-managed solely by the SGX subsystem. The existing cgroup memory controller
-cannot be used to limit or account for SGX EPC memory, which is a desirable
-feature in some environments, e.g., support for pod level control in a
-Kubernates cluster on a VM or baremetal host [1,2] in those environments.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-This patchset implements the support for sgx_epc memory within the misc
-cgroup controller. The user can use the misc cgroup controller to set and
-enforce a max limit on total EPC usage per cgroup. The implementation
-reports current usage and events of reaching the limit per cgroup as well
-as the total system capacity.
+Two types of owners, 'sgx_encl' for VA pages and 'sgx_encl_page' for other,
+can be stored in the union field in sgx_epc_page struct introduced in the
+previous patch.
 
-This work was originally authored by Sean Christopherson a few years ago,
-and previously modified by Kristen C. Accardi to work with more recent
-kernels, and to utilize the misc cgroup controller rather than a custom
-controller. Now I updated the patches based on review comments on the V2
-series[3], simplified a few aspects of the implementation/design and fixed
-some stability issues found from testing, while keeping the same user space
-facing interfaces.
+When cgroup OOM support is added in a later patch, the owning enclave of a
+page will need to be identified. Retrieving the sgx_encl struct from a
+sgx_epc_page will be different if the page is a VA page vs. other enclave
+pages.
 
-The patchset adds support for multiple LRUs to track both reclaimable EPC
-pages (i.e. pages the reclaimer knows about), as well as unreclaimable EPC
-pages (i.e.  pages which the reclaimer isn't aware of, such as VA pages).
-These pages are assigned to an LRU, as well as an enclave, so that an
-enclave's full EPC usage can be tracked, and limited to a max value. During
-OOM events, an enclave can be have its memory zapped, and all the EPC pages
-not tracked by the reclaimer can be freed.
+Add 2 flags which will identify the type of the owner and apply them
+accordingly to newly allocated pages.
 
-I appreciate your comments and feedback.
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+Cc: Sean Christopherson <seanjc@google.com>
 
-Summary of changes from v2: (more details in commit logs)
+V3:
+- Renamed the flags to clarify they are used to identify the type
+of the owner.
+---
+ arch/x86/kernel/cpu/sgx/encl.c  | 4 ++++
+ arch/x86/kernel/cpu/sgx/ioctl.c | 4 ++++
+ arch/x86/kernel/cpu/sgx/sgx.h   | 6 ++++++
+ 3 files changed, 14 insertions(+)
 
-* Added EPC states to replace flags in sgx_epc_page struct. (Jarkko)
-* Unrolled wrappers for cond_resched, list (Dave)
-* Separate patches for adding reclaimable and unreclaimable lists. (Dave)
-* Other improvments on patch flow, commit messages, styles. (Dave, Jarkko)
-* Simplified the cgroup tree walking with plain
-  css_for_each_descendant_pre.
-* Fixed race conditions and crashes.
-* OOM killer to wait for the victim enclave pages being reclaimed.
-* Unblock the user by handling misc_max_write callback asynchronously.
-* Rebased onto 6.4 and no longer base this series on the MCA patchset.
-* Fix an overflow in misc_try_charge.
-* Fix a NULL pointer in SGX PF handler.
-* Updated and included the SGX selftest patches previously reviewed. Those
-  patches fix issues triggered in high EPC pressure required for cgroup
-  testing.
-* Added test scripts to help setup and test SGX EPC cgroups.
-
-[1]https://lore.kernel.org/all/DM6PR21MB11772A6ED915825854B419D6C4989@DM6PR21MB1177.namprd21.prod.outlook.com/
-[2]https://lore.kernel.org/all/ZD7Iutppjj+muH4p@himmelriiki/
-[3]https://lore.kernel.org/all/20221202183655.3767674-1-kristen@linux.intel.com/
-[4]Documentation/arch/x86/sgx.rst, Section "Virtual EPC"
-
-Haitao Huang (6):
-  x86/sgx: Store struct sgx_encl when allocating new VA pages
-  x86/sgx: Introduce EPC page states
-  x86/sgx: fix a NULL pointer
-  cgroup/misc: Fix an overflow
-  selftests/sgx: Retry the ioctl()'s returned with EAGAIN
-  selftests/sgx: Add scripts for epc cgroup testing
-
-Jarkko Sakkinen (3):
-  selftests/sgx: Move ENCL_HEAP_SIZE_DEFAULT to main.c
-  selftests/sgx: Use encl->encl_size in sigstruct.c
-  selftests/sgx: Include the dynamic heap size to the ELRANGE
-    calculation
-
-Kristen Carlson Accardi (9):
-  x86/sgx: Add 'struct sgx_epc_lru_lists' to encapsulate lru list(s)
-  x86/sgx: Use sgx_epc_lru_lists for existing active page list
-  x86/sgx: Store reclaimable epc pages in sgx_epc_lru_lists
-  x86/sgx: store unreclaimable EPC pages in sgx_epc_lru_lists
-  x86/sgx: Use a list to track to-be-reclaimed pages
-  cgroup/misc: Add per resource callbacks for CSS events
-  cgroup/misc: Add SGX EPC resource type and export APIs for SGX driver
-  x86/sgx: Limit process EPC usage with misc cgroup controller
-  Docs/x86/sgx: Add description for cgroup support
-
-Sean Christopherson (9):
-  x86/sgx: Add EPC page flags to identify owner type
-  x86/sgx: Introduce RECLAIM_IN_PROGRESS state
-  x86/sgx: Allow reclaiming up to 32 pages, but scan 16 by default
-  x85/sgx: Return the number of EPC pages that were successfully
-    reclaimed
-  x86/sgx: Add option to ignore age of page during EPC reclaim
-  x86/sgx: Prepare for multiple LRUs
-  x86/sgx: Expose sgx_reclaim_pages() for use by EPC cgroup
-  x86/sgx: Add helper to grab pages from an arbitrary EPC LRU
-  x86/sgx: Add EPC OOM path to forcefully reclaim EPC
-
-Vijay Dhanraj (1):
-  selftests/sgx: Add SGX selftest augment_via_eaccept_long
-
- Documentation/arch/x86/sgx.rst                |  77 ++++
- arch/x86/Kconfig                              |  13 +
- arch/x86/kernel/cpu/sgx/Makefile              |   1 +
- arch/x86/kernel/cpu/sgx/driver.c              |  27 +-
- arch/x86/kernel/cpu/sgx/encl.c                |  95 +++-
- arch/x86/kernel/cpu/sgx/encl.h                |   4 +-
- arch/x86/kernel/cpu/sgx/epc_cgroup.c          | 406 ++++++++++++++++++
- arch/x86/kernel/cpu/sgx/epc_cgroup.h          |  60 +++
- arch/x86/kernel/cpu/sgx/ioctl.c               |  25 +-
- arch/x86/kernel/cpu/sgx/main.c                | 406 ++++++++++++++----
- arch/x86/kernel/cpu/sgx/sgx.h                 | 113 ++++-
- include/linux/misc_cgroup.h                   |  34 ++
- kernel/cgroup/misc.c                          |  63 ++-
- tools/testing/selftests/sgx/load.c            |   8 +-
- tools/testing/selftests/sgx/main.c            | 177 +++++++-
- tools/testing/selftests/sgx/main.h            |   6 +-
- .../selftests/sgx/run_tests_in_misc_cg.sh     |  68 +++
- tools/testing/selftests/sgx/setup_epc_cg.sh   |  29 ++
- tools/testing/selftests/sgx/sigstruct.c       |   8 +-
- .../selftests/sgx/watch_misc_for_tests.sh     |  13 +
- 20 files changed, 1446 insertions(+), 187 deletions(-)
- create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.c
- create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.h
- create mode 100755 tools/testing/selftests/sgx/run_tests_in_misc_cg.sh
- create mode 100755 tools/testing/selftests/sgx/setup_epc_cg.sh
- create mode 100755 tools/testing/selftests/sgx/watch_misc_for_tests.sh
-
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 98e1086eab07..3bc2f95b1da2 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -252,6 +252,7 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+ 		epc_page = sgx_encl_eldu(&encl->secs, NULL);
+ 		if (IS_ERR(epc_page))
+ 			return ERR_CAST(epc_page);
++		epc_page->flags |= SGX_EPC_OWNER_ENCL_PAGE;
+ 	}
+ 
+ 	epc_page = sgx_encl_eldu(entry, encl->secs.epc_page);
+@@ -260,6 +261,7 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+ 
+ 	encl->secs_child_cnt++;
+ 	sgx_mark_page_reclaimable(entry->epc_page);
++	entry->epc_page->flags |= SGX_EPC_OWNER_ENCL_PAGE;
+ 
+ 	return entry;
+ }
+@@ -379,6 +381,7 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+ 	encl->secs_child_cnt++;
+ 
+ 	sgx_mark_page_reclaimable(encl_page->epc_page);
++	encl_page->epc_page->flags |= SGX_EPC_OWNER_ENCL_PAGE;
+ 
+ 	phys_addr = sgx_get_epc_phys_addr(epc_page);
+ 	/*
+@@ -1235,6 +1238,7 @@ struct sgx_epc_page *sgx_alloc_va_page(struct sgx_encl *encl, bool reclaim)
+ 		sgx_encl_free_epc_page(epc_page);
+ 		return ERR_PTR(-EFAULT);
+ 	}
++	epc_page->flags |= SGX_EPC_OWNER_ENCL;
+ 
+ 	return epc_page;
+ }
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index fa8c3f32ccf6..fe3e89cf013f 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -113,6 +113,8 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	encl->attributes = secs->attributes;
+ 	encl->attributes_mask = SGX_ATTR_UNPRIV_MASK;
+ 
++	encl->secs.epc_page->flags |= SGX_EPC_OWNER_ENCL_PAGE;
++
+ 	/* Set only after completion, as encl->lock has not been taken. */
+ 	set_bit(SGX_ENCL_CREATED, &encl->flags);
+ 
+@@ -323,6 +325,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 	}
+ 
+ 	sgx_mark_page_reclaimable(encl_page->epc_page);
++	encl_page->epc_page->flags |= SGX_EPC_OWNER_ENCL_PAGE;
+ 	mutex_unlock(&encl->lock);
+ 	mmap_read_unlock(current->mm);
+ 	return ret;
+@@ -977,6 +980,7 @@ static long sgx_enclave_modify_types(struct sgx_encl *encl,
+ 			mutex_lock(&encl->lock);
+ 
+ 			sgx_mark_page_reclaimable(entry->epc_page);
++			entry->epc_page->flags |= SGX_EPC_OWNER_ENCL_PAGE;
+ 		}
+ 
+ 		/* Change EPC type */
+diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
+index dc1cbcfcf2d4..f6e3c5810eef 100644
+--- a/arch/x86/kernel/cpu/sgx/sgx.h
++++ b/arch/x86/kernel/cpu/sgx/sgx.h
+@@ -29,6 +29,12 @@
+ /* Pages on free list */
+ #define SGX_EPC_PAGE_IS_FREE		BIT(1)
+ 
++/* flag for pages owned by a sgx_encl_page */
++#define SGX_EPC_OWNER_ENCL_PAGE		BIT(3)
++
++/* flag for pages owned by a sgx_encl struct */
++#define SGX_EPC_OWNER_ENCL		BIT(4)
++
+ struct sgx_epc_page {
+ 	unsigned int section;
+ 	u16 flags;
 -- 
 2.25.1
 
