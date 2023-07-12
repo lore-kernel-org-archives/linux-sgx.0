@@ -2,53 +2,53 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2383DC04FDF
-	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jul 2023 23:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCB4C04E69
+	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jul 2023 23:03:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233072AbjGLXCy (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 12 Jul 2023 19:02:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50600 "EHLO
+        id S232864AbjGLXCv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 12 Jul 2023 19:02:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232746AbjGLXCT (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 12 Jul 2023 19:02:19 -0400
+        with ESMTP id S232717AbjGLXCR (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 12 Jul 2023 19:02:17 -0400
 Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D57310E2;
-        Wed, 12 Jul 2023 16:02:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B47C10D4;
+        Wed, 12 Jul 2023 16:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689202937; x=1720738937;
+  t=1689202936; x=1720738936;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=TP2QR91RjVHQ9dyPHa8/7eEH5VE2VT3Zn/qVSkO1wJ0=;
-  b=I7QJTOhHjresphU3ZeiAGnP4l/U7xq5Yz3pjhPKfyoSPQvdiC8rpXWLo
-   DS1Tz3RDsfIoutLYVyBxfZ//pjNMhwvoHBoR3rWUjShFCx+C7FzIZFexI
-   0l2pho/1n67eWs2zgNh8IQzHwLenpS8O/6BAUR4waZiN5QHYtsFZhClzj
-   ydkRj3iuHgJhxDnTFHtO7i7Ih0Yi/ruVTDRtaSx7mvj6s/W1Tt34b/8tn
-   NGWaxcr0DTXbTnxjA341pR4a/4ke4R3TLkNMPDYf1zDAjjoRrsgZ0JQCa
-   Six9nfVzd9+4gFtf3h7IFJSyFmbu5VViURPqnQI7TImDMcYFJWcYlz5/J
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="428774175"
+  bh=29rCY8b1sI/pP+SjE7VInjolfMafoPZmrodrQ56lQbM=;
+  b=GXltZie+I4jPLkN3A6s3ad60A3gpvCwELiAms4Wm9FVXszPi9KL3nkkq
+   mmfhAPa5pOyzyDgffbNlrVprAkdzVL9jDd26Sy2R7uxfimS9ZfEFsnwff
+   m1Nduajsy/9+vJhif1yVqHLJ5NCKn9HPsWfXdyTuruEGcU6gxWoAa/rCy
+   Kzz32WTz77TxwxgMs7q4hTH1jvlr8cSuXNzp5KD9aTDkL1TXf+sTWq8kB
+   zRn8vyIdg4S32/2v6JjvZFxf9vpbBC308aOQG+VG5PK6hPoiQs1yBVVG8
+   Ykt2D4AJAAP/ZtbJZncskae2RqFrHdgMS0LWIWSjbUZZFVbBBHuCojIfL
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="428774156"
 X-IronPort-AV: E=Sophos;i="6.01,200,1684825200"; 
-   d="scan'208";a="428774175"
+   d="scan'208";a="428774156"
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2023 16:02:16 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2023 16:02:15 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="835338653"
+X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="835338646"
 X-IronPort-AV: E=Sophos;i="6.01,200,1684825200"; 
-   d="scan'208";a="835338653"
+   d="scan'208";a="835338646"
 Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by fmsmga002.fm.intel.com with ESMTP; 12 Jul 2023 16:02:15 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 12 Jul 2023 16:02:14 -0700
 From:   Haitao Huang <haitao.huang@linux.intel.com>
 To:     jarkko@kernel.org, dave.hansen@linux.intel.com, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org, Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
+        cgroups@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
 Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        zhiquan1.li@intel.com
-Subject: [PATCH v3 19/28] cgroup/misc: Add per resource callbacks for CSS events
-Date:   Wed, 12 Jul 2023 16:01:53 -0700
-Message-Id: <20230712230202.47929-20-haitao.huang@linux.intel.com>
+        zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com
+Subject: [PATCH v3 17/28] x86/sgx: fix a NULL pointer
+Date:   Wed, 12 Jul 2023 16:01:51 -0700
+Message-Id: <20230712230202.47929-18-haitao.huang@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230712230202.47929-1-haitao.huang@linux.intel.com>
 References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
@@ -58,119 +58,90 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-From: Kristen Carlson Accardi <kristen@linux.intel.com>
+Under heavy load, the SGX EPC reclaimers (ksgxd or future EPC cgroup
+worker) may reclaim SECS EPC page for an enclave and set
+encl->secs.epc_page to NULL. But the SECS EPC page is required for EAUG
+in #PF handler and is used without checking for NULL and reloading.
 
-Consumers of the misc cgroup controller might need to perform separate
-actions for Cgroups Subsystem State(CSS) events: cgroup alloc and free.
-In addition, writes to the max value may also need separate action. Add
-the ability to allow downstream users to setup callbacks for these
-operations, and call the corresponding per-resource-type callback when
-appropriate.
+Fix this by checking if SECS is loaded before EAUG and load it if it was
+reclaimed.
 
-This code will be utilized by the SGX driver in a future patch.
-
-Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
 Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
-
-Changes from V2:
-- Removed the released() callback
 ---
- include/linux/misc_cgroup.h |  5 +++++
- kernel/cgroup/misc.c        | 32 +++++++++++++++++++++++++++++---
- 2 files changed, 34 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/sgx/encl.c | 30 +++++++++++++++++++++++-------
+ arch/x86/kernel/cpu/sgx/main.c |  4 ++++
+ 2 files changed, 27 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
-index c238207d1615..9962b870d382 100644
---- a/include/linux/misc_cgroup.h
-+++ b/include/linux/misc_cgroup.h
-@@ -37,6 +37,11 @@ struct misc_res {
- 	unsigned long max;
- 	atomic_long_t usage;
- 	atomic_long_t events;
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index c321c848baa9..028d1b9d6572 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -235,6 +235,19 @@ static struct sgx_epc_page *sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 	return epc_page;
+ }
+ 
++static struct sgx_epc_page *sgx_encl_load_secs(struct sgx_encl *encl)
++{
++	struct sgx_epc_page *epc_page = encl->secs.epc_page;
 +
-+	/* per resource callback ops */
-+	int (*misc_cg_alloc)(struct misc_cg *cg);
-+	void (*misc_cg_free)(struct misc_cg *cg);
-+	void (*misc_cg_max_write)(struct misc_cg *cg);
- };
- 
- /**
-diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-index ff9f900981a3..4736db3cd418 100644
---- a/kernel/cgroup/misc.c
-+++ b/kernel/cgroup/misc.c
-@@ -278,10 +278,13 @@ static ssize_t misc_cg_max_write(struct kernfs_open_file *of, char *buf,
- 
- 	cg = css_misc(of_css(of));
- 
--	if (READ_ONCE(misc_res_capacity[type]))
-+	if (READ_ONCE(misc_res_capacity[type])) {
- 		WRITE_ONCE(cg->res[type].max, max);
--	else
-+		if (cg->res[type].misc_cg_max_write)
-+			cg->res[type].misc_cg_max_write(cg);
-+	} else {
- 		ret = -EINVAL;
++	if (!epc_page) {
++		epc_page = sgx_encl_eldu(&encl->secs, NULL);
++		if (!IS_ERR(epc_page))
++			sgx_record_epc_page(epc_page, SGX_EPC_OWNER_ENCL_PAGE |
++					    SGX_EPC_PAGE_UNRECLAIMABLE);
 +	}
- 
- 	return ret ? ret : nbytes;
- }
-@@ -385,23 +388,39 @@ static struct cftype misc_cg_files[] = {
- static struct cgroup_subsys_state *
- misc_cg_alloc(struct cgroup_subsys_state *parent_css)
++	return epc_page;
++}
++
+ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+ 						  struct sgx_encl_page *entry)
  {
-+	struct misc_cg *parent_cg;
- 	enum misc_res_type i;
- 	struct misc_cg *cg;
-+	int ret;
- 
- 	if (!parent_css) {
- 		cg = &root_cg;
-+		parent_cg = &root_cg;
- 	} else {
- 		cg = kzalloc(sizeof(*cg), GFP_KERNEL);
- 		if (!cg)
- 			return ERR_PTR(-ENOMEM);
-+		parent_cg = css_misc(parent_css);
+@@ -248,13 +261,9 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+ 		return entry;
  	}
  
- 	for (i = 0; i < MISC_CG_RES_TYPES; i++) {
- 		WRITE_ONCE(cg->res[i].max, MAX_NUM);
- 		atomic_long_set(&cg->res[i].usage, 0);
-+		if (parent_cg->res[i].misc_cg_alloc) {
-+			ret = parent_cg->res[i].misc_cg_alloc(cg);
-+			if (ret)
-+				goto alloc_err;
-+		}
- 	}
+-	if (!(encl->secs.epc_page)) {
+-		epc_page = sgx_encl_eldu(&encl->secs, NULL);
+-		if (IS_ERR(epc_page))
+-			return ERR_CAST(epc_page);
+-		sgx_record_epc_page(epc_page, SGX_EPC_OWNER_ENCL_PAGE |
+-				    SGX_EPC_PAGE_UNRECLAIMABLE);
+-	}
++	epc_page = sgx_encl_load_secs(encl);
++	if (IS_ERR(epc_page))
++		return ERR_CAST(epc_page);
  
- 	return &cg->css;
-+
-+alloc_err:
-+	for (i = 0; i < MISC_CG_RES_TYPES; i++)
-+		if (parent_cg->res[i].misc_cg_free)
-+			cg->res[i].misc_cg_free(cg);
-+	kfree(cg);
-+	return ERR_PTR(ret);
- }
+ 	epc_page = sgx_encl_eldu(entry, encl->secs.epc_page);
+ 	if (IS_ERR(epc_page))
+@@ -342,6 +351,13 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
  
- /**
-@@ -412,7 +431,14 @@ misc_cg_alloc(struct cgroup_subsys_state *parent_css)
-  */
- static void misc_cg_free(struct cgroup_subsys_state *css)
- {
--	kfree(css_misc(css));
-+	struct misc_cg *cg = css_misc(css);
-+	enum misc_res_type i;
-+
-+	for (i = 0; i < MISC_CG_RES_TYPES; i++)
-+		if (cg->res[i].misc_cg_free)
-+			cg->res[i].misc_cg_free(cg);
-+
-+	kfree(cg);
- }
+ 	mutex_lock(&encl->lock);
  
- /* Cgroup controller callbacks */
++	epc_page = sgx_encl_load_secs(encl);
++	if (IS_ERR(epc_page)) {
++		if (PTR_ERR(epc_page) == -EBUSY)
++			vmret =  VM_FAULT_NOPAGE;
++		goto err_out_unlock;
++	}
++
+ 	epc_page = sgx_alloc_epc_page(encl_page, false);
+ 	if (IS_ERR(epc_page)) {
+ 		if (PTR_ERR(epc_page) == -EBUSY)
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 9ea487469e4c..68c89d575abc 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -265,6 +265,10 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
+ 
+ 	mutex_lock(&encl->lock);
+ 
++	/* Should not be possible */
++	if (WARN_ON(!(encl->secs.epc_page)))
++		goto out;
++
+ 	sgx_encl_ewb(epc_page, backing);
+ 	encl_page->epc_page = NULL;
+ 	encl->secs_child_cnt--;
 -- 
 2.25.1
 
