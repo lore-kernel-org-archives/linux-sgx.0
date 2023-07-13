@@ -2,210 +2,84 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB84C25B4F
-	for <linux-sgx@archiver.kernel.org>; Wed, 12 Jul 2023 23:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA05EB64DA
+	for <linux-sgx@archiver.kernel.org>; Thu, 13 Jul 2023 00:03:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232599AbjGLXDC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 12 Jul 2023 19:03:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50746 "EHLO
+        id S233125AbjGMADa (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 12 Jul 2023 20:03:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232923AbjGLXC0 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 12 Jul 2023 19:02:26 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D451C173C
-        for <linux-sgx@vger.kernel.org>; Wed, 12 Jul 2023 16:02:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689202944; x=1720738944;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=MK3gZJmuysHB8wA7uWRCc5NU9OSQd6zXuKDxCfPo4fE=;
-  b=KUqC9xWQwWsyn0N+Ycg31gnOr5eeeVmTdwRYxHU0AwX26RgVlnHQK9K8
-   E5FY+1iij3qxUd6jx75Ecno29UYk1iuC1njC928lWU27RzRwOoqZThcmc
-   drOTKi5aRarDxu8FNzD1JCC0szlyoqQSudQslb818i+GciBj2HJpNLpwP
-   0bpsWdu0nBlMjnc13M1bND7DxNckO7InyRrCFKMnt+We4dfoCaTla7Bpw
-   Dj/RdhLR09nfJ17NmC57oqfxDg7RNa1AK0gglVpWAR+YDLm8of48aXsvL
-   5+xqk8Zr8452yA23Nzd4uCZRljefVgtKpzO5EiM+1EbQVoaT/tl+tbfvK
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="428774228"
-X-IronPort-AV: E=Sophos;i="6.01,200,1684825200"; 
-   d="scan'208";a="428774228"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2023 16:02:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10769"; a="835338700"
-X-IronPort-AV: E=Sophos;i="6.01,200,1684825200"; 
-   d="scan'208";a="835338700"
-Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by fmsmga002.fm.intel.com with ESMTP; 12 Jul 2023 16:02:19 -0700
-From:   Haitao Huang <haitao.huang@linux.intel.com>
-To:     jarkko@kernel.org, dave.hansen@linux.intel.com,
-        linux-sgx@vger.kernel.org
-Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
-        zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
-        zhanb@microsoft.com, anakrish@microsoft.com,
-        mikko.ylinen@linux.intel.com
-Subject: [PATCH v3 28/28] selftests/sgx: Add scripts for epc cgroup testing
-Date:   Wed, 12 Jul 2023 16:02:02 -0700
-Message-Id: <20230712230202.47929-29-haitao.huang@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230712230202.47929-1-haitao.huang@linux.intel.com>
-References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
+        with ESMTP id S233082AbjGMAD3 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 12 Jul 2023 20:03:29 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10E8C1FC8;
+        Wed, 12 Jul 2023 17:03:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=cNlYMcVTEfy/fmVD8wCyTrFiHwmY85jTLhb7uGYkAe0=; b=CWrOGiVyZ6xotScp1dFunEvArA
+        HpkAOJoRwLPjpPDqE98L4eeGySw9uYJLSkp2yyvIGRVbVFO+SdxdkuoAgbI5lKPdIZO1RAp7gcYHy
+        HcA/3JvKWFixTOfSR03gYcpJgcs3NSkXZTcpHvVImevtBIy8X6Cf8PgDYSFVjisSt4V88xk5T0J7J
+        y4i7EZ2QYnPa+FgZj2UljbmxCZtyTCVYZTeG51pkgXk1vn2ZQg4vq140MFL00BDzMjJ/M73BTG1/m
+        vwZbTOmPpxJ5GcFRIloDi8Nc6Z2CQcylwntNM4hkzVEUD6zmJGIpPY4Px3B2fl/ogxHD4ol13MBU0
+        MHVYlvOA==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qJjnq-001XVa-2a;
+        Thu, 13 Jul 2023 00:03:26 +0000
+Message-ID: <70cd3d3d-48b0-7570-850a-906a1d960bbd@infradead.org>
+Date:   Wed, 12 Jul 2023 17:03:25 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v3 21/28] x86/sgx: Limit process EPC usage with misc
+ cgroup controller
+Content-Language: en-US
+To:     Haitao Huang <haitao.huang@linux.intel.com>, jarkko@kernel.org,
+        dave.hansen@linux.intel.com, tj@kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        cgroups@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        zhiquan1.li@intel.com, seanjc@google.com
+References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
+ <20230712230202.47929-22-haitao.huang@linux.intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20230712230202.47929-22-haitao.huang@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Scripts rely on cgroup-tools package from libcgroup [1].
 
-To test:
-1) sudo ./setup_epc_cg.sh (optional one time setup)
-2) sudo ./run_tests_in_misc_cg.sh
 
-To watch misc group current:
-./watch_misc_for_tests.sh current
+On 7/12/23 16:01, Haitao Huang wrote:
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 53bab123a8ee..8a7378159e9e 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -1952,6 +1952,19 @@ config X86_SGX
+>  
+>  	  If unsure, say N.
+>  
+> +config CGROUP_SGX_EPC
+> +	bool "Miscellaneous Cgroup Controller for Enclave Page Cache (EPC) for Intel SGX"
+> +	depends on X86_SGX && CGROUP_MISC
+> +	help
+> +	  Provides control over the EPC footprint of tasks in a cgroup via
+> +	  the Miscellaneous cgroup controller.
+> +
+> +	  EPC is a subset of regular memory that is usable only by SGX
+> +	  enclaves and is very limited in quantity, e.g. less than 1%
+> +	  of total DRAM.
+> +
+> +          Say N if unsure.
 
-[1] https://github.com/libcgroup/libcgroup/blob/main/README
+Use tab + 2 spaces above for indentation, please.
 
-Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
----
- .../selftests/sgx/run_tests_in_misc_cg.sh     | 68 +++++++++++++++++++
- tools/testing/selftests/sgx/setup_epc_cg.sh   | 29 ++++++++
- .../selftests/sgx/watch_misc_for_tests.sh     | 13 ++++
- 3 files changed, 110 insertions(+)
- create mode 100755 tools/testing/selftests/sgx/run_tests_in_misc_cg.sh
- create mode 100755 tools/testing/selftests/sgx/setup_epc_cg.sh
- create mode 100755 tools/testing/selftests/sgx/watch_misc_for_tests.sh
-
-diff --git a/tools/testing/selftests/sgx/run_tests_in_misc_cg.sh b/tools/testing/selftests/sgx/run_tests_in_misc_cg.sh
-new file mode 100755
-index 000000000000..f9b691252b8d
---- /dev/null
-+++ b/tools/testing/selftests/sgx/run_tests_in_misc_cg.sh
-@@ -0,0 +1,68 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright(c) 2023 Intel Corporation.
-+
-+if ! lscgroup | grep -q "test/test1/test3$"; then
-+  echo "setting up cgroups for testing..."
-+  ./setup_epc_cg.sh
-+fi
-+
-+cmd='./test_sgx'
-+default_test="augment_via_eaccept_long"
-+
-+# We use 'tail' to skip header lines and 'sed' to remove 'enclave' from the first non-header line.
-+list=$($cmd -l 2>&1 | tail -n +4 | sed '0,/^enclave/ s/^enclave//' | sed 's/^ *//')
-+
-+IFS=$'\n' read -d '' -r -a lines <<< "$list"
-+lines=("all" "${lines[@]}")
-+
-+echo "Available tests:"
-+for i in "${!lines[@]}"; do
-+  # Check if the current line is the default test
-+  if [[ ${lines[$i]} == *"$default_test"* ]]; then
-+    echo "$((i)). ${lines[$i]} (default)"
-+  else
-+    echo "$((i)). ${lines[$i]}"
-+  fi
-+done
-+
-+echo "Please enter the number of the test you want to run (or press enter for the default test):"
-+read choice
-+
-+if [ -z "$choice" ]; then
-+  testname="$default_test"
-+else
-+  testname="${lines[$choice]}"
-+fi
-+
-+if [ "$testname" == "all" ]; then
-+  test_cmd="$cmd"
-+else
-+  test_cmd="$cmd -t $testname"
-+fi
-+
-+timestamp=$(date +%Y%m%d_%H%M%S)
-+
-+# Alway use leaf node of misc cgroups so it works for both v1 and v2
-+# these may fail on OOM
-+nohup bash -c "cgexec -g misc:test/test1/test3 $test_cmd" >test1_1_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test1/test3 $test_cmd" >test1_2_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test1/test3 $test_cmd" >test1_3_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test1/test3 $test_cmd" >test1_4_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test1/test3 $test_cmd" >test1_5_$timestamp.log 2>&1 &
-+
-+# These tests may timeout on oversubscribed tests on 4G EPC
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_1_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_2_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_3_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_4_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_5_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_6_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_7_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_8_$timestamp.log 2>&1 &
-+
-+# this should work on 4G EPC
-+nohup bash -c "cgexec -g misc:test4 $test_cmd" >test4_1_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test4 $test_cmd" >test4_2_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test4 $test_cmd" >test4_3_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test4 $test_cmd" >test4_4_$timestamp.log 2>&1 &
-diff --git a/tools/testing/selftests/sgx/setup_epc_cg.sh b/tools/testing/selftests/sgx/setup_epc_cg.sh
-new file mode 100755
-index 000000000000..5fd137a66436
---- /dev/null
-+++ b/tools/testing/selftests/sgx/setup_epc_cg.sh
-@@ -0,0 +1,29 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright(c) 2023 Intel Corporation.
-+
-+cgcreate -g misc:test
-+if [ $? -ne 0 ]; then
-+    echo "Please make sure cgroup-tools is installed, and misc cgroup is mounted."
-+    exit 1
-+fi
-+cgcreate -g misc:test/test1
-+cgcreate -g misc:test/test1/test3
-+cgcreate -g misc:test/test2
-+cgcreate -g misc:test4
-+
-+# Setup for a platform with 4G EPC
-+LARGER=4096000000
-+LARGE=409600000
-+SMALL=4096000
-+if [ ! -d "/sys/fs/cgroup/misc" ]; then
-+    echo "cgroups v2 is in use. Only leaf nodes can run a process"
-+    echo "sgx_epc $SMALL" | tee /sys/fs/cgroup/test/test1/misc.max
-+    echo "sgx_epc $LARGE" | tee /sys/fs/cgroup/test/test2/misc.max
-+    echo "sgx_epc $LARGER" | tee /sys/fs/cgroup/test4/misc.max
-+else
-+    echo "cgroups v1 is in use."
-+    echo "sgx_epc $SMALL" | tee /sys/fs/cgroup/misc/test/test1/misc.max
-+    echo "sgx_epc $LARGE" | tee /sys/fs/cgroup/misc/test/test2/misc.max
-+    echo "sgx_epc $LARGER" | tee /sys/fs/cgroup/misc/test4/misc.max
-+fi
-diff --git a/tools/testing/selftests/sgx/watch_misc_for_tests.sh b/tools/testing/selftests/sgx/watch_misc_for_tests.sh
-new file mode 100755
-index 000000000000..dbd38f346e7b
---- /dev/null
-+++ b/tools/testing/selftests/sgx/watch_misc_for_tests.sh
-@@ -0,0 +1,13 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright(c) 2023 Intel Corporation.
-+
-+if [ -z "$1" ]
-+  then
-+    echo "No argument supplied, please provide 'max', 'current' or 'events'"
-+    exit 1
-+fi
-+
-+watch -n 1 "find /sys/fs/cgroup -wholename */test*/misc.$1 -exec sh -c \
-+    'echo \"\$1:\"; cat \"\$1\"' _ {} \;"
-+
 -- 
-2.25.1
-
+~Randy
