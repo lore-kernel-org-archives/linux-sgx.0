@@ -2,120 +2,96 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DAAC0015E
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jul 2023 13:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDD2EB64DC
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jul 2023 14:34:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229820AbjGQN0t (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Jul 2023 09:26:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36032 "EHLO
+        id S231261AbjGQOe3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Jul 2023 10:34:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229800AbjGQN0h (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Jul 2023 09:26:37 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C77D7171F;
-        Mon, 17 Jul 2023 06:26:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689600378; x=1721136378;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=kSV+42buHlYkZswjzK71Zxt1+CC8bsivgjmnDWsyDDU=;
-  b=Xo2NZXcTMJTAsxXzjFJdw7y4u2cy6k20NYPmeVW9cMay4C/N2oOiGu9x
-   QfWDab74lkEYoWsqy7Lya3FnUeMHwQgx+uH84wmPHximhT8iaEaFbyty0
-   n1JSTS04yTCnNyru//Ja6ADkEbpNOJEoeDz9B8p+GOYYeey4G7RfrAmlZ
-   di8qh6mymvdt6dwWtvd1pEXXm37BGK2GT3B0opCFhWuH3s85s4xKYGkcd
-   GU2u4RuRLEZc9rZBy/3f3b0/s6TqA1FJFsx5DFXz8NJdyMqyZKnBWG2B9
-   91Qt9AC45Lrr/XL0VIJ3ZxYz2ZYbB/UTcMa8u5nX7UM2FITa/zbqu/TTE
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="432098780"
-X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="432098780"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 06:23:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="717231362"
-X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="717231362"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.48.113])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 17 Jul 2023 06:23:01 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     dave.hansen@linux.intel.com, tj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        with ESMTP id S231708AbjGQOeQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Jul 2023 10:34:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 467A01BD8;
+        Mon, 17 Jul 2023 07:33:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CDE37610AB;
+        Mon, 17 Jul 2023 14:33:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40CADC433C7;
+        Mon, 17 Jul 2023 14:33:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689604431;
+        bh=I21ZDliWD7GOdnTUiUm/tPH/YR8Nmd8AOMXf8/BsAhQ=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=IHUkmxqZ8XZmpa+aN5HU8DZORxXMoMRWO+WWbx47YVDPP8qvPcVzhLHh1XeIU1nv8
+         QzuwK0t9DPm/8gU/fnssor4Fkmq/bB8XGYkbHHr7y4nEmeUstm1rRH2EwPj95Ker1K
+         ndQjU7fQqZIg6zCAfCxTzu03K585baZEwR6GK48cFRJRo8r8l0MRQ4w+PA1hZNqEk2
+         rosP4lYUR6++AlrfPC7kpK3RXNhNpJEOgiJy4QIqZNBgQEvsDCtykn/s6ikPHmljVM
+         iwMAYqHp7lpN2ENeBAvgFFQ5uBO42xfrgNcJzvgxERPEFLRFCZbhD5sy8yNFfJ9l7k
+         qM+Ktsgp12Txw==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Mon, 17 Jul 2023 14:33:46 +0000
+Message-Id: <CU4IS5XRH3PK.M9DAVXJ7PSSE@seitikki>
+Cc:     <kai.huang@intel.com>, <reinette.chatre@intel.com>,
+        <zhiquan1.li@intel.com>, <kristen@linux.intel.com>,
+        <seanjc@google.com>
+Subject: Re: [PATCH v3 17/28] x86/sgx: fix a NULL pointer
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Haitao Huang" <haitao.huang@linux.intel.com>,
+        <dave.hansen@linux.intel.com>, <tj@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+        <cgroups@vger.kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
         "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "Jarkko Sakkinen" <jarkko@kernel.org>
-Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
-        "Kristen Carlson Accardi" <kristen@linux.intel.com>,
-        zhiquan1.li@intel.com, seanjc@google.com
-Subject: Re: [PATCH v3 03/28] x86/sgx: Add 'struct sgx_epc_lru_lists' to
- encapsulate lru list(s)
+        <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+X-Mailer: aerc 0.14.0
 References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
- <20230712230202.47929-4-haitao.huang@linux.intel.com>
- <CU4GHCJTRKLZ.1RK23NWPHJGNI@seitikki>
-Date:   Mon, 17 Jul 2023 08:23:00 -0500
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.17794m01wjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <CU4GHCJTRKLZ.1RK23NWPHJGNI@seitikki>
-User-Agent: Opera Mail/1.0 (Win32)
+ <20230712230202.47929-18-haitao.huang@linux.intel.com>
+ <CU4GJG1NRTUD.275UVHM8W2VED@seitikki> <CU4GKARPLGU5.1CVBNY9N4K28F@seitikki>
+ <op.1779qgkdwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <op.1779qgkdwjvjmi@hhuan26-mobl.amr.corp.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 17 Jul 2023 07:45:36 -0500, Jarkko Sakkinen <jarkko@kernel.org>  
-wrote:
-
-> On Wed Jul 12, 2023 at 11:01 PM UTC, Haitao Huang wrote:
->> From: Kristen Carlson Accardi <kristen@linux.intel.com>
->>
->> Introduce a data structure to wrap the existing reclaimable list
->> and its spinlock in a struct to minimize the code changes needed
->> to handle multiple LRUs as well as reclaimable and non-reclaimable
->> lists. The new structure will be used in a following set of patches to
->> implement SGX EPC cgroups.
->>
->> The changes to the structure needed for unreclaimable lists will be
->> added in later patches.
->>
->> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
->> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
->> Cc: Sean Christopherson <seanjc@google.com>
->>
->> V3:
->> Removed the helper functions and revised commit messages
->> ---
->>  arch/x86/kernel/cpu/sgx/sgx.h | 17 +++++++++++++++++
->>  1 file changed, 17 insertions(+)
->>
->> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h  
->> b/arch/x86/kernel/cpu/sgx/sgx.h
->> index f6e3c5810eef..77fceba73a25 100644
->> --- a/arch/x86/kernel/cpu/sgx/sgx.h
->> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
->> @@ -92,6 +92,23 @@ static inline void *sgx_get_epc_virt_addr(struct  
->> sgx_epc_page *page)
->>  	return section->virt_addr + index * PAGE_SIZE;
->>  }
->>
->> +/*
->> + * This data structure wraps a list of reclaimable EPC pages, and a  
->> list of
->> + * non-reclaimable EPC pages and is used to implement a LRU policy  
->> during
->> + * reclamation.
->> + */
->> +struct sgx_epc_lru_lists {
->> +	/* Must acquire this lock to access */
->> +	spinlock_t lock;
+On Mon Jul 17, 2023 at 1:14 PM UTC, Haitao Huang wrote:
+> On Mon, 17 Jul 2023 07:49:27 -0500, Jarkko Sakkinen <jarkko@kernel.org> =
+=20
+> wrote:
 >
-> Isn't this self-explanatory, why the inline comment?
+> > On Mon Jul 17, 2023 at 12:48 PM UTC, Jarkko Sakkinen wrote:
+> >> On Wed Jul 12, 2023 at 11:01 PM UTC, Haitao Huang wrote:
+> >> > Under heavy load, the SGX EPC reclaimers (ksgxd or future EPC cgroup
+> >> > worker) may reclaim SECS EPC page for an enclave and set
+> >> > encl->secs.epc_page to NULL. But the SECS EPC page is required for =
+=20
+> >> EAUG
+> >> > in #PF handler and is used without checking for NULL and reloading.
+> >> >
+> >> > Fix this by checking if SECS is loaded before EAUG and load it if it=
+ =20
+> >> was
+> >> > reclaimed.
+> >> >
+> >> > Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> >>
+> >> A bug fix should be 1/*.
+> >
+> > And a fixes tag.
+> >
+> > Or is there a bug that is momentized by the earlier patches? This patch
+> > feels confusing to say the least.
+> >
+>
+> It happens in heavy reclaiming cases, just extremely rare when EPC =20
+> accounting is not partitioned into cgroups. Will add fix tag with the =20
+> related EDMM patch. And move this as the first patch.
 
-I got a warning from the checkpatch script complaining this lock needs  
-comments.
+I understand, it is just a good practice to follow, i.e. have prelude
+and then the "real" changes :-)
 
-Thanks
-Haitao
+BR, Jarkko
