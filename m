@@ -2,129 +2,143 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD215EB64DC
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jul 2023 20:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4958EB64DC
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jul 2023 20:29:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230160AbjGQUTp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Jul 2023 16:19:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57062 "EHLO
+        id S229582AbjGQU3l (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Jul 2023 16:29:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230028AbjGQUTo (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Jul 2023 16:19:44 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CBEF199;
-        Mon, 17 Jul 2023 13:19:42 -0700 (PDT)
+        with ESMTP id S229496AbjGQU3k (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Jul 2023 16:29:40 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE2C188;
+        Mon, 17 Jul 2023 13:29:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689625182; x=1721161182;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=S09jmTQ/NZNijcZ2es5DpthxzTjKbOVrCRQMBqh1UUk=;
-  b=f5GI2ChHAsI/eYh7FM8FcMTumP5BAQHfsXWe1dQdv56XNEZlJnpeS2RT
-   Rpgwbuv9op9jUrpox/BATorW/AX++GGElA+ApM7StOjgNTtCcZsQwrkfp
-   XN3k8NgEeB00/+iPy7sivFJP6D7Lt56EHd/coOyv2OIWZuTLvyG52Kk4U
-   wLkRDN5Q3iZ224BmZMn52QCA3CHUA2ZESfWnvhr32CtlNOOcZC2hO/Hj7
-   e6NQVq4GCOwHcIpsq8i9M8k09Mx+JG8y+p6LI7HLHgVOYARxw1F/7DW94
-   mQh79C0SZ4yr+r/Z65eq5xn+FRnNL4ZK3mCJ/KPh+aQqP+57tNEKPBvIg
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="452404601"
+  t=1689625779; x=1721161779;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=X8jjGorvvakFNZSiXbU5g+XQSAuUt8rUfwsivIw+/D4=;
+  b=ItJ1Dy1niyG7hjHIbgFk/+ao9cg+xuuEfllINT6qFABopX/zytE+9GWC
+   2rgxulZUYU2JW8IH7G8lZSoRJh4/27sQFZg2JZ3IclvAMWe5vhi8eJItg
+   nX4jtR7ewYjPGQi8Eq1a/kxNK2kzpKUj+bxY3hz/G+dfnuZuOrSm789xS
+   +GzcMhLX/DHES3ZrkMetuq59AaFJKNkR+Rw31QIv6KOmGmhIRSBpXARAU
+   maHjF+Y3HK0njKD4Tq0HIpukeCc5GW/ijfD2Mpqx7YsvMk1SpJw9W7qP+
+   bsAU83pWsMUOvdQ2dM9EtZsXYsMoackEJ/1U/pa4aUVw9o8kn7JMgQCgb
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="345625644"
 X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="452404601"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 13:19:41 -0700
+   d="scan'208";a="345625644"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 13:29:39 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="788774525"
-X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="788774525"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.48.113])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 17 Jul 2023 13:19:40 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "Jarkko Sakkinen" <jarkko@kernel.org>, "Tejun Heo" <tj@kernel.org>,
-        "Haitao Huang" <haitao.huang@linux.intel.com>
-Cc:     dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, cgroups@vger.kernel.org,
-        "Zefan Li" <lizefan.x@bytedance.com>,
-        "Johannes Weiner" <hannes@cmpxchg.org>, vipinsh@google.com,
-        kai.huang@intel.com, reinette.chatre@intel.com,
-        zhiquan1.li@intel.com, kristen@linux.intel.com
-Subject: Re: [PATCH] cgroup/misc: Fix an overflow
-References: <20230717184719.85523-1-haitao.huang@linux.intel.com>
- <CU4OCLEHU1S5.359W394902648@seitikki> <ZLWPN_xyGFrqqJkV@slm.duckdns.org>
- <op.178pr1qewjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Date:   Mon, 17 Jul 2023 15:19:38 -0500
+X-IronPort-AV: E=Sophos;i="6.01,202,1684825200"; 
+   d="scan'208";a="866838387"
+Received: from b4969161e530.jf.intel.com ([10.165.56.46])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Jul 2023 13:29:39 -0700
+From:   Haitao Huang <haitao.huang@linux.intel.com>
+To:     "Jarkko Sakkinen" <jarkko@kernel.org>,
+        "Haitao Huang" <haitao.huang@linux.intel.com>,
+        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
+        kristen@linux.intel.com, seanjc@google.com, stable@vger.kernel.org
+Subject: [PATCH] x86/sgx: fix a NULL pointer
+Date:   Mon, 17 Jul 2023 13:29:38 -0700
+Message-Id: <20230717202938.94989-1-haitao.huang@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CU4OBQ8MQ2LK.2GRBPLQGVTZ3@seitikki>
+References: <CU4OBQ8MQ2LK.2GRBPLQGVTZ3@seitikki>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.178te0tbwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <op.178pr1qewjvjmi@hhuan26-mobl.amr.corp.intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 17 Jul 2023 14:01:03 -0500, Haitao Huang  
-<haitao.huang@linux.intel.com> wrote:
+Under heavy load, the SGX EPC reclaimers (current ksgxd or future EPC
+cgroup worker) may reclaim the SECS EPC page for an enclave and set
+encl->secs.epc_page to NULL. But the SECS EPC page is used for EAUG in
+the SGX #PF handler without checking for NULL and reloading.
 
-> On Mon, 17 Jul 2023 13:57:59 -0500, Tejun Heo <tj@kernel.org> wrote:
->
->> On Mon, Jul 17, 2023 at 06:55:32PM +0000, Jarkko Sakkinen wrote:
->>> On Mon Jul 17, 2023 at 6:47 PM UTC, Haitao Huang wrote:
->>> > The variable 'new_usage' in misc_cg_try_charge() may overflow if it
->>> > becomes above INT_MAX. This was observed when I implement the new SGX
->>> > EPC cgroup[1] as a misc cgroup and test on a platform with large SGX  
->>> EPC
->>> > sizes.
->>> >
->>> > Change type of new_usage to long from int and check overflow.
->>> >
->>> > Fixes: a72232eabdfcf ("cgroup: Add misc cgroup controller")
->>> > Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
->>> >
->>> > [1]  
->>> https://lore.kernel.org/linux-sgx/20230712230202.47929-1-haitao.huang@linux.intel.com/
->>> > ---
->>> >  kernel/cgroup/misc.c | 6 +++---
->>> >  1 file changed, 3 insertions(+), 3 deletions(-)
->>> >
->>> > diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
->>> > index fe3e8a0eb7ed..ff9f900981a3 100644
->>> > --- a/kernel/cgroup/misc.c
->>> > +++ b/kernel/cgroup/misc.c
->>> > @@ -143,7 +143,7 @@ int misc_cg_try_charge(enum misc_res_type type,  
->>> struct misc_cg *cg,
->>> >  	struct misc_cg *i, *j;
->>> >  	int ret;
->>> >  	struct misc_res *res;
->>> > -	int new_usage;
->>> > +	long new_usage;
->>> >
->>> >  	if (!(valid_type(type) && cg &&  
->>> READ_ONCE(misc_res_capacity[type])))
->>> >  		return -EINVAL;
->>> > @@ -153,10 +153,10 @@ int misc_cg_try_charge(enum misc_res_type  
->>> type, struct misc_cg *cg,
->>> >
->>> >  	for (i = cg; i; i = parent_misc(i)) {
->>> >  		res = &i->res[type];
->>> > -
->>>
->>> This is extra noise in the patch, please remove the change.
->>
->> Lemme just revert it. Haitao, can you instead make the resource  
->> counters and
->> all related variables explicit 64bit instead?
->>
->
-> Will do.
+Fix this by checking if SECS is loaded before EAUG and load it if it was
+reclaimed.
 
-Actually, we are using atomic_long_t for 'current' which is the same width  
-as long defined by arch/compiler. So new_usage should be long to be  
-consistent?
+Fixes: 5a90d2c3f5ef8 ("x86/sgx: Support adding of pages to an initialized enclave")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 25 ++++++++++++++++++++-----
+ arch/x86/kernel/cpu/sgx/main.c |  4 ++++
+ 2 files changed, 24 insertions(+), 5 deletions(-)
 
-ditto for event counter. Only max is plain unsigned long but I think it is  
-also OK as it only compared with 'current' without any arithmetic ops  
-involved.
-Did I miss something here?
-Thanks
-Haitao
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 2a0e90fe2abc..2ab544da1664 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -235,6 +235,16 @@ static struct sgx_epc_page *sgx_encl_eldu(struct sgx_encl_page *encl_page,
+ 	return epc_page;
+ }
+ 
++static struct sgx_epc_page *sgx_encl_load_secs(struct sgx_encl *encl)
++{
++	struct sgx_epc_page *epc_page = encl->secs.epc_page;
++
++	if (!epc_page)
++		epc_page = sgx_encl_eldu(&encl->secs, NULL);
++
++	return epc_page;
++}
++
+ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+ 						  struct sgx_encl_page *entry)
+ {
+@@ -248,11 +258,9 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+ 		return entry;
+ 	}
+ 
+-	if (!(encl->secs.epc_page)) {
+-		epc_page = sgx_encl_eldu(&encl->secs, NULL);
+-		if (IS_ERR(epc_page))
+-			return ERR_CAST(epc_page);
+-	}
++	epc_page = sgx_encl_load_secs(encl);
++	if (IS_ERR(epc_page))
++		return ERR_CAST(epc_page);
+ 
+ 	epc_page = sgx_encl_eldu(entry, encl->secs.epc_page);
+ 	if (IS_ERR(epc_page))
+@@ -339,6 +347,13 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+ 
+ 	mutex_lock(&encl->lock);
+ 
++	epc_page = sgx_encl_load_secs(encl);
++	if (IS_ERR(epc_page)) {
++		if (PTR_ERR(epc_page) == -EBUSY)
++			vmret =  VM_FAULT_NOPAGE;
++		goto err_out_unlock;
++	}
++
+ 	epc_page = sgx_alloc_epc_page(encl_page, false);
+ 	if (IS_ERR(epc_page)) {
+ 		if (PTR_ERR(epc_page) == -EBUSY)
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 166692f2d501..4662a364ce62 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -257,6 +257,10 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
+ 
+ 	mutex_lock(&encl->lock);
+ 
++	/* Should not be possible */
++	if (WARN_ON(!(encl->secs.epc_page)))
++		goto out;
++
+ 	sgx_encl_ewb(epc_page, backing);
+ 	encl_page->epc_page = NULL;
+ 	encl->secs_child_cnt--;
+-- 
+2.25.1
+
