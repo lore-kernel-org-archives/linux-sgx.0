@@ -2,143 +2,100 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4958EB64DC
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jul 2023 20:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 528F7EB64DC
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jul 2023 20:37:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229582AbjGQU3l (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Jul 2023 16:29:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32858 "EHLO
+        id S229635AbjGQUhM (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Jul 2023 16:37:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjGQU3k (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Jul 2023 16:29:40 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE2C188;
-        Mon, 17 Jul 2023 13:29:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689625779; x=1721161779;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=X8jjGorvvakFNZSiXbU5g+XQSAuUt8rUfwsivIw+/D4=;
-  b=ItJ1Dy1niyG7hjHIbgFk/+ao9cg+xuuEfllINT6qFABopX/zytE+9GWC
-   2rgxulZUYU2JW8IH7G8lZSoRJh4/27sQFZg2JZ3IclvAMWe5vhi8eJItg
-   nX4jtR7ewYjPGQi8Eq1a/kxNK2kzpKUj+bxY3hz/G+dfnuZuOrSm789xS
-   +GzcMhLX/DHES3ZrkMetuq59AaFJKNkR+Rw31QIv6KOmGmhIRSBpXARAU
-   maHjF+Y3HK0njKD4Tq0HIpukeCc5GW/ijfD2Mpqx7YsvMk1SpJw9W7qP+
-   bsAU83pWsMUOvdQ2dM9EtZsXYsMoackEJ/1U/pa4aUVw9o8kn7JMgQCgb
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="345625644"
-X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="345625644"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 13:29:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.01,202,1684825200"; 
-   d="scan'208";a="866838387"
-Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Jul 2023 13:29:39 -0700
-From:   Haitao Huang <haitao.huang@linux.intel.com>
-To:     "Jarkko Sakkinen" <jarkko@kernel.org>,
-        "Haitao Huang" <haitao.huang@linux.intel.com>,
-        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
-        kristen@linux.intel.com, seanjc@google.com, stable@vger.kernel.org
-Subject: [PATCH] x86/sgx: fix a NULL pointer
-Date:   Mon, 17 Jul 2023 13:29:38 -0700
-Message-Id: <20230717202938.94989-1-haitao.huang@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <CU4OBQ8MQ2LK.2GRBPLQGVTZ3@seitikki>
-References: <CU4OBQ8MQ2LK.2GRBPLQGVTZ3@seitikki>
+        with ESMTP id S229582AbjGQUhM (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Jul 2023 16:37:12 -0400
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1796103;
+        Mon, 17 Jul 2023 13:37:10 -0700 (PDT)
+Received: by mail-il1-x130.google.com with SMTP id e9e14a558f8ab-34884a8f285so10380015ab.0;
+        Mon, 17 Jul 2023 13:37:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689626230; x=1692218230;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2kAwJHiR+H4GDqr7e6nXyr8bmo5EmU5aiLGkOZNmvaM=;
+        b=kmeBqa5MdbvFwdthLNdn6x5K0aMOzpJkcGZV6u06eY00afZa0fY9RvCh6intNP8pXp
+         ova0U7D4MjTIHFXVKb77udj94AQogskNUHixxA7OnLXGJPqGQg6Ye8E8Nr80P7xmVjtH
+         AT+CNgtY69k3C9UANOeU+fLg0WgCyuVlNL42ktb03Tr4Ttm67yY0eM3nIU9UTMc/OHvx
+         59KCftrig2iDJHxr3GXZJA7GmYbli/hP5Gfi8PyDKfKvTV/Uc6F+p1auVV2NYVy0z5kj
+         3RopdAE1ZYsq0E5J5tInZWS6tPHLNKqw1jaKxPBBsjVes2aS1YV/KBTdgWJzhzxViEOO
+         segw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689626230; x=1692218230;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2kAwJHiR+H4GDqr7e6nXyr8bmo5EmU5aiLGkOZNmvaM=;
+        b=QPpwyUtlxd+3/M46cPFcTUr5s41naeuwDX2qra/T0d+MjQf6WhX5an5Vf/2+A5DzwC
+         o5MyVi7cnDoLMAAyb7ernvdZeR/+F4KfM6R85R//UZwI1Y6m4dVH2KEKawEVW9Mc/Ii9
+         MMifR3CrB5WTGEaXsunekiajs7ShtJhQWj0tjPdL5aupEFPpa/xQFP4ySyzY0EnVpSC7
+         BBOxHplYVonVTDajdp1DSuP4v3pMYnSjqlq9h2BtWg6xYdvKcfJtWYNyX5P6gGlQcifr
+         EygUxwQ2/sJ1osOv7oCY4JDdjjlKZObwOKAlV1rYpLl6xmr5v2hmdKyfnzHnVCCB0kzB
+         UPqg==
+X-Gm-Message-State: ABy/qLbh/sTRckKyzlbVPFyKIfAurNbn4YR6h5LRSTfih4QmA02ethDS
+        arXAmG+ISWygXwfN4nAWl4g=
+X-Google-Smtp-Source: APBJJlEKXWlw+c5R6v5A6AbZDdFfolPCLTWSYnbtuLHMsBAPUBd5oy2WlAN/RWB7XzfShnMndpZc1w==
+X-Received: by 2002:a92:c943:0:b0:348:7c4e:2959 with SMTP id i3-20020a92c943000000b003487c4e2959mr644960ilq.23.1689626229961;
+        Mon, 17 Jul 2023 13:37:09 -0700 (PDT)
+Received: from localhost (dhcp-72-235-13-41.hawaiiantel.net. [72.235.13.41])
+        by smtp.gmail.com with ESMTPSA id a12-20020a92d34c000000b003426356a35asm199726ilh.0.2023.07.17.13.37.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jul 2023 13:37:09 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Mon, 17 Jul 2023 10:37:08 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>, dave.hansen@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        cgroups@vger.kernel.org, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, vipinsh@google.com,
+        kai.huang@intel.com, reinette.chatre@intel.com,
+        zhiquan1.li@intel.com, kristen@linux.intel.com
+Subject: Re: [PATCH] cgroup/misc: Fix an overflow
+Message-ID: <ZLWmdBfcuPUBtk1K@slm.duckdns.org>
+References: <20230717184719.85523-1-haitao.huang@linux.intel.com>
+ <CU4OCLEHU1S5.359W394902648@seitikki>
+ <ZLWPN_xyGFrqqJkV@slm.duckdns.org>
+ <op.178pr1qewjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <op.178te0tbwjvjmi@hhuan26-mobl.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <op.178te0tbwjvjmi@hhuan26-mobl.amr.corp.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Under heavy load, the SGX EPC reclaimers (current ksgxd or future EPC
-cgroup worker) may reclaim the SECS EPC page for an enclave and set
-encl->secs.epc_page to NULL. But the SECS EPC page is used for EAUG in
-the SGX #PF handler without checking for NULL and reloading.
+Hello,
 
-Fix this by checking if SECS is loaded before EAUG and load it if it was
-reclaimed.
+On Mon, Jul 17, 2023 at 03:19:38PM -0500, Haitao Huang wrote:
+> Actually, we are using atomic_long_t for 'current' which is the same width
+> as long defined by arch/compiler. So new_usage should be long to be
+> consistent?
 
-Fixes: 5a90d2c3f5ef8 ("x86/sgx: Support adding of pages to an initialized enclave")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
----
- arch/x86/kernel/cpu/sgx/encl.c | 25 ++++++++++++++++++++-----
- arch/x86/kernel/cpu/sgx/main.c |  4 ++++
- 2 files changed, 24 insertions(+), 5 deletions(-)
+We can use atomic64_t, right? It's slower on 32bit machines but I think it'd
+be better to guarantee resource counter range than micro-optimizing charge
+operations. None of the current users are hot enough for this to matter and
+if somebody becomes that hot, the difference between atomic_t and atomic64_t
+isn't gonna matter that much. We'd need to batch allocations per-cpu and so
+on.
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 2a0e90fe2abc..2ab544da1664 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -235,6 +235,16 @@ static struct sgx_epc_page *sgx_encl_eldu(struct sgx_encl_page *encl_page,
- 	return epc_page;
- }
- 
-+static struct sgx_epc_page *sgx_encl_load_secs(struct sgx_encl *encl)
-+{
-+	struct sgx_epc_page *epc_page = encl->secs.epc_page;
-+
-+	if (!epc_page)
-+		epc_page = sgx_encl_eldu(&encl->secs, NULL);
-+
-+	return epc_page;
-+}
-+
- static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
- 						  struct sgx_encl_page *entry)
- {
-@@ -248,11 +258,9 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
- 		return entry;
- 	}
- 
--	if (!(encl->secs.epc_page)) {
--		epc_page = sgx_encl_eldu(&encl->secs, NULL);
--		if (IS_ERR(epc_page))
--			return ERR_CAST(epc_page);
--	}
-+	epc_page = sgx_encl_load_secs(encl);
-+	if (IS_ERR(epc_page))
-+		return ERR_CAST(epc_page);
- 
- 	epc_page = sgx_encl_eldu(entry, encl->secs.epc_page);
- 	if (IS_ERR(epc_page))
-@@ -339,6 +347,13 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
- 
- 	mutex_lock(&encl->lock);
- 
-+	epc_page = sgx_encl_load_secs(encl);
-+	if (IS_ERR(epc_page)) {
-+		if (PTR_ERR(epc_page) == -EBUSY)
-+			vmret =  VM_FAULT_NOPAGE;
-+		goto err_out_unlock;
-+	}
-+
- 	epc_page = sgx_alloc_epc_page(encl_page, false);
- 	if (IS_ERR(epc_page)) {
- 		if (PTR_ERR(epc_page) == -EBUSY)
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 166692f2d501..4662a364ce62 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -257,6 +257,10 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
- 
- 	mutex_lock(&encl->lock);
- 
-+	/* Should not be possible */
-+	if (WARN_ON(!(encl->secs.epc_page)))
-+		goto out;
-+
- 	sgx_encl_ewb(epc_page, backing);
- 	encl_page->epc_page = NULL;
- 	encl->secs_child_cnt--;
+> ditto for event counter. Only max is plain unsigned long but I think it is
+> also OK as it only compared with 'current' without any arithmetic ops
+> involved.
+> Did I miss something here?
+
+I'm saying that it'd be better to make everything explicitly 64bit.
+
+Thanks.
+
 -- 
-2.25.1
-
+tejun
