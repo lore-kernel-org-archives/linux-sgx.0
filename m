@@ -2,46 +2,47 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E73EB64DC
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jul 2023 11:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED717EB64DC
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jul 2023 12:42:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230057AbjGQLPE (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Jul 2023 07:15:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36364 "EHLO
+        id S229919AbjGQMmU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Jul 2023 08:42:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbjGQLPD (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Jul 2023 07:15:03 -0400
+        with ESMTP id S231229AbjGQMl7 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Jul 2023 08:41:59 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E2E91B9;
-        Mon, 17 Jul 2023 04:15:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38D7CE7F;
+        Mon, 17 Jul 2023 05:41:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 32E7461014;
-        Mon, 17 Jul 2023 11:15:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93ED9C433C7;
-        Mon, 17 Jul 2023 11:14:58 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D5EE61050;
+        Mon, 17 Jul 2023 12:41:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC57C433CB;
+        Mon, 17 Jul 2023 12:41:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689592501;
-        bh=jQaqrSCg/yz5THxsM9cGnoZroPykdynjBcPlSG9vNuk=;
+        s=k20201202; t=1689597713;
+        bh=m/DOGC6VOPi4p/KkmSKEwPEhmwK+Sh1kqIBGMvhMij8=;
         h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=biVF7s9jcxMdUb2BNF9qZV5HtosaQalGOMAHtL4rHUPEpnq91DGXn039B5C6Cnk4D
-         ZDGEtBMAhLOQRwl6lIW+Zv6UhejI96Lz8bLsEjJiBaiIu2HLW+yFSrgtZdjXy+wXRV
-         vwMyz9EawHrE40q6tPROYq5yMLOKotg0Um/vk16UgL/Rdt/uP9kMiImhKhngT/mcCc
-         XwEQOxPLuR/eKw4HzDcXIWJbf+a1irlyFJM1wAtOHCJ/CWHxeAcbWlt55tVxcbu534
-         j9zH0Ggcj/mIULA/QUqd5AsxHezqVSOVMIs9NJUIe+JPVKyxbnhBP0c/SbXTdozyZr
-         LfPjYFzHfuLtQ==
+        b=Xt29kgKbOvs8kiul6RR8/AjHsVnpp2Vc9cPd3+e2BVZ69ih3Mh8Ry3SQx1pJ8I19y
+         EFWrSVAMcHAsUcM6/8DHpDu/5JS/+ugvBS59Gb6oidoSHaSPrlQ83S1sGgq//QtvCw
+         vYK/DHgSRdjO6eaweTtJarG1JY7DqbkfeJ/1REY1AoStCNHbhhX0/55egaxODMWZGT
+         OYHRy3uYXfyle2IC4SxQ/W4zn3tzfXef3yzJWWUgYNmOuC/M7kDlKYmsIOkSA2xx6E
+         gDjXmRA04k9xTnPeRhWv55jSj7XDPy8NtNnZTnoL08RUhozWl+0pUYqRp/EIUDJKXe
+         bYmJmJc3NuiFQ==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Mon, 17 Jul 2023 11:14:56 +0000
-Message-Id: <CU4EJXH6STEZ.20R6EOX7V3XGD@seitikki>
+Date:   Mon, 17 Jul 2023 12:41:47 +0000
+Message-Id: <CU4GEFJ8R4US.227AN2H482Q4G@seitikki>
 Cc:     <kai.huang@intel.com>, <reinette.chatre@intel.com>,
+        "Sean Christopherson" <sean.j.christopherson@intel.com>,
         <zhiquan1.li@intel.com>, <kristen@linux.intel.com>,
         <seanjc@google.com>
-Subject: Re: [PATCH v3 01/28] x86/sgx: Store struct sgx_encl when allocating
- new VA pages
+Subject: Re: [PATCH v3 02/28] x86/sgx: Add EPC page flags to identify owner
+ type
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
 To:     "Haitao Huang" <haitao.huang@linux.intel.com>,
         <dave.hansen@linux.intel.com>, <tj@kernel.org>,
@@ -51,53 +52,42 @@ To:     "Haitao Huang" <haitao.huang@linux.intel.com>,
         <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
 X-Mailer: aerc 0.14.0
 References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
- <20230712230202.47929-2-haitao.huang@linux.intel.com>
-In-Reply-To: <20230712230202.47929-2-haitao.huang@linux.intel.com>
+ <20230712230202.47929-3-haitao.huang@linux.intel.com>
+In-Reply-To: <20230712230202.47929-3-haitao.huang@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Wed Jul 12, 2023 at 11:01 PM UTC, Haitao Huang wrote:
-> In a later patch, when a cgroup has exceeded the max capacity for EPC pag=
-es
-> and there are no more Enclave EPC pages associated with the cgroup that c=
-an
-> be reclaimed, the only pages still associated with an enclave will be the
-> unreclaimable Version Array (VA) pages or SECS pages, and the entire
-> enclave will need to be killed to free up those pages.
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
 >
-> Currently, given an enclave pointer it is easy to find the associated VA
-> pages and free them, however, OOM killing an enclave based on cgroup limi=
-ts
-> will require examining a cgroup's unreclaimable page list, and finding an
-> enclave given a SECS page or a VA page. This will require a backpointer
-> from a page to an enclave, including for VA pages.
+> Two types of owners, 'sgx_encl' for VA pages and 'sgx_encl_page' for othe=
+r,
+> can be stored in the union field in sgx_epc_page struct introduced in the
+> previous patch.
+
+This would be easier to follow:
+
+"Two types of owners of struct_epc_page, 'sgx_encl' for VA pages and
+'sgx_encl_page' can be stored in the previously introduced union field."
+
+> When cgroup OOM support is added in a later patch, the owning enclave of =
+a
+> page will need to be identified. Retrieving the sgx_encl struct from a
+> sgx_epc_page will be different if the page is a VA page vs. other enclave
+> pages.
 >
-> When allocating new Version Array (VA) pages, pass the struct sgx_encl of
-> the enclave that is allocating the page. sgx_alloc_epc_page() will store
-> this value in the owner field of the struct sgx_epc_page.  In a later
-> patch, VA pages will be placed in an unreclaimable queue, and then when t=
-he
-> cgroup max limit is reached and there are no more reclaimable pages and t=
-he
-> enclave must be OOM killed, all the VA pages associated with that enclave
-> can be uncharged and freed.
->
-> To avoid casting needed to access the two types of owners: sgx_encl for V=
-A
-> pages, sgx_encl_page for other pages, replace 'owner' field in sgx_epc_pa=
-ge
-> with a union of the two types.
+> Add 2 flags which will identify the type of the owner and apply them
+> accordingly to newly allocated pages.
 
-I think the action taken is correct but the reasoning is a bit
-convoluted.
+This would be easier to follow:
 
-Why not instead put something like:
+"OOM support for cgroups requires that the owner needs to be identified
+when selecting pages from the unreclaimable list. Address this by adding
+flags for identifying the owner type."
 
-"Because struct sgx_epc_page instances of VA pages are not owned by an
-sgx_encl_page instance in the first place, mark their owner as sgx_encl,
-in order to make it reachable from the unreclaimable list."
+It is better to carry the story a little bit forward than say that a
+subsequent patch will require this :-) I.e. enough to get at least a
+rough idea what is going on.
 
-The code change itself, and rest of the paragraphs do look reasonable.
-
-BR, Jarkko
+R, Jarkko
