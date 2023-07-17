@@ -2,100 +2,91 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AB9EB64DC
-	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jul 2023 18:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE7AEB64DC
+	for <linux-sgx@archiver.kernel.org>; Mon, 17 Jul 2023 18:49:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229759AbjGQSrX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 17 Jul 2023 14:47:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42484 "EHLO
+        id S231193AbjGQStx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 17 Jul 2023 14:49:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230161AbjGQSrW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Jul 2023 14:47:22 -0400
+        with ESMTP id S231321AbjGQStw (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 17 Jul 2023 14:49:52 -0400
 Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3703C9D;
-        Mon, 17 Jul 2023 11:47:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22708124;
+        Mon, 17 Jul 2023 11:49:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689619641; x=1721155641;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Xn4mhx8wb+pDDvuBnsfj8E37sdsIB+VR4lYH55ZoQHk=;
-  b=T+s9ij9NaN7rOESMeFL11IgEPCXS5O69U+dy7O0cf3sozFqxR8E3Oa7S
-   TkUub/d9iZnwfqxvjwk6Q0oMbXUnar9RvmWG5wQay7jSWjjl0tBwFKaYg
-   +HOZeFF/S5ZcNtFTiX1hM6C/p+LyylYe669vYFdBFlgmmAosGbDfpy2RO
-   kjRlrtGuqTqruLt4JwMw24mRBQoFVx5R8f71k284zOAkGNeMGKX8CP5g/
-   LsnQigBEHIAPxwqhA+blK/bgbAVSgBstTkJkZauvIecFAHt8SjgxkpGaZ
-   JhkA61eUc+a21itcc6AH4D2mgoLWvc8nV4JcfRSvk8PCuD5HrPpUF90lw
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="429771528"
+  t=1689619790; x=1721155790;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=vHqFAb6Vl7dA36hMqfVx3NL//FFkWSCEjQFuIaxEHj0=;
+  b=JGcumQHKAfej9OfBNuWTssmjNqroOz3pWOZqr8dHcchCtTy70hnElRcM
+   5vU4/1390LyNb6biCvbYFZcVAeFsPLNG67+vIUaNUKsHxNFkfzh66a0lU
+   nPnmdhaTqSLOEdtVbrwxHHNcPAjXfwIKrM0YErvxYpSThhzlYkUV/hyzI
+   jEnetacAhziVngbtgET8ZcPjFdI73ta+PCbtXRwhO00jaxvl137OHTSk9
+   t/nwPBMvK+dI3q3MDO9jBBsS6GQb+twNGFl8DMym0M6GQ3DGfSvb60ViH
+   GafsECD20kS3O2diCc+jrOd+2QdW4lzTqOBiZaaUNtor/rpC9O/SgEQku
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="429772798"
 X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="429771528"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 11:47:20 -0700
+   d="scan'208";a="429772798"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 11:49:49 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="1053987123"
+X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="726661096"
 X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="1053987123"
-Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Jul 2023 11:47:19 -0700
-From:   Haitao Huang <haitao.huang@linux.intel.com>
-To:     jarkko@kernel.org, dave.hansen@linux.intel.com, tj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org, Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Cc:     vipinsh@google.com, kai.huang@intel.com, reinette.chatre@intel.com,
-        zhiquan1.li@intel.com, kristen@linux.intel.com
-Subject: [PATCH] cgroup/misc: Fix an overflow
-Date:   Mon, 17 Jul 2023 11:47:19 -0700
-Message-Id: <20230717184719.85523-1-haitao.huang@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
+   d="scan'208";a="726661096"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.48.113])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 17 Jul 2023 11:49:47 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "Jarkko Sakkinen" <jarkko@kernel.org>, dave.hansen@linux.intel.com,
+        tj@kernel.org, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org, cgroups@vger.kernel.org,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "Dave Hansen" <dave.hansen@intel.com>
+Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
+        zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com
+Subject: Re: [PATCH v3 17/28] x86/sgx: fix a NULL pointer
+References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
+ <20230712230202.47929-18-haitao.huang@linux.intel.com>
+ <CU4GJG1NRTUD.275UVHM8W2VED@seitikki>
+ <ffe26e8b-9f2a-4f06-aadf-9dfb1421be76@intel.com>
+Date:   Mon, 17 Jul 2023 13:49:45 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.178o87ejwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <ffe26e8b-9f2a-4f06-aadf-9dfb1421be76@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The variable 'new_usage' in misc_cg_try_charge() may overflow if it
-becomes above INT_MAX. This was observed when I implement the new SGX
-EPC cgroup[1] as a misc cgroup and test on a platform with large SGX EPC
-sizes.
+On Mon, 17 Jul 2023 10:49:03 -0500, Dave Hansen <dave.hansen@intel.com>  
+wrote:
 
-Change type of new_usage to long from int and check overflow.
+> On 7/17/23 05:48, Jarkko Sakkinen wrote:
+>> On Wed Jul 12, 2023 at 11:01 PM UTC, Haitao Huang wrote:
+>>> Under heavy load, the SGX EPC reclaimers (ksgxd or future EPC cgroup
+>>> worker) may reclaim SECS EPC page for an enclave and set
+>>> encl->secs.epc_page to NULL. But the SECS EPC page is required for EAUG
+>>> in #PF handler and is used without checking for NULL and reloading.
+>>>
+>>> Fix this by checking if SECS is loaded before EAUG and load it if it  
+>>> was
+>>> reclaimed.
+>>>
+>>> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+>> A bug fix should be 1/*.
+>
+> No, bug fixes should not even be _part_ of another series.  Send bug
+> fixes separately, please.
 
-Fixes: a72232eabdfcf ("cgroup: Add misc cgroup controller")
-Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
 
-[1] https://lore.kernel.org/linux-sgx/20230712230202.47929-1-haitao.huang@linux.intel.com/
----
- kernel/cgroup/misc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-index fe3e8a0eb7ed..ff9f900981a3 100644
---- a/kernel/cgroup/misc.c
-+++ b/kernel/cgroup/misc.c
-@@ -143,7 +143,7 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg,
- 	struct misc_cg *i, *j;
- 	int ret;
- 	struct misc_res *res;
--	int new_usage;
-+	long new_usage;
- 
- 	if (!(valid_type(type) && cg && READ_ONCE(misc_res_capacity[type])))
- 		return -EINVAL;
-@@ -153,10 +153,10 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg,
- 
- 	for (i = cg; i; i = parent_misc(i)) {
- 		res = &i->res[type];
--
- 		new_usage = atomic_long_add_return(amount, &res->usage);
- 		if (new_usage > READ_ONCE(res->max) ||
--		    new_usage > READ_ONCE(misc_res_capacity[type])) {
-+		    new_usage > READ_ONCE(misc_res_capacity[type]) ||
-+		    new_usage < 0) {
- 			ret = -EBUSY;
- 			goto err_charge;
- 		}
--- 
-2.25.1
-
+I sent the two bug fixes separately now. Do you want me resend this series  
+without those?
+Thanks
+Haitao
