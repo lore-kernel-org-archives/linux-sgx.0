@@ -2,119 +2,162 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AADEB64DC
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Jul 2023 14:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46547EB64DA
+	for <linux-sgx@archiver.kernel.org>; Tue, 18 Jul 2023 15:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231442AbjGROaP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Jul 2023 10:30:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49784 "EHLO
+        id S233085AbjGRPiU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 18 Jul 2023 11:38:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbjGROaO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Jul 2023 10:30:14 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF8039E;
-        Tue, 18 Jul 2023 07:30:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689690613; x=1721226613;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=VJrp3IJhInZ+SzZ0nDfPX4wCUgu4MkTGZuFgcyrPrfc=;
-  b=gHzc7/xrpK0tLHIRXishGPZQTr5yYnrYO0EB0D/tZvjT3hPEePBrHr2A
-   J3jjgEIjRz0GCrAeTQj8YE9NoISF3HYP7Npkg8HxQEdDwCmJNWaB8HBap
-   afqNXGZ2098ptGMd2N6gtPKWSdjiDBbKYa7ozXTG1v12iJLY8WAV6ktgI
-   0PNRWIj4NJFQSvEK2NdnjxGMbKjn2mLDXUQtRcTy9dvxYAs9RZBIz5r2Y
-   TmqXkNYUnJnGVdr0+DueUsD00Ra9tKTaNSmW8JqzAz8wisne6ETZ2er76
-   MoFLdD2hSxL91FkQXmjiiVJQHXc3IN0olRV+qa5gRuRsq94mA7Z6TqmqP
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="368863511"
-X-IronPort-AV: E=Sophos;i="6.01,214,1684825200"; 
-   d="scan'208";a="368863511"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2023 07:30:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="700928252"
-X-IronPort-AV: E=Sophos;i="6.01,214,1684825200"; 
-   d="scan'208";a="700928252"
-Received: from pkarurmo-mobl.amr.corp.intel.com (HELO [10.209.37.195]) ([10.209.37.195])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2023 07:30:11 -0700
-Message-ID: <95371eef-73ec-5541-ad97-829954cfb848@intel.com>
-Date:   Tue, 18 Jul 2023 07:30:11 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
+        with ESMTP id S232674AbjGRPiT (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Jul 2023 11:38:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E4D5198C;
+        Tue, 18 Jul 2023 08:37:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 87A9D61632;
+        Tue, 18 Jul 2023 15:37:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C7DC433C9;
+        Tue, 18 Jul 2023 15:37:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689694673;
+        bh=Bu4gsHY3PTe4G9zq0dlJB1ALuaQlaOto2aj5qSjrYKo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZIFf1HG47tn2zhXBi6kTcvxFF8zu5DrIRxjOe+TfY00ISraRVMADvdrSJbb5da8g+
+         CgkOGLKDbf6qpTknZQNTzN0xYPXc6OIf/cyGnuOv1tEtJkTiUoNYFUQb4NgtAW34T0
+         CDOqbvauBaPvcwY3TkRZVpIk+lq6/8PienVUTQ+59/NZlMryZCJdBbG5dlEkDlrwUI
+         xgK+OHilT3DNhkVh0qsTbJrfjiAfc1m5JsjA63eJzbNKPXfli69zgQRZpEa1WntdoM
+         9JUf5xdv8AXxVDdoufyApxqVo/wxkLbWDIJZitDRlQ9SNLW+lyCEchQV5AjPyLORCq
+         I9KZp3AVX0d9g==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 18 Jul 2023 18:37:45 +0300
+Message-Id: <CU5ERP8KIR0W.JN8OYIY3AQI6@suppilovahvero>
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Haitao Huang" <haitao.huang@linux.intel.com>,
+        <dave.hansen@linux.intel.com>, <linux-kernel@vger.kernel.org>,
+        <linux-sgx@vger.kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+Cc:     <kai.huang@intel.com>, <reinette.chatre@intel.com>,
+        <kristen@linux.intel.com>, <seanjc@google.com>,
+        <stable@vger.kernel.org>
 Subject: Re: [PATCH] x86/sgx: fix a NULL pointer
-Content-Language: en-US
-To:     Haitao Huang <haitao.huang@linux.intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
-        kristen@linux.intel.com, seanjc@google.com, stable@vger.kernel.org
+X-Mailer: aerc 0.14.0
 References: <CU4OBQ8MQ2LK.2GRBPLQGVTZ3@seitikki>
  <20230717202938.94989-1-haitao.huang@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
 In-Reply-To: <20230717202938.94989-1-haitao.huang@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 7/17/23 13:29, Haitao Huang wrote:
-...
-> @@ -248,11 +258,9 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+On Mon Jul 17, 2023 at 11:29 PM EEST, Haitao Huang wrote:
+> Under heavy load, the SGX EPC reclaimers (current ksgxd or future EPC
+> cgroup worker) may reclaim the SECS EPC page for an enclave and set
+> encl->secs.epc_page to NULL. But the SECS EPC page is used for EAUG in
+> the SGX #PF handler without checking for NULL and reloading.
+>
+> Fix this by checking if SECS is loaded before EAUG and load it if it was
+> reclaimed.
+>
+> Fixes: 5a90d2c3f5ef8 ("x86/sgx: Support adding of pages to an initialized=
+ enclave")
+> Cc: stable@vger.kernel.org
+
+Given that
+
+	$ git describe --contains 5a90d2c3f5ef8
+	v6.0-rc1~102^2~16
+
+You could also describe this as:
+
+Cc: stable@vger.kernel.org # v6.0+
+
+> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/encl.c | 25 ++++++++++++++++++++-----
+>  arch/x86/kernel/cpu/sgx/main.c |  4 ++++
+>  2 files changed, 24 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/enc=
+l.c
+> index 2a0e90fe2abc..2ab544da1664 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -235,6 +235,16 @@ static struct sgx_epc_page *sgx_encl_eldu(struct sgx=
+_encl_page *encl_page,
+>  	return epc_page;
+>  }
+> =20
+> +static struct sgx_epc_page *sgx_encl_load_secs(struct sgx_encl *encl)
+> +{
+> +	struct sgx_epc_page *epc_page =3D encl->secs.epc_page;
+> +
+> +	if (!epc_page)
+> +		epc_page =3D sgx_encl_eldu(&encl->secs, NULL);
+> +
+> +	return epc_page;
+> +}
+> +
+>  static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+>  						  struct sgx_encl_page *entry)
+>  {
+> @@ -248,11 +258,9 @@ static struct sgx_encl_page *__sgx_encl_load_page(st=
+ruct sgx_encl *encl,
 >  		return entry;
 >  	}
->  
+> =20
 > -	if (!(encl->secs.epc_page)) {
-> -		epc_page = sgx_encl_eldu(&encl->secs, NULL);
+> -		epc_page =3D sgx_encl_eldu(&encl->secs, NULL);
 > -		if (IS_ERR(epc_page))
 > -			return ERR_CAST(epc_page);
 > -	}
-> +	epc_page = sgx_encl_load_secs(encl);
+> +	epc_page =3D sgx_encl_load_secs(encl);
 > +	if (IS_ERR(epc_page))
 > +		return ERR_CAST(epc_page);
->  
->  	epc_page = sgx_encl_eldu(entry, encl->secs.epc_page);
+> =20
+>  	epc_page =3D sgx_encl_eldu(entry, encl->secs.epc_page);
 >  	if (IS_ERR(epc_page))
-> @@ -339,6 +347,13 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
->  
+> @@ -339,6 +347,13 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_=
+struct *vma,
+> =20
 >  	mutex_lock(&encl->lock);
->  
-> +	epc_page = sgx_encl_load_secs(encl);
+> =20
+> +	epc_page =3D sgx_encl_load_secs(encl);
 > +	if (IS_ERR(epc_page)) {
-> +		if (PTR_ERR(epc_page) == -EBUSY)
-> +			vmret =  VM_FAULT_NOPAGE;
+> +		if (PTR_ERR(epc_page) =3D=3D -EBUSY)
+> +			vmret =3D  VM_FAULT_NOPAGE;
 > +		goto err_out_unlock;
 > +	}
-
-Whenever I see one of these "make sure it isn't NULL", I always jump to
-asking what *keeps* it from becoming NULL again.  In both cases here, I
-think that's encl->lock.
-
-A comment would be really nice here, maybe on sgx_encl_load_secs().  Maybe:
-
-/*
- * Ensure the SECS page is not swapped out.  Must be called with
- * encl->lock to protect _____ and ensure the SECS page is not
- * swapped out again.
- */
-
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> +
+>  	epc_page =3D sgx_alloc_epc_page(encl_page, false);
+>  	if (IS_ERR(epc_page)) {
+>  		if (PTR_ERR(epc_page) =3D=3D -EBUSY)
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/mai=
+n.c
 > index 166692f2d501..4662a364ce62 100644
 > --- a/arch/x86/kernel/cpu/sgx/main.c
 > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -257,6 +257,10 @@ static void sgx_reclaimer_write(struct sgx_epc_page *epc_page,
->  
+> @@ -257,6 +257,10 @@ static void sgx_reclaimer_write(struct sgx_epc_page =
+*epc_page,
+> =20
 >  	mutex_lock(&encl->lock);
->  
+> =20
 > +	/* Should not be possible */
 > +	if (WARN_ON(!(encl->secs.epc_page)))
 > +		goto out;
+> +
+>  	sgx_encl_ewb(epc_page, backing);
+>  	encl_page->epc_page =3D NULL;
+>  	encl->secs_child_cnt--;
+> --=20
+> 2.25.1
 
-That comment isn't super helpful.  We generally don't WARN_ON() things
-that should happen.  *Why* is it not possible?
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
+BR, Jarkko
