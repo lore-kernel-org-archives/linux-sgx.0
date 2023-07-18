@@ -2,87 +2,157 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55175EB64DA
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Jul 2023 15:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3E1EB64DD
+	for <linux-sgx@archiver.kernel.org>; Tue, 18 Jul 2023 16:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231649AbjGRPlh (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Jul 2023 11:41:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41242 "EHLO
+        id S233341AbjGRQkW (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 18 Jul 2023 12:40:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230296AbjGRPlg (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Jul 2023 11:41:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA114B0;
-        Tue, 18 Jul 2023 08:41:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3E04A61636;
-        Tue, 18 Jul 2023 15:41:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6087CC433C7;
-        Tue, 18 Jul 2023 15:41:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689694894;
-        bh=2z4VemvJVhwmItrQCFbXp9Jgb8x1GmS7nNXmRAUmxe4=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=b7YN7txj1on5brdZbnALpUA94GYmyReQ+rClZl8Mz2bWYBYwgmIEkm8pdca4djZv/
-         M0/ca7LkPW9RLp4P5PxIhT4+N4GIFM0+SDwh848mHn+4gCX/qzKQDzYdF/H9OdGwA2
-         LqF+D+CokWv5RrrXVPnDyJ80a2/otiTTB4iz9ik+d0/+wa7T3aHw7GUMCpflWkoxJ5
-         8ocmj/cGk3YWBFL0Cbe1589RT4WHM40Sbl5wCDRS9LLcaY1bliMbadfrb/dDmlHV8e
-         2s0h4K2G6ILAYhmyVG/Wf6mi64APUa8G9zu3M2+1psXxsFLMceexRWUl36HHyJU2ym
-         IVDuIGvKOZKBw==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 18 Jul 2023 18:41:27 +0300
-Message-Id: <CU5EUJDXM616.SQKBEGB2RLHL@suppilovahvero>
-Cc:     <dave.hansen@linux.intel.com>, <linux-kernel@vger.kernel.org>,
-        <linux-sgx@vger.kernel.org>, <cgroups@vger.kernel.org>,
-        "Zefan Li" <lizefan.x@bytedance.com>,
-        "Johannes Weiner" <hannes@cmpxchg.org>, <vipinsh@google.com>,
-        <kai.huang@intel.com>, <reinette.chatre@intel.com>,
-        <zhiquan1.li@intel.com>, <kristen@linux.intel.com>
-Subject: Re: [PATCH] cgroup/misc: Fix an overflow
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Tejun Heo" <tj@kernel.org>,
-        "Haitao Huang" <haitao.huang@linux.intel.com>
-X-Mailer: aerc 0.14.0
-References: <20230717184719.85523-1-haitao.huang@linux.intel.com>
- <CU4OCLEHU1S5.359W394902648@seitikki> <ZLWPN_xyGFrqqJkV@slm.duckdns.org>
- <op.178pr1qewjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <op.178te0tbwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <ZLWmdBfcuPUBtk1K@slm.duckdns.org>
-In-Reply-To: <ZLWmdBfcuPUBtk1K@slm.duckdns.org>
+        with ESMTP id S233259AbjGRQkQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Jul 2023 12:40:16 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94362171C;
+        Tue, 18 Jul 2023 09:40:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689698409; x=1721234409;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=UD4tx2ko1Ntid4p2qUjYdfLq2O8toM+6lgpiCZu5QuE=;
+  b=PAIMvxwwyrULQCWvkXKiUzmDKJM86RRoFTRhDfxmz838paZdN7Rjs8J9
+   m+rQH2AGJzIF1VzW8aEc4ra4aNbYrk4usrQGDEMy6U5rOMwnotk+S/dD6
+   i7EHPO0xsrTGY1Cqr/FeBCufs1OZdg0U3mn5xBjZBGAJSzGXy22HTopcF
+   aA1mOkD/8J5g8GIwZw9ROOO+MloCxXvzUJVneKfLrPEHgfs7hLyJCNiQN
+   HM25LEQKzlLPbI2BQpIlfNyqzY05ZCzkT2NzgZhKNTtYlx4/DwuFg0Mik
+   XQhLRoYuOwNJH2RLEXlTp04y5HtsI0kn/P0x221JSALFL+ehzZVUlBgcq
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="397096521"
+X-IronPort-AV: E=Sophos;i="6.01,214,1684825200"; 
+   d="scan'208";a="397096521"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2023 09:40:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="700975518"
+X-IronPort-AV: E=Sophos;i="6.01,214,1684825200"; 
+   d="scan'208";a="700975518"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.48.113])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 18 Jul 2023 09:39:57 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "Jarkko Sakkinen" <jarkko@kernel.org>, dave.hansen@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "Dave Hansen" <dave.hansen@intel.com>
+Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
+        kristen@linux.intel.com, seanjc@google.com, stable@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: fix a NULL pointer
+References: <CU4OBQ8MQ2LK.2GRBPLQGVTZ3@seitikki>
+ <20230717202938.94989-1-haitao.huang@linux.intel.com>
+ <95371eef-73ec-5541-ad97-829954cfb848@intel.com>
+Date:   Tue, 18 Jul 2023 11:39:56 -0500
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.18adwup7wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <95371eef-73ec-5541-ad97-829954cfb848@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon Jul 17, 2023 at 11:37 PM EEST, Tejun Heo wrote:
-> Hello,
+On Tue, 18 Jul 2023 09:30:11 -0500, Dave Hansen <dave.hansen@intel.com>  
+wrote:
+
+> On 7/17/23 13:29, Haitao Huang wrote:
+> ...
+>> @@ -248,11 +258,9 @@ static struct sgx_encl_page  
+>> *__sgx_encl_load_page(struct sgx_encl *encl,
+>>  		return entry;
+>>  	}
+>>
+>> -	if (!(encl->secs.epc_page)) {
+>> -		epc_page = sgx_encl_eldu(&encl->secs, NULL);
+>> -		if (IS_ERR(epc_page))
+>> -			return ERR_CAST(epc_page);
+>> -	}
+>> +	epc_page = sgx_encl_load_secs(encl);
+>> +	if (IS_ERR(epc_page))
+>> +		return ERR_CAST(epc_page);
+>>
+>>  	epc_page = sgx_encl_eldu(entry, encl->secs.epc_page);
+>>  	if (IS_ERR(epc_page))
+>> @@ -339,6 +347,13 @@ static vm_fault_t sgx_encl_eaug_page(struct  
+>> vm_area_struct *vma,
+>>
+>>  	mutex_lock(&encl->lock);
+>>
+>> +	epc_page = sgx_encl_load_secs(encl);
+>> +	if (IS_ERR(epc_page)) {
+>> +		if (PTR_ERR(epc_page) == -EBUSY)
+>> +			vmret =  VM_FAULT_NOPAGE;
+>> +		goto err_out_unlock;
+>> +	}
 >
-> On Mon, Jul 17, 2023 at 03:19:38PM -0500, Haitao Huang wrote:
-> > Actually, we are using atomic_long_t for 'current' which is the same wi=
-dth
-> > as long defined by arch/compiler. So new_usage should be long to be
-> > consistent?
+> Whenever I see one of these "make sure it isn't NULL", I always jump to
+> asking what *keeps* it from becoming NULL again.  In both cases here, I
+> think that's encl->lock.
 >
-> We can use atomic64_t, right? It's slower on 32bit machines but I think i=
-t'd
-> be better to guarantee resource counter range than micro-optimizing charg=
-e
-> operations. None of the current users are hot enough for this to matter a=
-nd
-> if somebody becomes that hot, the difference between atomic_t and atomic6=
-4_t
-> isn't gonna matter that much. We'd need to batch allocations per-cpu and =
-so
-> on.
+Yes, encl->lock protects all enclave states, the xarray holding  
+encl_pages, SECS, VAs, etc.
 
-In our context, the microcode of SGX could support 32-bit but by design
-we only support 64-bit. So at least with the current implementation this
-would not be an issue for SGX.
+> A comment would be really nice here, maybe on sgx_encl_load_secs().   
+> Maybe:
+>
+> /*
+>  * Ensure the SECS page is not swapped out.  Must be called with
+>  * encl->lock to protect _____ and ensure the SECS page is not
+>  * swapped out again.
+>  */
+>
+Thanks for the suggestion. Lock should be held for the duration of SECS  
+usage.
+So something like this?
+/*
+  * Ensure the SECS page is not swapped out.  Must be called with
+  * encl->lock to protect the enclave states including SECS and
+  * ensure the SECS page is not swapped out again while being used.
+  */
 
-BR, Jarkko
 
+>> diff --git a/arch/x86/kernel/cpu/sgx/main.c  
+>> b/arch/x86/kernel/cpu/sgx/main.c
+>> index 166692f2d501..4662a364ce62 100644
+>> --- a/arch/x86/kernel/cpu/sgx/main.c
+>> +++ b/arch/x86/kernel/cpu/sgx/main.c
+>> @@ -257,6 +257,10 @@ static void sgx_reclaimer_write(struct  
+>> sgx_epc_page *epc_page,
+>>
+>>  	mutex_lock(&encl->lock);
+>>
+>> +	/* Should not be possible */
+>> +	if (WARN_ON(!(encl->secs.epc_page)))
+>> +		goto out;
+>
+> That comment isn't super helpful.  We generally don't WARN_ON() things
+> that should happen.  *Why* is it not possible?
+>
 
+When this part of code is reached, the reclaimer is holding at least one  
+reclaimable EPC page to reclaim for the enclave and the code below only  
+reclaims SECS when no reclaimable EPCs (number of SECS children being  
+zero) of the enclave left. So it should not be possible.
+I'll remove this change because this is really not needed for fixing the  
+bug as Kai pointed out.
+
+I added this for sanity check when implementing multiple EPC tracking  
+lists for cgroups. At one point there were list corruption issues if  
+moving EPCs between lists not managed well. With those straightened out,  
+and clear definitions of EPC states for moving them from one list to  
+another, I no longer see much value to keep this even in later cgroup  
+patches.
+
+Thanks
+Haitao
