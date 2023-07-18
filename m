@@ -2,52 +2,57 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD85EB64DC
-	for <linux-sgx@archiver.kernel.org>; Tue, 18 Jul 2023 21:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E20CEEB64DD
+	for <linux-sgx@archiver.kernel.org>; Tue, 18 Jul 2023 21:36:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbjGRVWu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 18 Jul 2023 17:22:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41944 "EHLO
+        id S229889AbjGRVg6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 18 Jul 2023 17:36:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbjGRVWt (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Jul 2023 17:22:49 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AEF79D;
-        Tue, 18 Jul 2023 14:22:49 -0700 (PDT)
+        with ESMTP id S229463AbjGRVg5 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 18 Jul 2023 17:36:57 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB3D9C0;
+        Tue, 18 Jul 2023 14:36:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689715369; x=1721251369;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=pjVJw6GiD8De53zFr+sIXnTzakqEin8Mim8XJ1OncwA=;
-  b=OW7mKFiYpq7WXHOZlkqsG5JOgEhafpqVPmYIYji4/PwtesncsI9hiG1I
-   Fj0gFMl380KI+Z9HFsu9pzketsZJlxPjKEzOXGy9K2yYEr4/5Vrhn1kCw
-   FhSC1IENGNFiO003OmLAY9j9XlrgBW4utfgRaC0Q4/sEbsKv+f0qxVxFU
-   7shRCjdsCS0OtMeDcz+SLIcNN6ba/Nrfp+mCWlPB+2ZuOCIzyUlCRcHW5
-   Zpj56QTApSbNT3cuvRvyJEg3G9VwewU3Wxmt5b3wlS0WgNoqY/+Wr988F
-   IZKJXg2u/3h1xTxT4k/mJa+BYk4zBlELvm16tMpAgDGUVq6bNGfPleZMW
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="363774372"
+  t=1689716216; x=1721252216;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1BDw+qUZlFSHxjhbgyBlkEgjL+F0zoRSb4egK/Yp7FI=;
+  b=jJC08jRYLMdM+gxKn5rcJ9uVs6X8fknO/wjmQDHvvzQbAxAA5/t2VBPn
+   hlBFgEHhL9D3vaU4bd/UqI1EHcZauxxqyy72579xeRGChRouZ0/7watek
+   u8mTdvoLNllveXneHr4+jIfuzIsEu7Zs1IVw/ALqAGs/Q0jge14vh4kyM
+   jGs5+H8Qw91v27JWKL1hHjrMeSKVXjrXv7sccfU7ANWk9uCSspzl2azIX
+   3Rk+7aHuy2UNAxE3Ix+asuSn8nGRrJF8kcrzIzhyhMupoPB+F/AY8HIpF
+   ba8YexXrNOqwOkxDHWxW8ZG9NkoW5t/YrXp8lWRDvVRODrTIcVuhOB/sj
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="432500416"
 X-IronPort-AV: E=Sophos;i="6.01,215,1684825200"; 
-   d="scan'208";a="363774372"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2023 14:22:48 -0700
+   d="scan'208";a="432500416"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2023 14:36:56 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="847837663"
+X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="1054464383"
 X-IronPort-AV: E=Sophos;i="6.01,215,1684825200"; 
-   d="scan'208";a="847837663"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.48.113])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 18 Jul 2023 14:22:46 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "Jarkko Sakkinen" <jarkko@kernel.org>, dave.hansen@linux.intel.com,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "Dave Hansen" <dave.hansen@intel.com>
+   d="scan'208";a="1054464383"
+Received: from unknown (HELO [10.209.37.195]) ([10.209.37.195])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2023 14:36:54 -0700
+Message-ID: <ad2d9610-61c0-4719-9df1-0116ef317d8a@intel.com>
+Date:   Tue, 18 Jul 2023 14:36:53 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] x86/sgx: fix a NULL pointer
+Content-Language: en-US
+To:     Haitao Huang <haitao.huang@linux.intel.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
 Cc:     kai.huang@intel.com, reinette.chatre@intel.com,
         kristen@linux.intel.com, seanjc@google.com, stable@vger.kernel.org
-Subject: Re: [PATCH] x86/sgx: fix a NULL pointer
 References: <CU4OBQ8MQ2LK.2GRBPLQGVTZ3@seitikki>
  <20230717202938.94989-1-haitao.huang@linux.intel.com>
  <dfb1f233-aebd-50cf-8704-e83b91ee110a@intel.com>
@@ -55,55 +60,36 @@ References: <CU4OBQ8MQ2LK.2GRBPLQGVTZ3@seitikki>
  <b5779418-e2a4-ca7a-866f-97e49cd272cb@intel.com>
  <op.18aontlmwjvjmi@hhuan26-mobl.amr.corp.intel.com>
  <eb1aea6f-3688-f871-2335-ff911a51ef52@intel.com>
-Date:   Tue, 18 Jul 2023 16:22:45 -0500
-MIME-Version: 1.0
+ <op.18aqz7sbwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <op.18aqz7sbwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.18aqz7sbwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <eb1aea6f-3688-f871-2335-ff911a51ef52@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 18 Jul 2023 15:56:27 -0500, Dave Hansen <dave.hansen@intel.com>  
-wrote:
+On 7/18/23 14:22, Haitao Huang wrote:
+> I agree this is the race. But for this to happen, that is at #1 you have
+> only one non-SECS page left so #3 can happen. That means it is already
+> high pressure 
 
-> On 7/18/23 13:32, Haitao Huang wrote:
-> ...
->> Ignore VA pages for now. Say for a system with 10 page EPC, 2 enclaves,
->> each needs 5 pages non-SECS so total demand would be 12 pages. The ksgxd
->> would only need to swap out 2 pages at the most to get one enclave fully
->> loaded with 6 pages, and the other one with 4 pages. There is no chance
->> the ksgxd would swap any one of two SECS pages.
->>
->> We would need at least one enclave A of 10 pages total to squeeze out
->> the other B completely. For that to happen B pretty much has to be
->> sleeping all the time so the LRU based reclaiming would hit it but not
->> pages of A. So no chance to hit #PF on pages of B still.
->>
->> So some minimal pressure is needed to ensure SECS swapped. The higher
->> the pressure the higher the chance to hit #PF while SECS is swapped.
->
-> What would the second-to-last non-SECS page be?  A thread control page?
-> VA page?
->
-> As long as *that* page can generate a page fault, then you only need two
-> pages for this scenario to happen:
->
-> 1. Reclaimer takes encl->lock
-> 2. #PF occurs from another thread, blocks on encl->lock
-> 3. SECS is reclaimed
-> 4. encl->lock released
-> 5. #PF sees reclaimed SECS
->
->
-I agree this is the race. But for this to happen, that is at #1 you have  
-only one non-SECS page left so #3 can happen. That means it is already  
-high pressure because reclaimer has swapped all other non-SECS.
-In my example of two enclaves of 5 non-EPC pages. #3 won't happen because  
-you don't reach #1 with only one non-SECS left.
+I think our definitions of memory pressure differ.
 
-Thanks
-Haitao
+Pressure is raised by allocations and dropped by reclaim.  This
+raise->drop cycle is (or should be) time-limited and can't take forever.
+ The reclaim either works in a short period of time or something dies.
+If allocations are transient, pressure is transient.
+
+Let's say a pressure blip (a one-time event) comes along and pages out
+that second-to-last page.  That's pretty low pressure.  Years pass.  The
+enclave never gets run.  Nothing pages the second-to-last page back in.
+A second pressure blip comes along.  The SECS page gets paged out.
+
+That's two pressure blips in, say 10 years.  Is that "high pressure"?
+
+> because reclaimer has swapped all other non-SECS.
+> In my example of two enclaves of 5 non-EPC pages. #3 won't happen
+> because you don't reach #1 with only one non-SECS left.
+
+
