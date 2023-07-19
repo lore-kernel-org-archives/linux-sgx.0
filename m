@@ -2,113 +2,116 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B29ACC001B0
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jul 2023 13:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 953ADEB64DA
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jul 2023 14:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229673AbjGSNxZ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 19 Jul 2023 09:53:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36186 "EHLO
+        id S230513AbjGSOt0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 19 Jul 2023 10:49:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230164AbjGSNxY (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 19 Jul 2023 09:53:24 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 518AB19A;
-        Wed, 19 Jul 2023 06:53:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689774803; x=1721310803;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=eLReTLR7T3Lczh0yY83eGVr+L00pnkRO/M98nIcTRXc=;
-  b=E+aTPrw4iEGQ7xw5TrtWI3Lxk/lAt1Up0qkAhq1RyTjLZBTEKIuVoOZy
-   Huah9C4X5g2BLDjbQLQpqXiCA7462GRL2tL9/dHMV92ojsNW6r7Th2qAQ
-   G3PwyW/RSNvKTqtVcj+w/f8+AP5hwwdk2Pa9kRyqs5EtFgeyTModX2weR
-   0KLrG3hJAzK6OmYcQbpGa+E2FAE1s1OxyTxcJbzKKLFqznUVf9aihWU75
-   Kf/2oWk41+8/DrZMZlchQHK7VVtclTLbSr2OSniCF/Y5UjGF+m0NQHfF+
-   JJVWSN1S2olRI6BvKU4PSINVU8oahRBep+SooYoClL7E6b14wMR8UhLgw
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10776"; a="430236114"
-X-IronPort-AV: E=Sophos;i="6.01,216,1684825200"; 
-   d="scan'208";a="430236114"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2023 06:53:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10776"; a="717986450"
-X-IronPort-AV: E=Sophos;i="6.01,216,1684825200"; 
-   d="scan'208";a="717986450"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.48.113])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 19 Jul 2023 06:53:21 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "Huang, Kai" <kai.huang@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Dave Hansen" <dave.hansen@intel.com>
-Cc:     "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "Christopherson,, Sean" <seanjc@google.com>
-Subject: Re: [PATCH] x86/sgx: fix a NULL pointer
-References: <CU4OBQ8MQ2LK.2GRBPLQGVTZ3@seitikki>
- <20230717202938.94989-1-haitao.huang@linux.intel.com>
- <dfb1f233-aebd-50cf-8704-e83b91ee110a@intel.com>
- <op.18ah5mn3wjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <b5779418-e2a4-ca7a-866f-97e49cd272cb@intel.com>
- <op.18aontlmwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <eb1aea6f-3688-f871-2335-ff911a51ef52@intel.com>
- <op.18aqz7sbwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <ad2d9610-61c0-4719-9df1-0116ef317d8a@intel.com>
- <op.18asliuzwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <520111c9ccdd7356f9eaf20013e3e3c75b06398e.camel@intel.com>
- <d718cdda-2d5b-9b4b-d90d-55449ec1ac75@intel.com>
-Date:   Wed, 19 Jul 2023 08:53:20 -0500
+        with ESMTP id S229646AbjGSOtZ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 19 Jul 2023 10:49:25 -0400
+X-Greylist: delayed 1420 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 19 Jul 2023 07:49:19 PDT
+Received: from icts-p-cavspool-1.kulnet.kuleuven.be (icts-p-cavspool-1.kulnet.kuleuven.be [134.58.240.194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EBC111B;
+        Wed, 19 Jul 2023 07:49:19 -0700 (PDT)
+Received: from icts-p-cavuit-1.kulnet.kuleuven.be (icts-p-cavuit-1.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:132])
+        by icts-p-cavspool-1.kulnet.kuleuven.be (Postfix) with ESMTP id 40DAF1EFF;
+        Wed, 19 Jul 2023 16:25:49 +0200 (CEST)
+X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
+X-KULeuven-Scanned: Found to be clean
+X-KULeuven-ID: 6937920172.A944A
+X-KULeuven-Information: Katholieke Universiteit Leuven
+Received: from icts-p-ceifnet-smtps-1.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:136:242:ac11:f])
+        by icts-p-cavuit-1.kulnet.kuleuven.be (Postfix) with ESMTP id 6937920172;
+        Wed, 19 Jul 2023 16:25:44 +0200 (CEST)
+BCmilterd-Mark-Subject: no
+BCmilterd-Errors: 
+BCmilterd-Report: SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00
+X-CAV-Cluster: smtps
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
+        s=cav; t=1689776744;
+        bh=5z6MJatlb5WblaaYzgRyXrmUXZWjDHrlu7vyGhgqg2I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=JW9DEm3ick7ApuOSP3FNiVODaBf8i7CQPoKihhhoq4aq3yujoarkCscviGKf4LiRa
+         Chx/DxULB9XMJrWOxWqE4/3s1yFnTzVWgoig3LH1JTBDiHWHBjo2kyxopHIHrObpWY
+         mxl7HaNM0k//MZBtY4JyWBqI5CvniiaQGuAffKdM=
+Received: from librem.epfl.ch (eduroam-269-1-126.epfl.ch [192.33.197.126])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id 38BBBD4EC4971;
+        Wed, 19 Jul 2023 16:25:44 +0200 (CEST)
+X-Kuleuven: This mail passed the K.U.Leuven mailcluster
+From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+To:     jarkko@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     dave.hansen@linux.intel.com,
+        Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH 4/4] selftests/sgx: Fix compiler optimizations in test enclave
+Date:   Wed, 19 Jul 2023 16:25:00 +0200
+Message-Id: <20230719142500.13623-5-jo.vanbulck@cs.kuleuven.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
+References: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.18b0u6evwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <d718cdda-2d5b-9b4b-d90d-55449ec1ac75@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Dave and Kai
-On Tue, 18 Jul 2023 19:21:54 -0500, Dave Hansen <dave.hansen@intel.com>  
-wrote:
+Relocate encl_op_array entries at runtime relative to the enclave base to
+ensure correct function pointer when compiling the test enclave with -Os.
 
-> On 7/18/23 17:14, Huang, Kai wrote:
->> Also perhaps the patch title is too vague.  Adding more information  
->> doesn't hurt
->> I think, e.g., mentioning it is a fix for NULL pointer dereference in  
->> the EAUG
->> flow.
->
-> Yeah, let's say something like:
->
-> 	x86/sgx: Resolve SECS reclaim vs. page fault race
->
-The patch is not to resolve SECS vs #PF race though the race is a  
-necessary condition to cause the NULL pointer. The same condition does not  
-cause NULL pointer in the ELDU path of #PF, only in EAUG path of #PF.
+Declare the secinfo struct as volatile to prevent compiler optimizations
+from passing an unaligned pointer to ENCLU.
 
-And the issue really is the NULL pointer not checked and fix was to reuse  
-the same code to reload SECS in ELDU code path for EAUG code path
+Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+---
+ tools/testing/selftests/sgx/test_encl.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
+diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
+index 5531f5d48..d78596ccf 100644
+--- a/tools/testing/selftests/sgx/test_encl.c
++++ b/tools/testing/selftests/sgx/test_encl.c
+@@ -88,7 +88,8 @@ static void *memset(void *dest, int c, size_t n)
+ static void do_encl_emodpe(void *_op)
+ {
+ 	struct encl_op_emodpe op;
+-	struct sgx_secinfo secinfo __aligned(sizeof(struct sgx_secinfo)) = {0};
++	/* declare secinfo volatile to preserve alignment */
++	volatile struct __aligned(sizeof(struct sgx_secinfo)) sgx_secinfo secinfo = {0};
+ 
+ 	SAFE_COPY_STRUCT(_op, &op);
+ 	ASSERT_INSIDE_ENCLAVE(op.epc_addr, PAGE_SIZE);
+@@ -105,8 +106,9 @@ static void do_encl_emodpe(void *_op)
+ static void do_encl_eaccept(void *_op)
+ {
+ 	struct encl_op_eaccept op;
+-	struct sgx_secinfo secinfo __aligned(sizeof(struct sgx_secinfo)) = {0};
+ 	int rax;
++	/* declare secinfo volatile to preserve alignment */
++	volatile struct __aligned(sizeof(struct sgx_secinfo)) sgx_secinfo secinfo = {0};
+ 
+ 	SAFE_COPY_STRUCT(_op, &op);
+ 	ASSERT_INSIDE_ENCLAVE(op.epc_addr, PAGE_SIZE);
+@@ -205,7 +207,7 @@ static void do_encl_op_nop(void *_op)
+ 
+ void encl_body(void *rdi,  void *rsi)
+ {
+-	const void (*encl_op_array[ENCL_OP_MAX])(void *) = {
++	static const void (*encl_op_array[ENCL_OP_MAX])(void *) = {
+ 		do_encl_op_put_to_buf,
+ 		do_encl_op_get_from_buf,
+ 		do_encl_op_put_to_addr,
+@@ -220,5 +222,5 @@ void encl_body(void *rdi,  void *rsi)
+ 	SAFE_COPY_STRUCT(rdi, &op);
+ 
+ 	if (op.type < ENCL_OP_MAX)
+-		(*encl_op_array[op.type])(rdi);
++		(*(get_enclave_base() + encl_op_array[op.type]))(rdi);
+ }
+-- 
+2.34.1
 
-How about this:
-
-x86/sgx:  Reload reclaimed SECS for EAUG on #PF
-
-or
-
-x86/sgx: Fix a NULL pointer to SECS used for EAUG on #PF
-
-BR
-Haitao
