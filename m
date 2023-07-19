@@ -2,187 +2,178 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 128ABC0015E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B251C001DE
 	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jul 2023 14:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230392AbjGSOt2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 19 Jul 2023 10:49:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42074 "EHLO
+        id S229646AbjGSOt3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 19 Jul 2023 10:49:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230413AbjGSOt0 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 19 Jul 2023 10:49:26 -0400
+        with ESMTP id S231190AbjGSOt1 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 19 Jul 2023 10:49:27 -0400
 Received: from icts-p-cavspool-1.kulnet.kuleuven.be (icts-p-cavspool-1.kulnet.kuleuven.be [134.58.240.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652AD171D;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 651DB171B;
         Wed, 19 Jul 2023 07:49:21 -0700 (PDT)
 Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [134.58.240.133])
-        by icts-p-cavspool-1.kulnet.kuleuven.be (Postfix) with ESMTP id 48E5A1EDB;
-        Wed, 19 Jul 2023 16:25:46 +0200 (CEST)
+        by icts-p-cavspool-1.kulnet.kuleuven.be (Postfix) with ESMTP id F0FD01E2C;
+        Wed, 19 Jul 2023 16:25:41 +0200 (CEST)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 86997201C4.A879C
+X-KULeuven-ID: 3A6FD20176.AB057
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-1.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:136:242:ac11:f])
-        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id 86997201C4;
-        Wed, 19 Jul 2023 16:25:42 +0200 (CEST)
+        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id 3A6FD20176;
+        Wed, 19 Jul 2023 16:25:36 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
 BCmilterd-Report: SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1689776742;
-        bh=Nv3EyBGczwLEZB8AWa6Fp/AcP4hw5HdF1V+cNhE8Nuo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=X4Iucye8FCdaJb5+iAqfdDzW+CSJGmK/Ux8lQa4MrogF7/czdvRq6SbLwAzA4mmuU
-         xyHLw1rWBhp8fp5O1xBoj4DSMf053Nl/anKrqOuy8e3fZvE33oQRiu2R3CaryrCsEl
-         JABKmMjoBQRMcfWaOuJgZxX76FOAoYCQAIHOWb1o=
+        s=cav; t=1689776736;
+        bh=hHJG4KWPo0LI/bwzcL9cDo906OstHfhQRTpA1GLUueg=;
+        h=From:To:Cc:Subject:Date;
+        b=J3A8BqMN9OaKcfGxzF14KTnbaadHq/BM4WQlR9JPwnNG0fUqXyzRUA/jBAJgXpz7J
+         nI9yh/UAxNk0aaEXgSPdDBE276iMykO7oba46U0tTxL6r0nNRdNrLUmj9KinedoxIN
+         FrBydpHtwFukO3BGS2Xtj6iYoIM5sBgaO78flW+I=
 Received: from librem.epfl.ch (eduroam-269-1-126.epfl.ch [192.33.197.126])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id 5227CD4E6AFDA;
-        Wed, 19 Jul 2023 16:25:42 +0200 (CEST)
+        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id E770DD4E6AFDA;
+        Wed, 19 Jul 2023 16:25:35 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 To:     jarkko@kernel.org, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com,
         Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: [PATCH 2/4] selftests/sgx: Store base address and size in test enclave
-Date:   Wed, 19 Jul 2023 16:24:58 +0200
-Message-Id: <20230719142500.13623-3-jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH 0/4] selftests/sgx: Harden test enclave
+Date:   Wed, 19 Jul 2023 16:24:56 +0200
+Message-Id: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
-References: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Make the test enclave aware of its protected virtual address range to allow
-untrusted pointer argument range checks.
+Hi,
 
-Add a linker symbol for __enclave_base at the start of the enclave binary.
-Similar to real-world enclave runtimes, rely on the untrusted loader to
-fill in __enclave_size (measured as part of MRENCLAVE), as the final size
-of the enclave image is determined during loading.
+This patch series fixes several issues in the SGX example test enclave:
 
-Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
----
- tools/testing/selftests/sgx/load.c            |  3 +-
- tools/testing/selftests/sgx/main.c            | 29 +++++++++++++++++++
- tools/testing/selftests/sgx/test_encl.lds     |  1 +
- .../selftests/sgx/test_encl_bootstrap.S       | 17 +++++++++++
- 4 files changed, 49 insertions(+), 1 deletion(-)
+1. Adhere to enclave programming best practices by sanitizing untrusted
+   user inputs (ABI registers and API pointer arguments).
+2. Ensure correct behavior with compiler optimizations (gcc -O{1,2,3,s}).
 
-diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-index 94bdeac1c..968a656a3 100644
---- a/tools/testing/selftests/sgx/load.c
-+++ b/tools/testing/selftests/sgx/load.c
-@@ -60,7 +60,8 @@ static bool encl_map_bin(const char *path, struct encl *encl)
- 		goto err;
- 	}
- 
--	bin = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-+	/* NOTE: map read|write to allow __enclave_size to be filled in */
-+	bin = mmap(NULL, sb.st_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
- 	if (bin == MAP_FAILED) {
- 		perror("enclave executable mmap()");
- 		goto err;
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index d3c7a39f4..bad963c79 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -182,6 +182,7 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
- 	FILE *maps_file;
- 	unsigned int i;
- 	void *addr;
-+	uint64_t encl_size_addr;
- 
- 	if (!encl_load("test_encl.elf", encl, heap_size)) {
- 		encl_delete(encl);
-@@ -189,6 +190,16 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
- 		return false;
- 	}
- 
-+	/*
-+	 * Fill in the expected symbol location with the final size of the
-+	 * constructed enclave image.
-+	 */
-+	encl_size_addr = encl_get_entry(encl, "__enclave_size");
-+	if (encl_size_addr) {
-+		encl_size_addr += (uint64_t) encl->src;
-+		*((uint64_t *) encl_size_addr) = encl->encl_size;
-+	}
-+
- 	if (!encl_measure(encl))
- 		goto err;
- 
-@@ -307,6 +318,24 @@ TEST_F(enclave, unclobbered_vdso)
- 	EXPECT_EQ(self->run.user_data, 0);
- }
- 
-+TEST_F(enclave, init_size)
-+{
-+	struct encl_op_get_from_addr get_addr_op;
-+
-+	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
-+
-+	memset(&self->run, 0, sizeof(self->run));
-+	self->run.tcs = self->encl.encl_base;
-+
-+	/* __enclave_size is initialized by loader in measured enclave image */
-+	get_addr_op.value = 0;
-+	get_addr_op.addr = self->encl.encl_base + encl_get_entry(&self->encl, "__enclave_size");
-+	get_addr_op.header.type = ENCL_OP_GET_FROM_ADDRESS;
-+	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, false), 0);
-+	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(get_addr_op.value, self->encl.encl_size);
-+}
-+
- TEST_F(enclave, poison_args)
- {
- 	struct encl_op_header nop_op;
-diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
-index a1ec64f7d..ca659db2a 100644
---- a/tools/testing/selftests/sgx/test_encl.lds
-+++ b/tools/testing/selftests/sgx/test_encl.lds
-@@ -10,6 +10,7 @@ PHDRS
- SECTIONS
- {
- 	. = 0;
-+        __enclave_base = .;
- 	.tcs : {
- 		*(.tcs*)
- 	} : tcs
-diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-index 3b69fea61..444a075c0 100644
---- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
-+++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-@@ -98,6 +98,23 @@ encl_entry_core:
- 	mov	$4, %rax
- 	enclu
- 
-+	.global get_enclave_base
-+get_enclave_base:
-+	lea __enclave_base(%rip), %rax
-+	ret
-+
-+	.global get_enclave_size
-+get_enclave_size:
-+	mov __enclave_size(%rip), %rax
-+	ret
-+
-+	# The following 8 bytes (measured as part of MRENCLAVE) will be
-+	# filled in by the untrusted loader with the total size of the
-+	# loaded enclave.
-+	.global __enclave_size
-+__enclave_size:
-+	.quad 0x0
-+
- 	.section ".data", "aw"
- 
- encl_ssa_tcs1:
+Motivation
+==========
+
+While I understand that the bare-metal Intel SGX selftest enclave is
+certainly not intended as a full-featured independent production runtime,
+it has been noted on this mailing list before that "people are likely to
+copy this code for their own enclaves" and that it provides a "great
+starting point if you want to do things from scratch" [1]. Thus, proper and
+complete example code is vital for security-sensitive functionality, like the
+selftest example enclave.
+
+The purpose of this patch series is, hence, to make the test enclave adhere
+to required enclave programming defensive measures by, to the extent
+possible and practical, sanitizing attacker-controlled inputs through
+minimal checks. Note that this is in line with the existing check in the
+test enclave to guard against buffer overflow of the encl_op_array through
+the op.type input.
+
+Proposed changes
+================
+
+This patch series adds the minimally required sanitization checks, as well
+as makes the test enclave compatible with gcc compiler optimizations. The
+added functionality is separated in this patch series as follows:
+
+1. Minimal changes in the enclave entry assembly stub as per the x86-64
+   ABI expected by the C compiler. Particularly, sanitize the DF and AC
+   bits in RFLAGS, which have been dangerously abused in prior SGX attack
+   research [2,3]. Also add a test case to validate the sanitization.
+
+   Note that, compiling the existing, unmodified test enclave on my machine
+   (gcc v11.3.0) with -Os optimizations yields assembly code that uses the
+   x86 REP string instructions for memcpy/memset. Hence, such a compiled
+   test enclave would be directly vulnerable to severe memory-corruption
+   attacks by trivially inverting RFLAGS.DF before enclave entry (similar
+   to CVE-2019-14565 -- Intel SA-00293 [3]).
+
+   Finally note that the proposed patch does currently _not_ sanitize the
+   extended CPU state using XSAVE/XRSTOR, as has been shown in prior attack
+   research to be necessary for SGX enclaves using floating-point
+   instructions [4]. I found that prior versions of the selftest enclave
+   _did_ partially cleanse extended CPU state, but that his functionality
+   has been removed, as it was argued that "the test enclave doesn't touch
+   state managed by XSAVE, let alone put secrets into said state" [5].
+   However, I found that compiling the unmodified test enclave with gcc
+   -O{2,3} optimization levels may still use the XMM registers to store
+   some intermediate results (i.e., clobber them as allowed per the x86-64
+   ABI). Hence, for now, add the -mno-sse compilation option to prevent
+   this behavior and add a note to explicitly document the assumption that
+   extended state should remain untouched in the selftest enclave.
+
+   This may also be an argument to consider re-adding the XRSTOR
+   functionality?
+
+2. Make the selftest enclave aware of its protected ELRANGE: add a linker
+   symbol __enclave_base at the start of the enclave binary and reserve
+   space for __enclave_size to be filled in by the untrusted loader when
+   determining the size of the final enclave image (depending on allocated
+   heap etc.). The final value for __enclave_size is filled in before
+   actual enclave loading and will be measured as part of MRENCLAVE,
+   allowing to trust the size within the enclave validation logic. This
+   approach is similar to how this is done in real-world enclave runtimes
+   (e.g., Intel SGX-SDK).
+
+3. Add minimal validation logic in the enclave C code to ensure that
+   incoming pointer struct arguments properly point outside the enclave
+   before dereference, preventing confused-deputy attacks. Use a C macro to
+   copy struct arguments fully inside the enclave to avoid time-of-check to
+   time-of-use issues for nested pointers. Note that the test enclave
+   deliberately allows arbitrary reads/writes in enclave memory through the
+   get_from_addr/put_to_addr operations for explicit testing purposes.
+   Hence, add an explicit note for this case and only allow remaining
+   unchecked pointer dereferences in these functions.
+
+4. Ensure correct behavior under gcc compiler optimizations. Declare
+   encl_op_array static to ensure RIP-relative addressing is used to access
+   the function-pointer table and rebase the loaded function-pointer
+   entries at runtime before jumping. Declare the secinfo structure as
+   volatile to ensure the compiler passes an aligned address to ENCLU.
+
+   To ensure future compatibility, it may also be worthwhile to rewrite the
+   test framework to exhaustively execute all tests for test_encl.elf
+   compiled with all possible gcc optimizations -O{0,1,2,3,s}?
+
+Best,
+Jo
+
+[1] https://patchwork.kernel.org/comment/23202425/
+[2] https://jovanbulck.github.io/files/ccs19-tale.pdf
+[3] https://jovanbulck.github.io/files/systex22-abi.pdf
+[4] https://jovanbulck.github.io/files/acsac20-fpu.pdf
+[5] https://patchwork.kernel.org/comment/23216515/
+
+Jo Van Bulck (4):
+  selftests/sgx: Harden test enclave ABI
+  selftests/sgx: Store base address and size in test enclave
+  selftests/sgx: Harden test enclave API
+  selftests/sgx: Fix compiler optimizations in test enclave
+
+ tools/testing/selftests/sgx/Makefile          |   2 +-
+ tools/testing/selftests/sgx/load.c            |   3 +-
+ tools/testing/selftests/sgx/main.c            |  55 ++++++
+ tools/testing/selftests/sgx/test_encl.c       | 165 +++++++++++++-----
+ tools/testing/selftests/sgx/test_encl.lds     |   1 +
+ .../selftests/sgx/test_encl_bootstrap.S       |  29 +++
+ 6 files changed, 214 insertions(+), 41 deletions(-)
+
+
+base-commit: 1a2945f27157825a561be7840023e3664111ab2f
 -- 
 2.34.1
 
