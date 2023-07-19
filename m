@@ -2,54 +2,54 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 877F2C001B0
-	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jul 2023 14:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 128ABC0015E
+	for <linux-sgx@archiver.kernel.org>; Wed, 19 Jul 2023 14:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231176AbjGSOt1 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 19 Jul 2023 10:49:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42054 "EHLO
+        id S230392AbjGSOt2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 19 Jul 2023 10:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229622AbjGSOtZ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 19 Jul 2023 10:49:25 -0400
+        with ESMTP id S230413AbjGSOt0 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 19 Jul 2023 10:49:26 -0400
 Received: from icts-p-cavspool-1.kulnet.kuleuven.be (icts-p-cavspool-1.kulnet.kuleuven.be [134.58.240.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7EEA1718;
-        Wed, 19 Jul 2023 07:49:19 -0700 (PDT)
-Received: from icts-p-cavuit-1.kulnet.kuleuven.be (icts-p-cavuit-1.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:132])
-        by icts-p-cavspool-1.kulnet.kuleuven.be (Postfix) with ESMTP id DC6521EFB;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652AD171D;
+        Wed, 19 Jul 2023 07:49:21 -0700 (PDT)
+Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [134.58.240.133])
+        by icts-p-cavspool-1.kulnet.kuleuven.be (Postfix) with ESMTP id 48E5A1EDB;
         Wed, 19 Jul 2023 16:25:46 +0200 (CEST)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 9E8CF2016D.A65EC
+X-KULeuven-ID: 86997201C4.A879C
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-1.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:136:242:ac11:f])
-        by icts-p-cavuit-1.kulnet.kuleuven.be (Postfix) with ESMTP id 9E8CF2016D;
-        Wed, 19 Jul 2023 16:25:41 +0200 (CEST)
+        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id 86997201C4;
+        Wed, 19 Jul 2023 16:25:42 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
-BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00
+BCmilterd-Report: SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1689776741;
-        bh=U7po882eCFHMo5UgaOdm+hXgmwg0dG234LXIyMqCMnk=;
+        s=cav; t=1689776742;
+        bh=Nv3EyBGczwLEZB8AWa6Fp/AcP4hw5HdF1V+cNhE8Nuo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=ZYKJNQ3RNt8RXjFnwCz62eX70YXD+r3tmpyKaoKsyF/SrJGDhrvSkYabD+w40nb1l
-         MQiFnDDUEpLFPbrn5Yky34C/yk+SaOCHaEQ0xyo+0JRVDL8fu2tUWcs1/gRMep8weX
-         gpXWUsRksKfgy2fO9fwbnd+upNcprggvJsWXwcCI=
+        b=X4Iucye8FCdaJb5+iAqfdDzW+CSJGmK/Ux8lQa4MrogF7/czdvRq6SbLwAzA4mmuU
+         xyHLw1rWBhp8fp5O1xBoj4DSMf053Nl/anKrqOuy8e3fZvE33oQRiu2R3CaryrCsEl
+         JABKmMjoBQRMcfWaOuJgZxX76FOAoYCQAIHOWb1o=
 Received: from librem.epfl.ch (eduroam-269-1-126.epfl.ch [192.33.197.126])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id 6B089D4EB0D01;
-        Wed, 19 Jul 2023 16:25:41 +0200 (CEST)
+        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id 5227CD4E6AFDA;
+        Wed, 19 Jul 2023 16:25:42 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 To:     jarkko@kernel.org, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com,
         Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: [PATCH 1/4] selftests/sgx: Harden test enclave ABI
-Date:   Wed, 19 Jul 2023 16:24:57 +0200
-Message-Id: <20230719142500.13623-2-jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH 2/4] selftests/sgx: Store base address and size in test enclave
+Date:   Wed, 19 Jul 2023 16:24:58 +0200
+Message-Id: <20230719142500.13623-3-jo.vanbulck@cs.kuleuven.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
 References: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
@@ -59,93 +59,130 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The System V x86-64 ABI used by the C compiler defines certain low-level
-CPU configuration registers to be set to expected values upon function
-entry. However, SGX enclaves cannot expect the untrusted caller to respect
-these ABI conventions. Therefore, adhere to SGX runtime best practices by
-sanitizing RFLAGS.DF=0 before transitioning to C code. Additionally
-sanitize RFLAGS.AC=0 to protect against known #AC-fault side channels for
-unaligned memory accesses.
+Make the test enclave aware of its protected virtual address range to allow
+untrusted pointer argument range checks.
 
-Note that the test enclave does currently not use any floating-point
-instructions (-mno-sse). Hence, keep the code simple by _not_ using XRSTOR
-to cleanse extended x87/SSE state.
+Add a linker symbol for __enclave_base at the start of the enclave binary.
+Similar to real-world enclave runtimes, rely on the untrusted loader to
+fill in __enclave_size (measured as part of MRENCLAVE), as the final size
+of the enclave image is determined during loading.
 
 Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 ---
- tools/testing/selftests/sgx/Makefile          |  2 +-
- tools/testing/selftests/sgx/main.c            | 21 +++++++++++++++++++
- .../selftests/sgx/test_encl_bootstrap.S       | 12 +++++++++++
- 3 files changed, 34 insertions(+), 1 deletion(-)
+ tools/testing/selftests/sgx/load.c            |  3 +-
+ tools/testing/selftests/sgx/main.c            | 29 +++++++++++++++++++
+ tools/testing/selftests/sgx/test_encl.lds     |  1 +
+ .../selftests/sgx/test_encl_bootstrap.S       | 17 +++++++++++
+ 4 files changed, 49 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
-index 50aab6b57..c2a13bc6e 100644
---- a/tools/testing/selftests/sgx/Makefile
-+++ b/tools/testing/selftests/sgx/Makefile
-@@ -14,7 +14,7 @@ endif
- INCLUDES := -I$(top_srcdir)/tools/include
- HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC -z noexecstack
- ENCL_CFLAGS := -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
--	       -fno-stack-protector -mrdrnd $(INCLUDES)
-+	       -fno-stack-protector -mrdrnd -mno-sse $(INCLUDES)
+diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+index 94bdeac1c..968a656a3 100644
+--- a/tools/testing/selftests/sgx/load.c
++++ b/tools/testing/selftests/sgx/load.c
+@@ -60,7 +60,8 @@ static bool encl_map_bin(const char *path, struct encl *encl)
+ 		goto err;
+ 	}
  
- TEST_CUSTOM_PROGS := $(OUTPUT)/test_sgx
- TEST_FILES := $(OUTPUT)/test_encl.elf
+-	bin = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
++	/* NOTE: map read|write to allow __enclave_size to be filled in */
++	bin = mmap(NULL, sb.st_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+ 	if (bin == MAP_FAILED) {
+ 		perror("enclave executable mmap()");
+ 		goto err;
 diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 9820b3809..d3c7a39f4 100644
+index d3c7a39f4..bad963c79 100644
 --- a/tools/testing/selftests/sgx/main.c
 +++ b/tools/testing/selftests/sgx/main.c
-@@ -307,6 +307,27 @@ TEST_F(enclave, unclobbered_vdso)
+@@ -182,6 +182,7 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
+ 	FILE *maps_file;
+ 	unsigned int i;
+ 	void *addr;
++	uint64_t encl_size_addr;
+ 
+ 	if (!encl_load("test_encl.elf", encl, heap_size)) {
+ 		encl_delete(encl);
+@@ -189,6 +190,16 @@ static bool setup_test_encl(unsigned long heap_size, struct encl *encl,
+ 		return false;
+ 	}
+ 
++	/*
++	 * Fill in the expected symbol location with the final size of the
++	 * constructed enclave image.
++	 */
++	encl_size_addr = encl_get_entry(encl, "__enclave_size");
++	if (encl_size_addr) {
++		encl_size_addr += (uint64_t) encl->src;
++		*((uint64_t *) encl_size_addr) = encl->encl_size;
++	}
++
+ 	if (!encl_measure(encl))
+ 		goto err;
+ 
+@@ -307,6 +318,24 @@ TEST_F(enclave, unclobbered_vdso)
  	EXPECT_EQ(self->run.user_data, 0);
  }
  
-+TEST_F(enclave, poison_args)
++TEST_F(enclave, init_size)
 +{
-+	struct encl_op_header nop_op;
-+	uint64_t flags = -1;
++	struct encl_op_get_from_addr get_addr_op;
 +
 +	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata));
 +
 +	memset(&self->run, 0, sizeof(self->run));
 +	self->run.tcs = self->encl.encl_base;
 +
-+	/* attempt ABI register poisoning */
-+	nop_op.type = ENCL_OP_NOP;
-+	asm("std\n\t");
-+	EXPECT_EQ(ENCL_CALL(&nop_op, &self->run, false), 0);
-+	asm("pushfq\n\t"		\
-+	    "popq %0\n\t"		\
-+	    : "=m"(flags) : : );
++	/* __enclave_size is initialized by loader in measured enclave image */
++	get_addr_op.value = 0;
++	get_addr_op.addr = self->encl.encl_base + encl_get_entry(&self->encl, "__enclave_size");
++	get_addr_op.header.type = ENCL_OP_GET_FROM_ADDRESS;
++	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, false), 0);
 +	EXPECT_EEXIT(&self->run);
-+	EXPECT_EQ(flags & 0x40400, 0);
++	EXPECT_EQ(get_addr_op.value, self->encl.encl_size);
 +}
 +
- /*
-  * A section metric is concatenated in a way that @low bits 12-31 define the
-  * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
+ TEST_F(enclave, poison_args)
+ {
+ 	struct encl_op_header nop_op;
+diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
+index a1ec64f7d..ca659db2a 100644
+--- a/tools/testing/selftests/sgx/test_encl.lds
++++ b/tools/testing/selftests/sgx/test_encl.lds
+@@ -10,6 +10,7 @@ PHDRS
+ SECTIONS
+ {
+ 	. = 0;
++        __enclave_base = .;
+ 	.tcs : {
+ 		*(.tcs*)
+ 	} : tcs
 diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-index 03ae0f57e..3b69fea61 100644
+index 3b69fea61..444a075c0 100644
 --- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
 +++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-@@ -57,6 +57,18 @@ encl_entry_core:
- 	push	%rcx # push the address after EENTER
- 	push	%rbx # push the enclave base address
+@@ -98,6 +98,23 @@ encl_entry_core:
+ 	mov	$4, %rax
+ 	enclu
  
-+	# Sanitize CPU state: x86-64 ABI requires RFLAGS.DF=0 on function
-+	# entry, and we additionally clear RFLAGS.AC to prevent #AC-fault side
-+	# channels.
-+	# NOTE: Real-world enclave runtimes should also cleanse extended CPU
-+	# state (i.e., x87 FPU and SSE/AVX/...) configuration registers,
-+	# preferably using XRSTOR. This is _not_ done below to simplify the
-+	# test enclave, which does not use any floating-point instructions.
-+	cld
-+	pushfq
-+	andq $~0x40000, (%rsp)
-+	popfq
++	.global get_enclave_base
++get_enclave_base:
++	lea __enclave_base(%rip), %rax
++	ret
 +
- 	call	encl_body
++	.global get_enclave_size
++get_enclave_size:
++	mov __enclave_size(%rip), %rax
++	ret
++
++	# The following 8 bytes (measured as part of MRENCLAVE) will be
++	# filled in by the untrusted loader with the total size of the
++	# loaded enclave.
++	.global __enclave_size
++__enclave_size:
++	.quad 0x0
++
+ 	.section ".data", "aw"
  
- 	pop	%rbx # pop the enclave base address
+ encl_ssa_tcs1:
 -- 
 2.34.1
 
