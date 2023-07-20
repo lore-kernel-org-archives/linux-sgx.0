@@ -2,110 +2,135 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2D7EB64DA
-	for <linux-sgx@archiver.kernel.org>; Thu, 20 Jul 2023 17:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5CBEB64DA
+	for <linux-sgx@archiver.kernel.org>; Thu, 20 Jul 2023 17:30:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230283AbjGTR1W (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 20 Jul 2023 13:27:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59598 "EHLO
+        id S229552AbjGTRaB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 20 Jul 2023 13:30:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229756AbjGTR1W (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 20 Jul 2023 13:27:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20212CC;
-        Thu, 20 Jul 2023 10:27:21 -0700 (PDT)
+        with ESMTP id S229487AbjGTRaB (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 20 Jul 2023 13:30:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E7ED1BB;
+        Thu, 20 Jul 2023 10:30:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A61A361B8F;
-        Thu, 20 Jul 2023 17:27:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F1B3C433C7;
-        Thu, 20 Jul 2023 17:27:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9ED60619D3;
+        Thu, 20 Jul 2023 17:29:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 528B7C433C7;
+        Thu, 20 Jul 2023 17:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689874040;
-        bh=JK8s04faeXLdLKyaYrVKEX5OBE+3m3Gn+wU3x0gnq7w=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=Jk0zsYMr8cSZ1m/gN9/eV5vapOcfyIgIDEJl6YF/tYrc+jXQd9yx3Jf8CQOR0KglK
-         qLWeEMBmhVYpzhaIUuBhbB0ddxob+V0lzfMW9fipqQQ84YizjyHqfecbO8dhckXxtm
-         n9n2hpR9zAe3ZmIezD1UXBrIbABmqliU1ssOnBfhvydRp8mqq9fRiTUjiBj44z+Acp
-         wDAeaMiDytm3UOIc0Jfk+YtjUQ2ZErBr1BdPVi3Um3chUQjJfQRD3tX4nDvsl+/8RB
-         4HUqTiVCjLt+YjACUn0b6rpIhmANgTtvyXdZL3TBd+JLVpFoZnJwdn9XQpZ7LobySo
-         YAAsYLWCDwdUg==
+        s=k20201202; t=1689874198;
+        bh=89yA+qHMd8sAMy/jvkyrwSt1wRpatnT6dIOnEoXYtLY=;
+        h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+        b=a3ljgeH+Bb2rKSQDCCrONYR7bkFPIUv8mZS6qjaMs9/droT5X1J5SBhkK8SjedOOt
+         AEH24KWPGMFNyDeQNqHIybHiC7U6CaDtPU8evu/pH+9cm95Wh64El1JiRR4DE+7eaM
+         w/D66XtnALtIRru+1+rgUgiVNzbw8npiDQ5pXUaKowfRPWo8xAH7ZQk1auQrvlC8gq
+         J3gj9lddG5Wol3ATQm3Gyfy7a3+83nmrMZSZ7OYE+qnX1Z+olYfc144v630om+Oa95
+         CzwhiWK9JygSDta1bHcJwEfXcNZO/eIOPp0VJ4r57kIfNaq4MynozrhB2WP4vQhaxb
+         cPRkNJxYON7Mw==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Thu, 20 Jul 2023 20:27:15 +0300
-Message-Id: <CU76CMOCVA8N.PM4O08WT1DZA@suppilovahvero>
-Cc:     <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 1/4] selftests/sgx: Harden test enclave ABI
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+Date:   Thu, 20 Jul 2023 20:29:54 +0300
+Message-Id: <CU76ENNUAMHF.15D3KJY99C50@suppilovahvero>
 To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>,
         <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc:     <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 2/4] selftests/sgx: Store base address and size in test
+ enclave
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
 X-Mailer: aerc 0.14.0
 References: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
- <20230719142500.13623-2-jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <20230719142500.13623-2-jo.vanbulck@cs.kuleuven.be>
+ <20230719142500.13623-3-jo.vanbulck@cs.kuleuven.be>
+In-Reply-To: <20230719142500.13623-3-jo.vanbulck@cs.kuleuven.be>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Wed Jul 19, 2023 at 5:24 PM EEST, Jo Van Bulck wrote:
-> The System V x86-64 ABI used by the C compiler defines certain low-level
-> CPU configuration registers to be set to expected values upon function
-> entry. However, SGX enclaves cannot expect the untrusted caller to respec=
-t
-> these ABI conventions. Therefore, adhere to SGX runtime best practices by
-> sanitizing RFLAGS.DF=3D0 before transitioning to C code. Additionally
-> sanitize RFLAGS.AC=3D0 to protect against known #AC-fault side channels f=
-or
-> unaligned memory accesses.
+> Make the test enclave aware of its protected virtual address range to all=
+ow
+> untrusted pointer argument range checks.
 >
-> Note that the test enclave does currently not use any floating-point
-> instructions (-mno-sse). Hence, keep the code simple by _not_ using XRSTO=
-R
-> to cleanse extended x87/SSE state.
+> Add a linker symbol for __enclave_base at the start of the enclave binary=
+.
+> Similar to real-world enclave runtimes, rely on the untrusted loader to
+> fill in __enclave_size (measured as part of MRENCLAVE), as the final size
+> of the enclave image is determined during loading.
 >
 > Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 > ---
->  tools/testing/selftests/sgx/Makefile          |  2 +-
->  tools/testing/selftests/sgx/main.c            | 21 +++++++++++++++++++
->  .../selftests/sgx/test_encl_bootstrap.S       | 12 +++++++++++
->  3 files changed, 34 insertions(+), 1 deletion(-)
+>  tools/testing/selftests/sgx/load.c            |  3 +-
+>  tools/testing/selftests/sgx/main.c            | 29 +++++++++++++++++++
+>  tools/testing/selftests/sgx/test_encl.lds     |  1 +
+>  .../selftests/sgx/test_encl_bootstrap.S       | 17 +++++++++++
+>  4 files changed, 49 insertions(+), 1 deletion(-)
 >
-> diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftes=
-ts/sgx/Makefile
-> index 50aab6b57..c2a13bc6e 100644
-> --- a/tools/testing/selftests/sgx/Makefile
-> +++ b/tools/testing/selftests/sgx/Makefile
-> @@ -14,7 +14,7 @@ endif
->  INCLUDES :=3D -I$(top_srcdir)/tools/include
->  HOST_CFLAGS :=3D -Wall -Werror -g $(INCLUDES) -fPIC -z noexecstack
->  ENCL_CFLAGS :=3D -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
-> -	       -fno-stack-protector -mrdrnd $(INCLUDES)
-> +	       -fno-stack-protector -mrdrnd -mno-sse $(INCLUDES)
+> diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests=
+/sgx/load.c
+> index 94bdeac1c..968a656a3 100644
+> --- a/tools/testing/selftests/sgx/load.c
+> +++ b/tools/testing/selftests/sgx/load.c
+> @@ -60,7 +60,8 @@ static bool encl_map_bin(const char *path, struct encl =
+*encl)
+>  		goto err;
+>  	}
 > =20
->  TEST_CUSTOM_PROGS :=3D $(OUTPUT)/test_sgx
->  TEST_FILES :=3D $(OUTPUT)/test_encl.elf
+> -	bin =3D mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+> +	/* NOTE: map read|write to allow __enclave_size to be filled in */
+> +	bin =3D mmap(NULL, sb.st_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd,=
+ 0);
+>  	if (bin =3D=3D MAP_FAILED) {
+>  		perror("enclave executable mmap()");
+>  		goto err;
 > diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests=
 /sgx/main.c
-> index 9820b3809..d3c7a39f4 100644
+> index d3c7a39f4..bad963c79 100644
 > --- a/tools/testing/selftests/sgx/main.c
 > +++ b/tools/testing/selftests/sgx/main.c
-> @@ -307,6 +307,27 @@ TEST_F(enclave, unclobbered_vdso)
+> @@ -182,6 +182,7 @@ static bool setup_test_encl(unsigned long heap_size, =
+struct encl *encl,
+>  	FILE *maps_file;
+>  	unsigned int i;
+>  	void *addr;
+> +	uint64_t encl_size_addr;
+
+Should be the first declaration (reverse xmas tree order).
+
+I'd rename this as encl_end, as the current name is cryptic.
+
+> =20
+>  	if (!encl_load("test_encl.elf", encl, heap_size)) {
+>  		encl_delete(encl);
+> @@ -189,6 +190,16 @@ static bool setup_test_encl(unsigned long heap_size,=
+ struct encl *encl,
+>  		return false;
+>  	}
+> =20
+> +	/*
+> +	 * Fill in the expected symbol location with the final size of the
+> +	 * constructed enclave image.
+> +	 */
+> +	encl_size_addr =3D encl_get_entry(encl, "__enclave_size");
+> +	if (encl_size_addr) {
+> +		encl_size_addr +=3D (uint64_t) encl->src;
+> +		*((uint64_t *) encl_size_addr) =3D encl->encl_size;
+> +	}
+> +
+>  	if (!encl_measure(encl))
+>  		goto err;
+> =20
+> @@ -307,6 +318,24 @@ TEST_F(enclave, unclobbered_vdso)
 >  	EXPECT_EQ(self->run.user_data, 0);
 >  }
 > =20
-
-Since the amount of tests is increasing over time, I'd put here:
-
-/*
- * Explanation what the test does and why it exists.
- */
-> +TEST_F(enclave, poison_args)
+> +TEST_F(enclave, init_size)
 > +{
-> +	struct encl_op_header nop_op;
-> +	uint64_t flags =3D -1;
+> +	struct encl_op_get_from_addr get_addr_op;
 > +
 > +	ASSERT_TRUE(setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metad=
 ata));
@@ -113,46 +138,61 @@ ata));
 > +	memset(&self->run, 0, sizeof(self->run));
 > +	self->run.tcs =3D self->encl.encl_base;
 > +
-> +	/* attempt ABI register poisoning */
-> +	nop_op.type =3D ENCL_OP_NOP;
-> +	asm("std\n\t");
-> +	EXPECT_EQ(ENCL_CALL(&nop_op, &self->run, false), 0);
-> +	asm("pushfq\n\t"		\
-> +	    "popq %0\n\t"		\
-> +	    : "=3Dm"(flags) : : );
+> +	/* __enclave_size is initialized by loader in measured enclave image */
+> +	get_addr_op.value =3D 0;
+> +	get_addr_op.addr =3D self->encl.encl_base + encl_get_entry(&self->encl,=
+ "__enclave_size");
+> +	get_addr_op.header.type =3D ENCL_OP_GET_FROM_ADDRESS;
+> +	EXPECT_EQ(ENCL_CALL(&get_addr_op, &self->run, false), 0);
 > +	EXPECT_EEXIT(&self->run);
-> +	EXPECT_EQ(flags & 0x40400, 0);
+> +	EXPECT_EQ(get_addr_op.value, self->encl.encl_size);
 > +}
 > +
->  /*
->   * A section metric is concatenated in a way that @low bits 12-31 define=
- the
->   * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of=
- the
+>  TEST_F(enclave, poison_args)
+>  {
+>  	struct encl_op_header nop_op;
+> diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/se=
+lftests/sgx/test_encl.lds
+> index a1ec64f7d..ca659db2a 100644
+> --- a/tools/testing/selftests/sgx/test_encl.lds
+> +++ b/tools/testing/selftests/sgx/test_encl.lds
+> @@ -10,6 +10,7 @@ PHDRS
+>  SECTIONS
+>  {
+>  	. =3D 0;
+> +        __enclave_base =3D .;
+>  	.tcs : {
+>  		*(.tcs*)
+>  	} : tcs
 > diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/te=
 sting/selftests/sgx/test_encl_bootstrap.S
-> index 03ae0f57e..3b69fea61 100644
+> index 3b69fea61..444a075c0 100644
 > --- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
 > +++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-> @@ -57,6 +57,18 @@ encl_entry_core:
->  	push	%rcx # push the address after EENTER
->  	push	%rbx # push the enclave base address
+> @@ -98,6 +98,23 @@ encl_entry_core:
+>  	mov	$4, %rax
+>  	enclu
 > =20
-> +	# Sanitize CPU state: x86-64 ABI requires RFLAGS.DF=3D0 on function
-> +	# entry, and we additionally clear RFLAGS.AC to prevent #AC-fault side
-> +	# channels.
-> +	# NOTE: Real-world enclave runtimes should also cleanse extended CPU
-> +	# state (i.e., x87 FPU and SSE/AVX/...) configuration registers,
-> +	# preferably using XRSTOR. This is _not_ done below to simplify the
-> +	# test enclave, which does not use any floating-point instructions.
-> +	cld
-> +	pushfq
-> +	andq $~0x40000, (%rsp)
-> +	popfq
+> +	.global get_enclave_base
+> +get_enclave_base:
+> +	lea __enclave_base(%rip), %rax
+> +	ret
 > +
->  	call	encl_body
+> +	.global get_enclave_size
+> +get_enclave_size:
+> +	mov __enclave_size(%rip), %rax
+> +	ret
+> +
+> +	# The following 8 bytes (measured as part of MRENCLAVE) will be
+> +	# filled in by the untrusted loader with the total size of the
+> +	# loaded enclave.
+> +	.global __enclave_size
+> +__enclave_size:
+> +	.quad 0x0
+> +
+>  	.section ".data", "aw"
 > =20
->  	pop	%rbx # pop the enclave base address
+>  encl_ssa_tcs1:
 > --=20
 > 2.34.1
 
