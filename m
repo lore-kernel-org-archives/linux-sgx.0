@@ -2,90 +2,74 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EF0EB64DA
-	for <linux-sgx@archiver.kernel.org>; Thu, 20 Jul 2023 19:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 548DDEB64DA
+	for <linux-sgx@archiver.kernel.org>; Thu, 20 Jul 2023 19:14:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229981AbjGTTMb (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 20 Jul 2023 15:12:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58144 "EHLO
+        id S229950AbjGTTOp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 20 Jul 2023 15:14:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbjGTTMa (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 20 Jul 2023 15:12:30 -0400
-Received: from icts-p-cavuit-4.kulnet.kuleuven.be (icts-p-cavuit-4.kulnet.kuleuven.be [134.58.240.134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 417ED1996;
-        Thu, 20 Jul 2023 12:12:22 -0700 (PDT)
+        with ESMTP id S229756AbjGTTOo (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 20 Jul 2023 15:14:44 -0400
+Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [134.58.240.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8D34270C;
+        Thu, 20 Jul 2023 12:14:33 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 306023E.A9684
+X-KULeuven-ID: B103C20176.A84CF
 X-KULeuven-Information: Katholieke Universiteit Leuven
-Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:143:242:ac11:20])
-        by icts-p-cavuit-4.kulnet.kuleuven.be (Postfix) with ESMTP id 306023E;
-        Thu, 20 Jul 2023 21:12:19 +0200 (CEST)
+Received: from icts-p-ceifnet-smtps-1.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:136:242:ac11:f])
+        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id B103C20176;
+        Thu, 20 Jul 2023 21:14:31 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
-BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID#0.00
+BCmilterd-Report: SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_SIGNED#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1689880339;
-        bh=xNUxqK1R5VTNPAGLqFndyY2LGO0x/eTnGj2ufVA0aAA=;
-        h=Date:From:Subject:To:Cc:References:In-Reply-To;
-        b=M9s7zLgu4zO9gWWlBmzHztoRxHakiIk8n2mpwAv3WaOVBNCd0vqymZ8EztVoT72Tg
-         NTxH8JpFON9ezN0XO7vG0Y6wHbW058y7dxCEYAxZs8XtKu92IuFlHMytsp8trHJmr/
-         uKaMej0M/Mp2bH4DHDHIptb5yhT90XA80ilJU1jk=
+        s=cav; t=1689880471;
+        bh=XjIQhXMj6DqsEk4Hf1da40N0NTw/NbVJuF//Vsu0skQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=dkI6E2LjLRqUBzRMfgJdZZ2/8yhveyYDf7TDKUt/HZ41oRnWHoIBQ+3EbcjihiZ+Q
+         ZsOqdEBDzSVpEwugIDWHPlYtu64587V+H8o2U5iEN+og0WsxlMlGuxLmWmJT1mpfSo
+         9+EGXOTP+AFgpZj+KtqvwPvdjO1Cup2woUgBtBiA=
 Received: from [IPV6:2a02:1210:6c17:f000:af2b:c1b5:c15b:acda] (unknown [IPv6:2a02:1210:6c17:f000:af2b:c1b5:c15b:acda])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id DA920D4E6B1DB;
-        Thu, 20 Jul 2023 21:12:18 +0200 (CEST)
-Message-ID: <a6e26927-acb0-c967-10c4-90a41d9a8cad@cs.kuleuven.be>
-Date:   Thu, 20 Jul 2023 21:12:17 +0200
+        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id 6AD51D4E6A33B;
+        Thu, 20 Jul 2023 21:14:31 +0200 (CEST)
+Message-ID: <6d261882-9e51-d64b-083a-439e615e4eca@cs.kuleuven.be>
+Date:   Thu, 20 Jul 2023 21:14:30 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-X-Kuleuven: This mail passed the K.U.Leuven mailcluster
-From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: Re: [PATCH 0/4] selftests/sgx: Harden test enclave
+Subject: Re: [PATCH 1/4] selftests/sgx: Harden test enclave ABI
+Content-Language: en-US
 To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com
 References: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
- <CU76BC9V7H3Z.TQ3L8AZY1WD@suppilovahvero>
-Content-Language: en-US
-In-Reply-To: <CU76BC9V7H3Z.TQ3L8AZY1WD@suppilovahvero>
+ <20230719142500.13623-2-jo.vanbulck@cs.kuleuven.be>
+ <CU76CMOCVA8N.PM4O08WT1DZA@suppilovahvero>
+X-Kuleuven: This mail passed the K.U.Leuven mailcluster
+From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+In-Reply-To: <CU76CMOCVA8N.PM4O08WT1DZA@suppilovahvero>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 20.07.23 19:25, Jarkko Sakkinen wrote:
-> There's a lot of source code in kselftest, which probably has at least
-> some security issues.
+On 20.07.23 19:27, Jarkko Sakkinen wrote:
 > 
-> I'm not sure, at least based on this motivation, why would we care?
+> Since the amount of tests is increasing over time, I'd put here:
+> 
+> /*
+>   * Explanation what the test does and why it exists.
+>   */
+>> +TEST_F(enclave, poison_args)
 
-I'd argue that, in general, code examples are often used as templates 
-and may thus inherit any vulnerabilities therein. This may be especially 
-relevant here as your selftest enclave is in my knowledge the only 
-available truly minimal SGX enclave that can be built and extended while 
-only relying on standard tools and no heavy frameworks like the Intel 
-SGX SDK. Thus, as noted before on this mailing list, it may be an 
-attractive start for people who want to build things from scratch.
-
-IMHO the example enclave should do a best effort to reasonably follow 
-SGX coding best practices and not have _known_ security vulnerabilities 
-in it. Note that these are not advanced microarchitectural attacks with 
-ugly LFENCE defenses, but plain, architectural memory-safety exploit 
-preventions with minimal sanitization checks, not unlike the existing 
-protections against buffer overflow where best practices are followed 
-for op->type.
-
-Apart from that, the added checks only enforce correct behavior in the 
-test framework, only validating that things are sane and as expected. 
-Thus, to some extent, the added checks may even increase resilience of 
-the test framework.
+Thank you for the code review! Will add.
 
 Best,
 Jo
-
