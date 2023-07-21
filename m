@@ -2,85 +2,84 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FC6EB64DC
-	for <linux-sgx@archiver.kernel.org>; Fri, 21 Jul 2023 12:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A108EB64DD
+	for <linux-sgx@archiver.kernel.org>; Fri, 21 Jul 2023 18:10:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231274AbjGUMEr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 21 Jul 2023 08:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56888 "EHLO
+        id S230326AbjGUSKw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 21 Jul 2023 14:10:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231264AbjGUMEj (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 21 Jul 2023 08:04:39 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E653F3A92;
-        Fri, 21 Jul 2023 05:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689941056; x=1721477056;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4uv9zD1JJrwXe0E9I+ej0cnkJSwI8eyQL9t7kRDmIDo=;
-  b=JrMHGcYdzpNM9PLduB1h5Sn+FLeqPXacQsvIBFPFH4chBjg+pDfZ6ksl
-   GGvwSFeQ0lavCreYuva2h76uzqR6rVFmtXQpbfiwcnkevVEVJXERBKjpG
-   KP9Nf/0N812B8pS90yjPIoJzqX79cMVYFwO7zKGZdvNoMCG5ZyVgVBXGM
-   96Ho/79J6m0IhJndRgtx7iaoNjKAkejuoGLPdPaSkHuvQ4gyn3pMPtDEq
-   yvbPmIQrDPaqDGeQvH2NNMl1jLvf5lB9F+C9uO179RPXiN4jIsw7rWIrz
-   t+Gt0ZtZCul+y749XaCYxYrMveKYlVMmXTNXG7X5tGzDv5Tlg/YhUIqSR
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="356995884"
-X-IronPort-AV: E=Sophos;i="6.01,220,1684825200"; 
-   d="scan'208";a="356995884"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2023 05:02:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="675019242"
-X-IronPort-AV: E=Sophos;i="6.01,220,1684825200"; 
-   d="scan'208";a="675019242"
-Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by orsmga003.jf.intel.com with ESMTP; 21 Jul 2023 05:02:31 -0700
-From:   Haitao Huang <haitao.huang@linux.intel.com>
-To:     tj@kernel.org
+        with ESMTP id S229518AbjGUSKs (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 21 Jul 2023 14:10:48 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFF2E68;
+        Fri, 21 Jul 2023 11:10:47 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-668709767b1so1581834b3a.2;
+        Fri, 21 Jul 2023 11:10:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689963046; x=1690567846;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=45g6O9ZlJ9a46173hb9oD6WT0Gj5jDz2sDLA6BPWNec=;
+        b=XU6YpFKPBbH37FVtZHEnptSRL3P3lrRfAIIxJ3QCDkfv56XTKiavtaE0iCqLTm1EAO
+         /RmpapIvZqwgHjlnwe3v7/BAqJhlwdaC9UBDEdyP52asiRdv77jN/FbOHaJigcxI7+KX
+         to4rHwtUxx4KimsHgPF+JAbDI2MWrQkRBcrgf/Dt77/xACrwezXxlq1sl0UFMsbq5iZl
+         9OaS+4ukOVqSlVkZRCUsR24FH/hj14KVi2+45Xcchj9j/j89PstpJXLfX4JCTJ8zubAk
+         f26L7HbfpDFFiUGvojF8dEyUzBdzM8/rbKgnjwX75YppW9YOGpfVrprimMo9Z5orXJ6F
+         JC8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689963046; x=1690567846;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=45g6O9ZlJ9a46173hb9oD6WT0Gj5jDz2sDLA6BPWNec=;
+        b=YPzlsXB3uiGApqSyGTAkPO56bofn1dFpRdT6WQ7Qa23SGAfzO2gczLyjb4m9hvxJjl
+         Vs+Tail0nremq7GnqfT3irrku9TeoYBFbg/14ILFTPyscD4YqqcXjUEybBghvm1+FC7v
+         M/GL8b4Cr2LkyPBk9eiPZDGmvjDoNEmM/yj+BvWanNjHprDoD+GUKdbaZvnbZ/vqS6Rk
+         ZmmDws8NLRgIKJHu1uVUoFAFkxPeq+pkgMpy7K0XEuOvL5xnX0s4sbGrB9dUIOQtwLcS
+         AIqktf7E9MqSOHQOWSR4Xy60594KCYUT9l+SQBi06JT6O7Ju7nVeJYUPrlv5zqVGWflu
+         FYNQ==
+X-Gm-Message-State: ABy/qLbrKlb9wMpWa3p/fUorM1apPRtrax3uIV7hJQL70v5oXjdPB3FR
+        kg59BvRXw9AEvQgK59RVYJ+IM7bQUqs=
+X-Google-Smtp-Source: APBJJlGWL/QaHzT9fjxpbPhRKhL3PqU1vZDdIAooBipU5Zb/hmjVWDl8d+UIFe3PszzRVMXaB7E7OA==
+X-Received: by 2002:a05:6a20:5483:b0:133:f5c1:57b7 with SMTP id i3-20020a056a20548300b00133f5c157b7mr2929218pzk.51.1689963046299;
+        Fri, 21 Jul 2023 11:10:46 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:400::5:fbd8])
+        by smtp.gmail.com with ESMTPSA id t18-20020a1709028c9200b001b866472e8dsm3771890plo.241.2023.07.21.11.10.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jul 2023 11:10:45 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Fri, 21 Jul 2023 08:10:44 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
 Cc:     cgroups@vger.kernel.org, dave.hansen@linux.intel.com,
-        haitao.huang@linux.intel.com, hannes@cmpxchg.org,
-        jarkko@kernel.org, kai.huang@intel.com, kristen@linux.intel.com,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        lizefan.x@bytedance.com, reinette.chatre@intel.com,
-        vipinsh@google.com, zhiquan1.li@intel.com
-Subject: [PATCH] cgroup/misc: Store atomic64_t reads to u64
-Date:   Fri, 21 Jul 2023 05:02:31 -0700
-Message-Id: <20230721120231.13916-1-haitao.huang@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <ZLcXmvDKheCRYOjG@slm.duckdns.org>
-References: 
+        hannes@cmpxchg.org, jarkko@kernel.org, kai.huang@intel.com,
+        kristen@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org, lizefan.x@bytedance.com,
+        reinette.chatre@intel.com, vipinsh@google.com,
+        zhiquan1.li@intel.com
+Subject: Re: [PATCH] cgroup/misc: Store atomic64_t reads to u64
+Message-ID: <ZLrKJAyea-U5Lsiy@slm.duckdns.org>
+References: <ZLcXmvDKheCRYOjG@slm.duckdns.org>
+ <20230721120231.13916-1-haitao.huang@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230721120231.13916-1-haitao.huang@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Change 'new_usage' type to u64 so it can be compared with unsigned 'max'
-and 'capacity' properly even if the value crosses the signed boundary.
+On Fri, Jul 21, 2023 at 05:02:31AM -0700, Haitao Huang wrote:
+> Change 'new_usage' type to u64 so it can be compared with unsigned 'max'
+> and 'capacity' properly even if the value crosses the signed boundary.
+> 
+> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
 
-Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
----
- kernel/cgroup/misc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to cgroup/for-6.6.
 
-diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-index abbe9aa5cdd1..79a3717a5803 100644
---- a/kernel/cgroup/misc.c
-+++ b/kernel/cgroup/misc.c
-@@ -142,7 +142,7 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg, u64 amount)
- 	struct misc_cg *i, *j;
- 	int ret;
- 	struct misc_res *res;
--	s64 new_usage;
-+	u64 new_usage;
- 
- 	if (!(valid_type(type) && cg && READ_ONCE(misc_res_capacity[type])))
- 		return -EINVAL;
+Thanks.
 
-base-commit: 32bf85c60ca3584a7ba3bef19da2779b73b2e7d6
 -- 
-2.25.1
-
+tejun
