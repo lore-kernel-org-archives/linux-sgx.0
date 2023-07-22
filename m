@@ -2,84 +2,100 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A108EB64DD
-	for <linux-sgx@archiver.kernel.org>; Fri, 21 Jul 2023 18:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB86C0015E
+	for <linux-sgx@archiver.kernel.org>; Sat, 22 Jul 2023 18:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230326AbjGUSKw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 21 Jul 2023 14:10:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57544 "EHLO
+        id S229726AbjGVSKs (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 22 Jul 2023 14:10:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbjGUSKs (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 21 Jul 2023 14:10:48 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFF2E68;
-        Fri, 21 Jul 2023 11:10:47 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-668709767b1so1581834b3a.2;
-        Fri, 21 Jul 2023 11:10:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689963046; x=1690567846;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=45g6O9ZlJ9a46173hb9oD6WT0Gj5jDz2sDLA6BPWNec=;
-        b=XU6YpFKPBbH37FVtZHEnptSRL3P3lrRfAIIxJ3QCDkfv56XTKiavtaE0iCqLTm1EAO
-         /RmpapIvZqwgHjlnwe3v7/BAqJhlwdaC9UBDEdyP52asiRdv77jN/FbOHaJigcxI7+KX
-         to4rHwtUxx4KimsHgPF+JAbDI2MWrQkRBcrgf/Dt77/xACrwezXxlq1sl0UFMsbq5iZl
-         9OaS+4ukOVqSlVkZRCUsR24FH/hj14KVi2+45Xcchj9j/j89PstpJXLfX4JCTJ8zubAk
-         f26L7HbfpDFFiUGvojF8dEyUzBdzM8/rbKgnjwX75YppW9YOGpfVrprimMo9Z5orXJ6F
-         JC8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689963046; x=1690567846;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=45g6O9ZlJ9a46173hb9oD6WT0Gj5jDz2sDLA6BPWNec=;
-        b=YPzlsXB3uiGApqSyGTAkPO56bofn1dFpRdT6WQ7Qa23SGAfzO2gczLyjb4m9hvxJjl
-         Vs+Tail0nremq7GnqfT3irrku9TeoYBFbg/14ILFTPyscD4YqqcXjUEybBghvm1+FC7v
-         M/GL8b4Cr2LkyPBk9eiPZDGmvjDoNEmM/yj+BvWanNjHprDoD+GUKdbaZvnbZ/vqS6Rk
-         ZmmDws8NLRgIKJHu1uVUoFAFkxPeq+pkgMpy7K0XEuOvL5xnX0s4sbGrB9dUIOQtwLcS
-         AIqktf7E9MqSOHQOWSR4Xy60594KCYUT9l+SQBi06JT6O7Ju7nVeJYUPrlv5zqVGWflu
-         FYNQ==
-X-Gm-Message-State: ABy/qLbrKlb9wMpWa3p/fUorM1apPRtrax3uIV7hJQL70v5oXjdPB3FR
-        kg59BvRXw9AEvQgK59RVYJ+IM7bQUqs=
-X-Google-Smtp-Source: APBJJlGWL/QaHzT9fjxpbPhRKhL3PqU1vZDdIAooBipU5Zb/hmjVWDl8d+UIFe3PszzRVMXaB7E7OA==
-X-Received: by 2002:a05:6a20:5483:b0:133:f5c1:57b7 with SMTP id i3-20020a056a20548300b00133f5c157b7mr2929218pzk.51.1689963046299;
-        Fri, 21 Jul 2023 11:10:46 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:400::5:fbd8])
-        by smtp.gmail.com with ESMTPSA id t18-20020a1709028c9200b001b866472e8dsm3771890plo.241.2023.07.21.11.10.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jul 2023 11:10:45 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Fri, 21 Jul 2023 08:10:44 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     cgroups@vger.kernel.org, dave.hansen@linux.intel.com,
-        hannes@cmpxchg.org, jarkko@kernel.org, kai.huang@intel.com,
-        kristen@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, lizefan.x@bytedance.com,
-        reinette.chatre@intel.com, vipinsh@google.com,
-        zhiquan1.li@intel.com
-Subject: Re: [PATCH] cgroup/misc: Store atomic64_t reads to u64
-Message-ID: <ZLrKJAyea-U5Lsiy@slm.duckdns.org>
-References: <ZLcXmvDKheCRYOjG@slm.duckdns.org>
- <20230721120231.13916-1-haitao.huang@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230721120231.13916-1-haitao.huang@linux.intel.com>
+        with ESMTP id S229468AbjGVSKr (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 22 Jul 2023 14:10:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55CCE26B3;
+        Sat, 22 Jul 2023 11:10:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DE53360B96;
+        Sat, 22 Jul 2023 18:10:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A138C433C8;
+        Sat, 22 Jul 2023 18:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690049445;
+        bh=aG58NWi7sc0lQTEyK5lKCBU4gxPNAXYYIz4iHvVeBrA=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=oYXNhOWS89EfdquFHUuOm1TTuxo8RXPPqmhBV+abx+yIvbO8c+VzrnDCOA1P552Va
+         Jy7vMKnhFbZECVY5NIJOV45t1ZcrTvq994YGQFdT8Gvj1n0H5v7Prx4eOtUO2RQH4z
+         aQphr32K9mWn+xnOhh2cjlQiV/dByMOS55TLyxQZxDm3ayGKzt/Zm0DUBtwTY9oVX6
+         CP8QfFoZjcBP6Kmqx5WPm7oi30eijwRK2/LP8GB6aj4fWlyfy5640md6qLZhsGAvYZ
+         YQLt/RRgqwCzWwvXRGGk5fa/9hEFUmrH2+glW1zE8T2Z5QTr5ACiJEsLBDUqxMRmIJ
+         fxPgNBkKdP8Vg==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Sat, 22 Jul 2023 18:10:42 +0000
+Message-Id: <CU8WIZGB01DT.2YX12UG6QRTA@seitikki>
+Subject: Re: [PATCH 0/4] selftests/sgx: Harden test enclave
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>,
+        <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc:     <dave.hansen@linux.intel.com>
+X-Mailer: aerc 0.14.0
+References: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
+ <CU76BC9V7H3Z.TQ3L8AZY1WD@suppilovahvero>
+ <a6e26927-acb0-c967-10c4-90a41d9a8cad@cs.kuleuven.be>
+In-Reply-To: <a6e26927-acb0-c967-10c4-90a41d9a8cad@cs.kuleuven.be>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri, Jul 21, 2023 at 05:02:31AM -0700, Haitao Huang wrote:
-> Change 'new_usage' type to u64 so it can be compared with unsigned 'max'
-> and 'capacity' properly even if the value crosses the signed boundary.
-> 
-> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+On Thu Jul 20, 2023 at 7:12 PM UTC, Jo Van Bulck wrote:
+> On 20.07.23 19:25, Jarkko Sakkinen wrote:
+> > There's a lot of source code in kselftest, which probably has at least
+> > some security issues.
+> >=20
+> > I'm not sure, at least based on this motivation, why would we care?
+>
+> I'd argue that, in general, code examples are often used as templates=20
+> and may thus inherit any vulnerabilities therein. This may be especially=
+=20
+> relevant here as your selftest enclave is in my knowledge the only=20
+> available truly minimal SGX enclave that can be built and extended while=
+=20
+> only relying on standard tools and no heavy frameworks like the Intel=20
+> SGX SDK. Thus, as noted before on this mailing list, it may be an=20
+> attractive start for people who want to build things from scratch.
 
-Applied to cgroup/for-6.6.
+If you use this code as a template,  you have a legal risk in your hands
+because of GPLv2 licensing.
 
-Thanks.
+> IMHO the example enclave should do a best effort to reasonably follow=20
+> SGX coding best practices and not have _known_ security vulnerabilities=
+=20
+> in it. Note that these are not advanced microarchitectural attacks with=
+=20
+> ugly LFENCE defenses, but plain, architectural memory-safety exploit=20
+> preventions with minimal sanitization checks, not unlike the existing=20
+> protections against buffer overflow where best practices are followed=20
+> for op->type.
 
--- 
-tejun
+I'm not sure what are the "best practices" behavior in the context of a
+kselftest instance.
+
+> Apart from that, the added checks only enforce correct behavior in the=20
+> test framework, only validating that things are sane and as expected.=20
+> Thus, to some extent, the added checks may even increase resilience of=20
+> the test framework.
+
+I'm not sure what is "correct" behavior in the context of a kselftest
+instance.
+
+> Best,
+> Jo
+
+This code is not meant for production. I implemented it specifically for
+kselftest, and that is exactly its scope.
+
+BR, Jarkko
