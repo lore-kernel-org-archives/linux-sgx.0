@@ -2,86 +2,209 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47784C0015E
-	for <linux-sgx@archiver.kernel.org>; Mon, 24 Jul 2023 10:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028F2C0015E
+	for <linux-sgx@archiver.kernel.org>; Mon, 24 Jul 2023 14:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbjGXKqP (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 24 Jul 2023 06:46:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42740 "EHLO
+        id S229789AbjGXOzn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 24 Jul 2023 10:55:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230052AbjGXKqO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 24 Jul 2023 06:46:14 -0400
-Received: from icts-p-cavuit-1.kulnet.kuleuven.be (icts-p-cavuit-1.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD0E10D;
-        Mon, 24 Jul 2023 03:46:05 -0700 (PDT)
-X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
-X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 8EFF720163.A685F
-X-KULeuven-Information: Katholieke Universiteit Leuven
-Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:143:242:ac11:20])
-        by icts-p-cavuit-1.kulnet.kuleuven.be (Postfix) with ESMTP id 8EFF720163;
-        Mon, 24 Jul 2023 12:46:01 +0200 (CEST)
-BCmilterd-Mark-Subject: no
-BCmilterd-Errors: 
-BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID#0.00
-X-CAV-Cluster: smtps
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1690195561;
-        bh=bmJX1BVbtQUmyZepRqtuaofYw/TV9rsroQnINR+UbRc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=L+fHFFq+ORFvP3Zp9iCZkP3bVeLslww77mHENtzqBxgpo+JbMk2uajQCQ7dAvt3rP
-         gtAMXlxxcwY1U2NMB+Up6TRVB+Hp47EWP63woL9zrR8lKSDgJ7+NyvN96z/SmQ1V0V
-         NUaAWq4APTvovhsNZ3PNertBolJ/thn/s5nlBrFo=
-Received: from [192.33.197.126] (eduroam-269-1-126.epfl.ch [192.33.197.126])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id 54B78D4E67DD5;
-        Mon, 24 Jul 2023 12:46:01 +0200 (CEST)
-Message-ID: <707e662f-5aed-ef86-a2e3-dda3959d6f7d@cs.kuleuven.be>
-Date:   Mon, 24 Jul 2023 12:46:01 +0200
+        with ESMTP id S229590AbjGXOzm (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 24 Jul 2023 10:55:42 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B627C10C0;
+        Mon, 24 Jul 2023 07:55:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690210540; x=1721746540;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=0nQmreZIIFL5rEUPYPNOo7mftuofidoQGo9palwNguw=;
+  b=Pb9+CNagUg5PRfUxXh8qCaZXRgU/7qe0oG2ZZzQ/4ho3mPLPO0ICuP1/
+   00ouNESRfd2QaQJxfwjXTV/6HA2/ley2CVb7jEFfB4vkTOh6EU6cSax9P
+   cZ0QFCGWZiWVyDoPX9liuS3Cv0JoOwFlNXPL8tw+0y6FLbPevLP1/OC23
+   o4PaCpFImeNkULTymvDcVouCn49vbcjFegCU8sTzd031rRMAPwEu2nTRO
+   1XYrZ/2kmxqlWhN5LafhukewA6rpYkmOiI7wId6OZNvLDGs4BJH38ST4g
+   eL6dUtAebx1G6aEuklNkhrN/dBgXGIp9h7eG1zGIgacN0AC6WZN4Ulcfy
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="398369098"
+X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
+   d="scan'208";a="398369098"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2023 07:55:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="899520928"
+X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
+   d="scan'208";a="899520928"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.48.113])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 24 Jul 2023 07:55:38 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>, "tj@kernel.org" <tj@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "Huang, Kai" <kai.huang@intel.com>
+Cc:     "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+        "Christopherson,, Sean" <seanjc@google.com>
+Subject: Re: [PATCH v3 03/28] x86/sgx: Add 'struct sgx_epc_lru_lists' to
+ encapsulate lru list(s)
+References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
+ <20230712230202.47929-4-haitao.huang@linux.intel.com>
+ <CU4GHCJTRKLZ.1RK23NWPHJGNI@seitikki>
+ <op.17794m01wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <4f5496d2e0ea8edba430e7de7304bdd840616146.camel@intel.com>
+Date:   Mon, 24 Jul 2023 09:55:37 -0500
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 0/4] selftests/sgx: Harden test enclave
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     dave.hansen@linux.intel.com
-References: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
- <CU76BC9V7H3Z.TQ3L8AZY1WD@suppilovahvero>
- <a6e26927-acb0-c967-10c4-90a41d9a8cad@cs.kuleuven.be>
- <CU8WIZGB01DT.2YX12UG6QRTA@seitikki>
-X-Kuleuven: This mail passed the K.U.Leuven mailcluster
-From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <CU8WIZGB01DT.2YX12UG6QRTA@seitikki>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.18lc2zw6wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <4f5496d2e0ea8edba430e7de7304bdd840616146.camel@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 22.07.23 20:10, Jarkko Sakkinen wrote:
-> This code is not meant for production. I implemented it specifically for
-> kselftest, and that is exactly its scope.
+Hi Kai
+On Mon, 24 Jul 2023 05:04:48 -0500, Huang, Kai <kai.huang@intel.com> wrote:
 
-I see, makes sense. As per Dave's suggestion, I'll see if I can submit a 
-proposed minimal patch to remove any existing sanitization code that is 
-not necessary for kselftest (eg register cleansing) and avoid any 
-misguided impressions of the test enclave being representative.
+> On Mon, 2023-07-17 at 08:23 -0500, Haitao Huang wrote:
+>> On Mon, 17 Jul 2023 07:45:36 -0500, Jarkko Sakkinen <jarkko@kernel.org>
+>> wrote:
+>>
+>> > On Wed Jul 12, 2023 at 11:01 PM UTC, Haitao Huang wrote:
+>> > > From: Kristen Carlson Accardi <kristen@linux.intel.com>
+>> > >
+>> > > Introduce a data structure to wrap the existing reclaimable list
+>> > > and its spinlock in a struct to minimize the code changes needed
+>> > > to handle multiple LRUs as well as reclaimable and non-reclaimable
+>> > > lists. The new structure will be used in a following set of patches  
+>> to
+>> > > implement SGX EPC cgroups.
+>
+> Although briefly mentioned in the first patch, it would be better to put  
+> more
+> background about the "reclaimable" and "non-reclaimable" thing here,  
+> focusing on
+> _why_ we need multiple LRUs (presumably you mean two lists: reclaimable  
+> and non-
+> reclaimable).
+>
+Sure I can add a little more background to introduce the  
+reclaimable/unreclaimable concept. But why we need multiple LRUs would be  
+self-evident in later patches, not sure I will add details here.
 
-> I'm not sure what is "correct" behavior in the context of a kselftest
-> instance.
+>> > >
+>> > > The changes to the structure needed for unreclaimable lists will be
+>> > > added in later patches.
+>> > >
+>> > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+>> > > Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+>> > > Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+>> > > Cc: Sean Christopherson <seanjc@google.com>
+>> > >
+>> > > V3:
+>> > > Removed the helper functions and revised commit messages
+>
+> Please put change history into:
+>
+> ---
+>   change history
+> ---
+>
+> So it can be stripped away when applying the patch.
+>
+Will do that.
 
-True. But at least when defining "correct" as passing the selftests, 
-then I think it makes sense to merge the compiler optimization fixes. As 
-the existing code clearly emits wrong assembly that breaks the selftests 
-when switching optimization levels (which may always also be 
-incorporated by default in future gcc versions or other compilers like 
-clang).
+>> > > ---
+>> > >  arch/x86/kernel/cpu/sgx/sgx.h | 17 +++++++++++++++++
+>> > >  1 file changed, 17 insertions(+)
+>> > >
+>> > > diff --git a/arch/x86/kernel/cpu/sgx/sgx.h
+>> > > b/arch/x86/kernel/cpu/sgx/sgx.h
+>> > > index f6e3c5810eef..77fceba73a25 100644
+>> > > --- a/arch/x86/kernel/cpu/sgx/sgx.h
+>> > > +++ b/arch/x86/kernel/cpu/sgx/sgx.h
+>> > > @@ -92,6 +92,23 @@ static inline void *sgx_get_epc_virt_addr(struct
+>> > > sgx_epc_page *page)
+>> > >  	return section->virt_addr + index * PAGE_SIZE;
+>> > >  }
+>> > >
+>> > > +/*
+>> > > + * This data structure wraps a list of reclaimable EPC pages, and a
+>> > > list of
+>> > > + * non-reclaimable EPC pages and is used to implement a LRU policy
+>> > > during
+>> > > + * reclamation.
+>> > > + */
+>
+> I'd prefer to not mention the "non-reclaimable" thing in this patch, but  
+> defer
+> to the one actually introduces the "non-reclaimable" list.  Actually, I  
+> don't
+> think we even need this comment, given you have this in the structure:
+>
+> 	struct list_head reclaimable;
+>
 
-Thus, I'll separate this out and submit another patch to ensure 
-correctness with compiler optimizations only.
+Agreed.
 
-Best,
-Jo
+> Which already explains the "reclaimable" list.  I suppose the  
+> non-reclaimable
+> list would be named similarly thus need no comment either.
+>
+> Also, I am wondering why you need to split this out as a separate  
+> patch.  It
+> basically does nothing.  To me you should just merge this to the next  
+> patch,
+
+I think Kristen splitted the original patch based on Dave's comments:
+
+https://lore.kernel.org/all/e71d76b2-4368-4627-abd4-2163e6786a20@intel.com/
+
+> which actually does what you claimed in the changelog:
+>
+> 	Introduce a data structure to wrap the existing reclaimable list and 
+> 	its spinlock ...
+>
+> Then this can be an infrastructure change patch, which doesn't bring any
+> functional change, to support the non-reclaimable list.
+>
+>
+>> > > +struct sgx_epc_lru_lists {
+>> > > +	/* Must acquire this lock to access */
+>> > > +	spinlock_t lock;
+>> >
+>> > Isn't this self-explanatory, why the inline comment?
+>>
+>> I got a warning from the checkpatch script complaining this lock needs
+>> comments.
+>
+> I suspected this, so I applied this patch, removed the comment,  
+> generated a new
+> patch, and run checkpatch.pl for it.  It didn't report any warning/error  
+> in my
+> testing.
+>
+> Are you sure you got a warning?
+
+I did a reran and it's actually a "CHECK" I got:
+
+$ ./scripts/checkpatch.pl --strict  
+0001-x86-sgx-Add-struct-sgx_epc_lru_lists-to-encapsulate-.patch
+CHECK: spinlock_t definition without comment
+#41: FILE: arch/x86/kernel/cpu/sgx/sgx.h:101:
++       spinlock_t lock;
+
+total: 0 errors, 0 warnings, 1 checks, 22 lines checked
+
+Thanks
+Haitao
