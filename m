@@ -2,220 +2,128 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15468C00528
-	for <linux-sgx@archiver.kernel.org>; Thu, 27 Jul 2023 08:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7442C001E0
+	for <linux-sgx@archiver.kernel.org>; Thu, 27 Jul 2023 14:16:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233816AbjG0IHe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 27 Jul 2023 04:07:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42466 "EHLO
+        id S232057AbjG0OQj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 27 Jul 2023 10:16:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229946AbjG0IHD (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 27 Jul 2023 04:07:03 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C09E2D63;
-        Thu, 27 Jul 2023 01:03:32 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2b9bb097c1bso9558391fa.0;
-        Thu, 27 Jul 2023 01:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690445011; x=1691049811;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IbW7gI8a3h2DtRGdUF2rMRbdoxwlm6QKOTYcrosHNBs=;
-        b=EhWPo4MEPNAXO7A/UJ1EqCuxFIfcR01vvsKQKmIGV1QV+PnLkZKyDmrGCWc+YSi8F4
-         lOoP/2TG2yqIkudRF+0iwzcAiI4gYrGIXkrX2ypVZg5665I4MaFS0/JewGu3SragA9ZT
-         5MMrRSRaiadbCTjTK2fkDiXv4WVm47Lq8FpnWAYYd/ACP/WlVO3XmtZsl/pZbFqPf0b2
-         oD7jcmyAOXanzOz3WPIR9RjWSlsU+kHdWN2xj9/t0mPEwXDWsmkFWB2TLEw+rYroWyfk
-         JSYzeWSnH3jpGSR5Jdl0Xb+ZTJFqjSpaWRccdiCSuVgMsf/pJ52xuDTBWSauQNGq2+gn
-         Mztg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690445011; x=1691049811;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IbW7gI8a3h2DtRGdUF2rMRbdoxwlm6QKOTYcrosHNBs=;
-        b=P3ZE6CZ3+YM19zLaB4ZMjMGu72ez+G6dxKsXq8Skmhe2QYf3mVXp66OGDPsQZgZjKY
-         xDvkXNEkC8ROnopLDWjh5STMjCUdfqZ1AdqRE8xWQUDVuHxivxtMjG3EBDwPziFgW/Bt
-         HgLx43RD/FkoyvuM2uLu+p0c9fRlhmWr8OtPsLbj26gZTsRnGqpwuKfZ7ueIvlvs/byc
-         QgLOL3WlyRcQ39PyDTgNPH5OExGbhodJAhrNM/BIXCexRd3b07/Q/N7vlKg4hHs5Cxm3
-         oLhO2dfyBL3JarGJ/zeECXaGxIWFOz///hcfvvpE9g35Yxn3EGZKLbzmiOlE6n1gtc/c
-         muyw==
-X-Gm-Message-State: ABy/qLbuIcRFnC0vS61Ju3nMcDa4biCGHOBzEd476etE2I68yBQPyXUt
-        hVP3sjmZ+11O0eipRpP2AQZkhlmdB4eLWcYOOn4=
-X-Google-Smtp-Source: APBJJlFOyEp3aH4nbnnFb6F1FGxJyzCBCXxMiO4szu4Qz6wRbHan22QnDkvyGS9SlOqBnnv2QBJiOI+MWs7hY8+gz/A=
-X-Received: by 2002:a2e:b1d3:0:b0:2b6:da88:a2d0 with SMTP id
- e19-20020a2eb1d3000000b002b6da88a2d0mr1085078lja.47.1690445010411; Thu, 27
- Jul 2023 01:03:30 -0700 (PDT)
+        with ESMTP id S233300AbjG0OQi (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 27 Jul 2023 10:16:38 -0400
+Received: from mgamail.intel.com (unknown [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E6E230C0;
+        Thu, 27 Jul 2023 07:16:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690467397; x=1722003397;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=e7XwQAboRx8pLj3NqJweHiC0cjRxIvvy1IBoJET32ao=;
+  b=di8mEmeBD8LIrdhhuD+T9w/zX//4O38J2yP7pPpGXdqy9KPPAnBRJpOq
+   ANrO1Q3sGqn4RH3a1wuaZFhDyFgzivzW2PC8g+FDUTTtqZlIQBbece7Gn
+   Z3zig57xh0CuMzJWR+XJ7rn4T4GsIRsnSzEogezAQzDA3VsdveJv3Xm+x
+   O4usIlFxsaJliDMhSTAm5PdRaGEi+JtHErgs4Qe8vIQan047ZVoiphhVY
+   IC4lrZ0JKeYzSGd9qjgC/X1rtINXlFfdxAsiutRhCycELM7X0gS5v/JZv
+   1FlP4Cbfjf/HFgvrQoC2/EAfAEpPMk6MdcqHcJUz9dbkqgeLZDtEldxQp
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10784"; a="368337269"
+X-IronPort-AV: E=Sophos;i="6.01,235,1684825200"; 
+   d="scan'208";a="368337269"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2023 07:16:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10784"; a="704177600"
+X-IronPort-AV: E=Sophos;i="6.01,235,1684825200"; 
+   d="scan'208";a="704177600"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.48.113])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 27 Jul 2023 07:16:10 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "Huang, Kai" <kai.huang@intel.com>
+Cc:     "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "Mehta, Sohil" <sohil.mehta@intel.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Christopherson,, Sean" <seanjc@google.com>
+Subject: Re: [PATCH v5] x86/sgx: Resolves SECS reclaim vs. page fault for EAUG
+ race
+References: <20230727010212.26406-1-haitao.huang@linux.intel.com>
+ <c57d8cc4e4bfbef028a1f226ec2c4691a7c100fe.camel@intel.com>
+Date:   Thu, 27 Jul 2023 09:16:06 -0500
 MIME-Version: 1.0
-From:   Yikebaer Aizezi <yikebaer61@gmail.com>
-Date:   Thu, 27 Jul 2023 16:03:18 +0800
-Message-ID: <CALcu4rbFrU4go8sBHk3FreP+qjgtZCGcYNpSiEXOLm==qFv7iQ@mail.gmail.com>
-Subject: WARNING in kvm_arch_vcpu_ioctl_run
-To:     seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, jarkko@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.18qu84gewjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <c57d8cc4e4bfbef028a1f226ec2c4691a7c100fe.camel@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hello, I'm sorry for the mistake in my previous email. I forgot to add
-a subject. This is my second attempt to send the message.
+On Wed, 26 Jul 2023 21:50:02 -0500, Huang, Kai <kai.huang@intel.com> wrote:
 
-When using Healer to fuzz the latest Linux kernel, the following crash
-was triggered.
+> On Wed, 2023-07-26 at 18:02 -0700, Haitao Huang wrote:
+>> Under heavy load, the SGX EPC reclaimer (ksgxd) may reclaim the SECS EPC
+>
+> If I read correctly, Dave suggested to not use "high" (heavy in this  
+> sentence)
+> or "low" pressure:
+>
+> https://lore.kernel.org/lkml/op.179a4xs0wjvjmi@hhuan26-mobl.amr.corp.intel.com/T/#m9120eac6a4a94daa7c9fcc47709f241cd181e5dc
+>
+> And I agree.  For instance, consider this happens to one extremely  
+> "small"
+> enclave, while there's a new "big" enclave starts to run.  I don't think  
+> we
+> should say this is "under heavy load".  Just stick to the fact that the
+> reclaimer may reclaim the SECS page.
+>
+Mybe I have some confusion here but I did not think Dave had issues with  
+'heavy load'. When this happens, the last page causing #PF (page A below)  
+should be the the "youngest" in PTE and it got paged out together with the  
+SECS before the #PF is even handled. Based on that the ksgxd moves 'young'  
+pages to the back of the queue for reclaiming, for that to happen, almost  
+all EPC pages must be paged out for all enclaves at that time, so it means  
+heavy load to me.  And that's also consistent with my tests.
 
-HEAD commit: fdf0eaf11452d72945af31804e2a1048ee1b574c (tag: v6.5-rc2)
+>> page for an enclave and set encl->secs.epc_page to NULL. But the SECS
+>> EPC page is used for EAUG in the SGX page fault handler without checking
+>> for NULL and reloading.
+>>
+>> Fix this by checking if SECS is loaded before EAUG and loading it if it
+>> was reclaimed.
+>>
+>> The SECS page holds global enclave metadata. It can only be reclaimed
+>> when there are no other enclave pages remaining. At that point,
+>> virtually nothing can be done with the enclave until the SECS page is
+>> paged back in.
+...
+>> But it is still possible for a #PF for a non-SECS page to race
+>> with paging out the SECS page: when the last resident non-SECS page A
+>> triggers a #PF in a non-resident page B, and then page A and the SECS
+>> both are paged out before the #PF on B is handled.
+>>
+>> Hitting this bug requires that race triggered with a #PF for EAUG.
+>
+> The above race can happen for the normal ELDU path too, thus I suppose  
+> it will
+> be better to mention why the normal ELDU path doesn't have this issue: it
+> already does what this fix does.
+>
+Should we focus on the bug and fix itself instead of explaining a non-bug  
+case?
+And the simple changes in this patch clearly show that too if people look  
+for that.
 
-git tree: upstream
-
-console output:
-https://drive.google.com/file/d/1FiemC_AWRT-6EGscpQJZNzYhXZty6BVr/view?usp=drive_link
-kernel config: https://drive.google.com/file/d/1fgPLKOw7QbKzhK6ya5KUyKyFhumQgunw/view?usp=drive_link
-C reproducer: https://drive.google.com/file/d/1SiLpYTZ7Du39ubgf1k1BIPlu9ZvMjiWZ/view?usp=drive_link
-Syzlang reproducer:
-https://drive.google.com/file/d/1eWSmwvNGOlZNU-0-xsKhUgZ4WG2VLZL5/view?usp=drive_link
-Similar report:
-https://groups.google.com/g/syzkaller-bugs/c/C2ud-S1Thh0/m/z4iI7l_dAgAJ
-
-If you fix this issue, please add the following tag to the commit:
-Reported-by: Yikebaer Aizezi <yikebaer61@gmail.com>
-
-kvm: vcpu 129: requested lapic timer restore with starting count
-register 0x390=4241646265 (4241646265 ns) > initial count (296265111
-ns). Using initial count to start timer.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1977 at arch/x86/kvm/x86.c:11098
-kvm_arch_vcpu_ioctl_run+0x152f/0x1830 arch/x86/kvm/x86.c:11098
-Modules linked in:
-CPU: 0 PID: 1977 Comm: syz-executor Not tainted 6.5.0-rc2 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-RIP: 0010:kvm_arch_vcpu_ioctl_run+0x152f/0x1830 arch/x86/kvm/x86.c:11098
-Code: fd ff ff e8 83 ca 67 00 44 89 ee 48 c7 c7 80 8e 42 89 c6 05 e3
-40 1e 0c 01 e8 2d 22 33 00 0f 0b e9 ed fc ff ff e8 61 ca 67 00 <0f> 0b
-e9 ff fb ff ff e8 55 ca 67 00 80 3d c0 40 1e 0c 00 0f 85 19
-RSP: 0018:ffffc900072dfcd8 EFLAGS: 00010212
-RAX: 00000000000006a9 RBX: ffff88801852c000 RCX: ffffc90002bd9000
-RDX: 0000000000040000 RSI: ffffffff81114ddf RDI: ffff88810e5d0880
-RBP: ffff888018995180 R08: 0000000000000000 R09: fffffbfff1f4f5b0
-R10: ffffffff8fa7ad87 R11: 0000000000000001 R12: ffff8880189951ac
-R13: 0000000000000000 R14: ffff8880189959a8 R15: ffff888018995268
-FS:  00007feb64c14640(0000) GS:ffff888063e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000002a8 CR3: 0000000114888000 CR4: 0000000000752ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
-Call Trace:
- <TASK>
- kvm_vcpu_ioctl+0x4de/0xcc0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4112
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x173/0x1e0 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x47959d
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 b4 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007feb64c14068 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 000000000059c0a0 RCX: 000000000047959d
-RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000008
-RBP: 000000000059c0a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000059c0ac
-R13: 000000000000000b R14: 0000000000437250 R15: 00007feb64bf4000
- </TASK>
-
-Modules linked in:
-CPU: 0 PID: 1977 Comm: syz-executor Not tainted 6.5.0-rc2 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-RIP: 0010:kvm_arch_vcpu_ioctl_run+0x152f/0x1830 arch/x86/kvm/x86.c:11098
-Code: fd ff ff e8 83 ca 67 00 44 89 ee 48 c7 c7 80 8e 42 89 c6 05 e3
-40 1e 0c 01 e8 2d 22 33 00 0f 0b e9 ed fc ff ff e8 61 ca 67 00 <0f> 0b
-e9 ff fb ff ff e8 55 ca 67 00 80 3d c0 40 1e 0c 00 0f 85 19
-RSP: 0018:ffffc900072dfcd8 EFLAGS: 00010212
-RAX: 00000000000006a9 RBX: ffff88801852c000 RCX: ffffc90002bd9000
-RDX: 0000000000040000 RSI: ffffffff81114ddf RDI: ffff88810e5d0880
-RBP: ffff888018995180 R08: 0000000000000000 R09: fffffbfff1f4f5b0
-R10: ffffffff8fa7ad87 R11: 0000000000000001 R12: ffff8880189951ac
-R13: 0000000000000000 R14: ffff8880189959a8 R15: ffff888018995268
-FS:  00007feb64c14640(0000) GS:ffff888063e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000002a8 CR3: 0000000114888000 CR4: 0000000000752ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
-Call Trace:
- <TASK>
- kvm_vcpu_ioctl+0x4de/0xcc0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4112
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x173/0x1e0 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x47959d
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 b4 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007feb64c14068 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 000000000059c0a0 RCX: 000000000047959d
-RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000008
-RBP: 000000000059c0a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000059c0ac
-R13: 000000000000000b R14: 0000000000437250 R15: 00007feb64bf4000
- </TASK>
-Kernel panic - not syncing: kernel: panic_on_warn set ...
-CPU: 0 PID: 1977 Comm: syz-executor Not tainted 6.5.0-rc2 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x92/0xf0 lib/dump_stack.c:106
- panic+0x570/0x620 kernel/panic.c:340
- check_panic_on_warn+0x8e/0x90 kernel/panic.c:236
- __warn+0xee/0x340 kernel/panic.c:673
- __report_bug lib/bug.c:199 [inline]
- report_bug+0x25d/0x460 lib/bug.c:219
- handle_bug+0x3c/0x70 arch/x86/kernel/traps.c:324
- exc_invalid_op+0x14/0x40 arch/x86/kernel/traps.c:345
- asm_exc_invalid_op+0x16/0x20 arch/x86/include/asm/idtentry.h:568
-RIP: 0010:kvm_arch_vcpu_ioctl_run+0x152f/0x1830 arch/x86/kvm/x86.c:11098
-Code: fd ff ff e8 83 ca 67 00 44 89 ee 48 c7 c7 80 8e 42 89 c6 05 e3
-40 1e 0c 01 e8 2d 22 33 00 0f 0b e9 ed fc ff ff e8 61 ca 67 00 <0f> 0b
-e9 ff fb ff ff e8 55 ca 67 00 80 3d c0 40 1e 0c 00 0f 85 19
-RSP: 0018:ffffc900072dfcd8 EFLAGS: 00010212
-RAX: 00000000000006a9 RBX: ffff88801852c000 RCX: ffffc90002bd9000
-RDX: 0000000000040000 RSI: ffffffff81114ddf RDI: ffff88810e5d0880
-RBP: ffff888018995180 R08: 0000000000000000 R09: fffffbfff1f4f5b0
-R10: ffffffff8fa7ad87 R11: 0000000000000001 R12: ffff8880189951ac
-R13: 0000000000000000 R14: ffff8880189959a8 R15: ffff888018995268
- kvm_vcpu_ioctl+0x4de/0xcc0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4112
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x173/0x1e0 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x47959d
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 b4 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007feb64c14068 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 000000000059c0a0 RCX: 000000000047959d
-RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000008
-RBP: 000000000059c0a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000059c0ac
-R13: 000000000000000b R14: 0000000000437250 R15: 00007feb64bf4000
- </TASK>
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 1 seconds..
+Thanks
+Haitao
