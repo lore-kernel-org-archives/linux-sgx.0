@@ -2,41 +2,41 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF386C0015E
-	for <linux-sgx@archiver.kernel.org>; Fri, 28 Jul 2023 19:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8557CC0015E
+	for <linux-sgx@archiver.kernel.org>; Fri, 28 Jul 2023 19:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbjG1TEB (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 28 Jul 2023 15:04:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35026 "EHLO
+        id S232453AbjG1TET (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 28 Jul 2023 15:04:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbjG1TEA (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 28 Jul 2023 15:04:00 -0400
+        with ESMTP id S229572AbjG1TEQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 28 Jul 2023 15:04:16 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4302DE48;
-        Fri, 28 Jul 2023 12:03:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 999B93AB3;
+        Fri, 28 Jul 2023 12:04:15 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C955B621D3;
-        Fri, 28 Jul 2023 19:03:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4333EC433C8;
-        Fri, 28 Jul 2023 19:03:57 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0AC36621DA;
+        Fri, 28 Jul 2023 19:04:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E5FDC433C7;
+        Fri, 28 Jul 2023 19:04:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690571038;
-        bh=QDZem+8qSvLdha9A8EUPTt8gEUNGutbkwgAOj23ovTM=;
+        s=k20201202; t=1690571054;
+        bh=8DaWYZaCw2Xuxw5riz8+1tlUJan7UILXAqdOAeCekrE=;
         h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=GJQoWRumkBMBvO7UDy1MEYZQM6/6RznlmFmv7b5/ISTssCIf48a8qQHmNgZI6tttu
-         8u7y/NCA3UogGIZWaPsykIatfbNAbmPv2/JbaqiVGjhQ98ZUY+zPvqmo3g0yFs8rMA
-         4VoeJSdcMR1TaFgvL9+O7AojVqCFYHBvKu+r0qYUFK1nBKufhjkQ6f7A5XklGn1T1x
-         afzDNTltM0lEvqNhhaw9Si6FyCN2KUzlKVypgZxpmzZHAB6eqv/qhlUIbUophGZhxF
-         riIThAE5ZReusRZs7qF4m442mmhy+pH0qLGaINAEEGYo5qQRPhj+rqMlklIT+yNB1V
-         gDrnp5T3atMDA==
+        b=iu97QwjZRPD1dV3JIDfuMmsy98jTiapiijoGQ5PPMgXnYqJiiiYJrFs9zRG7irxTC
+         hWGquvIJSKt/jm8cfWonpOVx+HVoYWettmt88p7BTRR1iBAg1qkxnfxIW31cqPJPlw
+         NaxQ3tdZskTlaqogr3a6y1qFOKiR8B/bIBTkVOkGQ1Pu2xFK3MlpLU6Z6jjQb5rQyv
+         kE3LJuj2cSwO9om5EXncNvgiFPSnHvn5xi0x8ipyWbkf038zcyVFDhyarK56r9+xuI
+         RbLlKQv8kYeKub7kpgWD5hqfuliU+VKBc5pUrBMTEd9Yq634WOawbGc6/a15HLhGM9
+         fGw5V0uqIgScQ==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Fri, 28 Jul 2023 19:03:55 +0000
-Message-Id: <CUE1EZWZ2B1V.3RB2KB8Q2A52W@seitikki>
+Date:   Fri, 28 Jul 2023 19:04:11 +0000
+Message-Id: <CUE1F7IVKP62.33C0KMVG8HHKF@seitikki>
 Cc:     <dave.hansen@linux.intel.com>
 Subject: Re: [PATCH 1/5] selftests/sgx: Fix uninitialized pointer
  dereference in error path.
@@ -81,10 +81,6 @@ tests/sgx/sigstruct.c
 > --=20
 > 2.34.1
 
-Add a fixes tag. In other words, find the commit ID that caused the issue
-and add the output of the following to this patch before your sob:
-
-git --no-pager log --format=3D'Fixes: %h ("%s")' --abbrev=3D12 -1 <commit I=
-D>;
+Ditto.
 
 BR, Jarkko
