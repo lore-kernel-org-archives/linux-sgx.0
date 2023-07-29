@@ -2,66 +2,86 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B81C2C0015E
-	for <linux-sgx@archiver.kernel.org>; Fri, 28 Jul 2023 19:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDB4C001DC
+	for <linux-sgx@archiver.kernel.org>; Sat, 29 Jul 2023 12:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229917AbjG1TWK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 28 Jul 2023 15:22:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44294 "EHLO
+        id S230011AbjG2Mrz (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 29 Jul 2023 08:47:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229622AbjG1TWJ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 28 Jul 2023 15:22:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B097819A1;
-        Fri, 28 Jul 2023 12:22:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 453DB621D2;
-        Fri, 28 Jul 2023 19:22:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAAFAC433C7;
-        Fri, 28 Jul 2023 19:22:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690572127;
-        bh=kBgYBa52i0BtQ59SDR0Dcs0/lOoa0eFmpWZx7LXp6hQ=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=aMrNxQ8Zg1+2r7I8qh5K3VWTxhKn23neTeFfXex9ClA8kw3t25gUu3gokcR0kAXEQ
-         dfRqv3AGj3HEkD2YOH8/UNrkPMSkfDVBPmFEAHGaefxi1UuIbvxmTNqXmZqUXf3Odb
-         2adYWC8bQHJciA6qFvnar2tbsBK2gZ9RJV1eHD2n33GyzW8Hvx1CxmeX/tPDQLhKoM
-         x4KIkR9iDaxyJab5RTLgFNPnIml+lQFhskeW0Icj2pT16dTjfzrJiD4RTcCks49xYK
-         SRhlR5dBpCG+9LiYG6UivIds+RJS+RB2awPU+FkFTn89wcAps8vShy9w0dCOoV9+WQ
-         QiviOBbjuKtig==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Fri, 28 Jul 2023 19:22:04 +0000
-Message-Id: <CUE1SWKWLXPX.46QZ3KU4UAWL@seitikki>
-Cc:     <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 5/5] selftests/sgx: Enclave freestanding compilation +
- separate linker options.
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>,
-        <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.14.0
-References: <20230724165832.15797-1-jo.vanbulck@cs.kuleuven.be>
- <20230724165832.15797-6-jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <20230724165832.15797-6-jo.vanbulck@cs.kuleuven.be>
+        with ESMTP id S229510AbjG2Mrz (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sat, 29 Jul 2023 08:47:55 -0400
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD706E6A;
+        Sat, 29 Jul 2023 05:47:53 -0700 (PDT)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 2A8141C0A94; Sat, 29 Jul 2023 14:47:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+        t=1690634872;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=RAsNUQf+00oUuts2a7jrozlCZl17QKNd69lxBxURL3g=;
+        b=YnoqXcg30UY3MdSapkyH4rKRfmwItAMk6U74tP90L8di9bpTuUvR+jkWhqxdB2I7RIHOy5
+        mR6SxYFrOmWaY2DdCamfRajqHtno/aufJelCtXKvOF5UfLS4TthIpDWJWR0gQT4LtQVJwM
+        MMzRIAcVkPw2y5cposyyuIyaGkkZ2nk=
+Date:   Sat, 29 Jul 2023 14:47:51 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     jarkko@kernel.org, dave.hansen@linux.intel.com, tj@kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        cgroups@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        kai.huang@intel.com, reinette.chatre@intel.com,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com
+Subject: Re: [PATCH v3 11/28] x85/sgx: Return the number of EPC pages that
+ were successfully reclaimed
+Message-ID: <ZMUKd7KY6Kquubjf@duo.ucw.cz>
+References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
+ <20230712230202.47929-12-haitao.huang@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="R7yJGefVtKAYCwSn"
+Content-Disposition: inline
+In-Reply-To: <20230712230202.47929-12-haitao.huang@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon Jul 24, 2023 at 4:58 PM UTC, Jo Van Bulck wrote:
-> Fixes "'linker' input unused [-Wunused-command-line-argument]" errors whe=
-n
-> compiling with clang.
->
-> Additionally pass -ffreestanding to prohibit memset/memcpy stdlib calls f=
-or
-> optimized enclave code.
 
-Should be split into two patches. Please describe the motivation for the
-second paragraph in the patch, which adds '-ffreestanding'.
+--R7yJGefVtKAYCwSn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi!
 
-BR, Jarkko
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+>=20
+> Return the number of reclaimed pages from sgx_reclaim_pages(), the EPC
+> cgroup will use the result to track the success rate of its reclaim
+> calls, e.g. to escalate to a more forceful reclaiming mode if
+> necessary.
+
+Subject says x85. While some would love to see support of Linux on
+Intel 8085, I guess it should be x86.
+
+Best regards,
+								Pavel
+							=09
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--R7yJGefVtKAYCwSn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZMUKdwAKCRAw5/Bqldv6
+8hyIAKC6e4rHUDwLQThZHsYgsxUnrEcKQQCfXT0HVDxSw+VWX7v8QzRcoZQ5q/I=
+=C2G9
+-----END PGP SIGNATURE-----
+
+--R7yJGefVtKAYCwSn--
