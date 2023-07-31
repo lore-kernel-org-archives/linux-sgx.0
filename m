@@ -2,78 +2,121 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D64C001DC
-	for <linux-sgx@archiver.kernel.org>; Mon, 31 Jul 2023 11:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C1D7C001DE
+	for <linux-sgx@archiver.kernel.org>; Mon, 31 Jul 2023 20:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230249AbjGaLLD (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 31 Jul 2023 07:11:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56806 "EHLO
+        id S230028AbjGaUfo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 31 Jul 2023 16:35:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbjGaLLD (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 31 Jul 2023 07:11:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4763A1BF;
-        Mon, 31 Jul 2023 04:11:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C59C76105A;
-        Mon, 31 Jul 2023 11:11:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8B06C433C8;
-        Mon, 31 Jul 2023 11:10:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690801861;
-        bh=GQE4ikJOGvMhp7gKtfrRyBB/OigQHtCUYCx9FoUAlLg=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=c+5iI4lBI1Xr9Q6XgHXyYMgH7oUBx77jiwy8HUfsDonzUm3db0QulCo65lQZsc8z+
-         nboML0pAKixv0122Jd994M03a17edVOcADc4PO1XrXlJYoyeBaXt2NUKWDSrDau2Zn
-         GezQAPLMzstIeqp0hm4UIGUVXM2XVVmXCZhehBnHVDFOKZkWhZXhl8XPtxsgQ6v+fe
-         Ma/G2MSniOQNEY7Mst43pQWrr5k4qTh2GlNuOAGS4WIx7+UPem1oqBmX08c4lckeOp
-         osm1Rug37jBNdHdOpauhHvqBBvA0t4gFQYQYQeE04fG2cETavr1hxmQ6YVutpXFH39
-         xxqsBqNSBtCxw==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Mon, 31 Jul 2023 11:10:55 +0000
-Message-Id: <CUGB8HJ4IYB9.1VVYV9GK75UYX@seitikki>
-Cc:     <dave.hansen@linux.intel.com>, <tj@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
-        <cgroups@vger.kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        <kai.huang@intel.com>, <reinette.chatre@intel.com>,
-        "Sean Christopherson" <sean.j.christopherson@intel.com>,
-        <zhiquan1.li@intel.com>, <kristen@linux.intel.com>,
-        <seanjc@google.com>
-Subject: Re: [PATCH v3 11/28] x85/sgx: Return the number of EPC pages that
- were successfully reclaimed
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Pavel Machek" <pavel@ucw.cz>,
-        "Haitao Huang" <haitao.huang@linux.intel.com>
-X-Mailer: aerc 0.14.0
+        with ESMTP id S229928AbjGaUfn (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 31 Jul 2023 16:35:43 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B198172A;
+        Mon, 31 Jul 2023 13:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690835741; x=1722371741;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=il+OrpNJkCiZXQXCAjNwn2LSF5pF/7jhhD8JXlD/k1Q=;
+  b=lM4ae2yqx264rXk/G+jjkyTYzh9nYppQPp5OBGQ0aftWry10fq33z0s8
+   xT0bUdgFLJZ3sCc3wNI89yEzIig1womQcFH2gEBNkgT1n79GT/VD3cc57
+   E1GgYOFcdFWx3MHAZ5nG5+zCEM5CxBA9873uPQZRbhjKVh0LiDU0t65Dl
+   2WCMQM8u3JU+/9s6yU+ELO1mokaiW/0K4gAnKkM7o6Rn2R14gl/lxvcBg
+   pUrRNZgrGVWwfwJhBAebSmQgn+0EMrmHXJrVY7FpR6OFQPW0CnkT2FeSb
+   i8MlwaYAPf7+v2vO2SZR8xlio16I5bdoiQGB729BA/sarZZo69UpgtrIk
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10788"; a="354043394"
+X-IronPort-AV: E=Sophos;i="6.01,245,1684825200"; 
+   d="scan'208";a="354043394"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2023 13:35:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10788"; a="852170252"
+X-IronPort-AV: E=Sophos;i="6.01,245,1684825200"; 
+   d="scan'208";a="852170252"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.61])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 31 Jul 2023 13:35:38 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "mingo@redhat.com" <mingo@redhat.com>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "tj@kernel.org" <tj@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+        "Huang, Kai" <kai.huang@intel.com>
+Cc:     "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+        "Christopherson,, Sean" <seanjc@google.com>
+Subject: Re: [PATCH v3 03/28] x86/sgx: Add 'struct sgx_epc_lru_lists' to
+ encapsulate lru list(s)
 References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
- <20230712230202.47929-12-haitao.huang@linux.intel.com>
- <ZMUKd7KY6Kquubjf@duo.ucw.cz>
-In-Reply-To: <ZMUKd7KY6Kquubjf@duo.ucw.cz>
+ <20230712230202.47929-4-haitao.huang@linux.intel.com>
+ <CU4GHCJTRKLZ.1RK23NWPHJGNI@seitikki>
+ <op.17794m01wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <4f5496d2e0ea8edba430e7de7304bdd840616146.camel@intel.com>
+ <op.18lc2zw6wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <9ffb02a3344807f2c173fe8c7cb000cd6c7843b6.camel@intel.com>
+Date:   Mon, 31 Jul 2023 15:35:36 -0500
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.18yrhmgswjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <9ffb02a3344807f2c173fe8c7cb000cd6c7843b6.camel@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Sat Jul 29, 2023 at 12:47 PM UTC, Pavel Machek wrote:
-> Hi!
->
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> >=20
-> > Return the number of reclaimed pages from sgx_reclaim_pages(), the EPC
-> > cgroup will use the result to track the success rate of its reclaim
-> > calls, e.g. to escalate to a more forceful reclaiming mode if
-> > necessary.
->
-> Subject says x85. While some would love to see support of Linux on
-> Intel 8085, I guess it should be x86.
+On Mon, 24 Jul 2023 18:31:58 -0500, Huang, Kai <kai.huang@intel.com> wrote:
 
-hmm... that could potentially be also a step towards also to zilog z80
-compatibility :-)
+...
+>> > Although briefly mentioned in the first patch, it would be better to  
+>> put
+>> > more
+>> > background about the "reclaimable" and "non-reclaimable" thing here,
+>> > focusing on
+>> > _why_ we need multiple LRUs (presumably you mean two lists:  
+>> reclaimable
+>> > and non-
+>> > reclaimable).
+>> >
+>> Sure I can add a little more background to introduce the
+>> reclaimable/unreclaimable concept. But why we need multiple LRUs would  
+>> be
+>> self-evident in later patches, not sure I will add details here.
+>
+> In this case people will need to go to that patch to get some idea  
+> first.  It
+> doesn't seem hurt if you can explain why you need multiple LRUs here  
+> first.
+>
+Will add.
 
-BR, Jarkko
+...
+>
+> I didn't get the CHECK in my testing.  Not sure why.
+>
+> Anyway, I guess the comment can be useful if it is to explain why we  
+> need to use
+> spinlock or whatever lock.  But
+>
+> 	/* Must acquire this lock to access */
+>
+> doesn't explain why at all, thus doesn't look helpful to me.
+>
+> I guess you either need a better comment, or just remove it (it's  
+> obvious that a
+> lot of kernel code doesn't have a comment around spinlock_t).
+>
+
+I'll remove the comments.
+Thanks
+Haitao
