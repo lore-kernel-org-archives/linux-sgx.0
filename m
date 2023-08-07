@@ -2,90 +2,114 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0290FEB64DD
-	for <linux-sgx@archiver.kernel.org>; Mon,  7 Aug 2023 09:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D06EB64DD
+	for <linux-sgx@archiver.kernel.org>; Mon,  7 Aug 2023 09:43:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231478AbjHGJVY (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Aug 2023 05:21:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53362 "EHLO
+        id S230472AbjHGJnF (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Aug 2023 05:43:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230112AbjHGJVW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Aug 2023 05:21:22 -0400
-Received: from icts-p-cavuit-4.kulnet.kuleuven.be (icts-p-cavuit-4.kulnet.kuleuven.be [134.58.240.134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E46C1703;
-        Mon,  7 Aug 2023 02:21:17 -0700 (PDT)
+        with ESMTP id S230426AbjHGJnE (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Aug 2023 05:43:04 -0400
+Received: from icts-p-cavuit-4.kulnet.kuleuven.be (icts-p-cavuit-4.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 570F0F9;
+        Mon,  7 Aug 2023 02:42:47 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 05B42103.A9A9A
+X-KULeuven-ID: 11241103.A9806
 X-KULeuven-Information: Katholieke Universiteit Leuven
-Received: from icts-p-ceifnet-smtps-1.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:145:242:ac11:22])
-        by icts-p-cavuit-4.kulnet.kuleuven.be (Postfix) with ESMTP id 05B42103;
-        Mon,  7 Aug 2023 11:21:14 +0200 (CEST)
+Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:144:242:ac11:2f])
+        by icts-p-cavuit-4.kulnet.kuleuven.be (Postfix) with ESMTP id 11241103;
+        Mon,  7 Aug 2023 11:42:43 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
 BCmilterd-Report: SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_VALID#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1691400073;
-        bh=pVmZuIzag398flw4SkU/Ks3/qpR3wQd+pxQKgYORXPg=;
+        s=cav; t=1691401362;
+        bh=2hAp8DsSOdkurCaBVHql6zxWT8yIkzanw2ur0tNmnm0=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=Ms7/Ke76H8j4jeSWuhdpKC9gQ8DvXYKuleAlmShPCRq2JMc2WkqOGzyUbHZV9saen
-         QwBsJPlGe5KlXeHUQBzHgcqlpd66GPc9iR32RYDhuWA9h9236L4UKxkeTHMFe9OlKs
-         nZgxlQvl8i4ErR7vf9BSUDMr6DCjt8r0YivYz/OY=
-Received: from [192.168.44.147] (unknown [77.241.232.19])
+        b=oHKFSE93vluDkDFWGK2GU3Kgy2X7Z9QxrXbYQBtsdPYUKjWj2Oi8XmzRkSXuCxWNr
+         1KIGlqqB/n2X3jStRWVtxZ5lGRH8q5SyeRKj6ylrGdPaQ5evuFZhSxAZgiDzdMbkg+
+         PXnoe2xTi0UWIHAty0kzvMmy5GTYLJRoN9JBobh4=
+Received: from [192.168.44.147] (ptr-94-109-231-173.dyn.orange.be [94.109.231.173])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id AF16ED4F64AC2;
-        Mon,  7 Aug 2023 11:21:13 +0200 (CEST)
-Message-ID: <f0e29d32-286d-8973-dc34-93f1d8005787@cs.kuleuven.be>
-Date:   Mon, 7 Aug 2023 11:21:08 +0200
+        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id 4512BD4F78D51;
+        Mon,  7 Aug 2023 11:42:42 +0200 (CEST)
+Message-ID: <a2732938-f3db-a0af-3d68-a18060f66e79@cs.kuleuven.be>
+Date:   Mon, 7 Aug 2023 11:41:34 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH 3/5] selftests/sgx: Ensure correct secinfo struct
- alignment in test enclave.
+Subject: Re: [PATCH 4/5] selftests/sgx: Ensure expected enclave data buffer
+ size and placement.
 Content-Language: en-US
-To:     "Huang, Kai" <kai.huang@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     dave.hansen@linux.intel.com
 References: <20230724165832.15797-1-jo.vanbulck@cs.kuleuven.be>
- <20230724165832.15797-4-jo.vanbulck@cs.kuleuven.be>
- <4f4c7b98a707a7d5916d8e62681cc1a4b772dde4.camel@intel.com>
+ <20230724165832.15797-5-jo.vanbulck@cs.kuleuven.be>
+ <CUE1R4HRQ599.1BX4CEIPSDWRW@seitikki>
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <4f4c7b98a707a7d5916d8e62681cc1a4b772dde4.camel@intel.com>
+In-Reply-To: <CUE1R4HRQ599.1BX4CEIPSDWRW@seitikki>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 03.08.23 06:00, Huang, Kai wrote:> We already have __aligned.  Can 
-you provide more information in what
-> circumstances that __aligned isn't enough to guarantee the alignment?
-> 
-> We have a lot of kernel code which has __aligned but doesn't have volatile.
+On 28.07.23 21:19, Jarkko Sakkinen wrote:
+> So, when exactly is it optimized away by the compiler? This is missing.
 
-Thank you. I also dug deeper into this and the proper fix is indeed not 
-to make the variable volatile.
+The problem is that declaring encl_buf as static, implies that it will 
+only be used in this file and the compiler is allowed to optimize away 
+any entries that are never used within this compilation unit (e.g., when 
+optimizing out the memcpy calls).
 
-The real problem is that the inline assembly does not have the "memory" 
-clobber to tell the compiler that the "assembly code performs memory 
-reads or writes to items other than those listed in the input and output 
-operands (for example, accessing the memory pointed to by one of the 
-input parameters)" [1].
+In reality, the tests outside test_encl.elf rely on both the size and 
+exact placement of encl_buf at the start of .data.
 
-I checked that, depending on the optimizations and compiler (gcc vs 
-clang), the compiler may indeed reorder the write to secinfo.flags to 
-_after_ the inline asm block. Declaring secinfo as volatile fixed that, 
-but the proper fix is of course to properly include a "memory" clobber 
-for the asm block.
+For example, clang -Os generates the following (legal) code when 
+encl_bug is declared as static:
 
-I'll include a fix to include a "memory" clobber for the inline asm 
-block in the next patch revision.
+0000000000001020 <do_encl_op_put_to_buf>:
+     mov    0x8(%rdi),%al
+     mov    %al,0x1fd7(%rip)   # 3000 <encl_buffer.0>
+     mov    0x9(%rdi),%al
+     mov    %al,0x8fce(%rip)   # a000 <encl_buffer.1.0>
+     mov    0xa(%rdi),%al
+     mov    %al,0x8fd5(%rip)   # a010 <encl_buffer.1.1>
+     mov    0xb(%rdi),%al
+     mov    %al,0x8fce(%rip)   # a012 <encl_buffer.1.2>
+     mov    0xc(%rdi),%al
+     mov    %al,0x8fd3(%rip)   # a020 <encl_buffer.1.3>
+     mov    0xd(%rdi),%al
+     mov    %al,0x8fce(%rip)   # a024 <encl_buffer.1.4>
+     mov    0xe(%rdi),%al
+     mov    %al,0x8fd1(%rip)   # a030 <encl_buffer.1.5>
+     mov    0xf(%rdi),%al
+     mov    %al,0x8fca(%rip)   # a032 <encl_buffer.1.6>
+     ret
 
-[1] 
-https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#Clobbers-and-Scratch-Registers-1
+Disassembly of section .data:
+
+0000000000003000 <encl_buffer.0>:
+     3000:       01 00
+         ...
+0000000000004000 <encl_ssa_tcs1>:
+
+Thus, this proposed patch fixes both the size and location:
+
+1. removing the static keyword from the encl_bug declaration ensures 
+that the _entire_ buffer is preserved with expected size, as the 
+compiler cannot anymore assume encl_buf is only used in this file.
+
+2. adding _attribute__((section(".data.encl_buffer"))) ensures that we 
+can control the expected location at the start of the .data section. I 
+think this is optional, as encl_buf always seems to be placed at the 
+start of .data in all my tests. But afaik this is not guaranteed as per 
+the C standard and such constraints on exact placement should better be 
+explicitly controlled in the linker script(?)
