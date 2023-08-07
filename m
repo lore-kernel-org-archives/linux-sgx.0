@@ -2,85 +2,91 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1ECC001DB
-	for <linux-sgx@archiver.kernel.org>; Mon,  7 Aug 2023 10:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24EBAEB64DD
+	for <linux-sgx@archiver.kernel.org>; Mon,  7 Aug 2023 11:58:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbjHGKEH (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Aug 2023 06:04:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45724 "EHLO
+        id S232887AbjHGL6L (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Aug 2023 07:58:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbjHGKEG (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Aug 2023 06:04:06 -0400
-Received: from icts-p-cavuit-1.kulnet.kuleuven.be (icts-p-cavuit-1.kulnet.kuleuven.be [134.58.240.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7166F4;
-        Mon,  7 Aug 2023 03:04:03 -0700 (PDT)
-X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
-X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 2FD5B2005B.AB1E1
-X-KULeuven-Information: Katholieke Universiteit Leuven
-Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:144:242:ac11:2f])
-        by icts-p-cavuit-1.kulnet.kuleuven.be (Postfix) with ESMTP id 2FD5B2005B;
-        Mon,  7 Aug 2023 12:04:01 +0200 (CEST)
-BCmilterd-Mark-Subject: no
-BCmilterd-Errors: 
-BCmilterd-Report: SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00
-X-CAV-Cluster: smtps
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1691402641;
-        bh=RmRz9LoqDZp6qH6qZw7V6w8nVwyQgi4xXe25hmaXnWE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=fnQ6LKe8yf7cfK1Z+T99T9Gy5gZvwwdG0elfGQAbrFCcSfdlKZ26U9bMQb/+9xLQ5
-         EGhKf8e+x0vDCeLuR4JFPnylkV1hZy2QWNqXDHaa3LEKDyUUI8uZKhWranrf6TNm1B
-         pkAlmoeiwEq+Y0q7vjDaZmmdsUGPMQpxj5PPzoSs=
-Received: from [192.168.44.147] (ptr-94-109-231-173.dyn.orange.be [94.109.231.173])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+        with ESMTP id S232912AbjHGL6J (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Aug 2023 07:58:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 019781BC;
+        Mon,  7 Aug 2023 04:58:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id 86253D4F78D56;
-        Mon,  7 Aug 2023 12:04:00 +0200 (CEST)
-Message-ID: <a4e752f6-05c8-1fa1-54a4-f68191a617d1@cs.kuleuven.be>
-Date:   Mon, 7 Aug 2023 12:03:58 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 5/5] selftests/sgx: Enclave freestanding compilation +
- separate linker options.
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     dave.hansen@linux.intel.com
-References: <20230724165832.15797-1-jo.vanbulck@cs.kuleuven.be>
- <20230724165832.15797-6-jo.vanbulck@cs.kuleuven.be>
- <CUE1SWKWLXPX.46QZ3KU4UAWL@seitikki>
-X-Kuleuven: This mail passed the K.U.Leuven mailcluster
-From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <CUE1SWKWLXPX.46QZ3KU4UAWL@seitikki>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5555E61902;
+        Mon,  7 Aug 2023 11:58:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2930C433C7;
+        Mon,  7 Aug 2023 11:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691409484;
+        bh=Jf7kyLbyGJ806axVs2w19112jZ/lnUE8U+gZvgrhBnc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r/H2xKB0XJqnG4A9MB9Dh7yV+Lt7zmhXpWzPCPrFCN1LKEh3/vwNyqwpxJDZHSTLw
+         kFBhJAOdSCF8VsIHTZP0JvIo7HSQbRHaj9ElwHeaQWaaupt54CwPxbnh/7x7+7K7Wt
+         JyS+23CrEJRqvjT9fa8i6uRxNK3e+wnw1tq6EdyS1+6Ld1/inwnOKKk4R1oaS+MB+1
+         N1jIZBmL9eSnYKZ6nPwWryDd5BQmIn76xdf3MpnbKPwN0etnrVR8ZPrdNDu2a53M/k
+         HjviLq2C+nvaGk3KTh4eivK+wQtDuUC9lYaMXZ+oqQD6AbsAmdzd2TfVNKtAcYw3R0
+         9DgDQKAJ4Vl9g==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Mon, 07 Aug 2023 14:58:01 +0300
+Message-Id: <CUMAMCVE92I8.2RSIPQM9UJN4C@wks-101042-mac.ad.tuni.fi>
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>,
+        <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc:     <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 0/4] selftests/sgx: Harden test enclave
+X-Mailer: aerc 0.15.2
+References: <20230719142500.13623-1-jo.vanbulck@cs.kuleuven.be>
+ <CU76BC9V7H3Z.TQ3L8AZY1WD@suppilovahvero>
+ <a6e26927-acb0-c967-10c4-90a41d9a8cad@cs.kuleuven.be>
+ <CU8WIZGB01DT.2YX12UG6QRTA@seitikki>
+ <707e662f-5aed-ef86-a2e3-dda3959d6f7d@cs.kuleuven.be>
+ <CUE17WOKP8HH.39KZQV0H8IRBV@seitikki>
+ <d3ad2bfb-2d64-73f5-7e37-0119eaa89c93@cs.kuleuven.be>
+In-Reply-To: <d3ad2bfb-2d64-73f5-7e37-0119eaa89c93@cs.kuleuven.be>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 28.07.23 21:22, Jarkko Sakkinen wrote:
-> Should be split into two patches. 
+On Mon Aug 7, 2023 at 9:06 AM EEST, Jo Van Bulck wrote:
+> On 28.07.23 20:54, Jarkko Sakkinen wrote
+> > It should be relatively easy to relicense the code as most of the
+> > commits have Intel copyright.
+> >=20
+> > Personally I would not mind because that would give opportunity for
+> > code that I wrote to have a wider audience but it needs to be forked
+> > with some other license first.
+>
+> > I support also the idea of refining the selftest as a run-time, which
+> > could perhaps consist of the following steps:
+> >=20
+> > 1. Create a repository of the self-compiling selftest with GPLv2. You
+> >    could add also AUTHORS file for the initial content by crawling this
+> >    data from the git log.
+> > 2. Create a commit with sob's from the required stakeholders, which
+> >    changes the license to something more appropriate, and get the
+> >    sob's with some process.
+>
+> Thank you Jarkko, appreciated! I plan to start working on the fork from=
+=20
+> next month onwards. However, I think GPL would be the best license for=20
+> this project and I'd prefer to stick to it for the time being.
+>
+> Best,
+> Jo
 
-Thanks, will do in the next patch revision.
+Ask from me permission when you have things moving forward, and I'll
+very likely give permission to all my post-Intel contributions, which
+are not that many.
 
-> Please describe the motivation for the
-> second paragraph in the patch, which adds '-ffreestanding'.
+PS. You can quite easily get full authors list with some git magic so
+pretty easy to keep things legal wise in shape.
 
-Even when passing -nostdlib, the compiler still assumes memset and 
-memcpy are present [1].
-
-I found that, when not passing '-ffreestanding', clang seems to optimize 
-away the existing memcpy/memset implementations and errors with:
-
-/bin/ld: test_encl.o: in function `do_encl_init_tcs_page':
-test_encl.c:(.text+0x17e): undefined reference to `memset'
-
-I will add this information in the next patch revision.
-
-[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90701
-
-Best,
-Jo
+BR, Jarkko
