@@ -2,71 +2,84 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A5DEB64DD
-	for <linux-sgx@archiver.kernel.org>; Mon,  7 Aug 2023 06:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35985EB64DD
+	for <linux-sgx@archiver.kernel.org>; Mon,  7 Aug 2023 06:15:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230526AbjHGGHG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Aug 2023 02:07:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59562 "EHLO
+        id S230480AbjHGGPN (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 7 Aug 2023 02:15:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230259AbjHGGHF (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Aug 2023 02:07:05 -0400
-Received: from icts-p-cavuit-1.kulnet.kuleuven.be (icts-p-cavuit-1.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548B81724;
-        Sun,  6 Aug 2023 23:07:02 -0700 (PDT)
+        with ESMTP id S229640AbjHGGPM (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Aug 2023 02:15:12 -0400
+Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3BF10F9;
+        Sun,  6 Aug 2023 23:15:10 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 360FD2016C.A7649
+X-KULeuven-ID: A24E920034.A757A
 X-KULeuven-Information: Katholieke Universiteit Leuven
-Received: from icts-p-ceifnet-smtps-1.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:145:242:ac11:22])
-        by icts-p-cavuit-1.kulnet.kuleuven.be (Postfix) with ESMTP id 360FD2016C;
-        Mon,  7 Aug 2023 08:06:59 +0200 (CEST)
+Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:144:242:ac11:2f])
+        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id A24E920034;
+        Mon,  7 Aug 2023 08:15:08 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
-BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00
+BCmilterd-Report: SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_VALID#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1691388419;
-        bh=vo2vKLGfT7lup78gRTtsKKXog9tMvYYCJG1cHKh0xBs=;
+        s=cav; t=1691388908;
+        bh=qAEAuBjTzzHoMZUbH6JcPJmQOPkCDfo6qe+8I9+R/JI=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=PcWhzB7a96kkwjX+aDL5sZovrbQUrBmIXJqQBG941BMefspcUaLrXeH4z9VzDERmR
-         mjSEXtjUj9ZemxDuNW9yzj2UfEEN7SIY6vonz/XeBtHs53ReYE7SjwWLjP2Us8BCWP
-         qnaSscn8Yt76m1KRkesojTJkcCGGPsdxzvaHFzOY=
+        b=oSIIR/Pi4qcCt0t0k9uWUubT5wM6uElHLxs4rE67CRC0Ac9AwJj1PwHrnHc1oxgZ3
+         rxmLZWK83UvVJF/8q57jYt/ZAUAOOqzL33WO0owAI6g0v6e6PZeXb5TLw8Zj6/TBxh
+         HQBFaQYK9dslFJFVtVHou2bo8Z9J3a9vO06wYWsM=
 Received: from [10.101.1.242] (ip-185-104-137-32.ptr.icomera.net [185.104.137.32])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id 8F953D4F780D6;
-        Mon,  7 Aug 2023 08:06:58 +0200 (CEST)
-Message-ID: <d1b884b4-830a-88f5-7818-0e7d0ca2ef1b@cs.kuleuven.be>
-Date:   Mon, 7 Aug 2023 08:06:57 +0200
+        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id D3818D4F79126;
+        Mon,  7 Aug 2023 08:15:07 +0200 (CEST)
+Message-ID: <88eb26eb-b3a8-40e7-5c47-f832b3b0a627@cs.kuleuven.be>
+Date:   Mon, 7 Aug 2023 08:15:06 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
 Subject: Re: [PATCH 1/5] selftests/sgx: Fix uninitialized pointer dereference
  in error path.
 Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     dave.hansen@linux.intel.com
+To:     "Huang, Kai" <kai.huang@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
 References: <20230724165832.15797-1-jo.vanbulck@cs.kuleuven.be>
  <20230724165832.15797-2-jo.vanbulck@cs.kuleuven.be>
- <CUE1EZWZ2B1V.3RB2KB8Q2A52W@seitikki>
+ <30cdc29283a6ed6ece205d9a91f44b44b2b3a73c.camel@intel.com>
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <CUE1EZWZ2B1V.3RB2KB8Q2A52W@seitikki>
+In-Reply-To: <30cdc29283a6ed6ece205d9a91f44b44b2b3a73c.camel@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 28.07.23 21:03, Jarkko Sakkinen wrote:
-> Add a fixes tag. In other words, find the commit ID that caused the issue
-> and add the output of the following to this patch before your sob:
+On 03.08.23 05:51, Huang, Kai wrote:
+> Is it safe to assume EVP_MD_CTX_destroy() can always handle a NULL ctx?
 > 
-> git --no-pager log --format='Fixes: %h ("%s")' --abbrev=12 -1 <commit ID>;
+> The manpage says:
 > 
-> BR, Jarkko
+> EVP_MD_CTX_destroy() cleans up digest context ctx and frees up the space
+> allocated to it, it should be called only on a context created using
+> EVP_MD_CTX_create().
 
-Thank you, added for the next patch revision.
+Thank you for pointing this out. Afais the implementations I've seen can 
+handle NULL, and similar error-handling paths exists where 
+EVP_MD_CTX_destroy() is called with a NULL pointer exist in several 
+places in the openSSL code.
+
+That being said, this indeed not explicit in the specification (unlike 
+RSA_free() which is called just after and explicitly specifies that NULL 
+is okay). So you're probably right that it's generally safer to not call 
+EVP_MD_CTX_destroy() with a NULL pointer.
+
+I'll include an extra check for this in the next patch revision.
