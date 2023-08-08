@@ -2,74 +2,117 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB07C001B0
-	for <linux-sgx@archiver.kernel.org>; Mon,  7 Aug 2023 20:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60A4C04A6A
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Aug 2023 20:23:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229436AbjHGUN7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 7 Aug 2023 16:13:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55198 "EHLO
+        id S232358AbjHHUXd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 8 Aug 2023 16:23:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229696AbjHGUN7 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 7 Aug 2023 16:13:59 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59C2510D8
-        for <linux-sgx@vger.kernel.org>; Mon,  7 Aug 2023 13:13:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1691439238; x=1722975238;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=eLV5QN1JNaCHwkNte9jSaAToS3r/GiNV1cZEgIcMRYQ=;
-  b=in2npGb71mP8RdFRabRlvZSw4UMZ/GiBR/wRswY+9JyS8uYmHxRAJjgz
-   fMGdCTfsbQUbAd7yKQMExpBsWX6O6wi77gGYWfhIU6KWc0HD2CLLbgQ6P
-   gEfCvgX1SEDLHL++cZ3KdxcM/baWYSfu6RiVYq+zW0zJ7TaE07xwYQcjq
-   9AwudUgPipQfRxrEoXimNWq0EtaQNpE0FraDd6bzODtT/TaNFBkRyXoc2
-   2PJdEj20eNWF06n3pChUyIFJwV7tyB3sgc3Zv9xtf5EgbjEmj0OlEU8xy
-   p7lUbazXLiC6qaTRg0kmdna8mcQ7/8OTzsSeVvQoezdB4hngagpd5MvMu
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="370632731"
-X-IronPort-AV: E=Sophos;i="6.01,262,1684825200"; 
-   d="scan'208";a="370632731"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2023 13:13:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="854798320"
-X-IronPort-AV: E=Sophos;i="6.01,262,1684825200"; 
-   d="scan'208";a="854798320"
-Received: from nyamoah-mobl.amr.corp.intel.com (HELO [10.212.249.113]) ([10.212.249.113])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2023 13:13:57 -0700
-Message-ID: <ee73c85e-6e9d-1294-6e38-356f57559ace@intel.com>
-Date:   Mon, 7 Aug 2023 13:13:57 -0700
+        with ESMTP id S233131AbjHHUXY (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 8 Aug 2023 16:23:24 -0400
+Received: from icts-p-cavuit-4.kulnet.kuleuven.be (icts-p-cavuit-4.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6D9A1BC1;
+        Tue,  8 Aug 2023 12:32:19 -0700 (PDT)
+X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
+X-KULeuven-Scanned: Found to be clean
+X-KULeuven-ID: 2786918.AE55E
+X-KULeuven-Information: Katholieke Universiteit Leuven
+Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:144:242:ac11:2f])
+        by icts-p-cavuit-4.kulnet.kuleuven.be (Postfix) with ESMTP id 2786918;
+        Tue,  8 Aug 2023 21:32:16 +0200 (CEST)
+BCmilterd-Mark-Subject: no
+BCmilterd-Errors: 
+BCmilterd-Report: SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_VALID#0.00
+X-CAV-Cluster: smtps
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
+        s=cav; t=1691523136;
+        bh=ZwHoG1FSLPdwnjwsnFXl0cFqGgp/mVcR6JfBwdlbjPg=;
+        h=From:To:Cc:Subject:Date;
+        b=dwceqJXBvxulqechRxRhCXjvYjeUD7Dmhauu8vyfbk1Un8w+uRkYIiqENPV1slBJI
+         5sq5I9JsuQMxijD21DnrnFbG1mNJVeUeqLX4Y+CFQfGp+ZqKe2ew7SDTbEWKefuffA
+         jXOEiNMyf8uDiwN4BblLDyqbjVmxXNRajmoKTlrw=
+Received: from localhost.localdomain (rrcs-24-123-120-98.central.biz.rr.com [24.123.120.98])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id 90A87D4F79D27;
+        Tue,  8 Aug 2023 21:32:14 +0200 (CEST)
+X-Kuleuven: This mail passed the K.U.Leuven mailcluster
+From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     dave.hansen@linux.intel.com,
+        Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH v2 0/8] selftests/sgx: Fix compilation errors
+Date:   Tue,  8 Aug 2023 12:31:37 -0700
+Message-Id: <20230808193145.8860-1-jo.vanbulck@cs.kuleuven.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: SGX Memory Reservation on SPR
-Content-Language: en-US
-To:     Haitao Huang <haitao.huang@linux.intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Shutemov, Kirill" <kirill.shutemov@intel.com>
-References: <ce32998f-1d7f-9481-ddb8-961b5d0f6a83@intel.com>
- <op.19a6ljf3wjvjmi@hhuan26-mobl.amr.corp.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <op.19a6ljf3wjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 8/7/23 06:33, Haitao Huang wrote:
-> Hi Dave
-> On Fri, 04 Aug 2023 16:06:50 -0500, Dave Hansen <dave.hansen@intel.com>
-> wrote:
-> 
->> What choices do our end users have about how much EPC RAM to dedicate to
->> SGX on SPR systems?  I assume there's some ability to tweak to tweak it
->> in the BIOS.
-> 
-> On one platform I know, BIOS provides choices from 256M to 256G,
-> doubling at each increment. This should depend on OEM/BIOS and available
-> total RAM configured.
+Hi,
 
-OK, thanks.  I was mostly curious how much RAM our customers are burning
-on SGX just so they can do TDX attestation on SPR.
+This is the second iteration of a patch series to ensure that all SGX selftests
+succeed when compiling with optimizations (as tested with -O{0,1,2,3,s} for
+both gcc 11.3.0 and clang 14.0.0). The aim of the patches is to avoid reliance
+on undefined, compiler-specific behavior that can make the test results
+fragile.
+
+If useful, I can also include an elementary wrapper shell script to compile and
+run the tests for different compilers (gcc/clang) and optimization levels.
+Reference output below:
+
+.. Testing gcc   -O0    [OK]
+.. Testing gcc   -O1    [OK]
+.. Testing gcc   -O2    [OK]
+.. Testing gcc   -O3    [OK]
+.. Testing gcc   -Os    [OK]
+.. Testing gcc   -Ofast [OK]
+.. Testing gcc   -Og    [OK]
+.. Testing clang -O0    [OK]
+.. Testing clang -O1    [OK]
+.. Testing clang -O2    [OK]
+.. Testing clang -O3    [OK]
+.. Testing clang -Os    [OK]
+.. Testing clang -Ofast [OK]
+.. Testing clang -Og    [OK]
+
+Changelog
+---------
+
+v2
+  - Add additional check for NULL pointer (Kai)
+  - Refine to produce proper static-pie executable
+  - Fix linker script assertions
+  - Specify memory clobber for inline asm instead of volatile (Kai)
+  - Clarify why encl_buffer non-static (Jarkko, Kai)
+  - Clarify -ffreestanding (Jarkko)
+
+Best,
+Jo
+
+Jo Van Bulck (8):
+  selftests/sgx: Fix uninitialized pointer dereference in error path
+  selftests/sgx: Produce static-pie executable for test enclave
+  selftests/sgx: Handle relocations in test enclave
+  selftests/sgx: Fix linker script asserts
+  selftests/sgx: Include memory clobber for inline asm in test enclave
+  selftests/sgx: Ensure expected enclave data buffer size and placement
+  selftests/sgx: Separate linker options
+  selftests/sgx: Specify freestanding environment for enclave
+    compilation
+
+ tools/testing/selftests/sgx/Makefile          | 14 ++---
+ tools/testing/selftests/sgx/sigstruct.c       |  5 +-
+ tools/testing/selftests/sgx/test_encl.c       | 52 ++++++++++++-------
+ tools/testing/selftests/sgx/test_encl.lds     | 11 ++--
+ .../selftests/sgx/test_encl_bootstrap.S       | 12 ++---
+ 5 files changed, 56 insertions(+), 38 deletions(-)
+
+-- 
+2.34.1
+
