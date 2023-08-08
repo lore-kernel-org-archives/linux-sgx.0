@@ -2,117 +2,131 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D60A4C04A6A
-	for <linux-sgx@archiver.kernel.org>; Tue,  8 Aug 2023 20:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BACC001B0
+	for <linux-sgx@archiver.kernel.org>; Tue,  8 Aug 2023 20:23:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232358AbjHHUXd (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 8 Aug 2023 16:23:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39942 "EHLO
+        id S233286AbjHHUXe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 8 Aug 2023 16:23:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233131AbjHHUXY (ORCPT
+        with ESMTP id S233257AbjHHUXY (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Tue, 8 Aug 2023 16:23:24 -0400
-Received: from icts-p-cavuit-4.kulnet.kuleuven.be (icts-p-cavuit-4.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6D9A1BC1;
-        Tue,  8 Aug 2023 12:32:19 -0700 (PDT)
+Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [134.58.240.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 485589EDB;
+        Tue,  8 Aug 2023 12:32:27 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 2786918.AE55E
+X-KULeuven-ID: 47921201CF.A1124
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:144:242:ac11:2f])
-        by icts-p-cavuit-4.kulnet.kuleuven.be (Postfix) with ESMTP id 2786918;
-        Tue,  8 Aug 2023 21:32:16 +0200 (CEST)
+        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id 47921201CF;
+        Tue,  8 Aug 2023 21:32:25 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
-BCmilterd-Report: SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_VALID#0.00
+BCmilterd-Report: SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_VALID_AU#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1691523136;
-        bh=ZwHoG1FSLPdwnjwsnFXl0cFqGgp/mVcR6JfBwdlbjPg=;
-        h=From:To:Cc:Subject:Date;
-        b=dwceqJXBvxulqechRxRhCXjvYjeUD7Dmhauu8vyfbk1Un8w+uRkYIiqENPV1slBJI
-         5sq5I9JsuQMxijD21DnrnFbG1mNJVeUeqLX4Y+CFQfGp+ZqKe2ew7SDTbEWKefuffA
-         jXOEiNMyf8uDiwN4BblLDyqbjVmxXNRajmoKTlrw=
+        s=cav; t=1691523145;
+        bh=LHWOrlXFlSIJK8AJUxpnLildKFYA5GugfWRgE1behfk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=FCqX70SLi1DVJeREQ6P/VgJgmaABT76H39dMp1AxXEf3ms7mxzrNrYKprHOATUkA6
+         UpSSCFKsXgR00G5+sLDRtvOawxbzwEUWkjm/RPmmsPGeh7I31emBwaIVbieCcgKXDR
+         gGXd4++Rhu3RiEETJU3ZSni5anqaA8DDA3EwiFnU=
 Received: from localhost.localdomain (rrcs-24-123-120-98.central.biz.rr.com [24.123.120.98])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id 90A87D4F79D27;
-        Tue,  8 Aug 2023 21:32:14 +0200 (CEST)
+        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id B1F10D4F79BEF;
+        Tue,  8 Aug 2023 21:32:23 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com,
         Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: [PATCH v2 0/8] selftests/sgx: Fix compilation errors
-Date:   Tue,  8 Aug 2023 12:31:37 -0700
-Message-Id: <20230808193145.8860-1-jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH 2/8] selftests/sgx: Produce static-pie executable for test enclave
+Date:   Tue,  8 Aug 2023 12:31:39 -0700
+Message-Id: <20230808193145.8860-3-jo.vanbulck@cs.kuleuven.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230808193145.8860-1-jo.vanbulck@cs.kuleuven.be>
+References: <20230808193145.8860-1-jo.vanbulck@cs.kuleuven.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi,
+The current combination of -static and -fPIC creates a static executable
+with position-dependent addresses for global variables. Use -static-pie
+and -fPIE to create a proper static position independent executable that
+can be loaded at any address without a dynamic linker.
 
-This is the second iteration of a patch series to ensure that all SGX selftests
-succeed when compiling with optimizations (as tested with -O{0,1,2,3,s} for
-both gcc 11.3.0 and clang 14.0.0). The aim of the patches is to avoid reliance
-on undefined, compiler-specific behavior that can make the test results
-fragile.
+Link: https://lore.kernel.org/all/f9c24d89-ed72-7d9e-c650-050d722c6b04@cs.kuleuven.be/
+Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+---
+ tools/testing/selftests/sgx/Makefile              |  2 +-
+ tools/testing/selftests/sgx/test_encl.lds         |  1 +
+ tools/testing/selftests/sgx/test_encl_bootstrap.S | 12 ++++++------
+ 3 files changed, 8 insertions(+), 7 deletions(-)
 
-If useful, I can also include an elementary wrapper shell script to compile and
-run the tests for different compilers (gcc/clang) and optimization levels.
-Reference output below:
-
-.. Testing gcc   -O0    [OK]
-.. Testing gcc   -O1    [OK]
-.. Testing gcc   -O2    [OK]
-.. Testing gcc   -O3    [OK]
-.. Testing gcc   -Os    [OK]
-.. Testing gcc   -Ofast [OK]
-.. Testing gcc   -Og    [OK]
-.. Testing clang -O0    [OK]
-.. Testing clang -O1    [OK]
-.. Testing clang -O2    [OK]
-.. Testing clang -O3    [OK]
-.. Testing clang -Os    [OK]
-.. Testing clang -Ofast [OK]
-.. Testing clang -Og    [OK]
-
-Changelog
----------
-
-v2
-  - Add additional check for NULL pointer (Kai)
-  - Refine to produce proper static-pie executable
-  - Fix linker script assertions
-  - Specify memory clobber for inline asm instead of volatile (Kai)
-  - Clarify why encl_buffer non-static (Jarkko, Kai)
-  - Clarify -ffreestanding (Jarkko)
-
-Best,
-Jo
-
-Jo Van Bulck (8):
-  selftests/sgx: Fix uninitialized pointer dereference in error path
-  selftests/sgx: Produce static-pie executable for test enclave
-  selftests/sgx: Handle relocations in test enclave
-  selftests/sgx: Fix linker script asserts
-  selftests/sgx: Include memory clobber for inline asm in test enclave
-  selftests/sgx: Ensure expected enclave data buffer size and placement
-  selftests/sgx: Separate linker options
-  selftests/sgx: Specify freestanding environment for enclave
-    compilation
-
- tools/testing/selftests/sgx/Makefile          | 14 ++---
- tools/testing/selftests/sgx/sigstruct.c       |  5 +-
- tools/testing/selftests/sgx/test_encl.c       | 52 ++++++++++++-------
- tools/testing/selftests/sgx/test_encl.lds     | 11 ++--
- .../selftests/sgx/test_encl_bootstrap.S       | 12 ++---
- 5 files changed, 56 insertions(+), 38 deletions(-)
-
+diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
+index 50aab6b57da3..1d6315a2e5f5 100644
+--- a/tools/testing/selftests/sgx/Makefile
++++ b/tools/testing/selftests/sgx/Makefile
+@@ -13,7 +13,7 @@ endif
+ 
+ INCLUDES := -I$(top_srcdir)/tools/include
+ HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC -z noexecstack
+-ENCL_CFLAGS := -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
++ENCL_CFLAGS := -Wall -Werror -static-pie -nostdlib -nostartfiles -fPIE \
+ 	       -fno-stack-protector -mrdrnd $(INCLUDES)
+ 
+ TEST_CUSTOM_PROGS := $(OUTPUT)/test_sgx
+diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
+index a1ec64f7d91f..ca659db2a534 100644
+--- a/tools/testing/selftests/sgx/test_encl.lds
++++ b/tools/testing/selftests/sgx/test_encl.lds
+@@ -10,6 +10,7 @@ PHDRS
+ SECTIONS
+ {
+ 	. = 0;
++        __enclave_base = .;
+ 	.tcs : {
+ 		*(.tcs*)
+ 	} : tcs
+diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/testing/selftests/sgx/test_encl_bootstrap.S
+index 03ae0f57e29d..c91743f14312 100644
+--- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
++++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
+@@ -42,9 +42,12 @@
+ encl_entry:
+ 	# RBX contains the base address for TCS, which is the first address
+ 	# inside the enclave for TCS #1 and one page into the enclave for
+-	# TCS #2. By adding the value of encl_stack to it, we get
+-	# the absolute address for the stack.
+-	lea	(encl_stack)(%rbx), %rax
++	# TCS #2. First make it relative by substracting __enclave_base and
++	# then add the address of encl_stack to get the address for the stack.
++	lea __enclave_base(%rip), %rax
++	sub %rax, %rbx
++	lea encl_stack(%rip), %rax
++	add %rbx, %rax
+ 	jmp encl_entry_core
+ encl_dyn_entry:
+ 	# Entry point for dynamically created TCS page expected to follow
+@@ -55,12 +58,9 @@ encl_entry_core:
+ 	push	%rax
+ 
+ 	push	%rcx # push the address after EENTER
+-	push	%rbx # push the enclave base address
+ 
+ 	call	encl_body
+ 
+-	pop	%rbx # pop the enclave base address
+-
+ 	/* Clear volatile GPRs, except RAX (EEXIT function). */
+ 	xor     %rcx, %rcx
+ 	xor     %rdx, %rdx
 -- 
 2.34.1
 
