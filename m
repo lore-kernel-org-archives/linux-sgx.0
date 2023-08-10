@@ -2,135 +2,188 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB2DC001B0
-	for <linux-sgx@archiver.kernel.org>; Thu, 10 Aug 2023 19:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA102C001DE
+	for <linux-sgx@archiver.kernel.org>; Thu, 10 Aug 2023 20:32:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235628AbjHJTW4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 10 Aug 2023 15:22:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38286 "EHLO
+        id S235670AbjHJUcX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 10 Aug 2023 16:32:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235674AbjHJTWy (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Aug 2023 15:22:54 -0400
+        with ESMTP id S235606AbjHJUcX (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 10 Aug 2023 16:32:23 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F37D271B;
-        Thu, 10 Aug 2023 12:22:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799472D44;
+        Thu, 10 Aug 2023 13:32:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 24122667A7;
-        Thu, 10 Aug 2023 19:22:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D88BC433C7;
-        Thu, 10 Aug 2023 19:22:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0913D63521;
+        Thu, 10 Aug 2023 20:32:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F0C6C433C8;
+        Thu, 10 Aug 2023 20:32:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691695372;
-        bh=dhTR1cm0y7gQkGL+lHdVn7y+6t2d6bOkcH+/YxZYwWU=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=Ly7InVCU01Xc0iAQJfPte+c4RhhgsHumYGWNPfpSL0S3eDnqG39sQllTjEbbkaZiH
-         aHUmm8ygMFp54WJh40EjJHTMtfTB5Y2CFu0Aqb3Diu9SgcuW4pVeYoTy2VYscZWUIb
-         jrs7us2Mu7T3l9z6KlmVX9+iRppjUeZJIHIhSH7Rdy9WKV1QjeXwe4Lz27S1uGgmN5
-         8vSROuPlwd7Z//A3ntlCCLFGA6/qfuJGonUlLSLkTm5R81wNxLe0y/C3Sg4i6n62qs
-         cXqL+f4gAWgjPa+lrhXoSqrrvDFB//0VYJi0u/XZLvtWOj/bKVWIWSWR82IjbAYgGM
-         rctr2C897iEqA==
+        s=k20201202; t=1691699541;
+        bh=o+b08IggmBC0Q46+DH/TNZUWh52Eq5/sczGv7ydJn8Y=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=lYB6Ngh9IgxhMRc090T5m0BVwBG+VepIbwPecT9T8CH+9joDT+JOqUR4pfjNowdhf
+         68E955C6qrkoSKLUb2uksZIsLgNcyif9K4I21DwFcmY/TeP6LaP8QtIe+4zCnfpo5U
+         qQHGJZq7eZol+u4kT+SefU8LslkxArGkl6MV3EBOwiS2myi5IH6QrYbLS891WyFmHA
+         rIgR+hDwTl/bZ90QN41TGRXnNWU0/jadNjFQHSTrAAMzqC9hz+rnw5EKHKQHx6BdOi
+         cMT9+imturf6C/1gZ/6/mB0lKBlUaIXhnr0jy6c6HWfbbLwGF4OcCwGS9zSquz+UTL
+         e9H3YNxHLyxJg==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Thu, 10 Aug 2023 22:22:47 +0300
-Message-Id: <CUP3YJ000CVB.1DGFMB8XHFOSW@suppilovahvero>
-Cc:     <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 2/8] selftests/sgx: Produce static-pie executable for
- test enclave
+Date:   Thu, 10 Aug 2023 23:32:14 +0300
+Message-Id: <CUP5FP8OHD3I.2MUE3TTRVNRTQ@suppilovahvero>
+Subject: Re: [PATCH 3/8] selftests/sgx: Handle relocations in test enclave
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
 To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>, <kai.huang@intel.com>,
         <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc:     <dave.hansen@linux.intel.com>
 X-Mailer: aerc 0.14.0
 References: <20230808193145.8860-1-jo.vanbulck@cs.kuleuven.be>
- <20230808193145.8860-3-jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <20230808193145.8860-3-jo.vanbulck@cs.kuleuven.be>
+ <20230808193145.8860-4-jo.vanbulck@cs.kuleuven.be>
+In-Reply-To: <20230808193145.8860-4-jo.vanbulck@cs.kuleuven.be>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Tue Aug 8, 2023 at 10:31 PM EEST, Jo Van Bulck wrote:
-> The current combination of -static and -fPIC creates a static executable
-> with position-dependent addresses for global variables. Use -static-pie
-> and -fPIE to create a proper static position independent executable that
-> can be loaded at any address without a dynamic linker.
+> Static-pie binaries normally include a startup routine to perform any ELF
+> relocations from .rela.dyn. Since the enclave loading process is differen=
+t
+> and glibc is not included, do the necessary relocation for encl_op_array
+> entries manually at runtime relative to the enclave base to ensure correc=
+t
+> function pointers.
 >
-> Link: https://lore.kernel.org/all/f9c24d89-ed72-7d9e-c650-050d722c6b04@cs=
-.kuleuven.be/
 > Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+
+What happens if I only apply 1/8 and 2/8 from this patch set?
+
+I'm just wondering why there is no mention of "-static-pie" here.
+
 > ---
->  tools/testing/selftests/sgx/Makefile              |  2 +-
->  tools/testing/selftests/sgx/test_encl.lds         |  1 +
->  tools/testing/selftests/sgx/test_encl_bootstrap.S | 12 ++++++------
->  3 files changed, 8 insertions(+), 7 deletions(-)
+>  tools/testing/selftests/sgx/test_encl.c   | 35 +++++++++++++++--------
+>  tools/testing/selftests/sgx/test_encl.lds |  3 ++
+>  2 files changed, 26 insertions(+), 12 deletions(-)
 >
-> diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftes=
-ts/sgx/Makefile
-> index 50aab6b57da3..1d6315a2e5f5 100644
-> --- a/tools/testing/selftests/sgx/Makefile
-> +++ b/tools/testing/selftests/sgx/Makefile
-> @@ -13,7 +13,7 @@ endif
+> diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/self=
+tests/sgx/test_encl.c
+> index c0d6397295e3..c71dfbadd2d9 100644
+> --- a/tools/testing/selftests/sgx/test_encl.c
+> +++ b/tools/testing/selftests/sgx/test_encl.c
+> @@ -119,21 +119,32 @@ static void do_encl_op_nop(void *_op)
 > =20
->  INCLUDES :=3D -I$(top_srcdir)/tools/include
->  HOST_CFLAGS :=3D -Wall -Werror -g $(INCLUDES) -fPIC -z noexecstack
-> -ENCL_CFLAGS :=3D -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
-> +ENCL_CFLAGS :=3D -Wall -Werror -static-pie -nostdlib -nostartfiles -fPIE=
- \
->  	       -fno-stack-protector -mrdrnd $(INCLUDES)
+>  }
 > =20
->  TEST_CUSTOM_PROGS :=3D $(OUTPUT)/test_sgx
+> +/*
+> + * Symbol placed at the start of the enclave image by the linker script.
+> + * Declare this extern symbol with visibility "hidden" to ensure the
+> + * compiler does not access it through the GOT.
+> + */
+> +extern uint8_t __attribute__((visibility("hidden"))) __enclave_base;
+
+I'd rename this as __encl_base to be consistent with other naming here.
+
+You could also declare for convenience and clarity:
+
+	static const uint64_t encl_base =3D (uint64_t)&__encl_base;
+
+> +
+> +void (*encl_op_array[ENCL_OP_MAX])(void *) =3D {
+> +	do_encl_op_put_to_buf,
+> +	do_encl_op_get_from_buf,
+> +	do_encl_op_put_to_addr,
+> +	do_encl_op_get_from_addr,
+> +	do_encl_op_nop,
+> +	do_encl_eaccept,
+> +	do_encl_emodpe,
+> +	do_encl_init_tcs_page,
+> +};
+> +
+
+Why you need to drop "const"? The array is not dynamically updated, i.e.
+there's no reason to move it away from rodata section. If this was
+kernel code, such modification would be considered as a regression.
+
+I would also consider cleaning this up a bit further, while you are
+refactoring anyway, and declare a typedef:
+
+	typedef void (*encl_op_t)(void *);
+
+	const encl_op_t encl_op_array[ENCL_OP_MAX] =3D {
+
+>  void encl_body(void *rdi,  void *rsi)
+>  {
+> -	const void (*encl_op_array[ENCL_OP_MAX])(void *) =3D {
+> -		do_encl_op_put_to_buf,
+> -		do_encl_op_get_from_buf,
+> -		do_encl_op_put_to_addr,
+> -		do_encl_op_get_from_addr,
+> -		do_encl_op_nop,
+> -		do_encl_eaccept,
+> -		do_encl_emodpe,
+> -		do_encl_init_tcs_page,
+> -	};
+> -
+>  	struct encl_op_header *op =3D (struct encl_op_header *)rdi;
+> =20
+> +	/*
+> +	 * Manually rebase the loaded function pointer as enclaves cannot
+> +	 * rely on startup routines to perform static pie relocations.
+> +	 */
+
+This comment is not very useful. I'd consider dropping it.
+
+>  	if (op->type < ENCL_OP_MAX)
+> -		(*encl_op_array[op->type])(op);
+> +		(*(((uint64_t) &__enclave_base) + encl_op_array[op->type]))(op);
+                              ~
+			      should not have white space here (coding style)
+
+This would be cleaner IMHO:
+
+void encl_body(void *rdi,  void *rsi)
+{
+	struct encl_op_header *header =3D (struct encl_op_header *)rdi;
+	encl_op_t op;
+=09
+	if (header->type >=3D ENCL_OP_MAX)
+		return;
+
+	/*=20
+	 * "encl_base" needs to be added, as this call site *cannot be*
+	 * made rip-relative by the compiler, or fixed up by any other
+	 * possible means.
+	 */
+	op =3D encl_base + encl_op_array[header->type];
+
+	(*op)(header);
+}
+
+>  }
 > diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/se=
 lftests/sgx/test_encl.lds
-> index a1ec64f7d91f..ca659db2a534 100644
+> index ca659db2a534..73d9c8bbe7de 100644
 > --- a/tools/testing/selftests/sgx/test_encl.lds
 > +++ b/tools/testing/selftests/sgx/test_encl.lds
-> @@ -10,6 +10,7 @@ PHDRS
->  SECTIONS
->  {
->  	. =3D 0;
-> +        __enclave_base =3D .;
->  	.tcs : {
->  		*(.tcs*)
->  	} : tcs
-> diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/te=
-sting/selftests/sgx/test_encl_bootstrap.S
-> index 03ae0f57e29d..c91743f14312 100644
-> --- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
-> +++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-> @@ -42,9 +42,12 @@
->  encl_entry:
->  	# RBX contains the base address for TCS, which is the first address
->  	# inside the enclave for TCS #1 and one page into the enclave for
-> -	# TCS #2. By adding the value of encl_stack to it, we get
-> -	# the absolute address for the stack.
-> -	lea	(encl_stack)(%rbx), %rax
-> +	# TCS #2. First make it relative by substracting __enclave_base and
-> +	# then add the address of encl_stack to get the address for the stack.
-> +	lea __enclave_base(%rip), %rax
-> +	sub %rax, %rbx
-> +	lea encl_stack(%rip), %rax
-> +	add %rbx, %rax
->  	jmp encl_entry_core
->  encl_dyn_entry:
->  	# Entry point for dynamically created TCS page expected to follow
-> @@ -55,12 +58,9 @@ encl_entry_core:
->  	push	%rax
+> @@ -32,6 +32,9 @@ SECTIONS
+>  		*(.note*)
+>  		*(.debug*)
+>  		*(.eh_frame*)
+> +		/* Dynamic symbol table not supported in enclaves */
+
+I'd drop this comment.
+
+> +		*(.dyn*)
+> +		*(.gnu.hash)
+>  	}
+>  }
 > =20
->  	push	%rcx # push the address after EENTER
-> -	push	%rbx # push the enclave base address
-> =20
->  	call	encl_body
-> =20
-> -	pop	%rbx # pop the enclave base address
-> -
->  	/* Clear volatile GPRs, except RAX (EEXIT function). */
->  	xor     %rcx, %rcx
->  	xor     %rdx, %rdx
 > --=20
 > 2.34.1
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
