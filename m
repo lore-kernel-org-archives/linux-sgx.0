@@ -2,219 +2,122 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA6EC00528
-	for <linux-sgx@archiver.kernel.org>; Thu, 27 Jul 2023 07:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3FAC001B0
+	for <linux-sgx@archiver.kernel.org>; Mon, 14 Aug 2023 04:38:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233554AbjG0HyL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 27 Jul 2023 03:54:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58888 "EHLO
+        id S233131AbjHNEhq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 14 Aug 2023 00:37:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233505AbjG0Hx5 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 27 Jul 2023 03:53:57 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18E6B30F9;
-        Thu, 27 Jul 2023 00:49:18 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2b9aa1d3029so9045151fa.2;
-        Thu, 27 Jul 2023 00:49:18 -0700 (PDT)
+        with ESMTP id S233109AbjHNEhR (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 14 Aug 2023 00:37:17 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBE06FB
+        for <linux-sgx@vger.kernel.org>; Sun, 13 Aug 2023 21:37:15 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-9923833737eso514279166b.3
+        for <linux-sgx@vger.kernel.org>; Sun, 13 Aug 2023 21:37:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690444156; x=1691048956;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4whf+byTbm4cJNX65zR9TvBd0HghhsB3DRH+MFYWbS0=;
-        b=sx3fJjrrVeO0aZTsM526q8sE/tRtBxRHNAMyNvvWHCxuGKpQ8KLIywiuVzP8J7Frqe
-         g4DzDMhIoM4vrDo+WGPct0+icon7/E6t4JYtdBOzcqujkTbX5gvVI8dd9cX2ZW52i5k0
-         uQjtW+UKxZdnnXQaoypCfrvdZJeDHRWnYvK0RqMlzS0Z7GHHYTTc1xDEQ5FCPaP/Zn9t
-         udBWGlpBoSnWXJnaiZVsAauHxLnO7BDvO72eT6ROB4k7UnoV9kbqO0FmmKBVcGi3gLpV
-         eLaEuEqRKdn7wED/egJ7UZcT/X8m4fu0GEUmh21tOSFyn6MdrclLTlKC14VffLkP8D0z
-         GEtQ==
+        d=ionos.com; s=google; t=1691987834; x=1692592634;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m5YMrf4HHzqanqIpl1wLQB2vcTCJ/+RxEFmotMvtvro=;
+        b=GeD69R5C2qyeXCSoVm44xThlTJFTucMTrj3/AgXtyjLUHbQOnrRC9+4Zv6UkoE39Nk
+         8ChUGo3FcKHD1cxquRc3TeaA6IXKgv0957gAYdS7FoRHthdyw/ehLFiLFYS6tSoAJSak
+         5rsnIG+PhsOSsmEGDlElxL7BaFJc7Btp9jBroDzDjVpcV9489PTHd4rqiWns9WfOygdj
+         /QZdNBzzkKE2TyQxNgYecqj+IyzwqJPHJEzALQPv+fFb5wT+lQgZh9qAkxy/SnQBetLI
+         ITT/8ezgPEq90HIJleEAsbPAc+jLkQRULcDe1JqcptufKPYvrNFU9i239CbvL4jCtIN3
+         cGmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690444156; x=1691048956;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4whf+byTbm4cJNX65zR9TvBd0HghhsB3DRH+MFYWbS0=;
-        b=FbyYkovOC26OBny3qY6ZktpLGwxNycLNtztXv/U2OZQNxdSZHZRReVvck2nyUQWRYo
-         sURDjw5i3FBpAjS2IhZyuw4poaIRds1hIpEcCeluj0Odnt2Vy+sV/I2MVcxjtA37Z0TX
-         7DoTS0huA+qxoMhQMtMcG75gN9QFkpPf1QJknkFz0IcoFH8hmvXC98R9Yb/00/ArET00
-         SLOa9walYt3Wn6XI7ok4IAu3bNgxFYzTliD/PeecKKFxgGbMKakSU92fqmnEsxe+hJv6
-         AA2fnHXTkT/nWzHX8748x+WsPzfBXFdMvEwjC1cAvTUiPvEaOi7Bq3QA32UqcusejZ+R
-         zSTA==
-X-Gm-Message-State: ABy/qLZtrqLDrVTp0FoY+kBotsZ5yDNbpewyMOonE86N8gZ4og3EFw3W
-        Y91Xzy3WvhoeCywitkA1Vm7gxDeph50Sjpn8heo=
-X-Google-Smtp-Source: APBJJlEIn4SowAyXjgQOZPk+8jLV6yNmp/WB+PLHg9ZZ2IH6/t1VT90K8yXFBp90n4LmZksgAlcLO5t6L20s5Bx7IAA=
-X-Received: by 2002:a2e:9ed4:0:b0:2b9:aa4d:372c with SMTP id
- h20-20020a2e9ed4000000b002b9aa4d372cmr950250ljk.16.1690444155880; Thu, 27 Jul
- 2023 00:49:15 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1691987834; x=1692592634;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m5YMrf4HHzqanqIpl1wLQB2vcTCJ/+RxEFmotMvtvro=;
+        b=iLbx7/204xIUYkZsWd0fop5GxfWcN0+6aWuZ5fsmu+Qn3pwqeE5VuDvsiQXsR9ez94
+         ZLSYw0QL5ZFZaDI6J4QFtyW9/aQbtuA4g/pW+AyUsbkcDNEvdxTmnU8rt/koLNDc2WP8
+         qO4rUWR25c2QuYN2MMgMsFRlNH0PnMkQqXONjiynypHhySfS/3lkxiLEPALnBXAQWgqH
+         7pmun82gxo+kXwCHWu6kz+9oX/2ExkRqo6go4OEatDTHDaH3KLHMg13qQbd7kOE3QVrT
+         D/wU8MeNnir4dej8SBPPN5FpLpuHVrAJgsXE2UB8QJsxuPXulSp3ljk7zRrSAE42Ujad
+         i7Dg==
+X-Gm-Message-State: AOJu0YzeaZmtf8UPwYZeJa2kEiVAwqxOPypn/cDt5VycNuXz8HwA36cd
+        K16I9NxPlAvQaHI8A5lsfQ4tcFUzzoYHKYnkjc0=
+X-Google-Smtp-Source: AGHT+IGcwL+S+oEi8IuQQDpzC+Or1kJi3wT3P76D881eELwJxVYaM/MTa3EmOmyo+E1sRSoa3546dQ==
+X-Received: by 2002:a17:907:2717:b0:99b:f392:10b2 with SMTP id w23-20020a170907271700b0099bf39210b2mr7120318ejk.39.1691987834298;
+        Sun, 13 Aug 2023 21:37:14 -0700 (PDT)
+Received: from lb02065.fkb.profitbricks.net ([2001:9e8:1404:a00:2211:87e2:ac41:54ad])
+        by smtp.gmail.com with ESMTPSA id kf8-20020a17090776c800b00992b2c5598csm5223766ejc.128.2023.08.13.21.37.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Aug 2023 21:37:13 -0700 (PDT)
+From:   Jack Wang <jinpu.wang@ionos.com>
+To:     jarkko@kernel.org
+Cc:     linux-sgx@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Yu Zhang <yu.zhang@ionos.com>
+Subject: [PATCH] x86/sgx: Avoid softlockup from sgx_vepc_release
+Date:   Mon, 14 Aug 2023 06:37:14 +0200
+Message-Id: <20230814043714.107971-1-jinpu.wang@ionos.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-From:   Yikebaer Aizezi <yikebaer61@gmail.com>
-Date:   Thu, 27 Jul 2023 15:49:03 +0800
-Message-ID: <CALcu4raaDCUr1O+UGASjaPa+2jyoWkkCo287GSJPBGgUVA4L0g@mail.gmail.com>
-Subject: 
-To:     seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, jarkko@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hello,
+We hit softlocup with following call trace:
+ kernel: [ 2041.288210] Call Trace:
+kernel: [ 2041.288213]  <IRQ>
+kernel: [ 2041.288216]  ? watchdog_timer_fn+0x1b4/0x210
+kernel: [ 2041.288222]  ? lockup_detector_update_enable+0x50/0x50
+kernel: [ 2041.288225]  ? __hrtimer_run_queues+0x127/0x280
+kernel: [ 2041.288230]  ? hrtimer_interrupt+0xfc/0x210
+kernel: [ 2041.288233]  ? __sysvec_apic_timer_interrupt+0x59/0xd0
+kernel: [ 2041.288237]  ? sysvec_apic_timer_interrupt+0x6d/0x90
+kernel: [ 2041.288242]  </IRQ>
+kernel: [ 2041.288242]  <TASK>
+kernel: [ 2041.288244]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+kernel: [ 2041.288250]  xa_erase+0x21/0xb0
+kernel: [ 2041.288256]  ? sgx_free_epc_page+0x20/0x50
+kernel: [ 2041.288260]  sgx_vepc_release+0x75/0x220
+kernel: [ 2041.288263]  __fput+0x89/0x250
+kernel: [ 2041.288269]  task_work_run+0x59/0x90
+kernel: [ 2041.288275]  do_exit+0x337/0x9a0
 
-When using Healer to fuzz the latest Linux kernel, the following crash
-was triggered.
+Similar like 8795359e35bc ("x86/sgx: Silence softlockup detection when releasing large enclaves")
+The test system has 64GB of enclave memory, and all assigned to a single
+VM. Release vepc take longer time and triggers the softlockup warning.
 
-HEAD commit: fdf0eaf11452d72945af31804e2a1048ee1b574c (tag: v6.5-rc2)
+Add a cond_resched() to give other tasks a chance to run and placate
+the softlockup detector.
 
-git tree: upstream
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Haitao Huang <haitao.huang@linux.intel.com>
+Reported-by: Yu Zhang <yu.zhang@ionos.com>
 
-console output:
-https://drive.google.com/file/d/1FiemC_AWRT-6EGscpQJZNzYhXZty6BVr/view?usp=drive_link
-kernel config: https://drive.google.com/file/d/1fgPLKOw7QbKzhK6ya5KUyKyFhumQgunw/view?usp=drive_link
-C reproducer: https://drive.google.com/file/d/1SiLpYTZ7Du39ubgf1k1BIPlu9ZvMjiWZ/view?usp=drive_link
-Syzlang reproducer:
-https://drive.google.com/file/d/1eWSmwvNGOlZNU-0-xsKhUgZ4WG2VLZL5/view?usp=drive_link
-Similar report:
-https://groups.google.com/g/syzkaller-bugs/c/C2ud-S1Thh0/m/z4iI7l_dAgAJ
+Signed-off-by: Jack Wang <jinpu.wang@ionos.com>
+---
+ arch/x86/kernel/cpu/sgx/virt.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-If you fix this issue, please add the following tag to the commit:
-Reported-by: Yikebaer Aizezi <yikebaer61@gmail.com>
+diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+index c3e37eaec8ec..01d2795792cc 100644
+--- a/arch/x86/kernel/cpu/sgx/virt.c
++++ b/arch/x86/kernel/cpu/sgx/virt.c
+@@ -204,6 +204,7 @@ static int sgx_vepc_release(struct inode *inode, struct file *file)
+ 			continue;
+ 
+ 		xa_erase(&vepc->page_array, index);
++		cond_resched();
+ 	}
+ 
+ 	/*
+@@ -222,6 +223,7 @@ static int sgx_vepc_release(struct inode *inode, struct file *file)
+ 			list_add_tail(&epc_page->list, &secs_pages);
+ 
+ 		xa_erase(&vepc->page_array, index);
++		cond_resched();
+ 	}
+ 
+ 	/*
+-- 
+2.34.1
 
-kvm: vcpu 129: requested lapic timer restore with starting count
-register 0x390=4241646265 (4241646265 ns) > initial count (296265111
-ns). Using initial count to start timer.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1977 at arch/x86/kvm/x86.c:11098
-kvm_arch_vcpu_ioctl_run+0x152f/0x1830 arch/x86/kvm/x86.c:11098
-Modules linked in:
-CPU: 0 PID: 1977 Comm: syz-executor Not tainted 6.5.0-rc2 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-RIP: 0010:kvm_arch_vcpu_ioctl_run+0x152f/0x1830 arch/x86/kvm/x86.c:11098
-Code: fd ff ff e8 83 ca 67 00 44 89 ee 48 c7 c7 80 8e 42 89 c6 05 e3
-40 1e 0c 01 e8 2d 22 33 00 0f 0b e9 ed fc ff ff e8 61 ca 67 00 <0f> 0b
-e9 ff fb ff ff e8 55 ca 67 00 80 3d c0 40 1e 0c 00 0f 85 19
-RSP: 0018:ffffc900072dfcd8 EFLAGS: 00010212
-RAX: 00000000000006a9 RBX: ffff88801852c000 RCX: ffffc90002bd9000
-RDX: 0000000000040000 RSI: ffffffff81114ddf RDI: ffff88810e5d0880
-RBP: ffff888018995180 R08: 0000000000000000 R09: fffffbfff1f4f5b0
-R10: ffffffff8fa7ad87 R11: 0000000000000001 R12: ffff8880189951ac
-R13: 0000000000000000 R14: ffff8880189959a8 R15: ffff888018995268
-FS:  00007feb64c14640(0000) GS:ffff888063e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000002a8 CR3: 0000000114888000 CR4: 0000000000752ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
-Call Trace:
- <TASK>
- kvm_vcpu_ioctl+0x4de/0xcc0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4112
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x173/0x1e0 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x47959d
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 b4 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007feb64c14068 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 000000000059c0a0 RCX: 000000000047959d
-RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000008
-RBP: 000000000059c0a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000059c0ac
-R13: 000000000000000b R14: 0000000000437250 R15: 00007feb64bf4000
- </TASK>
-
-Modules linked in:
-CPU: 0 PID: 1977 Comm: syz-executor Not tainted 6.5.0-rc2 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-RIP: 0010:kvm_arch_vcpu_ioctl_run+0x152f/0x1830 arch/x86/kvm/x86.c:11098
-Code: fd ff ff e8 83 ca 67 00 44 89 ee 48 c7 c7 80 8e 42 89 c6 05 e3
-40 1e 0c 01 e8 2d 22 33 00 0f 0b e9 ed fc ff ff e8 61 ca 67 00 <0f> 0b
-e9 ff fb ff ff e8 55 ca 67 00 80 3d c0 40 1e 0c 00 0f 85 19
-RSP: 0018:ffffc900072dfcd8 EFLAGS: 00010212
-RAX: 00000000000006a9 RBX: ffff88801852c000 RCX: ffffc90002bd9000
-RDX: 0000000000040000 RSI: ffffffff81114ddf RDI: ffff88810e5d0880
-RBP: ffff888018995180 R08: 0000000000000000 R09: fffffbfff1f4f5b0
-R10: ffffffff8fa7ad87 R11: 0000000000000001 R12: ffff8880189951ac
-R13: 0000000000000000 R14: ffff8880189959a8 R15: ffff888018995268
-FS:  00007feb64c14640(0000) GS:ffff888063e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000002a8 CR3: 0000000114888000 CR4: 0000000000752ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
-Call Trace:
- <TASK>
- kvm_vcpu_ioctl+0x4de/0xcc0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4112
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x173/0x1e0 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x47959d
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 b4 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007feb64c14068 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 000000000059c0a0 RCX: 000000000047959d
-RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000008
-RBP: 000000000059c0a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000059c0ac
-R13: 000000000000000b R14: 0000000000437250 R15: 00007feb64bf4000
- </TASK>
-Kernel panic - not syncing: kernel: panic_on_warn set ...
-CPU: 0 PID: 1977 Comm: syz-executor Not tainted 6.5.0-rc2 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x92/0xf0 lib/dump_stack.c:106
- panic+0x570/0x620 kernel/panic.c:340
- check_panic_on_warn+0x8e/0x90 kernel/panic.c:236
- __warn+0xee/0x340 kernel/panic.c:673
- __report_bug lib/bug.c:199 [inline]
- report_bug+0x25d/0x460 lib/bug.c:219
- handle_bug+0x3c/0x70 arch/x86/kernel/traps.c:324
- exc_invalid_op+0x14/0x40 arch/x86/kernel/traps.c:345
- asm_exc_invalid_op+0x16/0x20 arch/x86/include/asm/idtentry.h:568
-RIP: 0010:kvm_arch_vcpu_ioctl_run+0x152f/0x1830 arch/x86/kvm/x86.c:11098
-Code: fd ff ff e8 83 ca 67 00 44 89 ee 48 c7 c7 80 8e 42 89 c6 05 e3
-40 1e 0c 01 e8 2d 22 33 00 0f 0b e9 ed fc ff ff e8 61 ca 67 00 <0f> 0b
-e9 ff fb ff ff e8 55 ca 67 00 80 3d c0 40 1e 0c 00 0f 85 19
-RSP: 0018:ffffc900072dfcd8 EFLAGS: 00010212
-RAX: 00000000000006a9 RBX: ffff88801852c000 RCX: ffffc90002bd9000
-RDX: 0000000000040000 RSI: ffffffff81114ddf RDI: ffff88810e5d0880
-RBP: ffff888018995180 R08: 0000000000000000 R09: fffffbfff1f4f5b0
-R10: ffffffff8fa7ad87 R11: 0000000000000001 R12: ffff8880189951ac
-R13: 0000000000000000 R14: ffff8880189959a8 R15: ffff888018995268
- kvm_vcpu_ioctl+0x4de/0xcc0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4112
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x173/0x1e0 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x47959d
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 b4 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007feb64c14068 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 000000000059c0a0 RCX: 000000000047959d
-RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000008
-RBP: 000000000059c0a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000059c0ac
-R13: 000000000000000b R14: 0000000000437250 R15: 00007feb64bf4000
- </TASK>
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 1 seconds..
