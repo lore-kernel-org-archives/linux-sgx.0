@@ -2,172 +2,83 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8730C3063E
-	for <linux-sgx@archiver.kernel.org>; Thu, 17 Aug 2023 15:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE7F1C41513
+	for <linux-sgx@archiver.kernel.org>; Thu, 17 Aug 2023 16:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353097AbjHQPSe (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 17 Aug 2023 11:18:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42952 "EHLO
+        id S232663AbjHQQCc (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 17 Aug 2023 12:02:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353120AbjHQPS3 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 17 Aug 2023 11:18:29 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28B3B1AE;
-        Thu, 17 Aug 2023 08:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692285506; x=1723821506;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QMgQfXBYJt0EBpimhe5IYAhnYAqWB+WrvTqlDZfpL3w=;
-  b=FOLHCzY3pqHfPw2gmRK+O3Lzov+/8YKK3aZ/6R9TCqoWH8bQ478XQ+Uz
-   HeYOWsogLVCVdw3tRKI1XeKK0h7LeHL/hPFkHmNfRxxwp0dzxbOynEAbA
-   zNsIdXg+zepLcmOEy7DQourD1ju7VsbZFwu8Q1DaPHoU/Z5MWjZahW6BJ
-   e+xlnCPRPIVKxaw7txxLWIENZvXb4R5At6JyF/eZsxdEbPnTpcyXoocXQ
-   q/OOzuZWxZItscNvI8mAdv7xH2wNjfjrISQBrAF8CKW8XxrUjqXnyqyaB
-   VzpS5w2vcY0LQmEpgeKtqN9nM69rqbtqwzVybq0zgfAFKRc2yasiKdZu5
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="436756642"
-X-IronPort-AV: E=Sophos;i="6.01,180,1684825200"; 
-   d="scan'208";a="436756642"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2023 08:18:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="684448527"
-X-IronPort-AV: E=Sophos;i="6.01,180,1684825200"; 
-   d="scan'208";a="684448527"
-Received: from kaeanliu-mobl.amr.corp.intel.com (HELO himmelriiki) ([10.252.52.225])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2023 08:18:10 -0700
-Date:   Thu, 17 Aug 2023 18:18:06 +0300
-From:   Mikko Ylinen <mikko.ylinen@linux.intel.com>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     jarkko@kernel.org, dave.hansen@linux.intel.com, tj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        cgroups@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jonathan Corbet <corbet@lwn.net>, kai.huang@intel.com,
-        reinette.chatre@intel.com,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        zhiquan1.li@intel.com, seanjc@google.com, bagasdotme@gmail.com,
-        linux-doc@vger.kernel.org, zhanb@microsoft.com,
-        anakrish@microsoft.com
-Subject: Re: [PATCH v3 22/28] Docs/x86/sgx: Add description for cgroup support
-Message-ID: <ZN46Lj8Ctde+QyPD@himmelriiki>
-References: <20230712230202.47929-1-haitao.huang@linux.intel.com>
- <20230712230202.47929-23-haitao.huang@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230712230202.47929-23-haitao.huang@linux.intel.com>
+        with ESMTP id S1353440AbjHQQCE (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 17 Aug 2023 12:02:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 376AB30F1
+        for <linux-sgx@vger.kernel.org>; Thu, 17 Aug 2023 09:02:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C657C67523
+        for <linux-sgx@vger.kernel.org>; Thu, 17 Aug 2023 16:02:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26776C433BF;
+        Thu, 17 Aug 2023 16:02:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692288122;
+        bh=KOFrx0L1xQJpxkZaQO7WPSPrunKiZrhrZZ9BYR+8wWI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PD6iRtLgLlKv2U/mkOboZApBU1NuI+UDOiqglqGc1dwT+apWo+L2EMZUgcwVtvm14
+         4W2p9J9ySxe7/TaAnAyI9A63E1C+ZD139vN50egWjlTT10wC9V7faK8MaCHXAHD2rO
+         cIuXOe1yDQgvCC9k88K2Icv8cz3+2fiaHbKrUjYudz+2t2DwAY0Y5ArRM3qcXFg4pY
+         WXvZ+Tm5SZiOlYYrkWMxUzoTC1MTni5W1koOuBVOBsjrtt0nqGX2r4h2eqOH1XXrjn
+         WGcyT3J70O9dADQWr8mdLQ8cD4SedqRmiCSXvdOpu73T5Jo2NC1QujgHwcyjaPi19Z
+         kODCLFYLtEM5g==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Thu, 17 Aug 2023 16:01:59 +0000
+Message-Id: <CUUY2LHIXLJO.2C4M4O5Q3SVCD@seitikki>
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Huang, Kai" <kai.huang@intel.com>,
+        "jinpu.wang@ionos.com" <jinpu.wang@ionos.com>
+Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "yu.zhang@ionos.com" <yu.zhang@ionos.com>,
+        "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>
+Subject: Re: [PATCH] x86/sgx: Avoid softlockup from sgx_vepc_release
+X-Mailer: aerc 0.14.0
+References: <20230814043714.107971-1-jinpu.wang@ionos.com>
+ <3954697abb1a6c84c4b30fbd0d5edcafae6f6966.camel@intel.com>
+ <CAMGffEk_ojyRsMy_7d1R0aacwNQ0itDV+ZYTDH0Fpoy03iPkTg@mail.gmail.com>
+ <3061b0ccb3a61b856498ebfc27d400250fa550c6.camel@intel.com>
+In-Reply-To: <3061b0ccb3a61b856498ebfc27d400250fa550c6.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, Jul 12, 2023 at 04:01:56PM -0700, Haitao Huang wrote:
-> From: Kristen Carlson Accardi <kristen@linux.intel.com>
-> 
-> Add initial documentation of how to regulate the distribution of
-> SGX Enclave Page Cache (EPC) memory via the Miscellaneous cgroup
-> controller.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> Cc: Sean Christopherson <seanjc@google.com>
-> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
->  Documentation/arch/x86/sgx.rst | 77 ++++++++++++++++++++++++++++++++++
->  1 file changed, 77 insertions(+)
-> 
-> diff --git a/Documentation/arch/x86/sgx.rst b/Documentation/arch/x86/sgx.rst
-> index 2bcbffacbed5..f6ca5594dcf2 100644
-> --- a/Documentation/arch/x86/sgx.rst
-> +++ b/Documentation/arch/x86/sgx.rst
-> @@ -300,3 +300,80 @@ to expected failures and handle them as follows:
->     first call.  It indicates a bug in the kernel or the userspace client
->     if any of the second round of ``SGX_IOC_VEPC_REMOVE_ALL`` calls has
->     a return code other than 0.
-> +
-> +
-> +Cgroup Support
-> +==============
-> +
-> +The "sgx_epc" resource within the Miscellaneous cgroup controller regulates
-> +distribution of SGX EPC memory, which is a subset of system RAM that
-> +is used to provide SGX-enabled applications with protected memory,
-> +and is otherwise inaccessible, i.e. shows up as reserved in
-> +/proc/iomem and cannot be read/written outside of an SGX enclave.
-> +
-> +Although current systems implement EPC by stealing memory from RAM,
-> +for all intents and purposes the EPC is independent from normal system
-> +memory, e.g. must be reserved at boot from RAM and cannot be converted
-> +between EPC and normal memory while the system is running.  The EPC is
-> +managed by the SGX subsystem and is not accounted by the memory
-> +controller.  Note that this is true only for EPC memory itself, i.e.
-> +normal memory allocations related to SGX and EPC memory, e.g. the
-> +backing memory for evicted EPC pages, are accounted, limited and
-> +protected by the memory controller.
-> +
-> +Much like normal system memory, EPC memory can be overcommitted via
-> +virtual memory techniques and pages can be swapped out of the EPC
-> +to their backing store (normal system memory allocated via shmem).
-> +The SGX EPC subsystem is analogous to the memory subsytem, and
-> +it implements limit and protection models for EPC memory.
-> +
-> +SGX EPC Interface Files
-> +-----------------------
-> +
-> +For a generic description of the Miscellaneous controller interface
-> +files, please see Documentation/admin-guide/cgroup-v2.rst
-> +
-> +All SGX EPC memory amounts are in bytes unless explicitly stated
-> +otherwise.  If a value which is not PAGE_SIZE aligned is written,
-> +the actual value used by the controller will be rounded down to
-> +the closest PAGE_SIZE multiple.
-> +
-> +  misc.capacity
-> +        A read-only flat-keyed file shown only in the root cgroup.
-> +        The sgx_epc resource will show the total amount of EPC
-> +        memory available on the platform.
-> +
-> +  misc.current
-> +        A read-only flat-keyed file shown in the non-root cgroups.
-> +        The sgx_epc resource will show the current active EPC memory
-> +        usage of the cgroup and its descendants. EPC pages that are
-> +        swapped out to backing RAM are not included in the current count.
-> +
-> +  misc.max
-> +        A read-write single value file which exists on non-root
-> +        cgroups. The sgx_epc resource will show the EPC usage
-> +        hard limit. The default is "max".
-> +
-> +        If a cgroup's EPC usage reaches this limit, EPC allocations,
-> +        e.g. for page fault handling, will be blocked until EPC can
-> +        be reclaimed from the cgroup.  If EPC cannot be reclaimed in
-> +        a timely manner, reclaim will be forced, e.g. by ignoring LRU.
+On Thu Aug 17, 2023 at 10:00 AM UTC, Huang, Kai wrote:
+> On Thu, 2023-08-17 at 09:38 +0200, Jinpu Wang wrote:
+> > > This adds cond_resched() to the first two loops: releasing non-SECS p=
+ages and
+> > > releasing SECS pages which don't have children on remote vepc instanc=
+e(s).
+> > > There is a third round loop to release SECS pages which have children=
+ on remote
+> > > vepc instance(s).=C2=A0 I think it's better to add cond_resched() the=
+re too, although
+> > > it's extremely unlikely it could trigger softlockup w/o cond_resched(=
+).
+> >=20
+> > I also think the third one are extremely unlikely could cause softlocku=
+p.
+> > And our tests do not hit it either.
+>
+> If we only consider your tests, then I believe you even don't need the se=
+cond
+> cond_resched()?
+>
+> I think we should just add cond_resched() to all the three loops.  No har=
+m, and
+> we don't need to worry about this anymore.
 
-Document the behavior when reclaim cannot happen, e.g., for the vEPC
-pages when a VMM tries to allocate more than misc.max.
+I'm fine with this.
 
-> +
-> +  misc.events
-> +	A read-write flat-keyed file which exists on non-root cgroups.
-> +	Writes to the file reset the event counters to zero.  A value
-> +	change in this file generates a file modified event.
-> +
-> +	  max
-> +		The number of times the cgroup has triggered a reclaim
-> +		due to its EPC usage approaching (or exceeding) its max
-> +		EPC boundary.
-> +
-> +Migration
-> +---------
-> +
-> +Once an EPC page is charged to a cgroup (during allocation), it
-> +remains charged to the original cgroup until the page is released
-> +or reclaimed.  Migrating a process to a different cgroup doesn't
-> +move the EPC charges that it incurred while in the previous cgroup
-> +to its new cgroup.
-> -- 
-> 2.25.1
-> 
+BR, Jarkko
