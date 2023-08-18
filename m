@@ -2,102 +2,183 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E363CC7112B
-	for <linux-sgx@archiver.kernel.org>; Fri, 18 Aug 2023 08:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9847C001DE
+	for <linux-sgx@archiver.kernel.org>; Fri, 18 Aug 2023 11:31:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358474AbjHRINC (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 18 Aug 2023 04:13:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57964 "EHLO
+        id S1376665AbjHRLak (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 18 Aug 2023 07:30:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358470AbjHRIMh (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 18 Aug 2023 04:12:37 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8C682D68
-        for <linux-sgx@vger.kernel.org>; Fri, 18 Aug 2023 01:12:35 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-52564f3faf7so729172a12.1
-        for <linux-sgx@vger.kernel.org>; Fri, 18 Aug 2023 01:12:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1692346354; x=1692951154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ExkJNHrMqkD14TVRbSwRbYGo1SL2hauVrLeSxqeyoQ=;
-        b=aAihkKdyAKeoynjpo66+cshaO87Hp0ENkknoe6i4nJ5txGgH/10VHmoZKcf/1Xi9Bg
-         LNNY9oxLnyrZ4kQ0GP6IJcbNotWu/eXY1rZBP9wFMZYEKIKmh3aZtyw/nytC5Cq6tuwa
-         JvD/OVN3pbjNuYyM8BH5Tamm4hcy8sq6/DPixlmKY+QweXYsOXxHXG2zlfTCtkan1Iv6
-         ebLW8Ty8Hg1U6w7Yf0m7HX0edmoInTQQ8g27mbzCMSRqtq1La4XPG6fdH59p4UVunrA1
-         NLDlOLUE/OV91qSRTysO8Bp9tQzH3OfAiNn+lZi2aQk0LVoQKKKcE1U7mJxZuO9PURiB
-         T/dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692346354; x=1692951154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3ExkJNHrMqkD14TVRbSwRbYGo1SL2hauVrLeSxqeyoQ=;
-        b=DTmp3hgN/vBIRkwL7H3MSXJvVRoFMkGcs4lNz15ub6jo+pBXel/bBcL46d8m+ltrY+
-         ptU7l4kFCDGWeaXmmNh2gLK73jBO5pDybHUiRwzk02DUJ0L/0H0xvLpIAG6SEqTJ5uZl
-         Z3uGHuEJTN9FBe0K09kf1i41nM7OBDv+NOqFNB91Xs0D0xa7FGnuEqaIDWcF72+HCfX1
-         +Py9lj3dwc1XGe4NIpw9W87avE67lmAcr42Q9iE4/+kyFVGsllGKT//lDWnTBLq5l7K1
-         cxmu836TnCpltRBvrxNTFj76L3sdHS1p1RIFuzYxxJ9p/4sxGuSfsm7T/wm+woneJW/v
-         p+uw==
-X-Gm-Message-State: AOJu0YyhkXgqLKIOHWLho2yPC4hQfXr9u6bjlvcBZfLO9m0N5hnbO8C4
-        OM5oxHeSy+RqAvcdGuyzdeKXRdQ6PWYEa6M6584bvc/2MHAyHFj+
-X-Google-Smtp-Source: AGHT+IErGB1NcoKtPbHWzx+qVnuVSPZ1XMMUdjRuBv5WoG12O4DVCTsbTe9Oa3CUlhLRaJr50a+EXnkb4qL4T9Js5XE=
-X-Received: by 2002:aa7:da53:0:b0:522:cb97:f196 with SMTP id
- w19-20020aa7da53000000b00522cb97f196mr1857782eds.36.1692346354162; Fri, 18
- Aug 2023 01:12:34 -0700 (PDT)
+        with ESMTP id S1376766AbjHRLa2 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 18 Aug 2023 07:30:28 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98CED3C3F;
+        Fri, 18 Aug 2023 04:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692358226; x=1723894226;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=SsCQzr5Qo1aqEf7apZ0q4hLi5x7VFXy8oU2WDSAHR/8=;
+  b=ZbRU9Saush9IETjzW5yPy6lyv9zDFtrYp2NcGGehHhWJ5vapaD04dh0d
+   pTK8y3PM7/8pJb9f4jjjRmf1DBu+gmnsuobczP7HKTGxnvCL4wi80AFE4
+   jInb9SRbIb/RxudvPb/uCFVuUR8ECyDWG0yUu8tL/fwlOsSOQekuxwwGY
+   Ptb2SLQVX6jORF3lpDIzQVD7MkZghvNz/lnE1rGbScfEYA8yXcg3hv1iD
+   xm+/2y/GgZpfYD+FtB42/jBdEy2jnoClNI0F6mqmECvAVj60jqoKwgep1
+   GNxJ6M4+Q0EXDUMz768nbQOMmFUJeNnuHKTRVsBEiXNWe/9IPNy0i+V7H
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="373061390"
+X-IronPort-AV: E=Sophos;i="6.01,183,1684825200"; 
+   d="scan'208";a="373061390"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2023 04:30:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="800442541"
+X-IronPort-AV: E=Sophos;i="6.01,183,1684825200"; 
+   d="scan'208";a="800442541"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmsmga008.fm.intel.com with ESMTP; 18 Aug 2023 04:30:26 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Fri, 18 Aug 2023 04:30:25 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Fri, 18 Aug 2023 04:30:25 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.44) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.27; Fri, 18 Aug 2023 04:30:25 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UMKQgqhaKLkacJaw7LuqOp684n/eJZLGzE5ZgmjMrhqLPt3+1T6RG8Xp1TbowJM20zJc10b0IyOnLYMg8f1Dht8nClGJgdR/JIyrUVhG8GH2zYjCosED3cRC7AT8Rb9CgL8gi2bppahaL82/UoQHycjsyZXuLmRaQIq7j81BuEnmPx2pK4cfsnkcupDxOJ9POoA9FLgYCF7AWSPSJ4RA/pEGzQ52iVhNXixSFRYbM2p2etxB48gj9eOL/nXAlaF0G+jQ4wyTo7d7IoQNmQoMs6GNbSmszfteZzRhQnbLQ0l3JW8MD+s0N5/lC9JX9rvNT7rmqDNKI+Tc9oyMFiv1AQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SsCQzr5Qo1aqEf7apZ0q4hLi5x7VFXy8oU2WDSAHR/8=;
+ b=SR8pvw+knWKvlIxKH3KwBiaD0NED/Om5m7QF1Ik6yWJ/N+BqfWPqjqv2R19h1Su1HjA7B5AgF0tOZDC+HopezxJG1yxG9C5Eo4J1OEDYpb1qd3D0XcN0nILD9cDg4UKQybtKbJmRYe0dg6aRjS+3zPNdLF7jbnn/EbS2XmFBzOni7Z/cD8ASHEtEjMpDBWxlOSAHumUi8tjJplasoiZhY5Mq4/s3uyYqCFlV/n8xkFnmKJYmKIEUuRf/IPVR2nU7ea50vuvTGZAdLgUFPXMGUArYa7zere7sLFM9uO2U65Td1CON+fEQ6LdmFAQirppIUpTWkr1LGSU4wb7Kj8gLzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by SN7PR11MB6851.namprd11.prod.outlook.com (2603:10b6:806:2a3::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.31; Fri, 18 Aug
+ 2023 11:30:21 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::980d:80cc:c006:e739]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::980d:80cc:c006:e739%4]) with mapi id 15.20.6699.020; Fri, 18 Aug 2023
+ 11:30:21 +0000
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Van Bulck, Jo" <jo.vanbulck@cs.kuleuven.be>
+CC:     "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 1/8] selftests/sgx: Fix uninitialized pointer dereference
+ in error path
+Thread-Topic: [PATCH 1/8] selftests/sgx: Fix uninitialized pointer dereference
+ in error path
+Thread-Index: AQHZyi8dkdXcW/mN7UCSqartzsAoha/v+lwA
+Date:   Fri, 18 Aug 2023 11:30:21 +0000
+Message-ID: <f900b6ffe0e7bc7237be699eefd4db7d971060ab.camel@intel.com>
+References: <20230808193145.8860-1-jo.vanbulck@cs.kuleuven.be>
+         <20230808193145.8860-2-jo.vanbulck@cs.kuleuven.be>
+In-Reply-To: <20230808193145.8860-2-jo.vanbulck@cs.kuleuven.be>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|SN7PR11MB6851:EE_
+x-ms-office365-filtering-correlation-id: 5f14a97c-112b-494e-69a9-08db9fde81ea
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: KsllbilgKxBCjwCs7beJ9BlzIuovYGf1qPjVUPP58fxrZWF5awpCgUnKAhZST8bzeYdbHVPUSuDA3G3fZgC5y9JDpZkb0auw5TxStaU9B2RyPlZoVaM51iOF0uWLHjXHJ0de7isYyOa9cXF/uab7vd+9sj/85ZYRSHYKipha4xgt/1noHZjUKTKxO068ClcFb6dHeXDtm4NFMRfxv9oOI3vZHUGWfOuwD9OEpbzRcsGG/CgjRsKcHb4TFJqOey0iyZBZ7ofldOZaXReq/f+TomSMH2zcsl5DtJMoxoR1bqoRsB/Vk8vr4y7HJ8nRDQhxhR1gazsD4e0LDNhQ+XuFrvA7ojge+bnwm7Lw/6EqHrLnnLYm67/OTJEq/r/95vdETGLmsARu1jGutJmVTdHrmW/d5g0qaDNfdiWJgimZ2Cw3iYc3sh81G8nBova35oJ0+XvWQrzKbPOB8tc0bIoXLvjDtojw+TRjYkR2koZXhKdVJwPMnj7uL+JANdOSrsKwkoo3MIlMjQAuimqChXlRtta+jWgn7wixlPCURQwzQ5X0VmQZiO7zgGTdLiT4KaindivU4qW+mCOnA6HXPjfm2X9RdlXdNL4vDfnuoRcs6Cjgju3P8XfQ46y3RYi8a58l
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(376002)(39860400002)(346002)(136003)(396003)(451199024)(186009)(1800799009)(86362001)(36756003)(83380400001)(8936002)(8676002)(4326008)(5660300002)(2906002)(41300700001)(26005)(6506007)(71200400001)(6512007)(6486002)(2616005)(122000001)(478600001)(76116006)(82960400001)(66476007)(316002)(110136005)(64756008)(38100700002)(91956017)(66946007)(38070700005)(66556008)(66446008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Mnp6eWQyTVUxalZOMVJOQ1cweEErMUVQN1dDR3Z1dFA4bWUxNWtYT1IwVW5y?=
+ =?utf-8?B?MmdUQ2JLdUZySkJvZGY4OG1udmhjdHBnenp3NU9ZbzZrTUNwT3VXdFpDZXdu?=
+ =?utf-8?B?cHA0M1FyN0NyK0prQnA3VTU2Wk5ES1MySERXUmtlU2JBV0s5eXZ0Z095UjhG?=
+ =?utf-8?B?SlNsRCtXZ3FMN1c0eGcxbGl4cllsdkI2dHE2WDVZUTJEbGFVUi9sMmxXajhN?=
+ =?utf-8?B?YjRPNnlPMlJNblVhWUZhVEpUVXF2N3ZTT2d2OUhkZkJ2bTArUE9KdVhSYnBi?=
+ =?utf-8?B?TjZIS2MwcHUrR3d3d3N1Sm80ZXo0dmw4c1FkVi9kT1paaEF1N3p6UlpQM1pL?=
+ =?utf-8?B?ZE12a0dyT2UwT0hTU1Q5K1UxMlRNeWtFY0lsTXFqTGErWkZMVmZMN3dKZ3cr?=
+ =?utf-8?B?LzhpVjYwQ3hwcmx1b3FsWmVJRVhOcnRqOE1IZVZkZGQ0Yk95cnpQbXBPK1NW?=
+ =?utf-8?B?emlVTkpCQ3NqU1R0b2YzT2laWVNjaWFJanZnTXhjekd0d1hYTWdBUWJadDN1?=
+ =?utf-8?B?VEtEQWMyd0daWGFkWk9YVFVQTG4zNzhDb3dXNUUyanBpbnhxNEkyMzQ2bkNM?=
+ =?utf-8?B?dFQwVVFubmJhWmlmTkx4V0tSY2RWZEduUnNXUlM4N0VpVkhteVFMTFo4UDdl?=
+ =?utf-8?B?TDNDUVlKdk1wM24rdllCUzNJSUhCajJyenQ3NTlkTEVMUThJdVZwclZFT2xF?=
+ =?utf-8?B?ZzNyY1lleEFvQVRhaURyNlJKZXgvblh2TGlkRS9WTDhCTWRQVzBuQ3p4TjFO?=
+ =?utf-8?B?ZW45VU14cnNVQzNielJJRW9OaEU1RTVjc2owK2Z3SjdwRHJ1clcxWVJBbFh2?=
+ =?utf-8?B?aXBQU1pUWGZKUk5LeXlMQTJLdXQ5N21mV0hDQ2U3YUwwRGZ6L1lPNmFRT1Na?=
+ =?utf-8?B?VmxNTEV4SHVHN3haS0RVSEcrZGhvV09IRHpiaWhGZG5CTWVXTm00YzBsVm43?=
+ =?utf-8?B?aGlLdi95MG5FVHZlRjFJdEhvMWE2WnZtUEVLRytFVS9tTXpML3pTRGsxMjV1?=
+ =?utf-8?B?Z1F6cFBORG1QL3cwTzVQTW5LRlJhdWFzbnAzVjNoTHJFUlF5ZXhZcmYyUmtl?=
+ =?utf-8?B?R0ZZTlJpWmd5UVZHM1JkTFFvYVpKYmZuUElTMWZXTS80RmJBaVNyV0gwL0py?=
+ =?utf-8?B?V2hiTXBVTDA0Z2JWd3ZKeFhhbWk3TE5CaGJOQlFuL1VqNGdNaDFXd0hEenNQ?=
+ =?utf-8?B?OWgrVjJYaXZ4ODVJbVd3dzNsTTIweFhlcVJhd0lQTDRUYVlDbzhzWUJMMUNG?=
+ =?utf-8?B?aEI0YVNLQnB0eHBkQlo4Z3NwdU5GRm9KZDdnWjZTQUxJblpQekprZDhpd3dX?=
+ =?utf-8?B?QitXc3FSUi81SEwyTWg2dEdaZlFQUXJLdzZZejhMRlFoVENscElFZ1c2K1Z4?=
+ =?utf-8?B?WlNLUTJ4QVVNbDdVK0Z2NmRDRkpYUllOSldaNGZoSUF2QjZreGlnaW5wbzRF?=
+ =?utf-8?B?VmtGaEhaRHB0NFFsRTMwQnp3bzVDK3NBdWVUd21ZcFNVQW9jOGhvQkpWWmRC?=
+ =?utf-8?B?cFpjcklvT3k0MjBEZ3pqdC9FbmY5Z2F0azZPME9lY3dhTlB2V0VtS0tQRmt1?=
+ =?utf-8?B?dXAxNFc0eG5rUFgvWUN1amxvRkJpWGlMOUVPa3Q4TWNkZ2x6S2dkeGNGTkVB?=
+ =?utf-8?B?WjVndGVHL0xJOC9hb1c0bVpYMm5KOVpwMFBGRjRrZzlaQWRlRlROVTU1SUQx?=
+ =?utf-8?B?U3N2WE5lM0Z2RFd2VTcybW9ibFlmQkJNaGxBNjhGdHlJN1RSdDBIV1ZwZ2VO?=
+ =?utf-8?B?U1o4VkZmbVV2OGJMN1Z5Z0hxTTJYYk03NHNMVU8xZXNEUFRyZXhkVXNRY3BM?=
+ =?utf-8?B?NExOZEhwWTZaUWY3bXJ5THpMZGJoTWh4eThNYlA3QmVvQzdlQ21IdHRQS1JN?=
+ =?utf-8?B?dTlqNThBMDV5TzRxRzFEcWtkTjRIcFdoazlIdnlkdE84Ui9mV0t5YWRleERo?=
+ =?utf-8?B?TGloRndaM3NLVjR1N09mdktnc1JsaHFNaGM2TnJWcStxWkFSRHhzbmdkUWtF?=
+ =?utf-8?B?d0lNcmNGS3gzeUhYbWJDMytlalZ4L3FML2s5MWx2UDYrRlRLVVVlcmp3N2hF?=
+ =?utf-8?B?WFhFMG9zWTJlWjZPbmVyTUJsQmRlT1BHMlFYV0E4Q0hyNDdVSDlmVzNla1VB?=
+ =?utf-8?Q?CoVMeL8SbrGyG8PFbDzBWqY9f?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <165234DF45D9044C984CF5A881DF26B1@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20230814043714.107971-1-jinpu.wang@ionos.com> <3954697abb1a6c84c4b30fbd0d5edcafae6f6966.camel@intel.com>
- <CAMGffEk_ojyRsMy_7d1R0aacwNQ0itDV+ZYTDH0Fpoy03iPkTg@mail.gmail.com>
- <3061b0ccb3a61b856498ebfc27d400250fa550c6.camel@intel.com> <CUUY2LHIXLJO.2C4M4O5Q3SVCD@seitikki>
-In-Reply-To: <CUUY2LHIXLJO.2C4M4O5Q3SVCD@seitikki>
-From:   Jinpu Wang <jinpu.wang@ionos.com>
-Date:   Fri, 18 Aug 2023 10:12:23 +0200
-Message-ID: <CAMGffE=q8gMqrQSpwUuRjz_jTTDdOBti6pcDp20PFKszTM74MA@mail.gmail.com>
-Subject: Re: [PATCH] x86/sgx: Avoid softlockup from sgx_vepc_release
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        "Huang, Kai" <kai.huang@intel.com>
-Cc:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "yu.zhang@ionos.com" <yu.zhang@ionos.com>,
-        "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f14a97c-112b-494e-69a9-08db9fde81ea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Aug 2023 11:30:21.3940
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +6cusI3/0yv1AAcCZ1GrR8YmAZe+GzHl2DBl64nCBIDivgk9K7PaKNB9NekgMxPm3lOGOusFdMTlU2saozcBew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6851
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, Aug 17, 2023 at 6:02=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> On Thu Aug 17, 2023 at 10:00 AM UTC, Huang, Kai wrote:
-> > On Thu, 2023-08-17 at 09:38 +0200, Jinpu Wang wrote:
-> > > > This adds cond_resched() to the first two loops: releasing non-SECS=
- pages and
-> > > > releasing SECS pages which don't have children on remote vepc insta=
-nce(s).
-> > > > There is a third round loop to release SECS pages which have childr=
-en on remote
-> > > > vepc instance(s).  I think it's better to add cond_resched() there =
-too, although
-> > > > it's extremely unlikely it could trigger softlockup w/o cond_resche=
-d().
-> > >
-> > > I also think the third one are extremely unlikely could cause softloc=
-kup.
-> > > And our tests do not hit it either.
-> >
-> > If we only consider your tests, then I believe you even don't need the =
-second
-> > cond_resched()?
-> >
-> > I think we should just add cond_resched() to all the three loops.  No h=
-arm, and
-> > we don't need to worry about this anymore.
->
-> I'm fine with this.
-
-Ok, as both of you think it's better to cover all 3 cases. I will do
-it in v3 later today.
->
-> BR, Jarkko
-Thx!
+T24gVHVlLCAyMDIzLTA4LTA4IGF0IDEyOjMxIC0wNzAwLCBKbyBWYW4gQnVsY2sgd3JvdGU6DQo+
+IEVuc3VyZSBjdHggaXMgemVyby1pbml0aWFsaXplZCwgc3VjaCB0aGF0IHRoZSBlbmNsX21lYXN1
+cmUgZnVuY3Rpb24gd2lsbA0KPiBub3QgY2FsbCBFVlBfTURfQ1RYX2Rlc3Ryb3kgd2l0aCBhbiB1
+bmluaXRpYWxpemVkIGN0eCBwb2ludGVyIGluIGNhc2Ugb2YgYW4NCj4gZWFybHkgZXJyb3IgZHVy
+aW5nIGtleSBnZW5lcmF0aW9uLg0KPiANCj4gRml4ZXM6IDJhZGNiYTc5ZTY5ZCAoInNlbGZ0ZXN0
+cy94ODY6IEFkZCBhIHNlbGZ0ZXN0IGZvciBTR1giKQ0KPiBTaWduZWQtb2ZmLWJ5OiBKbyBWYW4g
+QnVsY2sgPGpvLnZhbmJ1bGNrQGNzLmt1bGV1dmVuLmJlPg0KPiAtLS0NCj4gIHRvb2xzL3Rlc3Rp
+bmcvc2VsZnRlc3RzL3NneC9zaWdzdHJ1Y3QuYyB8IDUgKysrLS0NCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCAzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvdG9v
+bHMvdGVzdGluZy9zZWxmdGVzdHMvc2d4L3NpZ3N0cnVjdC5jIGIvdG9vbHMvdGVzdGluZy9zZWxm
+dGVzdHMvc2d4L3NpZ3N0cnVjdC5jDQo+IGluZGV4IGEwNzg5NmE0NjM2NC4uZDczYjI5YmVjZjVi
+IDEwMDY0NA0KPiAtLS0gYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9zZ3gvc2lnc3RydWN0LmMN
+Cj4gKysrIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvc2d4L3NpZ3N0cnVjdC5jDQo+IEBAIC0z
+MTgsOSArMzE4LDkgQEAgYm9vbCBlbmNsX21lYXN1cmUoc3RydWN0IGVuY2wgKmVuY2wpDQo+ICAJ
+c3RydWN0IHNneF9zaWdzdHJ1Y3QgKnNpZ3N0cnVjdCA9ICZlbmNsLT5zaWdzdHJ1Y3Q7DQo+ICAJ
+c3RydWN0IHNneF9zaWdzdHJ1Y3RfcGF5bG9hZCBwYXlsb2FkOw0KPiAgCXVpbnQ4X3QgZGlnZXN0
+W1NIQTI1Nl9ESUdFU1RfTEVOR1RIXTsNCj4gKwlFVlBfTURfQ1RYICpjdHggPSBOVUxMOw0KPiAg
+CXVuc2lnbmVkIGludCBzaWdsZW47DQo+ICAJUlNBICprZXkgPSBOVUxMOw0KPiAtCUVWUF9NRF9D
+VFggKmN0eDsNCj4gIAlpbnQgaTsNCj4gIA0KPiAgCW1lbXNldChzaWdzdHJ1Y3QsIDAsIHNpemVv
+Zigqc2lnc3RydWN0KSk7DQo+IEBAIC0zODQsNyArMzg0LDggQEAgYm9vbCBlbmNsX21lYXN1cmUo
+c3RydWN0IGVuY2wgKmVuY2wpDQo+ICAJcmV0dXJuIHRydWU7DQo+ICANCj4gIGVycjoNCj4gLQlF
+VlBfTURfQ1RYX2Rlc3Ryb3koY3R4KTsNCj4gKwlpZiAoY3R4KQ0KPiArCQlFVlBfTURfQ1RYX2Rl
+c3Ryb3koY3R4KTsNCj4gIAlSU0FfZnJlZShrZXkpOw0KPiAgCXJldHVybiBmYWxzZTsNCj4gIH0N
+Cg0KQWNrZWQtYnk6IEthaSBIdWFuZyA8a2FpLmh1YW5nQGludGVsLmNvbT4NCg==
