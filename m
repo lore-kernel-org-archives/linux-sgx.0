@@ -2,51 +2,51 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB37EE49A5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F33B9EE49B4
 	for <linux-sgx@archiver.kernel.org>; Sat, 19 Aug 2023 10:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230436AbjHSKkj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 19 Aug 2023 06:40:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40598 "EHLO
+        id S230459AbjHSKkk (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 19 Aug 2023 06:40:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229956AbjHSKkd (ORCPT
+        with ESMTP id S230152AbjHSKkd (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Sat, 19 Aug 2023 06:40:33 -0400
-Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 008E9149658;
-        Sat, 19 Aug 2023 02:44:46 -0700 (PDT)
+Received: from icts-p-cavuit-2.kulnet.kuleuven.be (icts-p-cavuit-2.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E29014965B;
+        Sat, 19 Aug 2023 02:44:51 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 982DB20174.A9AC2
+X-KULeuven-ID: F24F12016A.AB1C2
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-1.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:145:242:ac11:22])
-        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id 982DB20174;
-        Sat, 19 Aug 2023 11:44:44 +0200 (CEST)
+        by icts-p-cavuit-2.kulnet.kuleuven.be (Postfix) with ESMTP id F24F12016A;
+        Sat, 19 Aug 2023 11:44:48 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
-BCmilterd-Report: SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_VALID#0.00
+BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1692438284;
-        bh=Go3rtD87YXREVaeVp3Xz6onrRpQhrhHVDA9+EDx58PA=;
+        s=cav; t=1692438288;
+        bh=Es4bgQSxaVPMq8T2rzAMLM5sMQ1gtlFq3he7Z786Ikk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=Y4q1zaTy/G+VWazPAXrQnv0tyXPM4j0KAAYup5N2U7IegUpPVxSLBE/tLb4EobGPn
-         /0c0JL+IslbrCwmFuMNNM47Vb9/xeN4riWlDFBtTYeUJoljvronTSfoNxgEctC784T
-         +SEMDXlDTMyDhqiHLr0dI3mEMAENwNJXkp9VG7Z0=
+        b=kWflMKU1hf91H8nfhWaP8uBEZPHkyy3EOIHzNCnEZyXKKyA4WR70ZF1owfTku/bV5
+         TzWzbY/ETsxnyBH4mD4RVHHEmiawY0cMHx5AIZlnZOO3vP1yuoi5oc1iO7zzbG8Edv
+         AMu+mVaSqtuYREFf1hwVpf2AUq75ZfaXinjAbr2o=
 Received: from localhost.localdomain (ip-185-104-137-32.ptr.icomera.net [185.104.137.32])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id 9800FD4EB61BA;
-        Sat, 19 Aug 2023 11:44:43 +0200 (CEST)
+        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id EEB25D4EB6E40;
+        Sat, 19 Aug 2023 11:44:47 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com,
         Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: [PATCH v3 7/9] selftests/sgx: Ensure expected location of test enclave buffer
-Date:   Sat, 19 Aug 2023 11:43:30 +0200
-Message-Id: <20230819094332.8535-8-jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH v3 9/9] selftests/sgx: Specify freestanding environment for enclave compilation
+Date:   Sat, 19 Aug 2023 11:43:32 +0200
+Message-Id: <20230819094332.8535-10-jo.vanbulck@cs.kuleuven.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
 References: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
@@ -56,63 +56,31 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The external tests manipulating page permissions expect encl_buffer to be
-placed at the start of the test enclave's .data section. As this is not
-guaranteed per the C standard, explicitly place encl_buffer in a separate
-section that is explicitly placed at the start of the .data segment in the
-linker script to avoid the compiler placing it somewhere else in .data.
+Use -ffreestanding to assert the enclave compilation targets a
+freestanding environment (i.e., without "main" or standard libraries).
+This fixes clang reporting "undefined reference to `memset'" after
+erroneously optimizing away the provided memset/memcpy implementations.
 
 Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 ---
- tools/testing/selftests/sgx/defines.h     | 1 +
- tools/testing/selftests/sgx/test_encl.c   | 8 ++++----
- tools/testing/selftests/sgx/test_encl.lds | 1 +
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ tools/testing/selftests/sgx/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
-index b8f482667..402f8787a 100644
---- a/tools/testing/selftests/sgx/defines.h
-+++ b/tools/testing/selftests/sgx/defines.h
-@@ -14,6 +14,7 @@
- #define __aligned(x) __attribute__((__aligned__(x)))
- #define __packed __attribute__((packed))
- #define __used __attribute__((used))
-+#define __section(x)__attribute__((__section__(x)))
+diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
+index 2de970f72..19a07e890 100644
+--- a/tools/testing/selftests/sgx/Makefile
++++ b/tools/testing/selftests/sgx/Makefile
+@@ -14,8 +14,8 @@ endif
+ INCLUDES := -I$(top_srcdir)/tools/include
+ HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC
+ HOST_LDFLAGS := -z noexecstack -lcrypto
+-ENCL_CFLAGS := -Wall -Werror -static-pie -nostdlib -nostartfiles -fPIE \
+-	       -fno-stack-protector -mrdrnd $(INCLUDES)
++ENCL_CFLAGS := -Wall -Werror -static-pie -nostdlib -ffreestanding -fPIE \
++		-nostartfiles -fno-stack-protector -mrdrnd $(INCLUDES)
+ ENCL_LDFLAGS := -Wl,-T,test_encl.lds,--build-id=none
  
- #include "../../../../arch/x86/include/asm/sgx.h"
- #include "../../../../arch/x86/include/asm/enclu.h"
-diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
-index c7bcbc85b..151600353 100644
---- a/tools/testing/selftests/sgx/test_encl.c
-+++ b/tools/testing/selftests/sgx/test_encl.c
-@@ -6,11 +6,11 @@
- 
- /*
-  * Data buffer spanning two pages that will be placed first in the .data
-- * segment. Even if not used internally the second page is needed by external
-- * test manipulating page permissions, so mark encl_buffer as "used" to make
-- * sure it is entirely preserved by the compiler.
-+ * segment via the linker script. Even if not used internally the second page
-+ * is needed by external test manipulating page permissions, so mark
-+ * encl_buffer as "used" to make sure it is entirely preserved by the compiler.
-  */
--static uint8_t __used encl_buffer[8192] = { 1 };
-+static uint8_t __used __section(".data.encl_buffer") encl_buffer[8192] = { 1 };
- 
- enum sgx_enclu_function {
- 	EACCEPT = 0x5,
-diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
-index 13144b045..ffe851a1c 100644
---- a/tools/testing/selftests/sgx/test_encl.lds
-+++ b/tools/testing/selftests/sgx/test_encl.lds
-@@ -24,6 +24,7 @@ SECTIONS
- 	} : text
- 
- 	.data : {
-+		*(.data.encl_buffer)
- 		*(.data*)
- 	} : data
- 
+ TEST_CUSTOM_PROGS := $(OUTPUT)/test_sgx
 -- 
 2.25.1
 
