@@ -2,51 +2,51 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB63EE49B1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB37EE49A5
 	for <linux-sgx@archiver.kernel.org>; Sat, 19 Aug 2023 10:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230428AbjHSKki (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 19 Aug 2023 06:40:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32918 "EHLO
+        id S230436AbjHSKkj (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sat, 19 Aug 2023 06:40:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229928AbjHSKkd (ORCPT
+        with ESMTP id S229956AbjHSKkd (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Sat, 19 Aug 2023 06:40:33 -0400
-Received: from icts-p-cavuit-1.kulnet.kuleuven.be (icts-p-cavuit-1.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED5C5149652;
-        Sat, 19 Aug 2023 02:44:40 -0700 (PDT)
+Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 008E9149658;
+        Sat, 19 Aug 2023 02:44:46 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 282F72015B.A7654
+X-KULeuven-ID: 982DB20174.A9AC2
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-1.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:145:242:ac11:22])
-        by icts-p-cavuit-1.kulnet.kuleuven.be (Postfix) with ESMTP id 282F72015B;
-        Sat, 19 Aug 2023 11:44:39 +0200 (CEST)
+        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id 982DB20174;
+        Sat, 19 Aug 2023 11:44:44 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
-BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00
+BCmilterd-Report: SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_VALID#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1692438279;
-        bh=SumPskZTcvIGEOhK9lU/byBy9PNktmry+qhAbU/Yg3w=;
+        s=cav; t=1692438284;
+        bh=Go3rtD87YXREVaeVp3Xz6onrRpQhrhHVDA9+EDx58PA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=dL0U0sM1ul83GcPvFiiWPV3gQNgxmpTekjPuBZEAOE1xuyBeaKSlmaMzvTdrEx/tI
-         avYkSrE71gCeMebf+vhGijrVnucX1SDGjdt34fF0vmSND5PeMYALcmVTGyyxA7tzc6
-         kMCQC6Soo45DCKNnwwHo6WPKczUEDj7BdNnbahIk=
+        b=Y4q1zaTy/G+VWazPAXrQnv0tyXPM4j0KAAYup5N2U7IegUpPVxSLBE/tLb4EobGPn
+         /0c0JL+IslbrCwmFuMNNM47Vb9/xeN4riWlDFBtTYeUJoljvronTSfoNxgEctC784T
+         +SEMDXlDTMyDhqiHLr0dI3mEMAENwNJXkp9VG7Z0=
 Received: from localhost.localdomain (ip-185-104-137-32.ptr.icomera.net [185.104.137.32])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id 29E6AD4EB7300;
-        Sat, 19 Aug 2023 11:44:38 +0200 (CEST)
+        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id 9800FD4EB61BA;
+        Sat, 19 Aug 2023 11:44:43 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com,
         Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: [PATCH v3 5/9] selftests/sgx: Include memory clobber for inline asm in test enclave
-Date:   Sat, 19 Aug 2023 11:43:28 +0200
-Message-Id: <20230819094332.8535-6-jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH v3 7/9] selftests/sgx: Ensure expected location of test enclave buffer
+Date:   Sat, 19 Aug 2023 11:43:30 +0200
+Message-Id: <20230819094332.8535-8-jo.vanbulck@cs.kuleuven.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
 References: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
@@ -56,45 +56,63 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Add the "memory" clobber to the EMODPE and EACCEPT asm blocks to tell the
-compiler the assembly code accesses to the secinfo struct. This ensures
-the compiler treats the asm block as a memory barrier and the write to
-secinfo will be visible to ENCLU.
+The external tests manipulating page permissions expect encl_buffer to be
+placed at the start of the test enclave's .data section. As this is not
+guaranteed per the C standard, explicitly place encl_buffer in a separate
+section that is explicitly placed at the start of the .data segment in the
+linker script to avoid the compiler placing it somewhere else in .data.
 
 Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
 ---
- tools/testing/selftests/sgx/test_encl.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ tools/testing/selftests/sgx/defines.h     | 1 +
+ tools/testing/selftests/sgx/test_encl.c   | 8 ++++----
+ tools/testing/selftests/sgx/test_encl.lds | 1 +
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
+diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
+index b8f482667..402f8787a 100644
+--- a/tools/testing/selftests/sgx/defines.h
++++ b/tools/testing/selftests/sgx/defines.h
+@@ -14,6 +14,7 @@
+ #define __aligned(x) __attribute__((__aligned__(x)))
+ #define __packed __attribute__((packed))
+ #define __used __attribute__((used))
++#define __section(x)__attribute__((__section__(x)))
+ 
+ #include "../../../../arch/x86/include/asm/sgx.h"
+ #include "../../../../arch/x86/include/asm/enclu.h"
 diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
-index 7633fb7cb..b09550cb3 100644
+index c7bcbc85b..151600353 100644
 --- a/tools/testing/selftests/sgx/test_encl.c
 +++ b/tools/testing/selftests/sgx/test_encl.c
-@@ -24,10 +24,11 @@ static void do_encl_emodpe(void *_op)
- 	secinfo.flags = op->flags;
+@@ -6,11 +6,11 @@
  
- 	asm volatile(".byte 0x0f, 0x01, 0xd7"
--				:
-+				: /* no outputs */
- 				: "a" (EMODPE),
- 				  "b" (&secinfo),
--				  "c" (op->epc_addr));
-+				  "c" (op->epc_addr)
-+				: "memory" /* read from secinfo pointer */);
- }
+ /*
+  * Data buffer spanning two pages that will be placed first in the .data
+- * segment. Even if not used internally the second page is needed by external
+- * test manipulating page permissions, so mark encl_buffer as "used" to make
+- * sure it is entirely preserved by the compiler.
++ * segment via the linker script. Even if not used internally the second page
++ * is needed by external test manipulating page permissions, so mark
++ * encl_buffer as "used" to make sure it is entirely preserved by the compiler.
+  */
+-static uint8_t __used encl_buffer[8192] = { 1 };
++static uint8_t __used __section(".data.encl_buffer") encl_buffer[8192] = { 1 };
  
- static void do_encl_eaccept(void *_op)
-@@ -42,7 +43,8 @@ static void do_encl_eaccept(void *_op)
- 				: "=a" (rax)
- 				: "a" (EACCEPT),
- 				  "b" (&secinfo),
--				  "c" (op->epc_addr));
-+				  "c" (op->epc_addr)
-+				: "memory" /* read from secinfo pointer */);
+ enum sgx_enclu_function {
+ 	EACCEPT = 0x5,
+diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
+index 13144b045..ffe851a1c 100644
+--- a/tools/testing/selftests/sgx/test_encl.lds
++++ b/tools/testing/selftests/sgx/test_encl.lds
+@@ -24,6 +24,7 @@ SECTIONS
+ 	} : text
  
- 	op->ret = rax;
- }
+ 	.data : {
++		*(.data.encl_buffer)
+ 		*(.data*)
+ 	} : data
+ 
 -- 
 2.25.1
 
