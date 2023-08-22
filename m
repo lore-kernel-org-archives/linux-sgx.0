@@ -2,145 +2,84 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8136DEE4996
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 10:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 699B3EE4996
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 10:09:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232516AbjHVKIu (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 22 Aug 2023 06:08:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49046 "EHLO
+        id S234626AbjHVKJ2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 22 Aug 2023 06:09:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231998AbjHVKIu (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 06:08:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E116718B;
-        Tue, 22 Aug 2023 03:08:48 -0700 (PDT)
+        with ESMTP id S231998AbjHVKJ2 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 06:09:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7A2018B;
+        Tue, 22 Aug 2023 03:09:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6E97661EA9;
-        Tue, 22 Aug 2023 10:08:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52D4C433C9;
-        Tue, 22 Aug 2023 10:08:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4CDFC6162C;
+        Tue, 22 Aug 2023 10:09:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F38CC433C8;
+        Tue, 22 Aug 2023 10:09:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692698927;
-        bh=31R96I3P54cnARbiyGkbYK6u+UzSnC6bAhE/aCVtR0U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=c0FKpA0IJW/PIPu2dV0IIm0gLP2eleNsCujH1ZcTmxXy9IvitGtQwub05L5YF53mT
-         Ihfhma/xW6es6k0gEdZtP6PxdIfU4TGuEHdCplA7Fv3s7zeOZFbNMZfLAhdy5u08ky
-         OgTlqUeCzztz1NldyIJWEv90xvclLMKEPuQk61baifl0qJdUunI/KjFq9hypZuWd7I
-         gt0nWxAdoedqxzRK8Bs2H582z2D/sQtOLOwCfPeN9nTtpUXbKTQJ5/owYUlNwCwu50
-         gzrPdgL3O4LBVkuMnxrKSC5P1buqR9jgB87QCBhD5IAQsGvPkHZ8ZSObMoXi8e9GqW
-         lNzf3nMn+j4uw==
+        s=k20201202; t=1692698965;
+        bh=CZDcapZMT6KJZ2xTcpV5wlhRFiE1a2rJHijUp7yyqtc=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=SCoSR3q4YigFszhIOZhnU6QugKeiGp5yxoh5i/Uma8Tp2su4Yto6tEO/faITsVBl7
+         UEEqG6HwNqk7cWp8XtNtvt3Jv37XYyZ7n7c0lR1EAOrlGh5aG5tt5w6TEfEkP+uc/1
+         Gwqvab7RWYFuRkBr4u8vcW279y7R4nTlB6BG+tjALZ+n3fG7dq943NQyzlXpu+suIX
+         ku5o2bf0jSX+eHAbbDEzyyE4gJJhqepeQiSKU2e4dzqUPGL8CqxExilfk+Mdc7ujmx
+         0eej6xkaHKalhPGHvdsI9p23EmtxRb6T10pRsqRgmLvREETndzPvsaRplyuhCRXQjK
+         5+P7VOZUSZX2Q==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 22 Aug 2023 13:08:44 +0300
-Message-Id: <CUYZOUUWNA2G.29721KK0K22HI@suppilovahvero>
+Date:   Tue, 22 Aug 2023 13:09:22 +0300
+Message-Id: <CUYZPCDTQSRR.32LXC3ILC7JM5@suppilovahvero>
+Cc:     <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v3 4/9] selftests/sgx: Fix linker script asserts
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
 To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>, <kai.huang@intel.com>,
         <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc:     <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v3 3/9] selftests/sgx: Handle relocations in test
- enclave
 X-Mailer: aerc 0.14.0
 References: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
- <20230819094332.8535-4-jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <20230819094332.8535-4-jo.vanbulck@cs.kuleuven.be>
+ <20230819094332.8535-5-jo.vanbulck@cs.kuleuven.be>
+In-Reply-To: <20230819094332.8535-5-jo.vanbulck@cs.kuleuven.be>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Sat Aug 19, 2023 at 12:43 PM EEST, Jo Van Bulck wrote:
-> Static-pie binaries normally include a startup routine to perform any ELF
-> relocations from .rela.dyn. Since the enclave loading process is differen=
-t
-> and glibc is not included, do the necessary relocation for encl_op_array
-> entries manually at runtime relative to the enclave base to ensure correc=
-t
-> function pointers.
+> DEFINED only considers symbols, not section names. Hence, replace the
+> check for .got.plt with the _GLOBAL_OFFSET_TABLE_ symbol and remove other
+> (non-essential) asserts.
 >
 > Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 > ---
->  tools/testing/selftests/sgx/test_encl.c   | 49 ++++++++++++++++-------
->  tools/testing/selftests/sgx/test_encl.lds |  2 +
->  2 files changed, 36 insertions(+), 15 deletions(-)
+>  tools/testing/selftests/sgx/test_encl.lds | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 >
-> diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/self=
-tests/sgx/test_encl.c
-> index c0d639729..7633fb7cb 100644
-> --- a/tools/testing/selftests/sgx/test_encl.c
-> +++ b/tools/testing/selftests/sgx/test_encl.c
-> @@ -119,21 +119,40 @@ static void do_encl_op_nop(void *_op)
-> =20
->  }
-> =20
-> +/*
-> + * Symbol placed at the start of the enclave image by the linker script.
-> + * Declare this extern symbol with visibility "hidden" to ensure the
-> + * compiler does not access it through the GOT.
-> + */
-> +extern const uint8_t __attribute__((visibility("hidden"))) __encl_base;
-> +static const uint64_t encl_base =3D (uint64_t)&__encl_base;
-> +
-> +typedef void (*encl_op_t)(void *);
-> +const encl_op_t encl_op_array[ENCL_OP_MAX] =3D {
-> +	do_encl_op_put_to_buf,
-> +	do_encl_op_get_from_buf,
-> +	do_encl_op_put_to_addr,
-> +	do_encl_op_get_from_addr,
-> +	do_encl_op_nop,
-> +	do_encl_eaccept,
-> +	do_encl_emodpe,
-> +	do_encl_init_tcs_page,
-> +};
-> +
->  void encl_body(void *rdi,  void *rsi)
->  {
-> -	const void (*encl_op_array[ENCL_OP_MAX])(void *) =3D {
-> -		do_encl_op_put_to_buf,
-> -		do_encl_op_get_from_buf,
-> -		do_encl_op_put_to_addr,
-> -		do_encl_op_get_from_addr,
-> -		do_encl_op_nop,
-> -		do_encl_eaccept,
-> -		do_encl_emodpe,
-> -		do_encl_init_tcs_page,
-> -	};
-> -
-> -	struct encl_op_header *op =3D (struct encl_op_header *)rdi;
-> -
-> -	if (op->type < ENCL_OP_MAX)
-> -		(*encl_op_array[op->type])(op);
-> +	struct encl_op_header *header =3D (struct encl_op_header *)rdi;
-> +	encl_op_t op;
-> +
-> +	if (header->type >=3D ENCL_OP_MAX)
-> +		return;
-> +
-> +	/*
-> +	 * "encl_base" needs to be added, as this call site *cannot be*
-> +	 * made rip-relative by the compiler, or fixed up by any other
-> +	 * possible means.
-> +	 */
-> +	op =3D encl_base + encl_op_array[header->type];
-> +
-> +	(*op)(header);
->  }
 > diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/se=
 lftests/sgx/test_encl.lds
-> index 62d37160f..b86c86060 100644
+> index b86c86060..13144b045 100644
 > --- a/tools/testing/selftests/sgx/test_encl.lds
 > +++ b/tools/testing/selftests/sgx/test_encl.lds
-> @@ -32,6 +32,8 @@ SECTIONS
->  		*(.note*)
->  		*(.debug*)
->  		*(.eh_frame*)
-> +		*(.dyn*)
-> +		*(.gnu.hash)
+> @@ -37,8 +37,4 @@ SECTIONS
 >  	}
 >  }
 > =20
+> -ASSERT(!DEFINED(.altinstructions), "ALTERNATIVES are not supported in en=
+claves")
+> -ASSERT(!DEFINED(.altinstr_replacement), "ALTERNATIVES are not supported =
+in enclaves")
+> -ASSERT(!DEFINED(.discard.retpoline_safe), "RETPOLINE ALTERNATIVES are no=
+t supported in enclaves")
+> -ASSERT(!DEFINED(.discard.nospec), "RETPOLINE ALTERNATIVES are not suppor=
+ted in enclaves")
+> -ASSERT(!DEFINED(.got.plt), "Libcalls are not supported in enclaves")
+> +ASSERT(!DEFINED(_GLOBAL_OFFSET_TABLE_), "Libcalls through GOT are not su=
+pported in enclaves")
 > --=20
 > 2.25.1
 
