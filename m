@@ -2,82 +2,128 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDC3EE4993
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 10:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B67BCEE4993
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 10:32:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234101AbjHVK3j (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 22 Aug 2023 06:29:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42834 "EHLO
+        id S234020AbjHVKcf (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 22 Aug 2023 06:32:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232556AbjHVK3j (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 06:29:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79410E51;
-        Tue, 22 Aug 2023 03:29:08 -0700 (PDT)
+        with ESMTP id S231791AbjHVKce (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 06:32:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A93BE59;
+        Tue, 22 Aug 2023 03:32:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1259A65134;
-        Tue, 22 Aug 2023 10:29:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAC36C433C7;
-        Tue, 22 Aug 2023 10:29:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B191460C78;
+        Tue, 22 Aug 2023 10:32:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E133EC433C7;
+        Tue, 22 Aug 2023 10:32:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692700147;
-        bh=IvGfBZV/2Fq02VPlpwX47hDqBBEMCLHL/8A28vWDXUc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=uqwRdGXrLVVBzIrINCLqNlhho2l5dOyRLX1h/2OMPF3QFkA+7uotHE76sAa8VIjYF
-         k+fhy01JNfiBFQ44lEw50tXOhL0YrJ4yLdtUEAxBPf3IktZr0ZlHHPODFVar1aziel
-         6RAyn4VX8VBpS8NgDz0+9S9X07mvyZiZrw/l0+QPZp82mbFJrWdaLBiSh+B+cp/JkM
-         CBkVX7MpUB/q6pV1EIiqOoJNRElangAk5sKwHkFj6jNTZAFe031xrgJw+8pUewD0PN
-         W1Jrn0Hu2smyWzlHqy4t8r4oA0hzgqG1LHyxnpWiB6AbxLlIe46kIFbrp3sPey0iv/
-         j66lhtnxaN+Jg==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     linux-sgx@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, stable@vger.kernel.org,
-        kernel test robot <lkp@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
-        Sean Christopherson <seanjc@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/sgx: Describe the parameters of sgx_calc_section_metric()
-Date:   Tue, 22 Aug 2023 13:28:53 +0300
-Message-Id: <20230822102853.15078-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.39.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        s=k20201202; t=1692700321;
+        bh=t8rkJevFQ4OOqTerIVYgB4Zt4P94JQD0Ng1gKbsVikA=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=ZGLPUey3ITbIVd0krjWiQlmcHneP7vH96hkoNhpUvV1PKVs6g7WqSXNAGhpsTJ7GX
+         a+ulObOI3Fol7trQvOU4Eo8ZKX1s/OLyVO74O2BghxK1IKFx/F0DEBfWDzrrhjVTKR
+         ITiuFourPgs0xV4eyHiKhzDMhMXg7/ha0XaPJF2yZV76pvAHkWbs0LbC/r8Ta02xg7
+         wJR6wRjCJkpFiTmanAhVwVCZE7tDGLHSJ0XXcP/jAS6vhLciJBc6iXZjZgljsyYE27
+         gXi+aNfqWxqZOO2VC0lmHdnmRaJl9v+VpvWC5wfSsp0OxA15P/EoM9Q1YD6kRm3LlI
+         yt1beGV46pRqQ==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 22 Aug 2023 13:31:58 +0300
+Message-Id: <CUZ06NE7G0YK.8WOBPAD6USMY@suppilovahvero>
+Cc:     <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v3 0/9] selftests/sgx: Fix compilation errors
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>, <kai.huang@intel.com>,
+        <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.14.0
+References: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
+In-Reply-To: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Cc: stable@vger.kernel.org # v5.11+
-Fixes: e7e0545299d8 ("x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202308221542.11UpkVfp-lkp@intel.com/
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- arch/x86/kernel/cpu/sgx/main.c | 4 ++++
- 1 file changed, 4 insertions(+)
+On Sat Aug 19, 2023 at 12:43 PM EEST, Jo Van Bulck wrote:
+> Hi,
+>
+> This is the third iteration of a patch series to ensure that all SGX self=
+tests
+> succeed when compiling with optimizations (as tested with -O{0,1,2,3,s} f=
+or
+> both gcc 11.3.0 and clang 14.0.0). The aim of the patches is to avoid rel=
+iance
+> on undefined, compiler-specific behavior that can make the test results
+> fragile.
+>
+> If useful, I can also include an elementary wrapper shell script to compi=
+le and
+> run the tests for different compilers (gcc/clang) and optimization levels=
+.
+> Reference output below:
+>
+> .. Testing gcc   -O0    [OK]
+> .. Testing gcc   -O1    [OK]
+> .. Testing gcc   -O2    [OK]
+> .. Testing gcc   -O3    [OK]
+> .. Testing gcc   -Os    [OK]
+> .. Testing gcc   -Ofast [OK]
+> .. Testing gcc   -Og    [OK]
+> .. Testing clang -O0    [OK]
+> .. Testing clang -O1    [OK]
+> .. Testing clang -O2    [OK]
+> .. Testing clang -O3    [OK]
+> .. Testing clang -Os    [OK]
+> .. Testing clang -Ofast [OK]
+> .. Testing clang -Og    [OK]
+>
+> Changelog
+> ---------
+>
+> v3
+>   - Refactor encl_op_array declaration and indexing (Jarkko)
+>   - Annotate encl_buffer with "used" attribute (Kai)
+>   - Split encl_buffer size and placement commits (Kai)
+>
+> v2
+>   - Add additional check for NULL pointer (Kai)
+>   - Refine to produce proper static-pie executable
+>   - Fix linker script assertions
+>   - Specify memory clobber for inline asm instead of volatile (Kai)
+>   - Clarify why encl_buffer non-static (Jarkko, Kai)
+>   - Clarify -ffreestanding (Jarkko)
+>
+> Best,
+> Jo
+>
+> Jo Van Bulck (9):
+>   selftests/sgx: Fix uninitialized pointer dereference in error path
+>   selftests/sgx: Produce static-pie executable for test enclave
+>   selftests/sgx: Handle relocations in test enclave
+>   selftests/sgx: Fix linker script asserts
+>   selftests/sgx: Include memory clobber for inline asm in test enclave
+>   selftests/sgx: Ensure test enclave buffer is entirely preserved
+>   selftests/sgx: Ensure expected location of test enclave buffer
+>   selftests/sgx: Separate linker options
+>   selftests/sgx: Specify freestanding environment for enclave
+>     compilation
+>
+>  tools/testing/selftests/sgx/Makefile          | 14 ++--
+>  tools/testing/selftests/sgx/defines.h         |  2 +
+>  tools/testing/selftests/sgx/sigstruct.c       |  5 +-
+>  tools/testing/selftests/sgx/test_encl.c       | 66 ++++++++++++-------
+>  tools/testing/selftests/sgx/test_encl.lds     | 10 +--
+>  .../selftests/sgx/test_encl_bootstrap.S       | 12 ++--
+>  6 files changed, 68 insertions(+), 41 deletions(-)
+>
+> --=20
+> 2.25.1
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 166692f2d501..388350b8f5e3 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -732,6 +732,10 @@ int arch_memory_failure(unsigned long pfn, int flags)
- }
- 
- /**
-+ * sgx_calc_section_metric() - Calculate an EPC section metric
-+ * @low:	low 32-bit word from CPUID:0x12:{2, ...}
-+ * @high:	high 32-bit word from CPUID:0x12:{2, ...}
-+ *
-  * A section metric is concatenated in a way that @low bits 12-31 define the
-  * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
-  * metric.
--- 
-2.39.2
+Looks "almost there" to me. Just had one query about freestanding.
 
+BR, Jarkko
