@@ -2,36 +2,36 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E230EE49AF
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 17:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AF9EE49AE
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 17:55:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229645AbjHVRxO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 22 Aug 2023 13:53:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43932 "EHLO
+        id S229470AbjHVRzJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 22 Aug 2023 13:55:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbjHVRxO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 13:53:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB5C330C4;
-        Tue, 22 Aug 2023 10:52:55 -0700 (PDT)
+        with ESMTP id S229591AbjHVRzI (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 13:55:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2DBD3A89
+        for <linux-sgx@vger.kernel.org>; Tue, 22 Aug 2023 10:54:42 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 404B56564C;
-        Tue, 22 Aug 2023 17:52:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21924C433C8;
-        Tue, 22 Aug 2023 17:52:53 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 86A0A65CFC
+        for <linux-sgx@vger.kernel.org>; Tue, 22 Aug 2023 17:54:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9352AC433C7;
+        Tue, 22 Aug 2023 17:54:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692726774;
-        bh=7ZBQ60QAjHKVFVd0j7bD6mifIJEl/fZHiRDkdIVlxpc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V1boDcjEUEjowJ74wIqHCDivWYXpyGjFaDDuAS9KS90+lQjBnBz51TP6w5Ic6x43H
-         Zz20oIizH/yH2WSkoXhh+vUmhufn+/aPX3wY3Zj9KKrOTGW+zaHMgqjp+oMUW7EspJ
-         5Ji01WRp74jsgv+RUr3hBbdJdGzR5wpY2UHcb7UVwhm6cZVtN18gFeOJ+9VvzluVWy
-         TCX7ssofokW2yaUtoo3uQls99pOxJRAj3dZThYhCWM1whyqbQeilV9mvzByhZU5D9t
-         zQ7BVuwAg5+JbtMGdlpwfOvgXPn+jjskPrzt60OdUKfVmOu+5g5h77A+8XR79ME0Lm
-         vfbeaVeEzcKkQ==
+        s=k20201202; t=1692726877;
+        bh=FM/ImYOedgyMG/UeQQ5hyr1gup3KyKWUkOb5ef8p3Gg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ReCWjLhwUla5x4tg5oBy9GPcCIFuLpg5enx+4HIBxQVDRNzenuh4WOjBuySnVXgFr
+         hv65zJhezCCccGmpuxkDL1VCGbZRgE+6uFL29Aze/UkDJVIZc3f4xsirg8o9Xxtaad
+         TtWPoSsqS9AGMzdIoRhQ0S0u97DFh/FGSx4yvLRVPkDcI9gLbsicIo/fO6Hng1WUdG
+         xLsV+9eZvNAFDpjiSIIt/AkvSJMENVYoZKVq+6OAzfS82PyRJfOQPXKss32Lve3JKB
+         Wj1b76kD7ofjaB1/Kt4eQrBdXFpMhQ6mVsxg08MeW41RWyWfSu8hNeFu3rXrDHg2hL
+         hN8iecq54/jcA==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
@@ -40,145 +40,85 @@ Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
         Stefan Berger <stefanb@linux.ibm.com>,
         David Howells <dhowells@redhat.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] KEYS: trusted: tpm2: Use struct tpm_buf for sized buffers
-Date:   Tue, 22 Aug 2023 20:52:21 +0300
-Message-Id: <20230822175221.2196136-7-jarkko@kernel.org>
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH v2 0/6] Extend struct tpm_buf to support sized buffers (TPM2B)
+Date:   Tue, 22 Aug 2023 20:54:29 +0300
+Message-Id: <20230822175429.2196851-1-jarkko@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230822175221.2196136-1-jarkko@kernel.org>
-References: <20230822175221.2196136-1-jarkko@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Take advantage of the new sized buffer (TPM2B) mode of struct tpm_buf in
-tpm2_seal_trusted(). This allows to add robustness to the command
-construction without requiring to calculate buffer sizes manually.
+This patch set implements my ideas on how to extend struct tpm_buf to
+support TPM2 sized buffers (TPM2B). See Section 10.4 in TPM2 Structures
+specification for more information.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+The goal is to do initial groundwork for smoother landing of integrity
+protection patches by James Bottomley.
 
-v2:
-* Use tpm_buf_read_*
----
- security/keys/trusted-keys/trusted_tpm2.c | 51 +++++++++++++----------
- 1 file changed, 29 insertions(+), 22 deletions(-)
+I tested the patch set with:
 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index c41f30770138..5d262306184c 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -228,8 +228,9 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 		      struct trusted_key_payload *payload,
- 		      struct trusted_key_options *options)
- {
-+	off_t offset = TPM_HEADER_SIZE;
-+	struct tpm_buf buf, sized;
- 	int blob_len = 0;
--	struct tpm_buf buf;
- 	u32 hash;
- 	u32 flags;
- 	int i;
-@@ -258,6 +259,13 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 		return rc;
- 	}
- 
-+	rc = tpm_buf_init(&sized, true, true);
-+	if (rc) {
-+		tpm_buf_destroy(&buf);
-+		tpm_put_ops(chip);
-+		return rc;
-+	}
-+
- 	tpm_buf_reset(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
- 	tpm_buf_append_u32(&buf, options->keyhandle);
- 	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
-@@ -267,36 +275,36 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 			     TPM_DIGEST_SIZE);
- 
- 	/* sensitive */
--	tpm_buf_append_u16(&buf, 4 + options->blobauth_len + payload->key_len);
-+	tpm_buf_append_u16(&sized, options->blobauth_len);
- 
--	tpm_buf_append_u16(&buf, options->blobauth_len);
- 	if (options->blobauth_len)
--		tpm_buf_append(&buf, options->blobauth, options->blobauth_len);
-+		tpm_buf_append(&sized, options->blobauth, options->blobauth_len);
- 
--	tpm_buf_append_u16(&buf, payload->key_len);
--	tpm_buf_append(&buf, payload->key, payload->key_len);
-+	tpm_buf_append_u16(&sized, payload->key_len);
-+	tpm_buf_append(&sized, payload->key, payload->key_len);
-+	tpm_buf_append(&buf, sized.data, sized.length);
- 
- 	/* public */
--	tpm_buf_append_u16(&buf, 14 + options->policydigest_len);
--	tpm_buf_append_u16(&buf, TPM_ALG_KEYEDHASH);
--	tpm_buf_append_u16(&buf, hash);
-+	tpm_buf_init(&sized, false, true);
-+	tpm_buf_append_u16(&sized, TPM_ALG_KEYEDHASH);
-+	tpm_buf_append_u16(&sized, hash);
- 
- 	/* key properties */
- 	flags = 0;
- 	flags |= options->policydigest_len ? 0 : TPM2_OA_USER_WITH_AUTH;
--	flags |= payload->migratable ? 0 : (TPM2_OA_FIXED_TPM |
--					    TPM2_OA_FIXED_PARENT);
--	tpm_buf_append_u32(&buf, flags);
-+	flags |= payload->migratable ? 0 : (TPM2_OA_FIXED_TPM | TPM2_OA_FIXED_PARENT);
-+	tpm_buf_append_u32(&sized, flags);
- 
- 	/* policy */
--	tpm_buf_append_u16(&buf, options->policydigest_len);
-+	tpm_buf_append_u16(&sized, options->policydigest_len);
- 	if (options->policydigest_len)
--		tpm_buf_append(&buf, options->policydigest,
--			       options->policydigest_len);
-+		tpm_buf_append(&sized, options->policydigest, options->policydigest_len);
- 
- 	/* public parameters */
--	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
--	tpm_buf_append_u16(&buf, 0);
-+	tpm_buf_append_u16(&sized, TPM_ALG_NULL);
-+	tpm_buf_append_u16(&sized, 0);
-+
-+	tpm_buf_append(&buf, sized.data, sized.length);
- 
- 	/* outside info */
- 	tpm_buf_append_u16(&buf, 0);
-@@ -313,21 +321,20 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 	if (rc)
- 		goto out;
- 
--	blob_len = be32_to_cpup((__be32 *) &buf.data[TPM_HEADER_SIZE]);
-+	blob_len = tpm_buf_read_u32(&buf, &offset);
- 	if (blob_len > MAX_BLOB_SIZE) {
- 		rc = -E2BIG;
- 		goto out;
- 	}
--	if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 4 + blob_len) {
-+	if (buf.length - offset < blob_len) {
- 		rc = -EFAULT;
- 		goto out;
- 	}
- 
--	blob_len = tpm2_key_encode(payload, options,
--				   &buf.data[TPM_HEADER_SIZE + 4],
--				   blob_len);
-+	blob_len = tpm2_key_encode(payload, options, &buf.data[offset], blob_len);
- 
- out:
-+	tpm_buf_destroy(&sized);
- 	tpm_buf_destroy(&buf);
- 
- 	if (rc > 0) {
+https://github.com/jarkkojs/buildroot-tpmdd/tree/linux-6.5.y
+
+Compilation:
+
+make qemu_x86_64_defconfig
+make 2>&1 | tee build.txt;
+
+TPM1 startup: output/images/start-qemu.sh --use-system-swtpm --rtc --tpm1
+TPM2 startup: output/images/start-qemu.sh --use-system-swtpm --rtc
+
+For TPM2 I executed the following as the smoke test for these patches:
+
+/usr/lib/kselftests/run_kselftest.sh
+tpm2_createprimary --hierarchy o -G rsa2048 -c key.ctxt
+tpm2_evictcontrol -c key.ctxt 0x81000001
+keyctl add trusted kmk "new 32 keyhandle=0x81000001" @u
+keyctl add encrypted 1000100010001000 "new ecryptfs trusted:kmk 64" @u
+
+For TPM1 I tried:
+
+keyctl add trusted kmk "new 32" @u
+
+This caused TPM error 18, which AFAIK means that there is not SRK (?),
+which is probably an issue in my swtpm configuration, which is visible
+in board/qemu/start-qemu.sh.in.
+
+Link: https://lore.kernel.org/linux-integrity/CT5OE5VZA7D7.3B7C6CK27JIK1@suppilovahvero/
+Link: https://lore.kernel.org/linux-integrity/20230403214003.32093-1-James.Bottomley@HansenPartnership.com/
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: William Roberts <bill.c.roberts@gmail.com> 
+Cc: Stefan Berger <stefanb@linux.ibm.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+
+James Bottomley (1):
+  tpm: Move buffer handling from static inlines to real functions
+
+Jarkko Sakkinen (5):
+  tpm: Store TPM buffer length
+  tpm: Detach tpm_buf_reset() from tpm_buf_init()
+  tpm: Support TPM2 sized buffers (TPM2B)
+  tpm: Add tpm_buf_read_{u8,u16,u32}
+  KEYS: trusted: tpm2: Use struct tpm_buf for sized buffers
+
+ drivers/char/tpm/Makefile                 |   1 +
+ drivers/char/tpm/tpm-buf.c                | 195 ++++++++++++++++++++++
+ drivers/char/tpm/tpm-interface.c          |  18 +-
+ drivers/char/tpm/tpm-sysfs.c              |   3 +-
+ drivers/char/tpm/tpm1-cmd.c               |  26 ++-
+ drivers/char/tpm/tpm2-cmd.c               |  36 ++--
+ drivers/char/tpm/tpm2-space.c             |   7 +-
+ drivers/char/tpm/tpm_vtpm_proxy.c         |  13 +-
+ include/linux/tpm.h                       |  96 ++---------
+ security/keys/trusted-keys/trusted_tpm1.c |  12 +-
+ security/keys/trusted-keys/trusted_tpm2.c |  60 ++++---
+ 11 files changed, 325 insertions(+), 142 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm-buf.c
+
 -- 
 2.39.2
 
