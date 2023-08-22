@@ -2,96 +2,107 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEFEEE49A3
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 10:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 649CFEE4996
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 10:11:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234604AbjHVKLG (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 22 Aug 2023 06:11:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41984 "EHLO
+        id S234674AbjHVKLK (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 22 Aug 2023 06:11:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231781AbjHVKLG (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 06:11:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 084ECCD0;
-        Tue, 22 Aug 2023 03:10:57 -0700 (PDT)
+        with ESMTP id S232263AbjHVKLH (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 06:11:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7577C18B;
+        Tue, 22 Aug 2023 03:11:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6FB8F633A0;
-        Tue, 22 Aug 2023 10:10:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD499C433C8;
-        Tue, 22 Aug 2023 10:10:27 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0CC2B61301;
+        Tue, 22 Aug 2023 10:11:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BDFEC433C8;
+        Tue, 22 Aug 2023 10:10:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692699028;
-        bh=OlIDWf01BL+/Ezuk9SoDTvgO4c2C63kFlK6C+hAdPCk=;
+        s=k20201202; t=1692699060;
+        bh=wNC0A6kL7exuR/rOZgM/K3PhTbqHuSNFdCbXpOCmezw=;
         h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=J7/vTggRaMK+PUeUetmzUBMg1zDolQCrFNqIOZad2p6OHmEW98jaxnevflhWrW+aJ
-         3OBOILEtQ9SwPOLQmxxsBvTSwSYEfp4Uy9CnBjZ36tTbr7hM8+ZINNahM0y9AYAt8q
-         HKp1saMbXyKypdhX/2E4d0tIQSXYz19iQs+EX1SxU+QufNqy9ZlEi+5wMV0Bw63sjd
-         eHSXa3KGTSOU2l8eSNejNJcbPGUgBxecxBvjraZI9aQqyVATnmhMYQnZPNnMLazfgs
-         Or0/qj35uVx7ocx6HL2585GogBCQk3hZ8Trk/eR5Mxz7fbiQh8pggdxDj4PdnDwE6W
-         UynjrKnx6wyAQ==
+        b=N6UJNcuuIRkcxE4cc7BePowDjaOXDNSQNUUbT+DG+qojGXTJ+Qplsj7kX9JB242Bc
+         gOW3RK5VSP3vg/YR3dHPap6wdeVBYYUqq6hM3GTzLPoM9MkrdCj2CXR8bBwi68TWMK
+         YQz//pCIMpTVP/PbviIdACxWHlKytqMDvQ4spT1BxtPGscIFesOIbxfhlOyn+CVu81
+         2NbEcLIF+7EyQAcvNfw7PSrmSkc5j37XGYidlmx6LnbXn7Kth10p95ANkJAdqlJlyR
+         Wcae4xKp6F0vm3Yc2A7S7MZoPtIS099E2BwJRUB10YZ9vVEk9f8pA+cijNF/NtrrMx
+         oNh6d9ld+unGA==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 22 Aug 2023 13:10:25 +0300
-Message-Id: <CUYZQ5FWX0Q0.2DOQOB96T7H7@suppilovahvero>
+Date:   Tue, 22 Aug 2023 13:10:57 +0300
+Message-Id: <CUYZQJXJCJGP.PBVMRZTU12QJ@suppilovahvero>
 Cc:     <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v3 5/9] selftests/sgx: Include memory clobber for inline
- asm in test enclave
+Subject: Re: [PATCH v3 6/9] selftests/sgx: Ensure test enclave buffer is
+ entirely preserved
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
 To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>, <kai.huang@intel.com>,
         <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 X-Mailer: aerc 0.14.0
 References: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
- <20230819094332.8535-6-jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <20230819094332.8535-6-jo.vanbulck@cs.kuleuven.be>
+ <20230819094332.8535-7-jo.vanbulck@cs.kuleuven.be>
+In-Reply-To: <20230819094332.8535-7-jo.vanbulck@cs.kuleuven.be>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Sat Aug 19, 2023 at 12:43 PM EEST, Jo Van Bulck wrote:
-> Add the "memory" clobber to the EMODPE and EACCEPT asm blocks to tell the
-> compiler the assembly code accesses to the secinfo struct. This ensures
-> the compiler treats the asm block as a memory barrier and the write to
-> secinfo will be visible to ENCLU.
+> Attach the "used" attribute to instruct the compiler to preserve the stat=
+ic
+> encl_buffer, even if it appears it is not entirely referenced in the encl=
+ave
+> code, as expected by the external tests manipulating page permissions.
 >
+> Link: https://lore.kernel.org/all/a2732938-f3db-a0af-3d68-a18060f66e79@cs=
+.kuleuven.be/
 > Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
 > ---
->  tools/testing/selftests/sgx/test_encl.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  tools/testing/selftests/sgx/defines.h   | 1 +
+>  tools/testing/selftests/sgx/test_encl.c | 9 +++++----
+>  2 files changed, 6 insertions(+), 4 deletions(-)
 >
+> diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selfte=
+sts/sgx/defines.h
+> index d8587c971..b8f482667 100644
+> --- a/tools/testing/selftests/sgx/defines.h
+> +++ b/tools/testing/selftests/sgx/defines.h
+> @@ -13,6 +13,7 @@
+> =20
+>  #define __aligned(x) __attribute__((__aligned__(x)))
+>  #define __packed __attribute__((packed))
+> +#define __used __attribute__((used))
+> =20
+>  #include "../../../../arch/x86/include/asm/sgx.h"
+>  #include "../../../../arch/x86/include/asm/enclu.h"
 > diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/self=
 tests/sgx/test_encl.c
-> index 7633fb7cb..b09550cb3 100644
+> index b09550cb3..c7bcbc85b 100644
 > --- a/tools/testing/selftests/sgx/test_encl.c
 > +++ b/tools/testing/selftests/sgx/test_encl.c
-> @@ -24,10 +24,11 @@ static void do_encl_emodpe(void *_op)
->  	secinfo.flags =3D op->flags;
+> @@ -5,11 +5,12 @@
+>  #include "defines.h"
 > =20
->  	asm volatile(".byte 0x0f, 0x01, 0xd7"
-> -				:
-> +				: /* no outputs */
->  				: "a" (EMODPE),
->  				  "b" (&secinfo),
-> -				  "c" (op->epc_addr));
-> +				  "c" (op->epc_addr)
-> +				: "memory" /* read from secinfo pointer */);
->  }
+>  /*
+> - * Data buffer spanning two pages that will be placed first in .data
+> - * segment. Even if not used internally the second page is needed by
+> - * external test manipulating page permissions.
+> + * Data buffer spanning two pages that will be placed first in the .data
+> + * segment. Even if not used internally the second page is needed by ext=
+ernal
+> + * test manipulating page permissions, so mark encl_buffer as "used" to =
+make
+> + * sure it is entirely preserved by the compiler.
+>   */
+> -static uint8_t encl_buffer[8192] =3D { 1 };
+> +static uint8_t __used encl_buffer[8192] =3D { 1 };
 > =20
->  static void do_encl_eaccept(void *_op)
-> @@ -42,7 +43,8 @@ static void do_encl_eaccept(void *_op)
->  				: "=3Da" (rax)
->  				: "a" (EACCEPT),
->  				  "b" (&secinfo),
-> -				  "c" (op->epc_addr));
-> +				  "c" (op->epc_addr)
-> +				: "memory" /* read from secinfo pointer */);
-> =20
->  	op->ret =3D rax;
->  }
+>  enum sgx_enclu_function {
+>  	EACCEPT =3D 0x5,
 > --=20
 > 2.25.1
 
