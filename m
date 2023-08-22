@@ -2,48 +2,48 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BB7EE49A5
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 20:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4123EE49A5
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 20:39:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230490AbjHVU2j (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 22 Aug 2023 16:28:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49484 "EHLO
+        id S231160AbjHVUjU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 22 Aug 2023 16:39:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230032AbjHVU2i (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 16:28:38 -0400
+        with ESMTP id S229486AbjHVUjT (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 16:39:19 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCD21CC;
-        Tue, 22 Aug 2023 13:28:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EDC9A8;
+        Tue, 22 Aug 2023 13:39:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5413C6400F;
-        Tue, 22 Aug 2023 20:28:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37629C433C7;
-        Tue, 22 Aug 2023 20:28:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CC71D6467B;
+        Tue, 22 Aug 2023 20:39:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A8EC433C7;
+        Tue, 22 Aug 2023 20:39:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692736115;
-        bh=X76ftMTPE0gLVW8UyVak9DVYrvFfNpTPl/FN4KHJV+g=;
+        s=k20201202; t=1692736757;
+        bh=olk3Xa6I7I4/DLU4D9iKqohQ9IwdhSuiwNTWLhb6zxs=;
         h=From:To:Cc:Subject:Date:From;
-        b=kQZ1H91brydNRglPflW7u8Cy5+meJCkRgNmlfurYKs6++thGZ95p2zS5fshPz2a0G
-         JpV20BJ/vgxR9T5zyP9AaTxDxa+bR87SyYOjRku4VsnHc+IpjXeDZa914g9fNi1L12
-         S6Jgzsf1vrey+m46ZpiLRhY+68j6Qw4dp38UJb2ZqOvBj6LzbPm7tb70lrWwJQfVns
-         wJMbubUYy4Eh5XjWXBs3xH/k+DHYqFnQ4iYOrtCk2ZReEdw9FL3lQ+lcvuCqriAK/D
-         t/SfNgamVDkZ6qIecW/4O88hvWnKRzfPLWMzddNkItF9Wkun79QzYr7mMlyrVbay6G
-         EWtANAJ5xNR+A==
+        b=R55u52RFCQBvWfVjXeXFdT43jvwopNLC2wbs/krHtWGCH4kH7eRlpNgiXJ+t7dPHu
+         Xnag1SpjT+Cr4ii1N4dGpIZvZPsRLXfSGtzxFuZ+O++ach9DjnbQZMct8WYH4kZxPg
+         wVc+BEzLfRr0TvO++BGnU30hhXYr2XNDZXjsoT61eRt5TuWSzfzmoW9CilTKQxPvXa
+         nKcYCNnJVNUasPrn2zsEBdSWb8MjcJWaYhkg5vbpfilXjkguVg4cP4wihTbM2Q8Evo
+         Wi/wXuTuKabVI5dLr0cLWQlFJ9qFd6u4PrZ3fgzA3JlNaRpm7vPAy+5gKRQcmI8kjn
+         S2iDr37kSJVfg==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
 Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
         Jarkko Sakkinen <jarkko@kernel.org>, stable@vger.kernel.org,
         Todd Brandt <todd.e.brandt@intel.com>,
-        Mario Limonciello <mario.limonciello@amd.com>,
         Peter Huewe <peterhuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>,
+        Mario Limonciello <mario.limonciello@amd.com>,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: Enable hwrng only for Pluton on AMD CPUs
-Date:   Tue, 22 Aug 2023 23:28:27 +0300
-Message-Id: <20230822202827.2234527-1-jarkko@kernel.org>
+Subject: [PATCH v2] tpm: Enable hwrng only for Pluton on AMD CPUs
+Date:   Tue, 22 Aug 2023 23:39:12 +0300
+Message-Id: <20230822203912.2256229-1-jarkko@kernel.org>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -60,13 +60,16 @@ Since only Microsoft Pluton is the only known combination of AMD CPU and
 fTPM from other vendor, disable hwrng otherwise. In order to make sysadmin
 aware of this, print also info message to the klog.
 
-Cc: stable@vger.kernel.org # v6.5+
+Cc: stable@vger.kernel.org
 Fixes: 554b841d4703 ("tpm: Disable RNG for all AMD fTPMs")
 Reported-by: Todd Brandt <todd.e.brandt@intel.com>
 Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217804
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v2:
+* CONFIG_X86
+* Removed "Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>"
+* Removed "Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>"
 ---
  drivers/char/tpm/tpm_crb.c | 31 ++++++-------------------------
  1 file changed, 6 insertions(+), 25 deletions(-)
