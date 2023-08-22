@@ -2,48 +2,48 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AF9EE49AE
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 17:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BB7EE49A5
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 20:28:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229470AbjHVRzJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 22 Aug 2023 13:55:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58192 "EHLO
+        id S230490AbjHVU2j (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 22 Aug 2023 16:28:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbjHVRzI (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 13:55:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2DBD3A89
-        for <linux-sgx@vger.kernel.org>; Tue, 22 Aug 2023 10:54:42 -0700 (PDT)
+        with ESMTP id S230032AbjHVU2i (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 16:28:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCD21CC;
+        Tue, 22 Aug 2023 13:28:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 86A0A65CFC
-        for <linux-sgx@vger.kernel.org>; Tue, 22 Aug 2023 17:54:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9352AC433C7;
-        Tue, 22 Aug 2023 17:54:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5413C6400F;
+        Tue, 22 Aug 2023 20:28:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37629C433C7;
+        Tue, 22 Aug 2023 20:28:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692726877;
-        bh=FM/ImYOedgyMG/UeQQ5hyr1gup3KyKWUkOb5ef8p3Gg=;
+        s=k20201202; t=1692736115;
+        bh=X76ftMTPE0gLVW8UyVak9DVYrvFfNpTPl/FN4KHJV+g=;
         h=From:To:Cc:Subject:Date:From;
-        b=ReCWjLhwUla5x4tg5oBy9GPcCIFuLpg5enx+4HIBxQVDRNzenuh4WOjBuySnVXgFr
-         hv65zJhezCCccGmpuxkDL1VCGbZRgE+6uFL29Aze/UkDJVIZc3f4xsirg8o9Xxtaad
-         TtWPoSsqS9AGMzdIoRhQ0S0u97DFh/FGSx4yvLRVPkDcI9gLbsicIo/fO6Hng1WUdG
-         xLsV+9eZvNAFDpjiSIIt/AkvSJMENVYoZKVq+6OAzfS82PyRJfOQPXKss32Lve3JKB
-         Wj1b76kD7ofjaB1/Kt4eQrBdXFpMhQ6mVsxg08MeW41RWyWfSu8hNeFu3rXrDHg2hL
-         hN8iecq54/jcA==
+        b=kQZ1H91brydNRglPflW7u8Cy5+meJCkRgNmlfurYKs6++thGZ95p2zS5fshPz2a0G
+         JpV20BJ/vgxR9T5zyP9AaTxDxa+bR87SyYOjRku4VsnHc+IpjXeDZa914g9fNi1L12
+         S6Jgzsf1vrey+m46ZpiLRhY+68j6Qw4dp38UJb2ZqOvBj6LzbPm7tb70lrWwJQfVns
+         wJMbubUYy4Eh5XjWXBs3xH/k+DHYqFnQ4iYOrtCk2ZReEdw9FL3lQ+lcvuCqriAK/D
+         t/SfNgamVDkZ6qIecW/4O88hvWnKRzfPLWMzddNkItF9Wkun79QzYr7mMlyrVbay6G
+         EWtANAJ5xNR+A==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-sgx@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        William Roberts <bill.c.roberts@gmail.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
+Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>, stable@vger.kernel.org,
+        Todd Brandt <todd.e.brandt@intel.com>,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v2 0/6] Extend struct tpm_buf to support sized buffers (TPM2B)
-Date:   Tue, 22 Aug 2023 20:54:29 +0300
-Message-Id: <20230822175429.2196851-1-jarkko@kernel.org>
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm: Enable hwrng only for Pluton on AMD CPUs
+Date:   Tue, 22 Aug 2023 23:28:27 +0300
+Message-Id: <20230822202827.2234527-1-jarkko@kernel.org>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,74 +51,75 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-This patch set implements my ideas on how to extend struct tpm_buf to
-support TPM2 sized buffers (TPM2B). See Section 10.4 in TPM2 Structures
-specification for more information.
+The vendor check introduced by commit 554b841d4703 ("tpm: Disable RNG for
+all AMD fTPMs") doesn't work properly on a number of Intel fTPMs.  On the
+reported systems the TPM doesn't reply at bootup and returns back the
+command code. This makes the TPM fail probe.
 
-The goal is to do initial groundwork for smoother landing of integrity
-protection patches by James Bottomley.
+Since only Microsoft Pluton is the only known combination of AMD CPU and
+fTPM from other vendor, disable hwrng otherwise. In order to make sysadmin
+aware of this, print also info message to the klog.
 
-I tested the patch set with:
+Cc: stable@vger.kernel.org # v6.5+
+Fixes: 554b841d4703 ("tpm: Disable RNG for all AMD fTPMs")
+Reported-by: Todd Brandt <todd.e.brandt@intel.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217804
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ drivers/char/tpm/tpm_crb.c | 31 ++++++-------------------------
+ 1 file changed, 6 insertions(+), 25 deletions(-)
 
-https://github.com/jarkkojs/buildroot-tpmdd/tree/linux-6.5.y
-
-Compilation:
-
-make qemu_x86_64_defconfig
-make 2>&1 | tee build.txt;
-
-TPM1 startup: output/images/start-qemu.sh --use-system-swtpm --rtc --tpm1
-TPM2 startup: output/images/start-qemu.sh --use-system-swtpm --rtc
-
-For TPM2 I executed the following as the smoke test for these patches:
-
-/usr/lib/kselftests/run_kselftest.sh
-tpm2_createprimary --hierarchy o -G rsa2048 -c key.ctxt
-tpm2_evictcontrol -c key.ctxt 0x81000001
-keyctl add trusted kmk "new 32 keyhandle=0x81000001" @u
-keyctl add encrypted 1000100010001000 "new ecryptfs trusted:kmk 64" @u
-
-For TPM1 I tried:
-
-keyctl add trusted kmk "new 32" @u
-
-This caused TPM error 18, which AFAIK means that there is not SRK (?),
-which is probably an issue in my swtpm configuration, which is visible
-in board/qemu/start-qemu.sh.in.
-
-Link: https://lore.kernel.org/linux-integrity/CT5OE5VZA7D7.3B7C6CK27JIK1@suppilovahvero/
-Link: https://lore.kernel.org/linux-integrity/20230403214003.32093-1-James.Bottomley@HansenPartnership.com/
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: William Roberts <bill.c.roberts@gmail.com> 
-Cc: Stefan Berger <stefanb@linux.ibm.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-
-James Bottomley (1):
-  tpm: Move buffer handling from static inlines to real functions
-
-Jarkko Sakkinen (5):
-  tpm: Store TPM buffer length
-  tpm: Detach tpm_buf_reset() from tpm_buf_init()
-  tpm: Support TPM2 sized buffers (TPM2B)
-  tpm: Add tpm_buf_read_{u8,u16,u32}
-  KEYS: trusted: tpm2: Use struct tpm_buf for sized buffers
-
- drivers/char/tpm/Makefile                 |   1 +
- drivers/char/tpm/tpm-buf.c                | 195 ++++++++++++++++++++++
- drivers/char/tpm/tpm-interface.c          |  18 +-
- drivers/char/tpm/tpm-sysfs.c              |   3 +-
- drivers/char/tpm/tpm1-cmd.c               |  26 ++-
- drivers/char/tpm/tpm2-cmd.c               |  36 ++--
- drivers/char/tpm/tpm2-space.c             |   7 +-
- drivers/char/tpm/tpm_vtpm_proxy.c         |  13 +-
- include/linux/tpm.h                       |  96 ++---------
- security/keys/trusted-keys/trusted_tpm1.c |  12 +-
- security/keys/trusted-keys/trusted_tpm2.c |  60 ++++---
- 11 files changed, 325 insertions(+), 142 deletions(-)
- create mode 100644 drivers/char/tpm/tpm-buf.c
-
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 65ff4d2fbe8d..28448bfd4062 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -463,28 +463,6 @@ static bool crb_req_canceled(struct tpm_chip *chip, u8 status)
+ 	return (cancel & CRB_CANCEL_INVOKE) == CRB_CANCEL_INVOKE;
+ }
+ 
+-static int crb_check_flags(struct tpm_chip *chip)
+-{
+-	u32 val;
+-	int ret;
+-
+-	ret = crb_request_locality(chip, 0);
+-	if (ret)
+-		return ret;
+-
+-	ret = tpm2_get_tpm_pt(chip, TPM2_PT_MANUFACTURER, &val, NULL);
+-	if (ret)
+-		goto release;
+-
+-	if (val == 0x414D4400U /* AMD */)
+-		chip->flags |= TPM_CHIP_FLAG_HWRNG_DISABLED;
+-
+-release:
+-	crb_relinquish_locality(chip, 0);
+-
+-	return ret;
+-}
+-
+ static const struct tpm_class_ops tpm_crb = {
+ 	.flags = TPM_OPS_AUTO_STARTUP,
+ 	.status = crb_status,
+@@ -827,9 +805,12 @@ static int crb_acpi_add(struct acpi_device *device)
+ 	if (rc)
+ 		goto out;
+ 
+-	rc = crb_check_flags(chip);
+-	if (rc)
+-		goto out;
++	/* A quirk for https://www.amd.com/en/support/kb/faq/pa-410 */
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
++	    priv->sm != ACPI_TPM2_COMMAND_BUFFER_WITH_PLUTON) {
++		dev_info(dev, "Disabling hwrng\n");
++		chip->flags |= TPM_CHIP_FLAG_HWRNG_DISABLED;
++	}
+ 
+ 	rc = tpm_chip_register(chip);
+ 
 -- 
 2.39.2
 
