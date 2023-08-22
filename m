@@ -2,223 +2,217 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F45EE49A0
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 01:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C85A9EE4996
+	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 10:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbjHVBL7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 21 Aug 2023 21:11:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46098 "EHLO
+        id S232466AbjHVKHx (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 22 Aug 2023 06:07:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231440AbjHVBL4 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 21 Aug 2023 21:11:56 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4411413D;
-        Mon, 21 Aug 2023 18:11:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692666701; x=1724202701;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=Blgbjw/fScMSONu3RbsLqGnZdv9lZFVgr+K6JiT5xn8=;
-  b=M5diad0XEzGt6G2GMu84ERoPk/Tz8bLkvIAEODZQc5+p0YIhwB5J8zlw
-   GQF9DyFkQkMbbPYP6beg0hTb0WHLoM3Nj6B89PRxQHhHPEpwOc9PPYqhs
-   gBTVgj/+cv0dIs+ZF+JXqXQbv5DDuJ6HS6Bi4d5/nIAs6gT8FijqE3rZO
-   0uA5q112SM/FKBy1qbekW4/CUzlYwW3R/WYAUmWe5IVhmudAmTDnlzhVl
-   B/0l3Kq0G+HbQxbK3LgLMiY6T7aOhpjSklyJKoa5PzMLGIaz90wFSehlr
-   vQ73zTjeV2dVwQvh89z18dFtl+mFoUCRYVN5ylI69g2df8msq8vVDuB6A
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="376480999"
-X-IronPort-AV: E=Sophos;i="6.01,191,1684825200"; 
-   d="scan'208";a="376480999"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2023 18:11:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="909909595"
-X-IronPort-AV: E=Sophos;i="6.01,191,1684825200"; 
-   d="scan'208";a="909909595"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orsmga005.jf.intel.com with ESMTP; 21 Aug 2023 18:11:40 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Mon, 21 Aug 2023 18:11:39 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27 via Frontend Transport; Mon, 21 Aug 2023 18:11:39 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.173)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.27; Mon, 21 Aug 2023 18:11:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=M/uB0SBRr5I/XWHZ3V9AkXa+g5Lfh+xXRGR7ZN7nLiS/11k/T3/yfAPE5p/UZpMjCLC/kMmbAIC/vAvBilKNpM3rjMXd1y+/8ScJmvZ7eYVff9gR6HzuKtxRYSqsvkVN7yaryFsmcixn/7Bw1+8EhrEj3BZjSodYGI/1KM2IyUHRLvrlj9Jn07BihlEe1QnHPTbBc0vpPsHqS0SxXR+/JOxl+wLC2S+Zfzje0/egMxUt49h1O+N9Mzp8d5mluo0lkHB6AhKxoqSw8lMWYJzWWy/dyJ1TrjMDuh+huoBrB80mi4Pn1sLX5OacWyHEA3WC8FFIXSa7DnOSkCUznWSHHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Blgbjw/fScMSONu3RbsLqGnZdv9lZFVgr+K6JiT5xn8=;
- b=jRTqeuM2Yyb24tq3rkno4nRsWQGxMhI/n6A7TgpBOIDxmQvGpefGC+ONpZPgby4LWnA68vhTczKNHnD/iRE9TfwufODAIb44dbSOzNCq/0ZEyVQK/j+rQtvagC9wWpl8cgbKDkT97yisD5NCJHf4sRyqAGoABaDIpI0WQzvxv69SvIc+chlXXXX/cs8dC9co8HYoNF2CRJx/Cf90rxNQqetJPKdNkjHwoadJcFhy/1POFWlvXZeIVt2K2u148ccjC4DcI1+Aqb2PH+zhPcK7qpayLxSAOgd2wm4pfHCoYMMgnHuxQpHdWBVdz5Lsqk+3h9pUI34GiJ4CiojWf3gsTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by CY8PR11MB7169.namprd11.prod.outlook.com (2603:10b6:930:90::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.24; Tue, 22 Aug
- 2023 01:11:37 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::980d:80cc:c006:e739]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::980d:80cc:c006:e739%4]) with mapi id 15.20.6699.020; Tue, 22 Aug 2023
- 01:11:37 +0000
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Van Bulck, Jo" <jo.vanbulck@cs.kuleuven.be>
-CC:     "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v3 3/9] selftests/sgx: Handle relocations in test enclave
-Thread-Topic: [PATCH v3 3/9] selftests/sgx: Handle relocations in test enclave
-Thread-Index: AQHZ0oHEWtAbX05d2kCxqa9DQf/2d6/1hiyA
-Date:   Tue, 22 Aug 2023 01:11:37 +0000
-Message-ID: <90ad8638bc1c26505e33b3f436fdbc22c8d74ba9.camel@intel.com>
-References: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
-         <20230819094332.8535-4-jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <20230819094332.8535-4-jo.vanbulck@cs.kuleuven.be>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.48.4 (3.48.4-1.fc38) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|CY8PR11MB7169:EE_
-x-ms-office365-filtering-correlation-id: b6bd6a9c-599d-4916-9795-08dba2acbbf6
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: EKRrNKZ+jsi0a5+h8rlLQGVmpWjmkpj+UeuwLp9GPh6TUDdXrNOSMDqfFm9H4KRXykPPxnW3hZFuzqp7LbiYlMRSmJ6wGRrARQClpMjQDaY068asbnkabi9fXdG0q1MeK0EeCVbEGWiDlzHq14HslFkp1UjlDJsATyHNTk9btXfWkV1t0z5Dnj4k6m8IKXT2qKqQyIvpUq6pI5z1T9VIiukfd1KOmH5SJde7/1Y8g3sDXU3b2esJuFzNZLNgiHIP5FCafFbkGHpGapqd5ft14lXd0IR4oS49DG2BmjvFUdo2bEoRwTF12fZflUm++J8dkQG1c0YEDMm0Fzh009F69iKaKJNIezh6imoU0FQ7+XkbycA/icCAcojHLkzYoMJ4ee75K4WJ3M0anh+IQdz8VqGTptCICiXoX13H5MHQQ0XvURxpxgiseEGLzvHV4GtY0JnJjnlFJNkz3bC0PzPhQQ4mEG5JFciNt2WPCJ8FZqIv0iOmue3ynVMtityY6hIvZ3umcDLwov6gdykSkihgUvGoJufSq7GQPSyIZKdTY2PqN8i9ux5lunFBnumBHXQu4dvOfxVYQmhLMyqgWsCmcpMmvhbtI2jIj0TjVK5rO9oPEoTOy9llTSBJdBBwkqkl
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(376002)(136003)(346002)(39860400002)(366004)(186009)(1800799009)(451199024)(66446008)(76116006)(66476007)(66556008)(64756008)(316002)(6512007)(66946007)(82960400001)(110136005)(91956017)(8676002)(8936002)(2616005)(4326008)(36756003)(41300700001)(122000001)(478600001)(71200400001)(38100700002)(38070700005)(6506007)(6486002)(83380400001)(2906002)(86362001)(5660300002)(26005);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TUZHbllIeE11SlNzWWg2V2JCNXIxTDFCNU1wUUxGM2ZRbE9xV2xiV2RmRENr?=
- =?utf-8?B?bWRENEFqa2l2MVJUbTVkVnJlYUN4Y2gxRUUrSWkvdWVRWHZpUmh2MEN2dGdq?=
- =?utf-8?B?YVhHWDFETm1YeFJJSUdTWnFMR1h2UW14QVV1U0FzMjFxSTR5cldETVphZ1Vh?=
- =?utf-8?B?RmVYSUNhaXRuNVg3R3FwZmJ0NnptajVlaTViMXpLeHZaYStqS3RLT0dwY0RO?=
- =?utf-8?B?RkVobTR1ZmFGbXVzKzc3Qm0yTmovTERZY21DVWs3MEFGUDVZZ2hPTnBLQnpB?=
- =?utf-8?B?SjE2alE0azhtcEpjR0NYR3M1NFVwaGJiR2dkeG1CTnZzVzdBRGRSRlRiSitk?=
- =?utf-8?B?SitDcUl1N3RhMmJYSXlDVDVaWXI1Tmp3M2czcFFSQVVOdGlTdFVzanhEYUlC?=
- =?utf-8?B?SXJRT3N1bEtubVpCRXNNcjQ2UGNOOUpNVVY3SFZoTWJhVDcvUXIvSCtVcUlm?=
- =?utf-8?B?WDRvNGlIeWhnaWxjcVFMY01vNjJkb0h0RmlMU3dGekdrU0Uzdi9zQWNZbkJm?=
- =?utf-8?B?VE5sWkphaGZudHpjZS8yU2NsNHo0VHFURTA4YVlIQVJIYkJNRWRwT1lyTE9p?=
- =?utf-8?B?TFpRVHZQeFlReWV2TmtDMEptcERVV1JMelFSSFo5TG1CanhNN3lDMGJGQWZ3?=
- =?utf-8?B?bVFXenRwZDgzdllpUFZ1RlBPOC9uVDlyVmtzUzZJWGdQWlZlYVdjNUhtdDUv?=
- =?utf-8?B?c0lmcHI0R1VVMHVqWlFOODgycmQ4ak9Rc0VwNlEzNjREMXdwQUJJS29VS2tH?=
- =?utf-8?B?QjdwTUI3VTY0ODBsY1djb0pPTGY3MytDanN4T0FCNzRDMEpuYjlHZ3M4bW5X?=
- =?utf-8?B?MXAzc2laSjRoT09obFlUVnhKd3krcnlwWlVGMSs0eGxyNXo4Q0dkRmc3UVR4?=
- =?utf-8?B?RjBSWlc3cmxGbXJlZzcwRHZ1Ty92UTh1cFRtTUhRVFVDeDVOOTAyS0lFNi80?=
- =?utf-8?B?NEJ0am13OHJDbmo3T29qOXZBOFV2ekxQZk8zVDJoTkVUQ2ZzNytpbFk4RGw1?=
- =?utf-8?B?SFR6NSs3MzBRZVkzWVdhWnRJU3hna2FRUHYvRlM0ZjhnektzREpxQ3ZGVTdS?=
- =?utf-8?B?YW1wZ2wvUjRiNm9NMWxyTGtnSlJjZUFvNWtROGcvL0NNSnNqZVgzVUJ4Q0pP?=
- =?utf-8?B?VE53bEpvalluK1g4blA2L0FXTjNpUWR3Z1Nad1gxMnBGbThwbHF5YWt1aExL?=
- =?utf-8?B?a2gwb28vdFJpNkxMeCt2TXQ4Q25hOVhwcmlqYzBLWVcrRnl4dzh5dmVFNWEz?=
- =?utf-8?B?RXdPWEJNVlhDTXRCRllIdVNpR2Zqb1hGM0NOMSt5VTRmMEhoanQyNDZ0Vmoy?=
- =?utf-8?B?NVkzTlV2aUpRZW5VRk42a01PRkxNbzRlMVFIYkpucHdMRWVmZ1R0VDdXQU5l?=
- =?utf-8?B?TGRUQkFrVEhHY040T0h6eGV4VWNPUVZjTUR3K3B6ZjhvT1dLbWphbmpJUDZ1?=
- =?utf-8?B?UXhxZTdCQ3V2NTdDa3U3eEFCRnNReWc4aCswMnZ5RlZJd2xWbUFZcUtmUEl4?=
- =?utf-8?B?d0tJVThoSFpsWFM4UEpBb25LYmx3RWVxOXc2RVZUTSs1VE0vRHF0WU5McDJF?=
- =?utf-8?B?Ly9aZ0Yyc3orSWcxYmx1NnVSMDA2RUtJVHY1MFNmS2JwUTJxMlgwQVRhOUkx?=
- =?utf-8?B?aXNnZFdjTVgzOVYvVFVDNVh4RWgrakJpWTZxYUhUWHM5WjQ1RWlzbmhLcFJu?=
- =?utf-8?B?Vkdoa3BlZVN4YzhxYkpib1kwbURzWC9iZ293NzEzWmNyTUluRDhmNUF5bXlK?=
- =?utf-8?B?NU1uWEw3MTI5bjZCbENvVEdCdlVQUUlaZVRGUURuNXcxY3NjVWpSUmRtdUxV?=
- =?utf-8?B?UllyQ1dtRGpQY0pOd2c3NnBiVWVrZFB3dkFTNmtLVzFweUMxOVd5QnNKUVhX?=
- =?utf-8?B?ZkEzTGk0TEdweC9XSWN0RWprbG9IYjhIdUJrNWhGVy9TOGR1WjZFNUh4MHJE?=
- =?utf-8?B?MUFmcGRPSU9mdzZicC9hemVQcEtzaytDVlJPa1lJZUFTSW5LT0o2WlZZMS9v?=
- =?utf-8?B?N04vZ1E1MW5WNGxPcmswQ0l5NDUwNzBHalNEMWh6MXh2dVo3SFlWRTNuLzZR?=
- =?utf-8?B?RjdrWEtqS0pjOWEyTHdsTzM1ZEVRQmRhK251OUxqRWVqTEhITUxQU3Y2YitN?=
- =?utf-8?Q?yVCFvr/ViH7bkryyoP6+lC918?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9EA2B4E609FF4A4181763419C4FA7CFF@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6bd6a9c-599d-4916-9795-08dba2acbbf6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2023 01:11:37.4037
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JhNMjr55EFfkHGO2vWMKglMDpCTQ7UwM7ij5YFQd7DxDSIoY1K4DfQPz7GxV2zjmEXP+DRfT1qFlluKlsJnOSw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7169
-X-OriginatorOrg: intel.com
+        with ESMTP id S231998AbjHVKHx (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 06:07:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41C8B18B;
+        Tue, 22 Aug 2023 03:07:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AC4D961EA9;
+        Tue, 22 Aug 2023 10:07:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C88F1C433C8;
+        Tue, 22 Aug 2023 10:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692698869;
+        bh=0ZPGrRZRUWkkEZpVYAJWUY54RNL1FGjWiIVHPrXvI4A=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=WBifWWNdkmudUA6iIY+XTIJQtdWpoFy3ImtFfpxmIPUxQTqMKyDIz5Y53G7tySIeO
+         PbYPotTHNqEL518JaM1DldT9BzdKdPnDS/CH96eu9UMg5gigvY268Mca1pS2EFEirs
+         DWO15If0s1fSTWK9T7VB/5yJM8EBwLAR/zQ/VbOuFMyTE7WM+dqRDrvPGybMZipnxk
+         EuI7Jqg74Q5jKX5JIhqcpFP7MXUCj29BDipu6mNzGPziUEBQwCKyre3YEoqLnkJiWu
+         hUM1uK0Nil9xf2rLEVrODc0R49eMq+mP/kWG9MN5busFzQuQ+WNWe/Ze5TBOyQc4/8
+         tR5eMIgw0p0gw==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 22 Aug 2023 13:07:46 +0300
+Message-Id: <CUYZO49LFVMX.1INU1A3LPM2MP@suppilovahvero>
+Cc:     <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 3/8] selftests/sgx: Handle relocations in test enclave
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>, <kai.huang@intel.com>,
+        <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.14.0
+References: <20230808193145.8860-1-jo.vanbulck@cs.kuleuven.be>
+ <20230808193145.8860-4-jo.vanbulck@cs.kuleuven.be>
+ <CUP5FP8OHD3I.2MUE3TTRVNRTQ@suppilovahvero>
+ <d6db0aed-8e08-d850-b952-d8b102624669@cs.kuleuven.be>
+In-Reply-To: <d6db0aed-8e08-d850-b952-d8b102624669@cs.kuleuven.be>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-T24gU2F0LCAyMDIzLTA4LTE5IGF0IDExOjQzICswMjAwLCBKbyBWYW4gQnVsY2sgd3JvdGU6DQo+
-IFN0YXRpYy1waWUgYmluYXJpZXMgbm9ybWFsbHkgaW5jbHVkZSBhIHN0YXJ0dXAgcm91dGluZSB0
-byBwZXJmb3JtIGFueSBFTEYNCj4gcmVsb2NhdGlvbnMgZnJvbSAucmVsYS5keW4uIFNpbmNlIHRo
-ZSBlbmNsYXZlIGxvYWRpbmcgcHJvY2VzcyBpcyBkaWZmZXJlbnQNCj4gYW5kIGdsaWJjIGlzIG5v
-dCBpbmNsdWRlZCwgZG8gdGhlIG5lY2Vzc2FyeSByZWxvY2F0aW9uIGZvciBlbmNsX29wX2FycmF5
-DQo+IGVudHJpZXMgbWFudWFsbHkgYXQgcnVudGltZSByZWxhdGl2ZSB0byB0aGUgZW5jbGF2ZSBi
-YXNlIHRvIGVuc3VyZSBjb3JyZWN0DQo+IGZ1bmN0aW9uIHBvaW50ZXJzLg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogSm8gVmFuIEJ1bGNrIDxqby52YW5idWxja0Bjcy5rdWxldXZlbi5iZT4NCj4gLS0t
-DQo+ICB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9zZ3gvdGVzdF9lbmNsLmMgICB8IDQ5ICsrKysr
-KysrKysrKysrKystLS0tLS0tDQo+ICB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9zZ3gvdGVzdF9l
-bmNsLmxkcyB8ICAyICsNCj4gIDIgZmlsZXMgY2hhbmdlZCwgMzYgaW5zZXJ0aW9ucygrKSwgMTUg
-ZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMv
-c2d4L3Rlc3RfZW5jbC5jIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvc2d4L3Rlc3RfZW5jbC5j
-DQo+IGluZGV4IGMwZDYzOTcyOS4uNzYzM2ZiN2NiIDEwMDY0NA0KPiAtLS0gYS90b29scy90ZXN0
-aW5nL3NlbGZ0ZXN0cy9zZ3gvdGVzdF9lbmNsLmMNCj4gKysrIGIvdG9vbHMvdGVzdGluZy9zZWxm
-dGVzdHMvc2d4L3Rlc3RfZW5jbC5jDQo+IEBAIC0xMTksMjEgKzExOSw0MCBAQCBzdGF0aWMgdm9p
-ZCBkb19lbmNsX29wX25vcCh2b2lkICpfb3ApDQo+ICANCj4gIH0NCj4gIA0KPiArLyoNCj4gKyAq
-IFN5bWJvbCBwbGFjZWQgYXQgdGhlIHN0YXJ0IG9mIHRoZSBlbmNsYXZlIGltYWdlIGJ5IHRoZSBs
-aW5rZXIgc2NyaXB0Lg0KPiArICogRGVjbGFyZSB0aGlzIGV4dGVybiBzeW1ib2wgd2l0aCB2aXNp
-YmlsaXR5ICJoaWRkZW4iIHRvIGVuc3VyZSB0aGUNCj4gKyAqIGNvbXBpbGVyIGRvZXMgbm90IGFj
-Y2VzcyBpdCB0aHJvdWdoIHRoZSBHT1QuDQo+ICsgKi8NCj4gK2V4dGVybiBjb25zdCB1aW50OF90
-IF9fYXR0cmlidXRlX18oKHZpc2liaWxpdHkoImhpZGRlbiIpKSkgX19lbmNsX2Jhc2U7DQo+ICtz
-dGF0aWMgY29uc3QgdWludDY0X3QgZW5jbF9iYXNlID0gKHVpbnQ2NF90KSZfX2VuY2xfYmFzZTsN
-Cg0KSSBoYWQgaGFyZCB0aW1lIHRvIHVuZGVyc3RhbmQgdGhpcy4gIFRoZSBfX2VuY2xfYmFzZSBp
-cyBhIHN5bWJvbCB3aGljaCBpcyBhDQpmaXhlZCB2YWx1ZSBzZXQgYnkgdGhlIGNvbXBpbGVyL2xp
-bmtlci4gIGVuY2xfYmFzZSBoYXMgdGhlIHJlYWwgc3RvcmFnZSBpbiB0aGUNCi5kYXRhIHNlY3Rp
-b24sIGJ1dCB0aGUgdmFsdWUgaXMgYWxzbyBidWlsZC10aW1lIGZpeGVkLiAgSUlVQyB3ZSBuZWVk
-IHNvbWUgY29kZQ0KdG8gZXhwbGljaXRseSBvdmVycmlkZSBpdCwgYnV0IEkgZG9uJ3Qgc2VlIHdo
-ZXJlIGl0J3MgZG9uZS4gIFBlcmhhcHMgSSBtaXNzZWQNCnNvbWV0aGluZz8NCg0KPiArDQo+ICt0
-eXBlZGVmIHZvaWQgKCplbmNsX29wX3QpKHZvaWQgKik7DQo+ICtjb25zdCBlbmNsX29wX3QgZW5j
-bF9vcF9hcnJheVtFTkNMX09QX01BWF0gPSB7DQo+ICsJZG9fZW5jbF9vcF9wdXRfdG9fYnVmLA0K
-PiArCWRvX2VuY2xfb3BfZ2V0X2Zyb21fYnVmLA0KPiArCWRvX2VuY2xfb3BfcHV0X3RvX2FkZHIs
-DQo+ICsJZG9fZW5jbF9vcF9nZXRfZnJvbV9hZGRyLA0KPiArCWRvX2VuY2xfb3Bfbm9wLA0KPiAr
-CWRvX2VuY2xfZWFjY2VwdCwNCj4gKwlkb19lbmNsX2Vtb2RwZSwNCj4gKwlkb19lbmNsX2luaXRf
-dGNzX3BhZ2UsDQo+ICt9Ow0KDQpBbnkgcmVhc29uIGl0IGNhbm5vdCBiZSAnc3RhdGljJz8NCg0K
-PiArDQo+ICB2b2lkIGVuY2xfYm9keSh2b2lkICpyZGksICB2b2lkICpyc2kpDQo+ICB7DQo+IC0J
-Y29uc3Qgdm9pZCAoKmVuY2xfb3BfYXJyYXlbRU5DTF9PUF9NQVhdKSh2b2lkICopID0gew0KPiAt
-CQlkb19lbmNsX29wX3B1dF90b19idWYsDQo+IC0JCWRvX2VuY2xfb3BfZ2V0X2Zyb21fYnVmLA0K
-PiAtCQlkb19lbmNsX29wX3B1dF90b19hZGRyLA0KPiAtCQlkb19lbmNsX29wX2dldF9mcm9tX2Fk
-ZHIsDQo+IC0JCWRvX2VuY2xfb3Bfbm9wLA0KPiAtCQlkb19lbmNsX2VhY2NlcHQsDQo+IC0JCWRv
-X2VuY2xfZW1vZHBlLA0KPiAtCQlkb19lbmNsX2luaXRfdGNzX3BhZ2UsDQo+IC0JfTsNCj4gLQ0K
-PiAtCXN0cnVjdCBlbmNsX29wX2hlYWRlciAqb3AgPSAoc3RydWN0IGVuY2xfb3BfaGVhZGVyICop
-cmRpOw0KPiAtDQo+IC0JaWYgKG9wLT50eXBlIDwgRU5DTF9PUF9NQVgpDQo+IC0JCSgqZW5jbF9v
-cF9hcnJheVtvcC0+dHlwZV0pKG9wKTsNCj4gKwlzdHJ1Y3QgZW5jbF9vcF9oZWFkZXIgKmhlYWRl
-ciA9IChzdHJ1Y3QgZW5jbF9vcF9oZWFkZXIgKilyZGk7DQo+ICsJZW5jbF9vcF90IG9wOw0KPiAr
-DQo+ICsJaWYgKGhlYWRlci0+dHlwZSA+PSBFTkNMX09QX01BWCkNCj4gKwkJcmV0dXJuOw0KPiAr
-DQo+ICsJLyoNCj4gKwkgKiAiZW5jbF9iYXNlIiBuZWVkcyB0byBiZSBhZGRlZCwgYXMgdGhpcyBj
-YWxsIHNpdGUgKmNhbm5vdCBiZSoNCj4gKwkgKiBtYWRlIHJpcC1yZWxhdGl2ZSBieSB0aGUgY29t
-cGlsZXIsIG9yIGZpeGVkIHVwIGJ5IGFueSBvdGhlcg0KPiArCSAqIHBvc3NpYmxlIG1lYW5zLg0K
-PiArCSAqLw0KPiArCW9wID0gZW5jbF9iYXNlICsgZW5jbF9vcF9hcnJheVtoZWFkZXItPnR5cGVd
-Ow0KPiArDQo+ICsJKCpvcCkoaGVhZGVyKTsNCj4gIH0NCj4gZGlmZiAtLWdpdCBhL3Rvb2xzL3Rl
-c3Rpbmcvc2VsZnRlc3RzL3NneC90ZXN0X2VuY2wubGRzIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVz
-dHMvc2d4L3Rlc3RfZW5jbC5sZHMNCj4gaW5kZXggNjJkMzcxNjBmLi5iODZjODYwNjAgMTAwNjQ0
-DQo+IC0tLSBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL3NneC90ZXN0X2VuY2wubGRzDQo+ICsr
-KyBiL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL3NneC90ZXN0X2VuY2wubGRzDQo+IEBAIC0zMiw2
-ICszMiw4IEBAIFNFQ1RJT05TDQo+ICAJCSooLm5vdGUqKQ0KPiAgCQkqKC5kZWJ1ZyopDQo+ICAJ
-CSooLmVoX2ZyYW1lKikNCj4gKwkJKiguZHluKikNCj4gKwkJKiguZ251Lmhhc2gpDQoNClRoaXMg
-bG9va3MgY2FuIGJlIGluIGEgc2VwYXJhdGUgcGF0Y2gsIGJlY2F1c2UgaXQncyBub3QgZGlyZWN0
-bHkgcmVsYXRlZCB0byB3aGF0DQp5b3UgYXJlIHRyeWluZyB0byBmaXguIMKgDQoNCkJ1dCBJIGRv
-bid0IHdhbnQgdG8gbWFrZSB0aGluZ3MgdW5uZWNlc3NhcmlseSBjb21wbGljYXRlZCBmb3Igc2Vs
-ZnRlc3RzLCBzbyBmaW5lDQp0byBtZSBpZiB5b3Ugc3RpbGwgd2FudCB0byBrZWVwIGl0LiAgQnV0
-IGlmIHlvdSBkbywgcGVyaGFwcyB5b3UgY2FuIGFkZCBzb21lDQpqdXN0aWZpY2F0aW9uIHRvIHRo
-ZSBjaGFuZ2Vsb2cgc2F5aW5nIHNvbWV0aGluZyBsaWtlOiBvcHBvcnR1bmlzdGljYWxseSBkaXNj
-YXJkDQoiLmR5bioiIGFuZCAiLmdudS5oYXNoIiB3aGljaCB0aGUgZW5jbGF2ZSBsb2FkZXIgY2Fu
-bm90IGhhbmRsZS4gIEFueXdheSwgc3RpbGwNCmJldHRlciB0byBtYWtlIGEgc2VwYXJhdGUgcGF0
-Y2ggZm9yIHN1Y2ggcHVycG9zZSBJTUhPLg0K
+On Sat Aug 19, 2023 at 3:32 AM EEST, Jo Van Bulck wrote:
+> On 10.08.23 13:32, Jarkko Sakkinen wrote:
+> > What happens if I only apply 1/8 and 2/8 from this patch set?
+>
+> This would work fine for gcc -O0/1/2/3, as encl_op_array happens to be=20
+> locally initialized:
+>
+> 00000000000023f4 <encl_body>:
+>       /* snipped */
+>       2408:       48 8d 05 ec fe ff ff    lea    -0x114(%rip),%rax
+> # 22fb <do_encl_op_put_to_buf>
+>       240f:       48 89 45 b0             mov    %rax,-0x50(%rbp)
+>       2413:       48 8d 05 18 ff ff ff    lea    -0xe8(%rip),%rax
+> # 2332 <do_encl_op_get_from_buf>
+>       241a:       48 89 45 b8             mov    %rax,-0x48(%rbp)
+>       241e:       48 8d 05 44 ff ff ff    lea    -0xbc(%rip),%rax
+> # 2369 <do_encl_op_put_to_addr>
+>       /* snipped */
+>
+> However, when compiling with -Os, the initialization proceeds through a=
+=20
+> prepared copy from .data with hard-coded (ie non RIP-relative) function=
+=20
+> addresses:
+>
+>  > 00000000000021b5 <encl_body>:
+>  >      /* snipped */
+>  >      21bc:       48 8d 35 3d 2e 00 00    lea    0x2e3d(%rip),%rsi
+>  > # 5000 <encl_buffer+0x2000>
+>  >      21c3:       48 8d 7c 24 b8          lea    -0x48(%rsp),%rdi
+>  >      21c8:       b9 10 00 00 00          mov    $0x10,%ecx
+>  >      21cd:       f3 a5                   rep movsl %ds:(%rsi),%es:(%rd=
+i)
+>  >      /* snipped */
+
+Thank you for the explanation.
+
+> > I'm just wondering why there is no mention of "-static-pie" here.
+>
+> This patch 3/8 is expected to be applied on top of 2/8 which adds=20
+> "-static-pie". While "-static-pie" is necessary to generate proper,=20
+> position-independent code when referencing global variables, there may=20
+> still be relocations left. These are normally handled by glibc on=20
+> startup, but we don't have that in the test enclave, so this commit=20
+> explicitly handles the (only) relocations for encl_op_array.
+>
+> When only applying 2/8, gcc generates correct code with -O0/1/2/3, as=20
+> the local encl_op_array initialization happens to be initialized in=20
+> encl_body:
+>
+> >> +extern uint8_t __attribute__((visibility("hidden"))) __enclave_base;
+> >=20
+> > I'd rename this as __encl_base to be consistent with other naming here.
+> >=20
+> > You could also declare for convenience and clarity:
+> >=20
+> > 	static const uint64_t encl_base =3D (uint64_t)&__encl_base;
+> >=20
+>
+> Thanks, makes sense!
+
+Great!
+
+> >> +
+> >> +void (*encl_op_array[ENCL_OP_MAX])(void *) =3D {
+> >> +	do_encl_op_put_to_buf,
+> >> +	do_encl_op_get_from_buf,
+> >> +	do_encl_op_put_to_addr,
+> >> +	do_encl_op_get_from_addr,
+> >> +	do_encl_op_nop,
+> >> +	do_encl_eaccept,
+> >> +	do_encl_emodpe,
+> >> +	do_encl_init_tcs_page,
+> >> +};
+> >> +
+> >=20
+> > Why you need to drop "const"? The array is not dynamically updated, i.e=
+.
+> > there's no reason to move it away from rodata section. If this was
+> > kernel code, such modification would be considered as a regression.
+>
+> I dropped "const" to work around a clang warning:
+>
+> test_encl.c:130:2: warning: incompatible pointer types initializing=20
+> 'const void (*)(void *)' with an expression of type 'void (void *)'=20
+> [-Wincompatible-pointer-types]
+>
+> But I agree dropping const is inferior and it's better to fix the=20
+> incompatible pointer types as per below.
+>
+> > I would also consider cleaning this up a bit further, while you are
+> > refactoring anyway, and declare a typedef:
+> >=20
+> > 	typedef void (*encl_op_t)(void *);
+> >=20
+> > 	const encl_op_t encl_op_array[ENCL_OP_MAX] =3D {
+>
+> Thanks this is indeed cleaner. This also fixes the above clang warning.
+>
+> >=20
+> >>   void encl_body(void *rdi,  void *rsi)
+> >>   {
+> >> -	const void (*encl_op_array[ENCL_OP_MAX])(void *) =3D {
+> >> -		do_encl_op_put_to_buf,
+> >> -		do_encl_op_get_from_buf,
+> >> -		do_encl_op_put_to_addr,
+> >> -		do_encl_op_get_from_addr,
+> >> -		do_encl_op_nop,
+> >> -		do_encl_eaccept,
+> >> -		do_encl_emodpe,
+> >> -		do_encl_init_tcs_page,
+> >> -	};
+> >> -
+> >>   	struct encl_op_header *op =3D (struct encl_op_header *)rdi;
+> >>  =20
+> >> +	/*
+> >> +	 * Manually rebase the loaded function pointer as enclaves cannot
+> >> +	 * rely on startup routines to perform static pie relocations.
+> >> +	 */
+> >=20
+> > This comment is not very useful. I'd consider dropping it.
+>
+> Dropped.
+>
+> >=20
+> >>   	if (op->type < ENCL_OP_MAX)
+> >> -		(*encl_op_array[op->type])(op);
+> >> +		(*(((uint64_t) &__enclave_base) + encl_op_array[op->type]))(op);
+> >                                ~
+> > 			      should not have white space here (coding style)
+>
+> Thanks for pointing this out.
+>
+> > This would be cleaner IMHO:
+> >=20
+> > void encl_body(void *rdi,  void *rsi)
+> > {
+> > 	struct encl_op_header *header =3D (struct encl_op_header *)rdi;
+> > 	encl_op_t op;
+> > =09
+> > 	if (header->type >=3D ENCL_OP_MAX)
+> > 		return;
+> >=20
+> > 	/*
+> > 	 * "encl_base" needs to be added, as this call site *cannot be*
+> > 	 * made rip-relative by the compiler, or fixed up by any other
+> > 	 * possible means.
+> > 	 */
+> > 	op =3D encl_base + encl_op_array[header->type];
+> >=20
+> > 	(*op)(header);
+> > }
+>
+> Thanks, this is indeed much cleaner! Including this in the next revision.
+>
+> >> +		/* Dynamic symbol table not supported in enclaves */
+> >=20
+> > I'd drop this comment.
+>
+> Dropped.
+
+Awesome!
+
+BR, Jarkko
