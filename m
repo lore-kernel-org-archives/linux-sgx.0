@@ -2,109 +2,101 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C059EE49A5
-	for <linux-sgx@archiver.kernel.org>; Tue, 22 Aug 2023 23:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E037EE4993
+	for <linux-sgx@archiver.kernel.org>; Wed, 23 Aug 2023 12:59:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231652AbjHVXQJ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 22 Aug 2023 19:16:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59598 "EHLO
+        id S233215AbjHWM7E (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 23 Aug 2023 08:59:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230519AbjHVXQJ (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 22 Aug 2023 19:16:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0904CE9;
-        Tue, 22 Aug 2023 16:16:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        with ESMTP id S232492AbjHWM7E (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 23 Aug 2023 08:59:04 -0400
+Received: from icts-p-cavspool-1.kulnet.kuleuven.be (icts-p-cavspool-1.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41EE01705;
+        Wed, 23 Aug 2023 05:58:12 -0700 (PDT)
+Received: from icts-p-cavuit-4.kulnet.kuleuven.be (icts-p-cavuit-4.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:134])
+        by icts-p-cavspool-1.kulnet.kuleuven.be (Postfix) with ESMTP id 69E0C2952;
+        Wed, 23 Aug 2023 14:58:07 +0200 (CEST)
+X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
+X-KULeuven-Scanned: Found to be clean
+X-KULeuven-ID: 1E13151.AF512
+X-KULeuven-Information: Katholieke Universiteit Leuven
+Received: from icts-p-ceifnet-smtps-1.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:132:242:ac11:16])
+        by icts-p-cavuit-4.kulnet.kuleuven.be (Postfix) with ESMTP id 1E13151;
+        Wed, 23 Aug 2023 14:57:46 +0200 (CEST)
+BCmilterd-Mark-Subject: no
+BCmilterd-Errors: 
+BCmilterd-Report: SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_VALID_AU#0.00
+X-CAV-Cluster: smtps
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
+        s=cav; t=1692795466;
+        bh=XLJ9oEsCm2dJliTwA4R+B1kkN/Uf4BYwyIvpoBcqa6M=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=g9mTYT4UR2iae7hS7IBjMyDVHORonS5LI6IQFx2ZIGq+60PKq5dRnljL7U3UAfKb9
+         g8dEEn2BpCFGqhAqRKBkNhI9C3tL+km6lmynYeAkR1I5MH3ThdP4zWIr76IXDkpdBx
+         xdr1UTr59+qOj9A8iut3jH0tWvwLDzqMn25AXgiE=
+Received: from [IPV6:2a02:1811:d31:8b00:6a8c:3ab2:9886:5378] (ptr-82s0fs797m4gxnd4pko.18120a2.ip6.access.telenet.be [IPv6:2a02:1811:d31:8b00:6a8c:3ab2:9886:5378])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 55F5861530;
-        Tue, 22 Aug 2023 23:16:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 020D2C433C8;
-        Tue, 22 Aug 2023 23:16:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692746166;
-        bh=jvom6YRY9DFH5+a0nubub9bkoGzaeU6lyAMRBFbF8eU=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=B6KzT4i0p19Ms4aXFI1rXalaTg+n7KRzghhFzyPugaK7L59ByhEdMZXTmP426BVNU
-         oqPzuv4v5BpMsccm/OlzRj5fatrKlFoi7Qezuwq9d8coYjZ7owstgW6Sg1CgvePLHA
-         8Qz6/tWimb/vgDSUXSyY9fcOwWKzTyDziQg+l2TETXMMfmlqwWOU37ufCu1pJKE/2N
-         eIlr9iTQ4WHNFTFJNThxQYNYS9aU3Rzx45jFZsdV/FeVWa7yNgqMQRuTqGh8P1lyvT
-         MGn2T/V/9ylyBSG44igWuvzNdntUNdZspLG48dhsrkzAMjR4AAw4BYilQvBgkh6nOV
-         1U6Cp4dpAGung==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Wed, 23 Aug 2023 02:16:02 +0300
-Message-Id: <CUZGFNUNLO3W.1669MKELG1XIL@suppilovahvero>
-Cc:     <linux-sgx@vger.kernel.org>, <stable@vger.kernel.org>,
-        "Todd Brandt" <todd.e.brandt@intel.com>,
-        "Peter Huewe" <peterhuewe@gmx.de>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>,
-        "Mario Limonciello" <mario.limonciello@amd.com>,
-        <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tpm: Enable hwrng only for Pluton on AMD CPUs
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Jerry Snitselaar" <jsnitsel@redhat.com>
-X-Mailer: aerc 0.14.0
-References: <20230822203912.2256229-1-jarkko@kernel.org>
- <ubwdpgalqja6c3ggp4rjapqhts7m3pxgrdvm7ytwxitaasbjhd@32tbbipd2vfn>
-In-Reply-To: <ubwdpgalqja6c3ggp4rjapqhts7m3pxgrdvm7ytwxitaasbjhd@32tbbipd2vfn>
+        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id D6034D4EBA1A7;
+        Wed, 23 Aug 2023 14:57:45 +0200 (CEST)
+Message-ID: <819a5450-127b-ecd2-ac01-c58e848fba1d@cs.kuleuven.be>
+Date:   Wed, 23 Aug 2023 14:57:48 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v3 9/9] selftests/sgx: Specify freestanding environment
+ for enclave compilation
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>, kai.huang@intel.com,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     dave.hansen@linux.intel.com
+References: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
+ <20230819094332.8535-10-jo.vanbulck@cs.kuleuven.be>
+ <CUYZSZWSDUHC.2QB1Z9GD76HF6@suppilovahvero>
+X-Kuleuven: This mail passed the K.U.Leuven mailcluster
+From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+In-Reply-To: <CUYZSZWSDUHC.2QB1Z9GD76HF6@suppilovahvero>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed Aug 23, 2023 at 12:28 AM EEST, Jerry Snitselaar wrote:
-> On Tue, Aug 22, 2023 at 11:39:12PM +0300, Jarkko Sakkinen wrote:
-> > The vendor check introduced by commit 554b841d4703 ("tpm: Disable RNG f=
-or
-> > all AMD fTPMs") doesn't work properly on a number of Intel fTPMs.  On t=
-he
-> > reported systems the TPM doesn't reply at bootup and returns back the
-> > command code. This makes the TPM fail probe.
-> >=20
-> > Since only Microsoft Pluton is the only known combination of AMD CPU an=
-d
-> > fTPM from other vendor, disable hwrng otherwise. In order to make sysad=
-min
-> > aware of this, print also info message to the klog.
-> >=20
-> > Cc: stable@vger.kernel.org
-> > Fixes: 554b841d4703 ("tpm: Disable RNG for all AMD fTPMs")
-> > Reported-by: Todd Brandt <todd.e.brandt@intel.com>
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D217804
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> > v2:
-> > * CONFIG_X86
->
-> Did you mean to wrap the crb_acpi_add chunk with CONFIG_X86?
+On 22.08.23 12:14, Jarkko Sakkinen wrote:
+> Do you still need nostdfiles and nostartfiles with freestanding?
 
-Yup :-/
+Thanks, good question. I tested that compiling with only -ffreestanding 
+yields:
 
-$ git diff
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 28448bfd4062..ea085b14ab7c 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -805,12 +805,14 @@ static int crb_acpi_add(struct acpi_device *device)
-        if (rc)
-                goto out;
+/* snipped */
+/usr/local/bin/ld: 
+/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/rcrt1.o: in 
+function `_start':
+(.text+0x24): undefined reference to `main'
+/* snipped */
 
-+#ifdef CONFIG_X86
-        /* A quirk for https://www.amd.com/en/support/kb/faq/pa-410 */
-        if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_AMD &&
-            priv->sm !=3D ACPI_TPM2_COMMAND_BUFFER_WITH_PLUTON) {
-                dev_info(dev, "Disabling hwrng\n");
-                chip->flags |=3D TPM_CHIP_FLAG_HWRNG_DISABLED;
-        }
-+#endif /* CONFIG_X86 */
+So we definitely still need -nostartfiles to prevent the compiler/linker 
+from introducing the standard system startup functions. However, in my 
+understanding, -nostdlib (which is what I assume you mean with 
+nostdfiles) already implies the individual options -nodefaultlibs and 
+-nostartfiles.
 
-        rc =3D tpm_chip_register(chip);
+Thus, we definitely still need -nostartfiles and I'm not 100% sure we 
+don't need -nostdlib (though it compiles fine for me with only 
+-nostartfiles). Gcc only specifies:
 
-[also linux-sgx leaked by mistake to my git-send-email command line]
+-ffreestanding
+Assert that compilation targets a freestanding environment.  This 
+implies -fno-builtin. A freestanding environment is one in which the 
+standard library may not exist, and program startup may not necessarily 
+be at "main".
 
-I sent a new one:
-https://lkml.org/lkml/2023/8/22/1288
+Bottom line: I suggest to keep -nostdlib to be sure and remove 
+-nostartfiles (as it is redundant). I'll include this in the next  patch 
+iteration.
 
-BR, Jarkko
+Best,
+Jo
+
