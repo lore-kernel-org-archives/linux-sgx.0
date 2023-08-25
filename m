@@ -2,98 +2,68 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 991E4C27C40
-	for <linux-sgx@archiver.kernel.org>; Wed, 23 Aug 2023 17:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C59EE49A3
+	for <linux-sgx@archiver.kernel.org>; Fri, 25 Aug 2023 13:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237230AbjHWRbl (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 23 Aug 2023 13:31:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55012 "EHLO
+        id S232774AbjHYN01 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 25 Aug 2023 09:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237819AbjHWRbk (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 23 Aug 2023 13:31:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3C1D10CE;
-        Wed, 23 Aug 2023 10:31:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        with ESMTP id S245150AbjHYN0D (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 25 Aug 2023 09:26:03 -0400
+X-Greylist: delayed 557 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 25 Aug 2023 06:25:52 PDT
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AF779212E
+        for <linux-sgx@vger.kernel.org>; Fri, 25 Aug 2023 06:25:52 -0700 (PDT)
+Received: from 8bytes.org (pd9fe95be.dip0.t-ipconnect.de [217.254.149.190])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8C053641C9;
-        Wed, 23 Aug 2023 17:31:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED32C433C7;
-        Wed, 23 Aug 2023 17:31:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692811895;
-        bh=vy1HguPEhdDUNYEeFhIUoKkEhkwru59pROu+eclhmqU=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=PRVUUlAk3Qzo8MLIccC6M3oygpY6WpCwC0TgZeTH/Zkmf+bBT0vZL54eaYYNuKrU5
-         zSA8hnbkIsAc70J6dEGqUHiKfbWJWpUbNN/iFI2k+P0rQ3ugYexePJykkDCxW3Tx+v
-         jh+kvywvVnF+MKQV0GTbb+D0qtp45refjMft+WOheg0ZhqidPWCt9WFac39KE2ILnX
-         1AdpGEMMuLmFcKHWMog+s4a9+/FV4LoekZOsEqdNo4PqumyYGkVIyQRWopQ3CS7zVN
-         qt2OggpSL8vyGObtckB9qM5xNREFa1LjvTBhOtB/rQq860FZwulOBD69l2seQkWnGe
-         z2NuLlVjK2KsA==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Wed, 23 Aug 2023 20:31:32 +0300
-Message-Id: <CV03QFOJR0PY.8QYY51SMOAO2@suppilovahvero>
-Cc:     <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v3 9/9] selftests/sgx: Specify freestanding environment
- for enclave compilation
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>, <kai.huang@intel.com>,
-        <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.14.0
-References: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
- <20230819094332.8535-10-jo.vanbulck@cs.kuleuven.be>
- <CUYZSZWSDUHC.2QB1Z9GD76HF6@suppilovahvero>
- <819a5450-127b-ecd2-ac01-c58e848fba1d@cs.kuleuven.be>
-In-Reply-To: <819a5450-127b-ecd2-ac01-c58e848fba1d@cs.kuleuven.be>
+        by mail.8bytes.org (Postfix) with ESMTPSA id 6AD2C2659D3;
+        Fri, 25 Aug 2023 15:16:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1692969392;
+        bh=nIJIcDHCndV6RMR52sBlpXdKyenjgdoQvcGfHbdVufI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jcGWQkTdA+AdnfpIQpjrlpuJb28zPJrt4Avl8XWWYPUEmo5VFOYLYvEM7KkYhdSp5
+         VsErLvWdj+4wEeH1fcbJQS6VPwYscLzFjSotj9uEYoCBI6qbKkHwYpjZ5EO4q7nLHv
+         ldOJJoL/scasqRq5XfT2bAO46758V/GZi1dH0vdXZQIw4IV88v2bUT1DKeusWrWX8x
+         PbB2dZrWjtkn7p7gPJaOcL4nimTy4HVHqicnFbvEJhgfX3lrTJKVLI9u4Q9Nb93YN9
+         TJuyk1ouwIo3KDz+jbeUzXgIQWGK/AqX0YUASA0G8Uur2m8FDgvAQj06W1qTQzPASd
+         5FXCZZQQHzAcw==
+Date:   Fri, 25 Aug 2023 15:16:31 +0200
+From:   =?iso-8859-1?Q?J=F6rg_R=F6del?= <joro@8bytes.org>
+To:     linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        linux-sgx@vger.kernel.org
+Cc:     Dhaval Giani <dhaval.giani@gmail.com>
+Subject: Re: [CfP] Confidential Computing Microconference @ LPC 2023
+Message-ID: <ZOiprzq_cPmcnyX_@8bytes.org>
+References: <ZLAdPyqn8glGgYjT@8bytes.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZLAdPyqn8glGgYjT@8bytes.org>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed Aug 23, 2023 at 3:57 PM EEST, Jo Van Bulck wrote:
-> On 22.08.23 12:14, Jarkko Sakkinen wrote:
-> > Do you still need nostdfiles and nostartfiles with freestanding?
->
-> Thanks, good question. I tested that compiling with only -ffreestanding=
-=20
-> yields:
->
-> /* snipped */
-> /usr/local/bin/ld:=20
-> /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/rcrt1.o: in=20
-> function `_start':
-> (.text+0x24): undefined reference to `main'
-> /* snipped */
->
-> So we definitely still need -nostartfiles to prevent the compiler/linker=
-=20
-> from introducing the standard system startup functions. However, in my=20
-> understanding, -nostdlib (which is what I assume you mean with=20
-> nostdfiles) already implies the individual options -nodefaultlibs and=20
-> -nostartfiles.
->
-> Thus, we definitely still need -nostartfiles and I'm not 100% sure we=20
-> don't need -nostdlib (though it compiles fine for me with only=20
-> -nostartfiles). Gcc only specifies:
->
-> -ffreestanding
-> Assert that compilation targets a freestanding environment.  This=20
-> implies -fno-builtin. A freestanding environment is one in which the=20
-> standard library may not exist, and program startup may not necessarily=
-=20
-> be at "main".
->
-> Bottom line: I suggest to keep -nostdlib to be sure and remove=20
-> -nostartfiles (as it is redundant). I'll include this in the next  patch=
-=20
-> iteration.
->
-> Best,
-> Jo
+On Thu, Jul 13, 2023 at 05:50:23PM +0200, Jörg Rödel wrote:
+> Make sure to select "Confidential Computing MC" as the track and submit
+> your session proposal by August 25th. Submissions made after that date
+> can not be included into the microconference.
 
-OK, cool, sounds like plan.
+Given the relaxed timing requirements we are happy to extend the CfP
+period to September 25th. There are quite a few submissions already, but
+the schedule begins to fill up. So feel motivated to get your proposals
+in quickly :-)
 
-BR, Jarkko
+In case you need to apply for a visa to enter the US and are not
+registered yet, please let us know by September 15th. We will try our
+best to get you registered so that there is enough time left for the
+visa process.
+
+Regards,
+
+	Joerg
