@@ -2,51 +2,51 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34107EE49BD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AF9C79F61
 	for <linux-sgx@archiver.kernel.org>; Fri, 25 Aug 2023 13:33:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245168AbjHYNd3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        id S245170AbjHYNd3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
         Fri, 25 Aug 2023 09:33:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58072 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245113AbjHYNdW (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 25 Aug 2023 09:33:22 -0400
-Received: from icts-p-cavuit-1.kulnet.kuleuven.be (icts-p-cavuit-1.kulnet.kuleuven.be [134.58.240.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 021A72126;
-        Fri, 25 Aug 2023 06:33:20 -0700 (PDT)
+        with ESMTP id S245104AbjHYNdS (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 25 Aug 2023 09:33:18 -0400
+Received: from icts-p-cavuit-2.kulnet.kuleuven.be (icts-p-cavuit-2.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 886671FDE;
+        Fri, 25 Aug 2023 06:33:16 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 8085720214.AFCE7
+X-KULeuven-ID: DEC512017E.AFCAD
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:144:242:ac11:2f])
-        by icts-p-cavuit-1.kulnet.kuleuven.be (Postfix) with ESMTP id 8085720214;
-        Fri, 25 Aug 2023 15:33:17 +0200 (CEST)
+        by icts-p-cavuit-2.kulnet.kuleuven.be (Postfix) with ESMTP id DEC512017E;
+        Fri, 25 Aug 2023 15:33:14 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
-BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID#0.00
+BCmilterd-Report: SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_VALID_AU#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1692970397;
-        bh=t4C5q/+PO5uca+hi5oGFJcAQVHSICyFgXT2ejy9I+M8=;
+        s=cav; t=1692970394;
+        bh=vRgKhle4NDy3DC4EdXBHFeEVfDkd5KOjdT2yg8fskAA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=NDpTvHhBxP+3Snu7d1e3rjP3vJ6AAl63SUgF/DguHeUhn/4PI0x3VNq7WxBIM8N/0
-         /Zs1QgsMdQcXR5k63ZQDrBaU8GGOVILZ0+A8HZz/+xOL+n26U5h2uSGUSZLHUqyodq
-         iRlg+IU7k4An/vREpaWJHLwZ/5dWxx4eu0wyR9ZU=
+        b=fQqQME90ewsaoH6q6eNOQyLXP9uD8JLkRS3aE/ihzy0VMpFRcwgKZXKRIZ79zxc82
+         X6c5OZ7Pfv6vr6/4Enz6oKJ4cxJrBd2KejeP60Z0eG9Nmb54LyMMLPIewidKzgKYbJ
+         zxdQ7R4O2hNFqh/s9OsEU/bRLYcNWWglFgwQTRZk=
 Received: from localhost.localdomain (ptr-82s0fs8e775rpuqrs36.18120a2.ip6.access.telenet.be [IPv6:2a02:1811:d31:8b00:b56b:371:2317:a8f2])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id 45648D4EB98F8;
-        Fri, 25 Aug 2023 15:33:17 +0200 (CEST)
+        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id A0442D4EBEF26;
+        Fri, 25 Aug 2023 15:33:14 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com,
         Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: [PATCH v4 08/13] selftests/sgx: Separate linker options
-Date:   Fri, 25 Aug 2023 15:32:47 +0200
-Message-Id: <20230825133252.9056-9-jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH v4 05/13] selftests/sgx: Include memory clobber for inline asm in test enclave
+Date:   Fri, 25 Aug 2023 15:32:44 +0200
+Message-Id: <20230825133252.9056-6-jo.vanbulck@cs.kuleuven.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230825133252.9056-1-jo.vanbulck@cs.kuleuven.be>
 References: <20230825133252.9056-1-jo.vanbulck@cs.kuleuven.be>
@@ -56,52 +56,46 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Fixes "'linker' input unused [-Wunused-command-line-argument]" errors when
-compiling with clang.
+Add the "memory" clobber to the EMODPE and EACCEPT asm blocks to tell the
+compiler the assembly code accesses to the secinfo struct. This ensures
+the compiler treats the asm block as a memory barrier and the write to
+secinfo will be visible to ENCLU.
 
 Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+Reviewed-by: Kai Huang <kai.huang@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- tools/testing/selftests/sgx/Makefile | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ tools/testing/selftests/sgx/test_encl.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
-index 1d6315a2e5f5..2de970f7237c 100644
---- a/tools/testing/selftests/sgx/Makefile
-+++ b/tools/testing/selftests/sgx/Makefile
-@@ -12,9 +12,11 @@ OBJCOPY := $(CROSS_COMPILE)objcopy
- endif
+diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
+index 706c1f7260ff..dfe531c5f560 100644
+--- a/tools/testing/selftests/sgx/test_encl.c
++++ b/tools/testing/selftests/sgx/test_encl.c
+@@ -24,10 +24,11 @@ static void do_encl_emodpe(void *_op)
+ 	secinfo.flags = op->flags;
  
- INCLUDES := -I$(top_srcdir)/tools/include
--HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC -z noexecstack
-+HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC
-+HOST_LDFLAGS := -z noexecstack -lcrypto
- ENCL_CFLAGS := -Wall -Werror -static-pie -nostdlib -nostartfiles -fPIE \
- 	       -fno-stack-protector -mrdrnd $(INCLUDES)
-+ENCL_LDFLAGS := -Wl,-T,test_encl.lds,--build-id=none
+ 	asm volatile(".byte 0x0f, 0x01, 0xd7"
+-				:
++				: /* no outputs */
+ 				: "a" (EMODPE),
+ 				  "b" (&secinfo),
+-				  "c" (op->epc_addr));
++				  "c" (op->epc_addr)
++				: "memory" /* read from secinfo pointer */);
+ }
  
- TEST_CUSTOM_PROGS := $(OUTPUT)/test_sgx
- TEST_FILES := $(OUTPUT)/test_encl.elf
-@@ -28,7 +30,7 @@ $(OUTPUT)/test_sgx: $(OUTPUT)/main.o \
- 		    $(OUTPUT)/sigstruct.o \
- 		    $(OUTPUT)/call.o \
- 		    $(OUTPUT)/sign_key.o
--	$(CC) $(HOST_CFLAGS) -o $@ $^ -lcrypto
-+	$(CC) $(HOST_CFLAGS) -o $@ $^ $(HOST_LDFLAGS)
+ static void do_encl_eaccept(void *_op)
+@@ -42,7 +43,8 @@ static void do_encl_eaccept(void *_op)
+ 				: "=a" (rax)
+ 				: "a" (EACCEPT),
+ 				  "b" (&secinfo),
+-				  "c" (op->epc_addr));
++				  "c" (op->epc_addr)
++				: "memory" /* read from secinfo pointer */);
  
- $(OUTPUT)/main.o: main.c
- 	$(CC) $(HOST_CFLAGS) -c $< -o $@
-@@ -45,8 +47,8 @@ $(OUTPUT)/call.o: call.S
- $(OUTPUT)/sign_key.o: sign_key.S
- 	$(CC) $(HOST_CFLAGS) -c $< -o $@
- 
--$(OUTPUT)/test_encl.elf: test_encl.lds test_encl.c test_encl_bootstrap.S
--	$(CC) $(ENCL_CFLAGS) -T $^ -o $@ -Wl,--build-id=none
-+$(OUTPUT)/test_encl.elf: test_encl.c test_encl_bootstrap.S
-+	$(CC) $(ENCL_CFLAGS) $^ -o $@ $(ENCL_LDFLAGS)
- 
- EXTRA_CLEAN := \
- 	$(OUTPUT)/test_encl.elf \
+ 	op->ret = rax;
+ }
 -- 
 2.25.1
 
