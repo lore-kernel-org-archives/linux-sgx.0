@@ -2,127 +2,165 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27094C3DA66
-	for <linux-sgx@archiver.kernel.org>; Fri, 25 Aug 2023 13:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99994EE49B4
+	for <linux-sgx@archiver.kernel.org>; Fri, 25 Aug 2023 13:33:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239380AbjHYN2E (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 25 Aug 2023 09:28:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60114 "EHLO
+        id S245114AbjHYNd0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 25 Aug 2023 09:33:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245125AbjHYN1m (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 25 Aug 2023 09:27:42 -0400
-Received: from icts-p-cavuit-4.kulnet.kuleuven.be (icts-p-cavuit-4.kulnet.kuleuven.be [134.58.240.134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652DB1FDF;
-        Fri, 25 Aug 2023 06:27:36 -0700 (PDT)
+        with ESMTP id S245085AbjHYNdQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 25 Aug 2023 09:33:16 -0400
+Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [134.58.240.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D7BF1FDE;
+        Fri, 25 Aug 2023 06:33:14 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 3308E113.AEEDF
+X-KULeuven-ID: 49882201B7.AE660
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:144:242:ac11:2f])
-        by icts-p-cavuit-4.kulnet.kuleuven.be (Postfix) with ESMTP id 3308E113;
-        Fri, 25 Aug 2023 15:27:33 +0200 (CEST)
+        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id 49882201B7;
+        Fri, 25 Aug 2023 15:33:09 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
-BCmilterd-Report: SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00
+BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1692970053;
-        bh=Ok+sDm5y05OIlJ4pZdJgTo4C7On0MUNwp4IKLhYQYdk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=CN1IY+J4fCQ4mWSuMDLTAS/gBHQY3qu187QDT2CdJe6JOoEativiLqZtxxwvep4PU
-         BJbbG9enMmuXw10lkfI0C0C+8qVjqzFWzN56j84QNRuc0/KK0fEPzsK6K8QegJbQA9
-         VKPTQsNk7xXWC+7ESRuwCVHlvGaieFczUtnovH1M=
-Received: from [IPV6:2a02:1811:d31:8b00:b56b:371:2317:a8f2] (ptr-82s0fs8e775rpuqrs36.18120a2.ip6.access.telenet.be [IPv6:2a02:1811:d31:8b00:b56b:371:2317:a8f2])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+        s=cav; t=1692970389;
+        bh=vp8fkTfpj2pMBJhMKyDWMekB7qDxhVJsvFbpU7SdwIA=;
+        h=From:To:Cc:Subject:Date;
+        b=Hk8wwfmyaZ+4xbEIESYyXe4X9JkBqz482Q+7M9zBgTvBO51IQLD6dM/FMrGIbA7xr
+         v+W5nXcls31Za+kwNCh6wwYy/BRvdrBDyYeVzWs4aTE52jHWglLjSqGzR2yYakgTmY
+         yzKa+kvG//ChrUdw2NIv7Qf2OVEDC3vlhvyYpsc4=
+Received: from localhost.localdomain (ptr-82s0fs8e775rpuqrs36.18120a2.ip6.access.telenet.be [IPv6:2a02:1811:d31:8b00:b56b:371:2317:a8f2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id E261FD4EBD175;
-        Fri, 25 Aug 2023 15:27:32 +0200 (CEST)
-Message-ID: <8c950b3d-0650-1a73-b7f7-eaddff2bc876@cs.kuleuven.be>
-Date:   Fri, 25 Aug 2023 15:27:35 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 3/9] selftests/sgx: Handle relocations in test enclave
-Content-Language: en-US
-To:     "Huang, Kai" <kai.huang@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-References: <20230819094332.8535-1-jo.vanbulck@cs.kuleuven.be>
- <20230819094332.8535-4-jo.vanbulck@cs.kuleuven.be>
- <90ad8638bc1c26505e33b3f436fdbc22c8d74ba9.camel@intel.com>
+        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id 03C15D4F7F13B;
+        Fri, 25 Aug 2023 15:33:08 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <90ad8638bc1c26505e33b3f436fdbc22c8d74ba9.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     dave.hansen@linux.intel.com,
+        Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH v4 00/13] selftests/sgx: Fix compilation errors
+Date:   Fri, 25 Aug 2023 15:32:39 +0200
+Message-Id: <20230825133252.9056-1-jo.vanbulck@cs.kuleuven.be>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 22.08.23 03:11, Huang, Kai wrote:>> +/*
->> + * Symbol placed at the start of the enclave image by the linker script.
->> + * Declare this extern symbol with visibility "hidden" to ensure the
->> + * compiler does not access it through the GOT.
->> + */
->> +extern const uint8_t __attribute__((visibility("hidden"))) __encl_base;
->> +static const uint64_t encl_base = (uint64_t)&__encl_base;
-> 
-> I had hard time to understand this.  The __encl_base is a symbol which is a
-> fixed value set by the compiler/linker.  encl_base has the real storage in the
-> .data section, but the value is also build-time fixed.  IIUC we need some code
-> to explicitly override it, but I don't see where it's done.  Perhaps I missed
-> something?
+Hi,
 
-Thank you for catching this. Such initialization would indeed have to be 
-explicitly overridden at runtime and I somehow overlooked this (it seems 
-I left the line to actually run the tests commented out after 
-compilation in my test script for all versions; this is now fixed). 
-Apologies for the confusion, my bad! I've reverted this back to an 
-explicit (uit64_t)&__encl_base cast in the next patch iteration to avoid 
-such confusion.
+This is the fourth iteration of a patch series to ensure that all SGX selftests
+succeed when compiling with optimizations (as tested with -O{0,1,2,3,s} for
+both gcc 11.3.0 and clang 14.0.0). The aim of the patches is to avoid reliance
+on undefined, compiler-specific behavior that can make the test results
+fragile.
 
->> +
->> +typedef void (*encl_op_t)(void *);
->> +const encl_op_t encl_op_array[ENCL_OP_MAX] = {
->> +	do_encl_op_put_to_buf,
->> +	do_encl_op_get_from_buf,
->> +	do_encl_op_put_to_addr,
->> +	do_encl_op_get_from_addr,
->> +	do_encl_op_nop,
->> +	do_encl_eaccept,
->> +	do_encl_emodpe,
->> +	do_encl_init_tcs_page,
->> +};
-> 
-> Any reason it cannot be 'static'?
+This series appends 4 new commits compared to the previous series (do let me
+know if appending commits to this series is not the preferred way to handle
+these?):
 
-I tested static indeed also works and will include this in the next 
-iteration.
+1. Another fix for possibly uninitialized pointer dereferences in
+   encl_get_entry. Note that this was only brought up as a compiler warning
+   when compiling the loader itself (i.e., not only the enclave) with
+   optimizations. Also not that the uninitialized pointers shouldn't show up
+   for "well-formed" enclave ELF files that properly contain a symbol table
+   section, but I considered it is nevertheless good practice to harden the
+   code against this (unlikely) case.
+2. Split off the ".dyn*" and ".gnu.hash" discarding in a separate commit, as
+   suggested by Kay [1].
+3. Split off the removal of the redundant push/pop pair in a separate commit,
+   as suggested by Kai [2].
+4. Remove all (incomplete) CPU register cleansing assembly code on enclave
+   exit, reflecting earlier discussions that highlight that the test enclave
+   should *not* be confused with exemplary, security-hardened enclave code, and
+   in line with Dave's suggestion to make the test enclave more *obviously*
+   insecure [3].
 
->> diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
->> index 62d37160f..b86c86060 100644
->> --- a/tools/testing/selftests/sgx/test_encl.lds
->> +++ b/tools/testing/selftests/sgx/test_encl.lds
->> @@ -32,6 +32,8 @@ SECTIONS
->>   		*(.note*)
->>   		*(.debug*)
->>   		*(.eh_frame*)
->> +		*(.dyn*)
->> +		*(.gnu.hash)
-> 
-> This looks can be in a separate patch, because it's not directly related to what
-> you are trying to fix.
-> 
-> But I don't want to make things unnecessarily complicated for selftests, so fine
-> to me if you still want to keep it.  But if you do, perhaps you can add some
-> justification to the changelog saying something like: opportunistically discard
-> ".dyn*" and ".gnu.hash" which the enclave loader cannot handle.  Anyway, still
-> better to make a separate patch for such purpose IMHO.
+If useful, I can also include an elementary wrapper shell script to compile and
+run the tests for different compilers (gcc/clang) and optimization levels.
+Reference output below:
 
-Thanks, splitting this off in a separate commit for the next iteration.
+.. Testing gcc   -O0    [OK]
+.. Testing gcc   -O1    [OK]
+.. Testing gcc   -O2    [OK]
+.. Testing gcc   -O3    [OK]
+.. Testing gcc   -Os    [OK]
+.. Testing gcc   -Ofast [OK]
+.. Testing gcc   -Og    [OK]
+.. Testing clang -O0    [OK]
+.. Testing clang -O1    [OK]
+.. Testing clang -O2    [OK]
+.. Testing clang -O3    [OK]
+.. Testing clang -Os    [OK]
+.. Testing clang -Ofast [OK]
+.. Testing clang -Og    [OK]
+
+Changelog
+---------
+
+v4
+  - Remove redundant -nostartfiles compiler flag (Jarkko)
+  - Split dynamic symbol table removal in separate commit (Kai)
+  - Split redundant push/pop elimination in separate commit (Kai)
+  - Remove (incomplete) register cleansing on enclave exit
+  - Fix possibly uninitialized pointer dereferences in load.c
+
+v3
+  - Refactor encl_op_array declaration and indexing (Jarkko)
+  - Annotate encl_buffer with "used" attribute (Kai)
+  - Split encl_buffer size and placement commits (Kai)
+
+v2
+  - Add additional check for NULL pointer (Kai)
+  - Refine to produce proper static-pie executable
+  - Fix linker script assertions
+  - Specify memory clobber for inline asm instead of volatile (Kai)
+  - Clarify why encl_buffer non-static (Jarkko, Kai)
+  - Clarify -ffreestanding (Jarkko)
+
+References
+----------
+
+[1] https://lore.kernel.org/all/90ad8638bc1c26505e33b3f436fdbc22c8d74ba9.camel@intel.com/
+[2] https://lore.kernel.org/all/71ad6389da7db8541dada0276db33f98e2a4fdcf.camel@intel.com/
+[3] https://lore.kernel.org/all/da0cfb1e-e347-f7f2-ac72-aec0ee0d867d@intel.com/
 
 Best,
 Jo
+
+
+Jo Van Bulck (13):
+  selftests/sgx: Fix uninitialized pointer dereference in error path
+  selftests/sgx: Produce static-pie executable for test enclave
+  selftests/sgx: Handle relocations in test enclave
+  selftests/sgx: Fix linker script asserts
+  selftests/sgx: Include memory clobber for inline asm in test enclave
+  selftests/sgx: Ensure test enclave buffer is entirely preserved
+  selftests/sgx: Ensure expected location of test enclave buffer
+  selftests/sgx: Separate linker options
+  selftests/sgx: Specify freestanding environment for enclave
+    compilation
+  selftests/sgx: Fix uninitialized pointer dereferences
+  selftests/sgx: Discard unsupported ELF sections
+  selftests/sgx: Remove redundant enclave base address save/restore
+  selftests/sgx: Remove incomplete ABI sanitization code in test enclave
+
+ tools/testing/selftests/sgx/Makefile          | 14 ++--
+ tools/testing/selftests/sgx/defines.h         |  2 +
+ tools/testing/selftests/sgx/load.c            |  9 ++-
+ tools/testing/selftests/sgx/sigstruct.c       |  5 +-
+ tools/testing/selftests/sgx/test_encl.c       | 65 ++++++++++++-------
+ tools/testing/selftests/sgx/test_encl.lds     | 10 +--
+ .../selftests/sgx/test_encl_bootstrap.S       | 28 +++-----
+ 7 files changed, 76 insertions(+), 57 deletions(-)
+
+-- 
+2.25.1
+
