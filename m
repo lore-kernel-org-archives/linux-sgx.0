@@ -2,51 +2,51 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8144AFC616B
-	for <linux-sgx@archiver.kernel.org>; Fri, 25 Aug 2023 13:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66654C3DA6F
+	for <linux-sgx@archiver.kernel.org>; Fri, 25 Aug 2023 13:34:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245104AbjHYNd3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 25 Aug 2023 09:33:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58088 "EHLO
+        id S245233AbjHYNd4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 25 Aug 2023 09:33:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245115AbjHYNdY (ORCPT
+        with ESMTP id S245122AbjHYNdY (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Fri, 25 Aug 2023 09:33:24 -0400
-Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [134.58.240.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CE23E6F;
+Received: from icts-p-cavuit-2.kulnet.kuleuven.be (icts-p-cavuit-2.kulnet.kuleuven.be [134.58.240.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3CC52126;
         Fri, 25 Aug 2023 06:33:22 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 0C27920052.A66A9
+X-KULeuven-ID: E3B912017E.A2A99
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:144:242:ac11:2f])
-        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id 0C27920052;
+        by icts-p-cavuit-2.kulnet.kuleuven.be (Postfix) with ESMTP id E3B912017E;
         Fri, 25 Aug 2023 15:33:19 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
 BCmilterd-Report: SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1692970398;
-        bh=qKbX2SWQobU0T2TnOqQF1i9y4ywemPrA3c6dALyT5oM=;
+        s=cav; t=1692970399;
+        bh=34J2+yYjU/ZqN2Jn5iXFYM2daZtW7hvT/KFqUm+6s5E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=aJ6yjFODSIKTOX38gvgCs2odGLffJ4U56Cpnasn2Q8E0YvfNYwS/F1P2fGfHl6NsV
-         iLz/5bKDYnU+e0FHIhProwuEc+GrwjEJMJpEZ5NbmVnaULtXRj/7h6lCAZSZzMTsbe
-         OKji3n4cAKm/BU8iDjcwraHx1Rw8gGS5rVHHdSSw=
+        b=mMp4cPuqxDxplLMha9wSNwHbgNsIzCVdWYSf8jw9gfqKLuWyAGqo9mU3bWJL5BjOc
+         obGvTKqv+FPueKI1jEpJkcQ4gfy2ifbrnd69EaHwPpVHtM+OFmhiLJK9zFIOy66o3w
+         upiQwG4wWBDHaDv2QaJKCG21VhMRkUWNfIn1wZGg=
 Received: from localhost.localdomain (ptr-82s0fs8e775rpuqrs36.18120a2.ip6.access.telenet.be [IPv6:2a02:1811:d31:8b00:b56b:371:2317:a8f2])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id C756FD4EBEF26;
-        Fri, 25 Aug 2023 15:33:18 +0200 (CEST)
+        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id 9C58FD4EBEF26;
+        Fri, 25 Aug 2023 15:33:19 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com,
         Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: [PATCH v4 10/13] selftests/sgx: Fix uninitialized pointer dereferences
-Date:   Fri, 25 Aug 2023 15:32:49 +0200
-Message-Id: <20230825133252.9056-11-jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH v4 11/13] selftests/sgx: Discard unsupported ELF sections
+Date:   Fri, 25 Aug 2023 15:32:50 +0200
+Message-Id: <20230825133252.9056-12-jo.vanbulck@cs.kuleuven.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230825133252.9056-1-jo.vanbulck@cs.kuleuven.be>
 References: <20230825133252.9056-1-jo.vanbulck@cs.kuleuven.be>
@@ -56,46 +56,28 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Ensure sym_tab and sym_names are zero-initialized and add an early-out
-condition in the unlikely (erroneous) case that the enclave ELF file would
-not contain a symbol table.
+Building the test enclave with -static-pie may produce a dynamic symbol
+table, but this is not supported for enclaves and any relocations need to
+happen manually (e.g., as for "encl_op_array"). Thus, opportunistically
+discard ".dyn*" and ".gnu.hash" which the enclave loader cannot handle.
 
-This addresses -Werror=maybe-uninitialized compiler warnings for gcc -O2.
-
-Fixes: 33c5aac3bf32 ("selftests/sgx: Test complete changing of page type flow")
 Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 ---
- tools/testing/selftests/sgx/load.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ tools/testing/selftests/sgx/test_encl.lds | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-index 94bdeac1cf04..c9f658e44de6 100644
---- a/tools/testing/selftests/sgx/load.c
-+++ b/tools/testing/selftests/sgx/load.c
-@@ -136,11 +136,11 @@ static bool encl_ioc_add_pages(struct encl *encl, struct encl_segment *seg)
-  */
- uint64_t encl_get_entry(struct encl *encl, const char *symbol)
- {
-+	Elf64_Sym *symtab = NULL;
-+	char *sym_names = NULL;
- 	Elf64_Shdr *sections;
--	Elf64_Sym *symtab;
- 	Elf64_Ehdr *ehdr;
--	char *sym_names;
--	int num_sym;
-+	int num_sym = 0;
- 	int i;
- 
- 	ehdr = encl->bin;
-@@ -161,6 +161,9 @@ uint64_t encl_get_entry(struct encl *encl, const char *symbol)
- 		}
+diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
+index 333a3e78fdc9..ffe851a1cac4 100644
+--- a/tools/testing/selftests/sgx/test_encl.lds
++++ b/tools/testing/selftests/sgx/test_encl.lds
+@@ -33,6 +33,8 @@ SECTIONS
+ 		*(.note*)
+ 		*(.debug*)
+ 		*(.eh_frame*)
++		*(.dyn*)
++		*(.gnu.hash)
  	}
- 
-+	if (!symtab || !sym_names)
-+		return 0;
-+
- 	for (i = 0; i < num_sym; i++) {
- 		Elf64_Sym *sym = &symtab[i];
+ }
  
 -- 
 2.25.1
