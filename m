@@ -2,90 +2,90 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B448C3DA6F
-	for <linux-sgx@archiver.kernel.org>; Fri, 25 Aug 2023 15:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB3E9C83F11
+	for <linux-sgx@archiver.kernel.org>; Sun, 27 Aug 2023 18:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235674AbjHYPS4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 25 Aug 2023 11:18:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49738 "EHLO
+        id S229867AbjH0Sf5 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Sun, 27 Aug 2023 14:35:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234735AbjHYPSg (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 25 Aug 2023 11:18:36 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65A7C2121;
-        Fri, 25 Aug 2023 08:18:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692976714; x=1724512714;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=4SuZ5OsPAW5MybHkdMLDB2TIspBmkp3UowO2L8p0FaQ=;
-  b=NlK+mVrHBOZG2iJazMNzV5gut9MuET4PcfpfB9/cf0apXjZeBEbuf2ab
-   roPxNfHGRZTCsHzeuEnhS7nq6YezdvL3FfR8AXBDrx5gtPcohXhlN8x2t
-   ZMqusYALJ2aSNDksjrQaBX4BI90SU31ZT+UiDLCfRl9q7S/2zhKenV+Kw
-   Gs713C1ZSGbmSzK6j0YmRXpWRZceB3FUMty7iNuQhvprPUGmBzaHgIGvz
-   jar/dpgmHiyYdpZiTF4WFF/XjuOY54u+KOyYHdUp+9oc0PvXs+Ku/Q2hB
-   GRZYDxFWqbO4rQtG0iyjjZJ1zh8fsb/6GGs129hJVTFLxN3ZPRlldRm9c
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10813"; a="405732486"
-X-IronPort-AV: E=Sophos;i="6.02,201,1688454000"; 
-   d="scan'208";a="405732486"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2023 08:18:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10813"; a="714378664"
-X-IronPort-AV: E=Sophos;i="6.02,201,1688454000"; 
-   d="scan'208";a="714378664"
-Received: from sbilgin1-mobl1.amr.corp.intel.com (HELO [10.209.78.69]) ([10.209.78.69])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2023 08:18:32 -0700
-Message-ID: <ba319881-b4e9-7129-123f-1884bfeb50ec@intel.com>
-Date:   Fri, 25 Aug 2023 08:18:32 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] x86/sgx: Describe the parameters of
- sgx_calc_section_metric()
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org
-Cc:     stable@vger.kernel.org, kernel test robot <lkp@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
-        Sean Christopherson <seanjc@google.com>,
-        linux-kernel@vger.kernel.org
-References: <20230822102853.15078-1-jarkko@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <20230822102853.15078-1-jarkko@kernel.org>
+        with ESMTP id S229619AbjH0Sfh (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Sun, 27 Aug 2023 14:35:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E23AC2;
+        Sun, 27 Aug 2023 11:35:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1AB9662BDA;
+        Sun, 27 Aug 2023 18:35:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 731BEC433C7;
+        Sun, 27 Aug 2023 18:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693161333;
+        bh=hthdsaMAEkjkovvMGqKX8Il/NFirqqc5w/Dlfh/wBzA=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=f6qg8bG5hCDTx2dTZFXuXMSl993MGpN8J8F8Fx5t2mK/GSk79ji5+gjSH5VMIqzT8
+         bh3LnDEfLMx4JSLw7xDkIwtmpV4lkTu22/RIKOTRoQQO1JF3ArsXBP4ebCpFNb2cIp
+         2qJAt7vVq3evsUxpXFWnkAgs3SllDZtWmpyd49OKIrKGhtXDYNUryrxzIrTBfl3q+y
+         543ZVcusFyRpBzpsZ7tcBv1iiNAmJLc322MkoPN7kkse11Y6E2tgE0C6B4W/tzuSWA
+         1PjThWyB4qGP6SkOxFgmXDGLmwH4FhRFiWbXqfVvVVdLVAQ1dU/RzYUa4ZbcoBlhzn
+         vTKJcBclXEcTA==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date:   Sun, 27 Aug 2023 21:35:30 +0300
+Message-Id: <CV3JLL8X7OVD.37SUDJ5IJXFN3@suppilovahvero>
+Cc:     <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v4 09/13] selftests/sgx: Specify freestanding
+ environment for enclave compilation
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>, <kai.huang@intel.com>,
+        <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.14.0
+References: <20230825133252.9056-1-jo.vanbulck@cs.kuleuven.be>
+ <20230825133252.9056-10-jo.vanbulck@cs.kuleuven.be>
+In-Reply-To: <20230825133252.9056-10-jo.vanbulck@cs.kuleuven.be>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On 8/22/23 03:28, Jarkko Sakkinen wrote:
-> Cc: stable@vger.kernel.org # v5.11+
-> Fixes: e7e0545299d8 ("x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202308221542.11UpkVfp-lkp@intel.com/
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Fri Aug 25, 2023 at 4:32 PM EEST, Jo Van Bulck wrote:
+> Use -ffreestanding to assert the enclave compilation targets a
+> freestanding environment (i.e., without "main" or standard libraries).
+> This fixes clang reporting "undefined reference to `memset'" after
+> erroneously optimizing away the provided memset/memcpy implementations.
+>
+> Still need to instruct the linker from using standard system startup
+> functions, but drop -nostartfiles as it is implied by -nostdlib.
+>
+> Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+> ---
+>  tools/testing/selftests/sgx/Makefile | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftes=
+ts/sgx/Makefile
+> index 2de970f7237c..f96667bdf9f2 100644
+> --- a/tools/testing/selftests/sgx/Makefile
+> +++ b/tools/testing/selftests/sgx/Makefile
+> @@ -14,8 +14,8 @@ endif
+>  INCLUDES :=3D -I$(top_srcdir)/tools/include
+>  HOST_CFLAGS :=3D -Wall -Werror -g $(INCLUDES) -fPIC
+>  HOST_LDFLAGS :=3D -z noexecstack -lcrypto
+> -ENCL_CFLAGS :=3D -Wall -Werror -static-pie -nostdlib -nostartfiles -fPIE=
+ \
+> -	       -fno-stack-protector -mrdrnd $(INCLUDES)
+> +ENCL_CFLAGS :=3D -Wall -Werror -static-pie -nostdlib -ffreestanding -fPI=
+E \
+> +		-fno-stack-protector -mrdrnd $(INCLUDES)
+>  ENCL_LDFLAGS :=3D -Wl,-T,test_encl.lds,--build-id=3Dnone
+> =20
+>  TEST_CUSTOM_PROGS :=3D $(OUTPUT)/test_sgx
+> --=20
+> 2.25.1
 
--ENOCHANGELOG
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
->  /**
-> + * sgx_calc_section_metric() - Calculate an EPC section metric
-> + * @low:	low 32-bit word from CPUID:0x12:{2, ...}
-> + * @high:	high 32-bit word from CPUID:0x12:{2, ...}
-> + *
->   * A section metric is concatenated in a way that @low bits 12-31 define the
->   * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
->   * metric.
-
-Shouldn't we just do:
-
--  /**
-+  /*
-
-?  This doesn't need kerneldoc comments.
+BR, Jarkko
