@@ -2,51 +2,51 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22ECCC83F34
-	for <linux-sgx@archiver.kernel.org>; Thu, 31 Aug 2023 13:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77477C83F10
+	for <linux-sgx@archiver.kernel.org>; Thu, 31 Aug 2023 13:42:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238672AbjHaNmr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 31 Aug 2023 09:42:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46742 "EHLO
+        id S243857AbjHaNmt (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 31 Aug 2023 09:42:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242265AbjHaNmR (ORCPT
+        with ESMTP id S1345840AbjHaNmR (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Thu, 31 Aug 2023 09:42:17 -0400
-Received: from icts-p-cavuit-2.kulnet.kuleuven.be (icts-p-cavuit-2.kulnet.kuleuven.be [134.58.240.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9F15CEB;
-        Thu, 31 Aug 2023 06:42:14 -0700 (PDT)
+Received: from icts-p-cavuit-1.kulnet.kuleuven.be (icts-p-cavuit-1.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11DDEE40;
+        Thu, 31 Aug 2023 06:42:13 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 0825E20227.ADBFF
+X-KULeuven-ID: E322920174.A7DFF
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:139:242:ac11:1e])
-        by icts-p-cavuit-2.kulnet.kuleuven.be (Postfix) with ESMTP id 0825E20227;
-        Thu, 31 Aug 2023 15:42:12 +0200 (CEST)
+        by icts-p-cavuit-1.kulnet.kuleuven.be (Postfix) with ESMTP id E322920174;
+        Thu, 31 Aug 2023 15:42:09 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
-BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#OURIPS#-35.00
+BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID#0.00,SA-HVU#OURIPS#-35.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1693489331;
-        bh=WZhgRlHVbnRyCvq9T4Lw0eA0V/AbFZq2OMPs2QQlYdk=;
+        s=cav; t=1693489329;
+        bh=l6q7Z1gZnU4OKdz8hXaMhVjUz5Ly84bkkIaWbzpEg+s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=Zz865cvw2YYTUR0QrFlJYevewOSE7uHFc3cqjFUtMngaJtLb8Cam1u2u9GADGK5yh
-         b8LyQ9ToayA378aYDHjBm7Ui0znrNzvPPEUhM3lm4hT93l4CI3eZXTlAjvNJan8ynV
-         Sv6CXdtFZKL0rK5ug4s4TnYHdD1ZRIvlaf8vrrik=
+        b=DqakU6RZ0pueoSLNGAhKIuswfPeyXzSB1mKnoncHlqqJ+cddKWxxj7540v1afkqJO
+         RwDfVD5uIWZP02ilKp2yFZvPIiabut13uP9XiHtGFUAUY7Sil4vMTD+ssohr0NbKS8
+         CQ36idBp+lpZIfODXsk7DmsgY+rV/NZ9I/dLVFQ8=
 Received: from localhost.localdomain (unknown [10.45.168.65])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id BE97DD4F6476C;
-        Thu, 31 Aug 2023 15:42:11 +0200 (CEST)
+        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id 92BEDD4F61344;
+        Thu, 31 Aug 2023 15:42:09 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com,
         Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: [PATCH v5 11/13] selftests/sgx: Ensure expected location of test enclave buffer
-Date:   Thu, 31 Aug 2023 15:41:42 +0200
-Message-Id: <20230831134144.22686-12-jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH v5 08/13] selftests/sgx: Handle relocations in test enclave
+Date:   Thu, 31 Aug 2023 15:41:39 +0200
+Message-Id: <20230831134144.22686-9-jo.vanbulck@cs.kuleuven.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230831134144.22686-1-jo.vanbulck@cs.kuleuven.be>
 References: <20230831134144.22686-1-jo.vanbulck@cs.kuleuven.be>
@@ -56,65 +56,141 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-The external tests manipulating page permissions expect encl_buffer to be
-placed at the start of the test enclave's .data section. As this is not
-guaranteed per the C standard, explicitly place encl_buffer in a separate
-section that is explicitly placed at the start of the .data segment in the
-linker script to avoid the compiler placing it somewhere else in .data.
+Static-pie binaries normally include a startup routine to perform any ELF
+relocations from .rela.dyn. Since the enclave loading process is different
+and glibc is not included, do the necessary relocation for encl_op_array
+entries manually at runtime relative to the enclave base to ensure correct
+function pointers.
 
+When keeping encl_op_array as a local variable on the stack, gcc without
+optimizations generates code that explicitly gets the right function
+addresses and stores them to create the array on the stack:
+
+encl_body:
+    /* snipped */
+    lea    do_encl_op_put_to_buf(%rip), %rax
+    mov    %rax, -0x50(%rbp)
+    lea    do_encl_op_get_from_buf(%rip), %rax
+    mov    %rax,-0x48(%rbp)
+    lea    do_encl_op_put_to_addr(%rip), %rax
+    /* snipped */
+
+However, gcc -Os or clang generate more efficient code that initializes
+encl_op_array by copying a "prepared copy" containing the absolute
+addresses of the functions (i.e., relative to the image base starting from
+0) generated by the compiler/linker:
+
+encl_body:
+    /* snipped */
+    lea    prepared_copy(%rip), %rsi
+    lea    -0x48(%rsp), %rdi
+    mov    $0x10,%ecx
+    rep movsl %ds:(%rsi),%es:(%rdi)
+    /* snipped */
+
+When building the enclave with -static-pie, the compiler/linker includes
+relocation entries for the function symbols in the "prepared copy":
+
+Relocation section '.rela.dyn' at offset 0x4000 contains 12 entries:
+  Offset          Info           Type         Symbol
+/* snipped; "prepared_copy" starts at 0x6000 */
+000000006000  000000000008 R_X86_64_RELATIVE  <do_encl_emodpe>
+000000006008  000000000008 R_X86_64_RELATIVE  <do_encl_eaccept>
+000000006010  000000000008 R_X86_64_RELATIVE  <do_encl_op_put_to_buf>
+000000006018  000000000008 R_X86_64_RELATIVE  <do_encl_op_get_from_buf>
+000000006020  000000000008 R_X86_64_RELATIVE  <do_encl_op_put_to_addr>
+000000006028  000000000008 R_X86_64_RELATIVE  <do_encl_op_get_from_addr>
+000000006030  000000000008 R_X86_64_RELATIVE  <do_encl_op_nop>
+000000006038  000000000008 R_X86_64_RELATIVE  <do_encl_init_tcs_page>
+
+Static-pie binaries normally include a glibc "_dl_relocate_static_pie"
+routine that will perform these relocations as part of the startup.
+However, since the enclave loading process is different and glibc is not
+included, we cannot rely on these relocations to be performed. Without
+relocations, the code would erroneously jump to the _absolute_ function
+address loaded from the local copy.
+
+Thus, declare "encl_op_array" as global and manually relocate the loaded
+function-pointer entries relative to the enclave base at runtime. This
+generates the following code:
+
+encl_body:
+    /* snipped */
+    lea    encl_op_array(%rip), %rcx
+    lea    __encl_base(%rip), %rax
+    add    (%rcx,%rdx,8),%rax
+    jmp    *%rax
+    ret
+
+Link: https://lore.kernel.org/all/150d8ca8-2c66-60d1-f9fc-8e6279824e94@cs.kuleuven.be/
+Link: https://lore.kernel.org/all/5c22de5a-4b3b-1f38-9771-409b4ec7f96d@cs.kuleuven.be/#r
 Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Acked-by: Kai Huang <kai.huang@intel.com>
 ---
- tools/testing/selftests/sgx/defines.h     | 1 +
- tools/testing/selftests/sgx/test_encl.c   | 8 ++++----
- tools/testing/selftests/sgx/test_encl.lds | 1 +
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ tools/testing/selftests/sgx/test_encl.c | 50 +++++++++++++++++--------
+ 1 file changed, 35 insertions(+), 15 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
-index b8f482667ce1..402f8787a71c 100644
---- a/tools/testing/selftests/sgx/defines.h
-+++ b/tools/testing/selftests/sgx/defines.h
-@@ -14,6 +14,7 @@
- #define __aligned(x) __attribute__((__aligned__(x)))
- #define __packed __attribute__((packed))
- #define __used __attribute__((used))
-+#define __section(x)__attribute__((__section__(x)))
- 
- #include "../../../../arch/x86/include/asm/sgx.h"
- #include "../../../../arch/x86/include/asm/enclu.h"
 diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
-index 7465f121fb74..2c4d709cce2d 100644
+index ae791df3e5a5..649604c526e7 100644
 --- a/tools/testing/selftests/sgx/test_encl.c
 +++ b/tools/testing/selftests/sgx/test_encl.c
-@@ -6,11 +6,11 @@
+@@ -121,21 +121,41 @@ static void do_encl_op_nop(void *_op)
  
- /*
-  * Data buffer spanning two pages that will be placed first in the .data
-- * segment. Even if not used internally the second page is needed by external
-- * test manipulating page permissions, so mark encl_buffer as "used" to make
-- * sure it is entirely preserved by the compiler.
-+ * segment via the linker script. Even if not used internally the second page
-+ * is needed by external test manipulating page permissions, so mark
-+ * encl_buffer as "used" to make sure it is entirely preserved by the compiler.
-  */
--static uint8_t __used encl_buffer[8192] = { 1 };
-+static uint8_t __used __section(".data.encl_buffer") encl_buffer[8192] = { 1 };
+ }
  
- enum sgx_enclu_function {
- 	EACCEPT = 0x5,
-diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
-index 6ffdfc9fb4cf..333a3e78fdc9 100644
---- a/tools/testing/selftests/sgx/test_encl.lds
-+++ b/tools/testing/selftests/sgx/test_encl.lds
-@@ -24,6 +24,7 @@ SECTIONS
- 	} : text
- 
- 	.data : {
-+		*(.data.encl_buffer)
- 		*(.data*)
- 	} : data
- 
++/*
++ * Symbol placed at the start of the enclave image by the linker script.
++ * Declare this extern symbol with visibility "hidden" to ensure the compiler
++ * does not access it through the GOT and generates position-independent
++ * addressing as __encl_base(%rip), so we can get the actual enclave base
++ * during runtime.
++ */
++extern const uint8_t __attribute__((visibility("hidden"))) __encl_base;
++
++typedef void (*encl_op_t)(void *);
++static const encl_op_t encl_op_array[ENCL_OP_MAX] = {
++	do_encl_op_put_to_buf,
++	do_encl_op_get_from_buf,
++	do_encl_op_put_to_addr,
++	do_encl_op_get_from_addr,
++	do_encl_op_nop,
++	do_encl_eaccept,
++	do_encl_emodpe,
++	do_encl_init_tcs_page,
++};
++
+ void encl_body(void *rdi,  void *rsi)
+ {
+-	const void (*encl_op_array[ENCL_OP_MAX])(void *) = {
+-		do_encl_op_put_to_buf,
+-		do_encl_op_get_from_buf,
+-		do_encl_op_put_to_addr,
+-		do_encl_op_get_from_addr,
+-		do_encl_op_nop,
+-		do_encl_eaccept,
+-		do_encl_emodpe,
+-		do_encl_init_tcs_page,
+-	};
+-
+-	struct encl_op_header *op = (struct encl_op_header *)rdi;
+-
+-	if (op->type < ENCL_OP_MAX)
+-		(*encl_op_array[op->type])(op);
++	struct encl_op_header *header = (struct encl_op_header *)rdi;
++	encl_op_t op;
++
++	if (header->type >= ENCL_OP_MAX)
++		return;
++
++	/*
++	 * The enclave base address needs to be added, as this call site
++	 * *cannot be* made rip-relative by the compiler, or fixed up by
++	 * any other possible means.
++	 */
++	op = ((uint64_t)&__encl_base) + encl_op_array[header->type];
++
++	(*op)(header);
+ }
 -- 
 2.25.1
 
