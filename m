@@ -2,217 +2,189 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065E5CA0ED1
-	for <linux-sgx@archiver.kernel.org>; Wed, 13 Sep 2023 04:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5379CA552A
+	for <linux-sgx@archiver.kernel.org>; Wed, 13 Sep 2023 09:39:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238296AbjIMEJv (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 13 Sep 2023 00:09:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38882 "EHLO
+        id S239011AbjIMJjQ (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 13 Sep 2023 05:39:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238267AbjIMEJN (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 13 Sep 2023 00:09:13 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F3419B4;
-        Tue, 12 Sep 2023 21:09:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694578141; x=1726114141;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=deuShLNhhDjtFREz/27mivDy0NewVu2ghIGkXQ/WYEo=;
-  b=BGRpBZfbppv+HPdcdDiUGm5ZsH97PhSvaBsw8VcWZcpsB4SUH9rRPcfV
-   Nmp8pezs6suwzQuuJhnFzIiQR5lmRF3hvk1kfKY8CkeyVSHrBbTZqsuMZ
-   2x6RlryAKoFTAPLCaGU9UbSl+GlI7uEdqeQUT6C4+OvKnUXR9BS6dT+kn
-   H1ckmoL9mD9l+iIfzuFZl7sS4xcUbXYJKUqbjgYEFjXUquytISxIpW3VZ
-   2MddTacl+TuHDhHCz4cCxamn5mK+KueABxA3ldQ2LkslKwcjw2G6rxdyB
-   aM0U4WOXSEJEWReESUcw2Gfs32O8BYGQg4gegAA2IREGS7uVIUXNuTI36
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10831"; a="357990526"
-X-IronPort-AV: E=Sophos;i="6.02,142,1688454000"; 
-   d="scan'208";a="357990526"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2023 21:06:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10831"; a="747156021"
-X-IronPort-AV: E=Sophos;i="6.02,142,1688454000"; 
-   d="scan'208";a="747156021"
-Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Sep 2023 21:06:56 -0700
-From:   Haitao Huang <haitao.huang@linux.intel.com>
-To:     jarkko@kernel.org, dave.hansen@linux.intel.com, tj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        x86@kernel.org, cgroups@vger.kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sohil.mehta@intel.com
-Cc:     zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
-        zhanb@microsoft.com, anakrish@microsoft.com,
-        mikko.ylinen@linux.intel.com, yangjie@microsoft.com
-Subject: [PATCH v4 18/18] selftests/sgx: Add scripts for epc cgroup testing
-Date:   Tue, 12 Sep 2023 21:06:35 -0700
-Message-Id: <20230913040635.28815-19-haitao.huang@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230913040635.28815-1-haitao.huang@linux.intel.com>
+        with ESMTP id S238849AbjIMJjQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 13 Sep 2023 05:39:16 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52DD1196;
+        Wed, 13 Sep 2023 02:39:12 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FB3BC433C7;
+        Wed, 13 Sep 2023 09:39:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694597951;
+        bh=dSg3FHeMAumbmUvzWNHW95nSf89/Wz3zP7aimaIkbxI=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=ZXzWXrwu9RC5kdgvyD4Ye5Agb5QzVO02jBJEW0mnHaQpEFqlkH9MjuSEVgXaUrJmq
+         EfQzJwDD9BBpXXvndNj+eIkUmIlhnnrBnsgfdmO/sFI5PRoHRFwjrU0y6hxj6aL84H
+         I/1JlDKdOO1LKXWPAMI7ktI9zNLjuHZKAgw7jpbATlCAQIIfwwhGBcxlYjrAwHRiWN
+         2hlxUuKCUSaDDKSY2Qy6K2Eom2p4u9TlGy9UGMjX9bItwj7Dnlyod7p1U3kbdl/FiD
+         Wu/LBlqhgtKWx1dvr4RG1Rdjsr2CT7nXCgU1y7jqToY0rPbmBIx4XdymwLrsZa4tpi
+         czcohdodFxFCA==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Wed, 13 Sep 2023 12:39:06 +0300
+Message-Id: <CVHOU5G1SCUT.RCBVZ3W8G2NJ@suppilovahvero>
+Cc:     <zhiquan1.li@intel.com>, <kristen@linux.intel.com>,
+        <seanjc@google.com>, <zhanb@microsoft.com>,
+        <anakrish@microsoft.com>, <mikko.ylinen@linux.intel.com>,
+        <yangjie@microsoft.com>
+Subject: Re: [PATCH v4 01/18] cgroup/misc: Add per resource callbacks for
+ CSS events
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Haitao Huang" <haitao.huang@linux.intel.com>,
+        <dave.hansen@linux.intel.com>, <tj@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+        <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+        <sohil.mehta@intel.com>
+X-Mailer: aerc 0.14.0
 References: <20230913040635.28815-1-haitao.huang@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20230913040635.28815-2-haitao.huang@linux.intel.com>
+In-Reply-To: <20230913040635.28815-2-haitao.huang@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Scripts rely on cgroup-tools package from libcgroup [1].
+On Wed Sep 13, 2023 at 7:06 AM EEST, Haitao Huang wrote:
+> From: Kristen Carlson Accardi <kristen@linux.intel.com>
+>
+> Consumers of the misc cgroup controller might need to perform separate
+> actions for Cgroups Subsystem State(CSS) events: cgroup alloc and free.
 
-To test:
-1) sudo ./setup_epc_cg.sh (optional one time setup)
-2) sudo ./run_tests_in_misc_cg.sh
+nit: s/State(CSS)/State (CSS)/
 
-To watch misc group current:
-./watch_misc_for_tests.sh current
+"cgroup alloc" and "cgroup free" mean absolutely nothing.
 
-[1] https://github.com/libcgroup/libcgroup/blob/main/README
 
-Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
----
-V4:
+> In addition, writes to the max value may also need separate action. Add
 
-Note: Need to apply on top of this series previously reviewed:
-https://lore.kernel.org/linux-sgx/20220905020411.17290-1-jarkko@kernel.org/
----
- .../selftests/sgx/run_tests_in_misc_cg.sh     | 68 +++++++++++++++++++
- tools/testing/selftests/sgx/setup_epc_cg.sh   | 29 ++++++++
- .../selftests/sgx/watch_misc_for_tests.sh     | 13 ++++
- 3 files changed, 110 insertions(+)
- create mode 100755 tools/testing/selftests/sgx/run_tests_in_misc_cg.sh
- create mode 100755 tools/testing/selftests/sgx/setup_epc_cg.sh
- create mode 100755 tools/testing/selftests/sgx/watch_misc_for_tests.sh
+What "the max value"?
 
-diff --git a/tools/testing/selftests/sgx/run_tests_in_misc_cg.sh b/tools/testing/selftests/sgx/run_tests_in_misc_cg.sh
-new file mode 100755
-index 000000000000..63da7b23b74e
---- /dev/null
-+++ b/tools/testing/selftests/sgx/run_tests_in_misc_cg.sh
-@@ -0,0 +1,68 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright(c) 2023 Intel Corporation.
-+
-+if ! lscgroup | grep -q "test/test1/test3$"; then
-+  echo "setting up cgroups for testing..."
-+  ./setup_epc_cg.sh
-+fi
-+
-+cmd='./test_sgx'
-+default_test="augment_via_eaccept_long"
-+
-+# We use 'tail' to skip header lines and 'sed' to remove 'enclave' from the first non-header line.
-+list=$($cmd -l 2>&1 | tail -n +4 | sed '0,/^enclave/ s/^enclave//' | sed 's/^ *//')
-+
-+IFS=$'\n' read -d '' -r -a lines <<< "$list"
-+lines=("all" "${lines[@]}")
-+
-+echo "Available tests:"
-+for i in "${!lines[@]}"; do
-+  # Check if the current line is the default test
-+  if [[ ${lines[$i]} == *"$default_test"* ]]; then
-+    echo "$((i)). ${lines[$i]} (default)"
-+  else
-+    echo "$((i)). ${lines[$i]}"
-+  fi
-+done
-+
-+echo "Please enter the number of the test you want to run (or press enter for the default test):"
-+read choice
-+
-+if [ -z "$choice" ]; then
-+  testname="$default_test"
-+else
-+  testname="${lines[$choice]}"
-+fi
-+
-+if [ "$testname" == "all" ]; then
-+  test_cmd="$cmd"
-+else
-+  test_cmd="$cmd -t $testname"
-+fi
-+
-+timestamp=$(date +%Y%m%d_%H%M%S)
-+
-+# Always use leaf node of misc cgroups so it works for both v1 and v2
-+# these may fail on OOM
-+nohup bash -c "cgexec -g misc:test/test1/test3 $test_cmd" >test1_1_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test1/test3 $test_cmd" >test1_2_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test1/test3 $test_cmd" >test1_3_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test1/test3 $test_cmd" >test1_4_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test1/test3 $test_cmd" >test1_5_$timestamp.log 2>&1 &
-+
-+# These tests may timeout on oversubscribed tests on 4G EPC
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_1_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_2_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_3_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_4_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_5_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_6_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_7_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test/test2 $test_cmd" >test2_8_$timestamp.log 2>&1 &
-+
-+# this should work on 4G EPC
-+nohup bash -c "cgexec -g misc:test4 $test_cmd" >test4_1_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test4 $test_cmd" >test4_2_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test4 $test_cmd" >test4_3_$timestamp.log 2>&1 &
-+nohup bash -c "cgexec -g misc:test4 $test_cmd" >test4_4_$timestamp.log 2>&1 &
-diff --git a/tools/testing/selftests/sgx/setup_epc_cg.sh b/tools/testing/selftests/sgx/setup_epc_cg.sh
-new file mode 100755
-index 000000000000..5fd137a66436
---- /dev/null
-+++ b/tools/testing/selftests/sgx/setup_epc_cg.sh
-@@ -0,0 +1,29 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright(c) 2023 Intel Corporation.
-+
-+cgcreate -g misc:test
-+if [ $? -ne 0 ]; then
-+    echo "Please make sure cgroup-tools is installed, and misc cgroup is mounted."
-+    exit 1
-+fi
-+cgcreate -g misc:test/test1
-+cgcreate -g misc:test/test1/test3
-+cgcreate -g misc:test/test2
-+cgcreate -g misc:test4
-+
-+# Setup for a platform with 4G EPC
-+LARGER=4096000000
-+LARGE=409600000
-+SMALL=4096000
-+if [ ! -d "/sys/fs/cgroup/misc" ]; then
-+    echo "cgroups v2 is in use. Only leaf nodes can run a process"
-+    echo "sgx_epc $SMALL" | tee /sys/fs/cgroup/test/test1/misc.max
-+    echo "sgx_epc $LARGE" | tee /sys/fs/cgroup/test/test2/misc.max
-+    echo "sgx_epc $LARGER" | tee /sys/fs/cgroup/test4/misc.max
-+else
-+    echo "cgroups v1 is in use."
-+    echo "sgx_epc $SMALL" | tee /sys/fs/cgroup/misc/test/test1/misc.max
-+    echo "sgx_epc $LARGE" | tee /sys/fs/cgroup/misc/test/test2/misc.max
-+    echo "sgx_epc $LARGER" | tee /sys/fs/cgroup/misc/test4/misc.max
-+fi
-diff --git a/tools/testing/selftests/sgx/watch_misc_for_tests.sh b/tools/testing/selftests/sgx/watch_misc_for_tests.sh
-new file mode 100755
-index 000000000000..dbd38f346e7b
---- /dev/null
-+++ b/tools/testing/selftests/sgx/watch_misc_for_tests.sh
-@@ -0,0 +1,13 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright(c) 2023 Intel Corporation.
-+
-+if [ -z "$1" ]
-+  then
-+    echo "No argument supplied, please provide 'max', 'current' or 'events'"
-+    exit 1
-+fi
-+
-+watch -n 1 "find /sys/fs/cgroup -wholename */test*/misc.$1 -exec sh -c \
-+    'echo \"\$1:\"; cat \"\$1\"' _ {} \;"
-+
--- 
-2.25.1
+> the ability to allow downstream users to setup callbacks for these
+> operations, and call the corresponding per-resource-type callback when
+> appropriate.
 
+Who are "the downstream users" and what sort of callbacks they setup?
+
+>
+> This code will be utilized by the SGX driver in a future patch.
+>
+> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> ---
+> V4:
+> - Moved this to the front of the series.
+> - Applies on cgroup/for-6.6 with the overflow fix for misc.
+>
+> V3:
+> - Removed the released() callback
+> ---
+>  include/linux/misc_cgroup.h |  5 +++++
+>  kernel/cgroup/misc.c        | 32 +++++++++++++++++++++++++++++---
+>  2 files changed, 34 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
+> index e799b1f8d05b..e1bcd176c2de 100644
+> --- a/include/linux/misc_cgroup.h
+> +++ b/include/linux/misc_cgroup.h
+> @@ -37,6 +37,11 @@ struct misc_res {
+>  	u64 max;
+>  	atomic64_t usage;
+>  	atomic64_t events;
+> +
+> +	/* per resource callback ops */
+> +	int (*misc_cg_alloc)(struct misc_cg *cg);
+> +	void (*misc_cg_free)(struct misc_cg *cg);
+> +	void (*misc_cg_max_write)(struct misc_cg *cg);
+>  };
+> =20
+>  /**
+> diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
+> index 79a3717a5803..e0092170d0dd 100644
+> --- a/kernel/cgroup/misc.c
+> +++ b/kernel/cgroup/misc.c
+> @@ -276,10 +276,13 @@ static ssize_t misc_cg_max_write(struct kernfs_open=
+_file *of, char *buf,
+> =20
+>  	cg =3D css_misc(of_css(of));
+> =20
+> -	if (READ_ONCE(misc_res_capacity[type]))
+> +	if (READ_ONCE(misc_res_capacity[type])) {
+>  		WRITE_ONCE(cg->res[type].max, max);
+> -	else
+> +		if (cg->res[type].misc_cg_max_write)
+> +			cg->res[type].misc_cg_max_write(cg);
+> +	} else {
+>  		ret =3D -EINVAL;
+> +	}
+> =20
+>  	return ret ? ret : nbytes;
+>  }
+> @@ -383,23 +386,39 @@ static struct cftype misc_cg_files[] =3D {
+>  static struct cgroup_subsys_state *
+>  misc_cg_alloc(struct cgroup_subsys_state *parent_css)
+>  {
+> +	struct misc_cg *parent_cg;
+>  	enum misc_res_type i;
+>  	struct misc_cg *cg;
+> +	int ret;
+> =20
+>  	if (!parent_css) {
+>  		cg =3D &root_cg;
+> +		parent_cg =3D &root_cg;
+>  	} else {
+>  		cg =3D kzalloc(sizeof(*cg), GFP_KERNEL);
+>  		if (!cg)
+>  			return ERR_PTR(-ENOMEM);
+> +		parent_cg =3D css_misc(parent_css);
+>  	}
+> =20
+>  	for (i =3D 0; i < MISC_CG_RES_TYPES; i++) {
+>  		WRITE_ONCE(cg->res[i].max, MAX_NUM);
+>  		atomic64_set(&cg->res[i].usage, 0);
+> +		if (parent_cg->res[i].misc_cg_alloc) {
+> +			ret =3D parent_cg->res[i].misc_cg_alloc(cg);
+> +			if (ret)
+> +				goto alloc_err;
+> +		}
+>  	}
+> =20
+>  	return &cg->css;
+> +
+> +alloc_err:
+> +	for (i =3D 0; i < MISC_CG_RES_TYPES; i++)
+> +		if (parent_cg->res[i].misc_cg_free)
+> +			cg->res[i].misc_cg_free(cg);
+> +	kfree(cg);
+> +	return ERR_PTR(ret);
+>  }
+> =20
+>  /**
+> @@ -410,7 +429,14 @@ misc_cg_alloc(struct cgroup_subsys_state *parent_css=
+)
+>   */
+>  static void misc_cg_free(struct cgroup_subsys_state *css)
+>  {
+> -	kfree(css_misc(css));
+> +	struct misc_cg *cg =3D css_misc(css);
+> +	enum misc_res_type i;
+> +
+> +	for (i =3D 0; i < MISC_CG_RES_TYPES; i++)
+> +		if (cg->res[i].misc_cg_free)
+> +			cg->res[i].misc_cg_free(cg);
+> +
+> +	kfree(cg);
+>  }
+> =20
+>  /* Cgroup controller callbacks */
+> --=20
+> 2.25.1
+
+BR, Jarkko
