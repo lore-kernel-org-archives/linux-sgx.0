@@ -2,135 +2,93 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7A4EED617
-	for <linux-sgx@archiver.kernel.org>; Fri, 15 Sep 2023 16:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 607A8EED61A
+	for <linux-sgx@archiver.kernel.org>; Fri, 15 Sep 2023 17:56:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231490AbjIOQ3O (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 15 Sep 2023 12:29:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50536 "EHLO
+        id S236094AbjIORz4 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 15 Sep 2023 13:55:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234444AbjIOQ2n (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 15 Sep 2023 12:28:43 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FA46199;
-        Fri, 15 Sep 2023 09:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694795318; x=1726331318;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=cj9l7n2Bmb5XcYMcAhASPfEHm9/0gmYiOFma5VsXwGU=;
-  b=MzFaLDBa+DuoIw3OwezMGLM0QNB+PCgUYfIHVyv5pH+iGEiTqMn/lGqi
-   nmWDOWhMiRQtu3dOzyuuI2L9pHm1FpkAdd7Li/XG3ws0FYZciGeOmpb4p
-   IT3TfIvujsF1XvIt4OaZP9n0qhIuiILFbhmB/jTbGt63+2eD2eK3U00SA
-   isllENiclTUZcGsnBSsUB4+ZSPKwpnworVDmB7cWwLc7c2JXpN7KaPLnH
-   N7Gcv1edFhFyArbsnp8tF6e543DRQ7DrM86evj17R58y+XTYsGR/54+wq
-   tjgqsMkHNOoXqBRrNB4D8NYIernupCDUJPW65sOXnBbWg9uYMnLzqgEri
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10834"; a="358708133"
-X-IronPort-AV: E=Sophos;i="6.02,149,1688454000"; 
-   d="scan'208";a="358708133"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2023 09:28:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10834"; a="810585199"
-X-IronPort-AV: E=Sophos;i="6.02,149,1688454000"; 
-   d="scan'208";a="810585199"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.25])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 15 Sep 2023 09:28:33 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "Huang, Kai" <kai.huang@intel.com>
-Cc:     "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "yangjie@microsoft.com" <yangjie@microsoft.com>,
-        "Li, Zhiquan1" <zhiquan1.li@intel.com>,
-        "Christopherson,, Sean" <seanjc@google.com>,
-        "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
-        "Zhang, Bo" <zhanb@microsoft.com>,
-        "anakrish@microsoft.com" <anakrish@microsoft.com>
-Subject: Re: [PATCH v4 03/18] x86/sgx: Add sgx_epc_lru_lists to encapsulate
- LRU lists
+        with ESMTP id S236326AbjIORzw (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 15 Sep 2023 13:55:52 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8584B10D;
+        Fri, 15 Sep 2023 10:55:47 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1c1ff5b741cso22273485ad.2;
+        Fri, 15 Sep 2023 10:55:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1694800547; x=1695405347; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WaFcn1QzXPssaV1y6SpztPUVojrCHgnKF1dhNtlMGp4=;
+        b=gkZvq6P00k5PUTsA89cAMAWHBG2rxmwaEnZaA1Dui3FGpsn8CeB6QBfPyADwkiSNrX
+         dqbWmJtalDGj5/icUCkXffvKVzMU2S6nva0A26HdrYFmBs2t7P5B/J2ATtwKiZ1j+MYG
+         2kPEGTe/9HLgHjsjCZgEfKkLjbMvACBlDtNVbpg9vRXszJoJgwtrflTxaCtTTA93fR2r
+         IfmnBFcvAahdRUryWm17p1BZAbKnWi4jn0bebTAKb1SAbW8UUDySzppGIlEGQbGfuHR3
+         BOl30qLJyJiDa5ZRx7N64CdbR1t4IhQX4BiToTfkCEY3EE/iR2Dl5Dn4OH8BNxkjOinm
+         RPRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694800547; x=1695405347;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WaFcn1QzXPssaV1y6SpztPUVojrCHgnKF1dhNtlMGp4=;
+        b=AXIqjZ5n+L2Ps+A5U21jYrZJqfwfZ7TXLjx1fF3aRv7xc+8mLSoaEFrMTXB9gUOArO
+         euKiW1KrifYFzADJMSvWSagfWDrPtUWxAoKRbKLtxFgpnVznHP+KCZUnu6VBac6AJf5k
+         Kpr5pTVRPevSncLaX3C3h/JCrxvcdsnRxBr0sHW3dtmSYsSMTWI4G9jV723HosjyWFo1
+         2+QrNOGd5WW3n+sb4cIcFN2FZzECcDy5h2JZvgLEnc+jKN/uLvUEpE/zjIc7DgDY1MAe
+         qg7lcV+JjcKKY/YoJaEWEV8XuuLmuET9yksqiD8GTeSLhAl1lUoi1glqCoy4uJ/wQpug
+         dRCw==
+X-Gm-Message-State: AOJu0YysJfybWAhyMOZar3g3YljeD+gP1CUAvcKLGDVW8Zm0fEP+CrkQ
+        bc+UBI0pP3pKkNKLe3CivJo=
+X-Google-Smtp-Source: AGHT+IGRKGAnyvhP9vrm2smcwDqLMNs/LZm4mYvCnAl2BqNU2eg1F0wc2J6eK1BHRcqsAtUi+Kr87w==
+X-Received: by 2002:a17:902:b943:b0:1bc:61d6:5fcc with SMTP id h3-20020a170902b94300b001bc61d65fccmr2096478pls.51.1694800546861;
+        Fri, 15 Sep 2023 10:55:46 -0700 (PDT)
+Received: from localhost (dhcp-72-235-13-41.hawaiiantel.net. [72.235.13.41])
+        by smtp.gmail.com with ESMTPSA id u6-20020a17090341c600b001c3f7fd1ef7sm3780417ple.12.2023.09.15.10.55.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Sep 2023 10:55:46 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Fri, 15 Sep 2023 07:55:45 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     jarkko@kernel.org, dave.hansen@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        x86@kernel.org, cgroups@vger.kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        sohil.mehta@intel.com, zhiquan1.li@intel.com,
+        kristen@linux.intel.com, seanjc@google.com, zhanb@microsoft.com,
+        anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
+        yangjie@microsoft.com
+Subject: Re: [PATCH v4 01/18] cgroup/misc: Add per resource callbacks for CSS
+ events
+Message-ID: <ZQSaoXBg-X4cwFdX@mtj.duckdns.org>
 References: <20230913040635.28815-1-haitao.huang@linux.intel.com>
- <20230913040635.28815-4-haitao.huang@linux.intel.com>
- <851f9b3043732c17cd8f86a77ccee0b7c6caa22f.camel@intel.com>
-Date:   Fri, 15 Sep 2023 11:28:28 -0500
+ <20230913040635.28815-2-haitao.huang@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2bbmpqncwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <851f9b3043732c17cd8f86a77ccee0b7c6caa22f.camel@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230913040635.28815-2-haitao.huang@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu, 14 Sep 2023 05:31:30 -0500, Huang, Kai <kai.huang@intel.com> wrote:
+On Tue, Sep 12, 2023 at 09:06:18PM -0700, Haitao Huang wrote:
+> @@ -37,6 +37,11 @@ struct misc_res {
+>  	u64 max;
+>  	atomic64_t usage;
+>  	atomic64_t events;
+> +
+> +	/* per resource callback ops */
+> +	int (*misc_cg_alloc)(struct misc_cg *cg);
+> +	void (*misc_cg_free)(struct misc_cg *cg);
+> +	void (*misc_cg_max_write)(struct misc_cg *cg);
 
-> Some non-technical staff:
->
-> On Tue, 2023-09-12 at 21:06 -0700, Haitao Huang wrote:
->> From: Kristen Carlson Accardi <kristen@linux.intel.com>
->
-> The patch was from Kristen, but ...
->
->>
->> Introduce a data structure to wrap the existing reclaimable list and its
->> spinlock. Each cgroup later will have one instance of this structure to
->> track EPC pages allocated for processes associated with the same cgroup.
->> Just like the global SGX reclaimer (ksgxd), an EPC cgroup reclaims pages
->> from the reclaimable list in this structure when its usage reaches near
->> its limit.
->>
->> Currently, ksgxd does not track the VA, SECS pages. They are considered
->> as 'unreclaimable' pages that are only deallocated when their respective
->> owning enclaves are destroyed and all associated resources released.
->>
->> When an EPC cgroup can not reclaim any more reclaimable EPC pages to
->> reduce its usage below its limit, the cgroup must also reclaim those
->> unreclaimables by killing their owning enclaves. The VA and SECS pages
->> later are also tracked in an 'unreclaimable' list added to this  
->> structure
->> to support this OOM killing of enclaves.
->>
->> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
->
-> ... it was firstly signed by Sean and then Kristen, which doesn't sound  
-> right.
->
-> If the patch was from Kristen, then either Sean's SoB should come after
-> Kristen's (which means Sean took Kristen's patch and signed it), or you  
-> need to
-> have a Co-developed-by tag for Sean right before his SoB (which  
-> indicates Sean
-> participated in the development of the patch but likely he wasn't the  
-> main
-> developer).
->
-> But I _guess_ the patch was just from Sean.
->
- From what I see:
-In v1 kristen included a "From" tsg for Sean. In v2 she split the original  
-patch into two and added some wrappers/ At that time, she removed the  
-"From" tag for both patches but kept the SOB and CC.
+A nit about naming. These are already in misc_res and cgroup_ and cgrp_
+prefixes are a lot more common. So, maybe go for sth like cgrp_alloc?
 
-@Kristen, could you confirm?
+Thanks.
 
-I only removed the wrappers from v2 based on Dave's comments.
-So if confirmed by Kristen, should we add "From" tag for Sean?
-
-I'll double check the other patches.
-Thanks
-Haitao
+-- 
+tejun
