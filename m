@@ -2,57 +2,44 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77267EED61A
-	for <linux-sgx@archiver.kernel.org>; Fri, 15 Sep 2023 18:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A502ACD37B1
+	for <linux-sgx@archiver.kernel.org>; Sat, 16 Sep 2023 01:28:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234869AbjIOS1h (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Fri, 15 Sep 2023 14:27:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36800 "EHLO
+        id S238225AbjIPB1d (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 15 Sep 2023 21:27:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236464AbjIOS1S (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Fri, 15 Sep 2023 14:27:18 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79090210A;
-        Fri, 15 Sep 2023 11:26:13 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-68fb85afef4so2370103b3a.1;
-        Fri, 15 Sep 2023 11:26:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1694802373; x=1695407173; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dlV13QwwEAoXGdo9jbQW+sodfxxDlcgtLnB5aE/tibY=;
-        b=Zni0BN3MU3FgBGvb9E3SP8UfiOMf9LsjEgP83dBOE2MUiHd2kF91631DgiECWi9G3G
-         9j6cwAMJAHFkZk9fACn0OTo1n3YhpW92uT/YtOP7G3in8xwKlQFifT8GJq/1UKAnuW44
-         EJ8Mzthsm7LMHKHyT4SE5SBsyAQ09tHZtJnphTRBih9LHn+ouJ2JQGhgXAqEMpDogceR
-         buXRPYOU/W5w8XvAmKV+8ISs6AkNedKfAXGpwdvvJXphQ+qHWd/dmz9GOyV1//ODiYP9
-         kAe6dgEwd9UJysMP/sbShYe3oxKT7j1yHa2xprFX/UFP6/mJ0ExbR+0E8IaK/06YAv0a
-         N7Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694802373; x=1695407173;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dlV13QwwEAoXGdo9jbQW+sodfxxDlcgtLnB5aE/tibY=;
-        b=hl716tEuar995P5ylAE6em2gJEEc2G1F4JRKtmBWK/4jL0nvuXlwKz7ELds+jZa2Em
-         vA62XoxWIf0pwRQVw6GG5Mo2fp3bzpAv8UcYJ51AXWXKhDstd4dUZccSPVfmlb/1G5vu
-         BvbALalGO0zxlt9aawLv3j76OU+A9528CcfAgPeWIXfYiILC/Tvb6EYLWU5Cq8pMrkTb
-         2wihf0rxWXQcNwPc3Z3RNIVoAHFycB6iEqlG5sA+M9B6CsAqNMVMfTJbGNzCgAF25mZU
-         lqf5NlBehNNVGnPkOZNVzt2ejnafkfRfL9QTeaAUOLgV3YnP/p7pOLnFUJ/scuVtM7j/
-         7A2w==
-X-Gm-Message-State: AOJu0YwY3uahGfhnv3SORxa3R8V8bZ+U+olKeaPQaLA7xapfcwRxXheh
-        Fl5JAHPtwUzsjcgnDPyTwQE=
-X-Google-Smtp-Source: AGHT+IEqMCcAWfckYmxxeU2Sj/UxNQHkJCdGLgYJ6dp/hUPxjtXiHVuvj3MRaVl6RlD+VN1d2FvZgA==
-X-Received: by 2002:a05:6a20:8f01:b0:152:6b63:f1e7 with SMTP id b1-20020a056a208f0100b001526b63f1e7mr3082123pzk.1.1694802372788;
-        Fri, 15 Sep 2023 11:26:12 -0700 (PDT)
-Received: from localhost (dhcp-72-235-13-41.hawaiiantel.net. [72.235.13.41])
-        by smtp.gmail.com with ESMTPSA id r11-20020a62e40b000000b006879493aca0sm3248207pfh.26.2023.09.15.11.26.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Sep 2023 11:26:12 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Fri, 15 Sep 2023 08:26:11 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
+        with ESMTP id S236657AbjIPB1P (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 15 Sep 2023 21:27:15 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59042128;
+        Fri, 15 Sep 2023 18:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694827630; x=1726363630;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=LSZ/Ims3Q2WIrfyaa9TBJMUmtRfQrZWhfLJol4CcGBY=;
+  b=ZryqysY/1oiPe9J8CU+PFqvz3Ck8IETEaBf6jC9Mvt4JwsvLrULNivj8
+   GvDstGNU/5so3AQ3+iYt5ZDDGnYnoxpnxUahtdOkzkrvbcMD5HpDOmL0X
+   ObcsUcSeDlYL4qV/J7j6ZdjK+P2lcVWH7krzIlM2dtVXTvWj9Oiwu/ZJ2
+   e1HvLCRfq75XXLCZvdzW95M5bwfHs3Sf+AeB0Mh0XFISI3UOpGvEq4wnC
+   NveIir9QWgt0ZuLLkLVhvMTrb9Vbs+W3mT69r8p2Sw/MhTORW1DU6HYQi
+   f8bUHgH5aqZZVutPw/uOiRwlcGniMVqMuln2xPrIT/RAF/YwDRn7uavdc
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10834"; a="465734052"
+X-IronPort-AV: E=Sophos;i="6.02,150,1688454000"; 
+   d="scan'208";a="465734052"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2023 18:27:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10834"; a="888407621"
+X-IronPort-AV: E=Sophos;i="6.02,150,1688454000"; 
+   d="scan'208";a="888407621"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.25])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 15 Sep 2023 18:26:31 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "Tejun Heo" <tj@kernel.org>
 Cc:     jarkko@kernel.org, dave.hansen@linux.intel.com,
         linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
         x86@kernel.org, cgroups@vger.kernel.org, tglx@linutronix.de,
@@ -61,33 +48,49 @@ Cc:     jarkko@kernel.org, dave.hansen@linux.intel.com,
         kristen@linux.intel.com, seanjc@google.com, zhanb@microsoft.com,
         anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
         yangjie@microsoft.com
-Subject: Re: [PATCH v4 00/18] Add Cgroup support for SGX EPC memory
-Message-ID: <ZQShw25UBVvVvjQo@mtj.duckdns.org>
+Subject: Re: [PATCH v4 01/18] cgroup/misc: Add per resource callbacks for CSS
+ events
 References: <20230913040635.28815-1-haitao.huang@linux.intel.com>
+ <20230913040635.28815-2-haitao.huang@linux.intel.com>
+ <ZQSaoXBg-X4cwFdX@mtj.duckdns.org> <ZQSbM9ItXVyeIU7F@mtj.duckdns.org>
+Date:   Fri, 15 Sep 2023 20:27:06 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230913040635.28815-1-haitao.huang@linux.intel.com>
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.2bcbngvpwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <ZQSbM9ItXVyeIU7F@mtj.duckdns.org>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, Sep 12, 2023 at 09:06:17PM -0700, Haitao Huang wrote:
-> SGX EPC memory allocations are separate from normal RAM allocations, and
-> are managed solely by the SGX subsystem. The existing cgroup memory
-> controller cannot be used to limit or account for SGX EPC memory, which is
-> a desirable feature in some environments, e.g., support for pod level
-> control in a Kubernates cluster on a VM or baremetal host [1,2].
-> 
-> This patchset implements the support for sgx_epc memory within the misc
-> cgroup controller. The user can use the misc cgroup controller to set and
-> enforce a max limit on total EPC usage per cgroup. The implementation
-> reports current usage and events of reaching the limit per cgroup as well
-> as the total system capacity.
+On Fri, 15 Sep 2023 12:58:11 -0500, Tejun Heo <tj@kernel.org> wrote:
 
-Minor nit aside, it looks fine from cgroup side.
+> On Fri, Sep 15, 2023 at 07:55:45AM -1000, Tejun Heo wrote:
+>> On Tue, Sep 12, 2023 at 09:06:18PM -0700, Haitao Huang wrote:
+>> > @@ -37,6 +37,11 @@ struct misc_res {
+>> >  	u64 max;
+>> >  	atomic64_t usage;
+>> >  	atomic64_t events;
+>> > +
+>> > +	/* per resource callback ops */
+>> > +	int (*misc_cg_alloc)(struct misc_cg *cg);
+>> > +	void (*misc_cg_free)(struct misc_cg *cg);
+>> > +	void (*misc_cg_max_write)(struct misc_cg *cg);
+>>
+>> A nit about naming. These are already in misc_res and cgroup_ and cgrp_
+>> prefixes are a lot more common. So, maybe go for sth like cgrp_alloc?
+>
+> Ah, never mind about the prefix part. misc is using cg_ prefix widely
+> already.
+>
 
-Thanks.
 
--- 
-tejun
+Change them to plain alloc, free, max_write? As they are per resource  
+type, not per cgroup.
+Also following no-prefix naming scheme like "open" for fops, vma_ops, etc.
+
+Thanks for your review.
+
+Haitao
