@@ -2,81 +2,105 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78573CD37B2
-	for <linux-sgx@archiver.kernel.org>; Sat, 16 Sep 2023 04:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 647CEE7D0A5
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Sep 2023 19:02:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238470AbjIPEU3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sat, 16 Sep 2023 00:20:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59504 "EHLO
+        id S230155AbjIUTCn (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 21 Sep 2023 15:02:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238431AbjIPEUC (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sat, 16 Sep 2023 00:20:02 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84A251BD2;
-        Fri, 15 Sep 2023 21:19:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694837997; x=1726373997;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=gIPyWiuFfzCzD4q9eXt3xfBm9DVJMh2r9IPir+knJEA=;
-  b=FAzDEN9rRR2HqihsDZKXnLrKWzQYeYI4y+RCHEq7iDU0vBJ0kUtkrAC2
-   nuqHsAIMjMb7jfJ+ngrOuWRYCj7BCv7COjGIs5K/BtYmsXRGYQdM9HxBl
-   GlyLW2opqLI99XC1xek0V3w01fpRSMqQuZTpZ8WvkBU26+RXggxPkNCeK
-   xSTbGr1GTZbgEmxdFbUIo4N5dMLPmFFB7lOBLjDnO5r7RYKFPmTtP4to6
-   SObrY4GTnbZy9W/Wqm+/fHUMBmTOIlS36oF+FolRGohDIoUOAcEiJJ2al
-   frxc36LGjLNw53ChmzHSsxidtt61BL1lOLOXEDrL/L5FUnMrAJkDa3OVd
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10834"; a="358798227"
-X-IronPort-AV: E=Sophos;i="6.02,151,1688454000"; 
-   d="scan'208";a="358798227"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2023 21:19:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10834"; a="748404890"
-X-IronPort-AV: E=Sophos;i="6.02,151,1688454000"; 
-   d="scan'208";a="748404890"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.25])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 15 Sep 2023 21:19:54 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     dave.hansen@linux.intel.com, tj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        x86@kernel.org, cgroups@vger.kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sohil.mehta@intel.com, "Jarkko Sakkinen" <jarkko@kernel.org>
-Cc:     zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
-        zhanb@microsoft.com, anakrish@microsoft.com,
-        mikko.ylinen@linux.intel.com, yangjie@microsoft.com
-Subject: Re: [PATCH v4 12/18] x86/sgx: Add EPC OOM path to forcefully reclaim
- EPC
-References: <20230913040635.28815-1-haitao.huang@linux.intel.com>
- <20230913040635.28815-13-haitao.huang@linux.intel.com>
- <CVHWE8HC4SHA.FU2XVIXN6WB7@suppilovahvero>
-Date:   Fri, 15 Sep 2023 23:19:53 -0500
+        with ESMTP id S229865AbjIUTCJ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 21 Sep 2023 15:02:09 -0400
+Received: from icts-p-cavspool-1.kulnet.kuleuven.be (icts-p-cavspool-1.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EB988CC93;
+        Thu, 21 Sep 2023 10:42:40 -0700 (PDT)
+Received: from icts-p-cavuit-4.kulnet.kuleuven.be (icts-p-cavuit-4.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:134])
+        by icts-p-cavspool-1.kulnet.kuleuven.be (Postfix) with ESMTP id 7757D29BF;
+        Thu, 21 Sep 2023 16:36:59 +0200 (CEST)
+X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
+X-KULeuven-Scanned: Found to be clean
+X-KULeuven-ID: 14592134.A48E4
+X-KULeuven-Information: Katholieke Universiteit Leuven
+Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:140:242:ac11:1d])
+        by icts-p-cavuit-4.kulnet.kuleuven.be (Postfix) with ESMTP id 14592134;
+        Thu, 21 Sep 2023 16:36:38 +0200 (CEST)
+BCmilterd-Mark-Subject: no
+BCmilterd-Errors: 
+BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID#0.00
+X-CAV-Cluster: smtps
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
+        s=cav; t=1695306997;
+        bh=BlYdRr32xxxqfktzP+vlGnAtIlq3iaZb2FkzpNho4RU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=cShiXCCWe/OoXhNS8r6JSF7j3nH5EkpMOg+XanBJ0o+CM1MsZs+bS8+nZ9OD3zYiQ
+         MZ0ZAsWK/b6bQkiUPeYet8zdD+eId4xI46Ql4plR6m242BM9ExSO9tKvBAciVxigq8
+         2K5CpVDR5eyFarD+JDZO2BgTYHWDsRBJAA1bCvks=
+Received: from localhost.localdomain (ptr-82s0fs8p4onqm1q5sl7.18120a2.ip6.access.telenet.be [IPv6:2a02:1811:d31:8b00:c962:1db3:c9ed:fdfb])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id CEF58D4F38757;
+        Thu, 21 Sep 2023 16:36:37 +0200 (CEST)
+X-Kuleuven: This mail passed the K.U.Leuven mailcluster
+From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     dave.hansen@linux.intel.com,
+        Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH v6 02/13] selftests/sgx: Fix uninitialized pointer dereferences in encl_get_entry
+Date:   Thu, 21 Sep 2023 16:35:53 +0200
+Message-Id: <20230921143604.6561-3-jo.vanbulck@cs.kuleuven.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230921143604.6561-1-jo.vanbulck@cs.kuleuven.be>
+References: <20230921143604.6561-1-jo.vanbulck@cs.kuleuven.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2bcjnfkmwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <CVHWE8HC4SHA.FU2XVIXN6WB7@suppilovahvero>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 13 Sep 2023 10:34:28 -0500, Jarkko Sakkinen <jarkko@kernel.org>  
-wrote:
+Ensure sym_tab and sym_names are zero-initialized and add an early-out
+condition in the unlikely (erroneous) case that the enclave ELF file would
+not contain a symbol table.
 
->> +++ b/arch/x86/kernel/cpu/sgx/encl.h
->> @@ -39,6 +39,7 @@ enum sgx_encl_flags {
->>  	SGX_ENCL_DEBUG		= BIT(1),
->>  	SGX_ENCL_CREATED	= BIT(2),
->>  	SGX_ENCL_INITIALIZED	= BIT(3),
->> +	SGX_ENCL_OOM		= BIT(4),
->
-> Given how the constants are named before maybe SGX_ENCL_NO_MEMORY would
-> be more obvious.
+This addresses -Werror=maybe-uninitialized compiler warnings for gcc -O2.
 
-Will do.
-Thanks
-Haitao
+Fixes: 33c5aac3bf32 ("selftests/sgx: Test complete changing of page type flow")
+Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ tools/testing/selftests/sgx/load.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+index 94bdeac1cf04..c9f658e44de6 100644
+--- a/tools/testing/selftests/sgx/load.c
++++ b/tools/testing/selftests/sgx/load.c
+@@ -136,11 +136,11 @@ static bool encl_ioc_add_pages(struct encl *encl, struct encl_segment *seg)
+  */
+ uint64_t encl_get_entry(struct encl *encl, const char *symbol)
+ {
++	Elf64_Sym *symtab = NULL;
++	char *sym_names = NULL;
+ 	Elf64_Shdr *sections;
+-	Elf64_Sym *symtab;
+ 	Elf64_Ehdr *ehdr;
+-	char *sym_names;
+-	int num_sym;
++	int num_sym = 0;
+ 	int i;
+ 
+ 	ehdr = encl->bin;
+@@ -161,6 +161,9 @@ uint64_t encl_get_entry(struct encl *encl, const char *symbol)
+ 		}
+ 	}
+ 
++	if (!symtab || !sym_names)
++		return 0;
++
+ 	for (i = 0; i < num_sym; i++) {
+ 		Elf64_Sym *sym = &symtab[i];
+ 
+-- 
+2.25.1
+
