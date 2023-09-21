@@ -2,54 +2,54 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1704E7D0A2
-	for <linux-sgx@archiver.kernel.org>; Thu, 21 Sep 2023 20:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FE5E7D0A2
+	for <linux-sgx@archiver.kernel.org>; Thu, 21 Sep 2023 20:27:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231949AbjIUU0r (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 21 Sep 2023 16:26:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37888 "EHLO
+        id S232003AbjIUU1Q (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 21 Sep 2023 16:27:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231896AbjIUU0Z (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 21 Sep 2023 16:26:25 -0400
+        with ESMTP id S231923AbjIUU0l (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 21 Sep 2023 16:26:41 -0400
 Received: from icts-p-cavspool-1.kulnet.kuleuven.be (icts-p-cavspool-1.kulnet.kuleuven.be [134.58.240.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB3BA8CC8F;
-        Thu, 21 Sep 2023 10:42:40 -0700 (PDT)
-Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [134.58.240.133])
-        by icts-p-cavspool-1.kulnet.kuleuven.be (Postfix) with ESMTP id 7A7FB29C7;
-        Thu, 21 Sep 2023 16:37:01 +0200 (CEST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5CFB8C634;
+        Thu, 21 Sep 2023 10:42:34 -0700 (PDT)
+Received: from icts-p-cavuit-2.kulnet.kuleuven.be (icts-p-cavuit-2.kulnet.kuleuven.be [134.58.240.131])
+        by icts-p-cavspool-1.kulnet.kuleuven.be (Postfix) with ESMTP id A3F7D299C;
+        Thu, 21 Sep 2023 16:36:58 +0200 (CEST)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: 1BADB201E8.A9C18
+X-KULeuven-ID: 51194201BA.AED27
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-0.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:140:242:ac11:1d])
-        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id 1BADB201E8;
-        Thu, 21 Sep 2023 16:36:41 +0200 (CEST)
+        by icts-p-cavuit-2.kulnet.kuleuven.be (Postfix) with ESMTP id 51194201BA;
+        Thu, 21 Sep 2023 16:36:38 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
 BCmilterd-Report: SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID#0.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1695307001;
-        bh=DkDARNB92D40iLpwhVTiKEDgJy/wmtJ7/ecGi3xcfk4=;
+        s=cav; t=1695306998;
+        bh=NdUR+7nosFPVu+HpEjxUpAINbu4PmwNYym3jDerAKxc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=ALXLwVZ+VpB22wRf+2I3R24UjU5LGPWBfWzBxwKoVMYzPMKOyFZm+Rc4kPgAdZEjP
-         6DV81j8OASOE3UKTr+rhBPF0EkbHH4lpqWWHy6STAtMv5R4IIoy/zpnqmus+BwWB9e
-         WyjLDCmHoU5u/wmwKs8kxfKV0mAWlngDSX+2WQwA=
+        b=bpTRGeDDukL4LXpKSwzaIleGdAFs0lZQ6aqtoLIthWCc3cXrSEwP7XOesFutciQnl
+         RA8WchEs+KmJlREAD3HePXJuNTb7AaT3BedHTC2OT9w7qQ3aEO5s5F44yp8scx2swW
+         Sg4zfx2Mzs+2HP/RIiXQ5OA9EIir/TNeaxARrxPQ=
 Received: from localhost.localdomain (ptr-82s0fs8p4onqm1q5sl7.18120a2.ip6.access.telenet.be [IPv6:2a02:1811:d31:8b00:c962:1db3:c9ed:fdfb])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id D7213D4F30837;
-        Thu, 21 Sep 2023 16:36:40 +0200 (CEST)
+        by icts-p-ceifnet-smtps-0.kuleuven.be (Postfix) with ESMTPSA id 1A92DD4F38757;
+        Thu, 21 Sep 2023 16:36:38 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com,
         Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: [PATCH v6 13/13] selftests/sgx: Remove incomplete ABI sanitization code in test enclave
-Date:   Thu, 21 Sep 2023 16:36:04 +0200
-Message-Id: <20230921143604.6561-14-jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH v6 03/13] selftests/sgx: Include memory clobber for inline asm in test enclave
+Date:   Thu, 21 Sep 2023 16:35:54 +0200
+Message-Id: <20230921143604.6561-4-jo.vanbulck@cs.kuleuven.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230921143604.6561-1-jo.vanbulck@cs.kuleuven.be>
 References: <20230921143604.6561-1-jo.vanbulck@cs.kuleuven.be>
@@ -59,46 +59,47 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-As the selftest enclave is *not* intended for production, simplify the
-code by not initializing CPU configuration registers as expected by the
-ABI on enclave entry or cleansing caller-save registers on enclave exit.
+Add the "memory" clobber to the EMODPE and EACCEPT asm blocks to tell the
+compiler the assembly code accesses to the secinfo struct. This ensures
+the compiler treats the asm block as a memory barrier and the write to
+secinfo will be visible to ENCLU.
 
-Link: https://lore.kernel.org/all/da0cfb1e-e347-f7f2-ac72-aec0ee0d867d@intel.com/
+Fixes: 20404a808593 ("selftests/sgx: Add test for EPCM permission changes")
 Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+Reviewed-by: Kai Huang <kai.huang@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- .../testing/selftests/sgx/test_encl_bootstrap.S  | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+ tools/testing/selftests/sgx/test_encl.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-index 28fe5d2ac0af..d8c4ac94e032 100644
---- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
-+++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-@@ -59,21 +59,11 @@ encl_entry_core:
+diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
+index c0d6397295e3..ae791df3e5a5 100644
+--- a/tools/testing/selftests/sgx/test_encl.c
++++ b/tools/testing/selftests/sgx/test_encl.c
+@@ -24,10 +24,11 @@ static void do_encl_emodpe(void *_op)
+ 	secinfo.flags = op->flags;
  
- 	push	%rcx # push the address after EENTER
+ 	asm volatile(".byte 0x0f, 0x01, 0xd7"
+-				:
++				: /* no outputs */
+ 				: "a" (EMODPE),
+ 				  "b" (&secinfo),
+-				  "c" (op->epc_addr));
++				  "c" (op->epc_addr)
++				: "memory" /* read from secinfo pointer */);
+ }
  
-+	# NOTE: as the selftest enclave is *not* intended for production,
-+	# simplify the code by not initializing ABI registers on entry or
-+	# cleansing caller-save registers on exit.
- 	call	encl_body
+ static void do_encl_eaccept(void *_op)
+@@ -42,7 +43,8 @@ static void do_encl_eaccept(void *_op)
+ 				: "=a" (rax)
+ 				: "a" (EACCEPT),
+ 				  "b" (&secinfo),
+-				  "c" (op->epc_addr));
++				  "c" (op->epc_addr)
++				: "memory" /* read from secinfo pointer */);
  
--	/* Clear volatile GPRs, except RAX (EEXIT function). */
--	xor     %rcx, %rcx
--	xor     %rdx, %rdx
--	xor     %rdi, %rdi
--	xor     %rsi, %rsi
--	xor     %r8, %r8
--	xor     %r9, %r9
--	xor     %r10, %r10
--	xor     %r11, %r11
--
--	# Reset status flags.
--	add     %rdx, %rdx # OF = SF = AF = CF = 0; ZF = PF = 1
--
- 	# Prepare EEXIT target by popping the address of the instruction after
- 	# EENTER to RBX.
- 	pop	%rbx
+ 	op->ret = rax;
+ }
 -- 
 2.25.1
 
