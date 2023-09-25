@@ -2,81 +2,116 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1379CE7AA3
-	for <linux-sgx@archiver.kernel.org>; Mon, 25 Sep 2023 16:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 628CBCE7AA3
+	for <linux-sgx@archiver.kernel.org>; Mon, 25 Sep 2023 16:57:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232336AbjIYQob (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 25 Sep 2023 12:44:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39938 "EHLO
+        id S232086AbjIYQ5b (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 25 Sep 2023 12:57:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232314AbjIYQoa (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 25 Sep 2023 12:44:30 -0400
+        with ESMTP id S231393AbjIYQ5a (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 25 Sep 2023 12:57:30 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CC03BE;
-        Mon, 25 Sep 2023 09:44:24 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10B52C433C8;
-        Mon, 25 Sep 2023 16:44:22 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D139110D;
+        Mon, 25 Sep 2023 09:57:23 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA55C433C7;
+        Mon, 25 Sep 2023 16:57:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695660264;
-        bh=RcsCUTJ6WPrPfmovT9/V50ARlRbqM5k1IHKyp/mjHN4=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=D9Wg6D7IUh8JaG6Aw0IDXHbUQQJyl3UJty8hbpGz9mTvhMgZRXz/syULmiH/KUQQ6
-         D8RwxpvLVkpl0b+sjjs/avbGTxG3FWiLqOl5o7eXGWMETdMJB7+JmoAZFhOzUFFzzg
-         cpvI4OAoV8DS200smzuvEFvaMg6kYFGseqGDN1JYyezqNyEy/DDMZhx+fTPnkvszru
-         yH/ZYRdHaClFYSXg/ocb60oG7usU9L4AxQAS9p/rpngYnG0cUqLrsbw4MzXL4GrwQv
-         G4g23o6stJ02HVwA//O7ZZZDhXgR2IAmHZWbE3IbW+JaQwYKLxjR+f2CN5SrvxWHSl
-         OO2MSZ9VjVygg==
+        s=k20201202; t=1695661043;
+        bh=/TClsZXVGXCV9uINJx9IgXVRoHxhac9DAEBNZbscd1w=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=WBNUXt/WPWhBOc7FN29nn/y8nh1h4+x9bTO6ai3NHcfLzlWG/RF6iEYi1pEp1HTh8
+         4LwFwL0c28Mm3QpAWj77WQVmkvBNkEA5CR6+zaET2Tlk2gaYI/0IrX/HOpkMeoOXyb
+         cPRErNZxEP2NLg9LCXSqWIwcIYiputLZ3MLdTsN12Q68acODnioW443+WPg+HKIizl
+         Nd/Z1N48K4NZ1DXFnadVJkdgIPRFCwXvnphpYImcEgrmtpxS/DHAc9lqiYJIEazOF2
+         8r33lZHLd77+B7WO3wIROGBDbMbJwg0Yueyzyb71wNWRiLWJ6wUFrQTOGAvx3S6DS/
+         40ITz+rb7puIw==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Mon, 25 Sep 2023 19:44:20 +0300
-Message-Id: <CVS5EA0J0L3K.3KYP9Y9K9DRSY@suppilovahvero>
-Subject: Re: [PATCH v6 06/13] selftests/sgx: Remove redundant enclave base
- address save/restore
+Date:   Mon, 25 Sep 2023 19:57:17 +0300
+Message-Id: <CVS5O6QV7OWF.UBP59U46WUBX@suppilovahvero>
+Cc:     <zhiquan1.li@intel.com>, <kristen@linux.intel.com>,
+        <seanjc@google.com>, <zhanb@microsoft.com>,
+        <anakrish@microsoft.com>, <mikko.ylinen@linux.intel.com>,
+        <yangjie@microsoft.com>
+Subject: Re: [PATCH v4 01/18] cgroup/misc: Add per resource callbacks for
+ CSS events
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>, <kai.huang@intel.com>,
-        <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc:     <dave.hansen@linux.intel.com>
+To:     "Haitao Huang" <haitao.huang@linux.intel.com>,
+        <dave.hansen@linux.intel.com>, <tj@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+        <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+        <sohil.mehta@intel.com>
 X-Mailer: aerc 0.14.0
-References: <20230921143604.6561-1-jo.vanbulck@cs.kuleuven.be>
- <20230921143604.6561-7-jo.vanbulck@cs.kuleuven.be>
-In-Reply-To: <20230921143604.6561-7-jo.vanbulck@cs.kuleuven.be>
+References: <20230913040635.28815-1-haitao.huang@linux.intel.com>
+ <20230913040635.28815-2-haitao.huang@linux.intel.com>
+ <CVHOU5G1SCUT.RCBVZ3W8G2NJ@suppilovahvero>
+ <op.2bci9anpwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <op.2bci9anpwjvjmi@hhuan26-mobl.amr.corp.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Thu Sep 21, 2023 at 5:35 PM EEST, Jo Van Bulck wrote:
-> Remove redundant push/pop pair that stores and restores the enclave base
-> address in the test enclave, as it is never used after the pop and can
-> anyway be easily retrieved via the __encl_base symbol.
+On Sat Sep 16, 2023 at 7:11 AM EEST, Haitao Huang wrote:
+> Hi Jarkko
 >
-> Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-> Acked-by: Kai Huang <kai.huang@intel.com>
-> ---
->  tools/testing/selftests/sgx/test_encl_bootstrap.S | 3 ---
->  1 file changed, 3 deletions(-)
+> On Wed, 13 Sep 2023 04:39:06 -0500, Jarkko Sakkinen <jarkko@kernel.org> =
+=20
+> wrote:
 >
-> diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/te=
-sting/selftests/sgx/test_encl_bootstrap.S
-> index 03ae0f57e29d..e0ce993d3f2c 100644
-> --- a/tools/testing/selftests/sgx/test_encl_bootstrap.S
-> +++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
-> @@ -55,12 +55,9 @@ encl_entry_core:
->  	push	%rax
-> =20
->  	push	%rcx # push the address after EENTER
-> -	push	%rbx # push the enclave base address
-> =20
->  	call	encl_body
-> =20
-> -	pop	%rbx # pop the enclave base address
-> -
->  	/* Clear volatile GPRs, except RAX (EEXIT function). */
->  	xor     %rcx, %rcx
->  	xor     %rdx, %rdx
-> --=20
-> 2.25.1
+> > On Wed Sep 13, 2023 at 7:06 AM EEST, Haitao Huang wrote:
+> >> From: Kristen Carlson Accardi <kristen@linux.intel.com>
+> >>
+> >> Consumers of the misc cgroup controller might need to perform separate
+> >> actions for Cgroups Subsystem State(CSS) events: cgroup alloc and free=
+.
+> >
+> > nit: s/State(CSS)/State (CSS)/
+> >
+> > "cgroup alloc" and "cgroup free" mean absolutely nothing.
+> >
+> >
+> >> In addition, writes to the max value may also need separate action. Ad=
+d
+> >
+> > What "the max value"?
+> >
+> >> the ability to allow downstream users to setup callbacks for these
+> >> operations, and call the corresponding per-resource-type callback when
+> >> appropriate.
+> >
+> > Who are "the downstream users" and what sort of callbacks they setup?
+>
+> How about this?
+>
+> The misc cgroup controller (subsystem) currently does not perform resourc=
+e =20
+> type specific action for Cgroups Subsystem State (CSS) events: the =20
+> 'css_alloc' event when a cgroup is created and the 'css_free' event when =
+a =20
+> cgroup is destroyed, or in event of user writing the max value to the =20
+> misc.max file to set the consumption limit of a specific resource =20
+> [admin-guide/cgroup-v2.rst, 5-9. Misc].
+>
+> Define callbacks for those events and allow resource providers to registe=
+r =20
+> the callbacks per resource type as needed. This will be utilized later by=
+ =20
+> the EPC misc cgroup support implemented in the SGX driver:
+> - On cgroup alloc, allocate and initialize necessary structures for EPC =
+=20
+> reclaiming, e.g., LRU list, work queue, etc.
+> - On cgroup free, cleanup and free those structures created in alloc.
+> - On max write, trigger EPC reclaiming if the new limit is at or below =
+=20
+> current consumption.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Yeah, this is much better (I was on holiday, thus the delay on
+response).
+
+> Thanks
+> Haitao
 
 BR, Jarkko
