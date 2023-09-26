@@ -2,218 +2,225 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C45E81810
-	for <linux-sgx@archiver.kernel.org>; Tue, 26 Sep 2023 03:04:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D14E7E633
+	for <linux-sgx@archiver.kernel.org>; Tue, 26 Sep 2023 13:10:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229521AbjIZDE3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 25 Sep 2023 23:04:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58564 "EHLO
+        id S230125AbjIZNKp (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 26 Sep 2023 09:10:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjIZDE3 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 25 Sep 2023 23:04:29 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53DA19F;
-        Mon, 25 Sep 2023 20:04:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695697462; x=1727233462;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=2bxMWcQV7aRui1UuOAzcGKmeuETYed3NCdfqWTKxnPg=;
-  b=JPLuIhdHmuourxB5ObKfx0tP7nrIY/angXy3i0My69HXDH6ZwGLyEXie
-   E9j6gR6TAPHmTG1WI9aEpPPLcfcqd+RppM+XAJRakBxIsaSLthBHOkmQ0
-   QNNEvrYyjzjmHIEEWtrX/wVv8I5GwdpQ8IzbbbX3qTjChjD5e/yHxT6f6
-   tJqSkH3uqyUdaW6VNhaOCaA5Pgi7suX7Fs99kLXeT/dGV/dAi1oXa6+bk
-   lD+S/QYJou7pUsXg6uvdF2aPt/jBbOogart+NXz3/yjSBAttGkxhK3gDh
-   YcFEDf3Z8ZRqNCdk0kZlErMKm8vyjrMppZiNzN4/GCP4dL21orLUaXfgt
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10843"; a="366527778"
-X-IronPort-AV: E=Sophos;i="6.03,176,1694761200"; 
-   d="scan'208";a="366527778"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2023 20:04:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10843"; a="748646739"
-X-IronPort-AV: E=Sophos;i="6.03,176,1694761200"; 
-   d="scan'208";a="748646739"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.93.65.124])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 25 Sep 2023 20:04:18 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     dave.hansen@linux.intel.com, tj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        x86@kernel.org, cgroups@vger.kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sohil.mehta@intel.com, "Jarkko Sakkinen" <jarkko@kernel.org>
-Cc:     zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
-        zhanb@microsoft.com, anakrish@microsoft.com,
-        mikko.ylinen@linux.intel.com, yangjie@microsoft.com
-Subject: Re: [PATCH v5 01/18] cgroup/misc: Add per resource callbacks for CSS
- events
+        with ESMTP id S229604AbjIZNKo (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 26 Sep 2023 09:10:44 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A36D10E;
+        Tue, 26 Sep 2023 06:10:37 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA60AC433C7;
+        Tue, 26 Sep 2023 13:10:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695733836;
+        bh=GDQp7RRyC5swsgr+p465JJc4d2vBoN5WMysJHZ++naU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nzht4gYm6auaMDpvFO3Q3sroRMOACCjpWaWumOcbekI+j6alECIBYEYDumT23Et3N
+         VcAWkq2onCsdBltq8qAjOWtoblLW451bXVGKcmeflXYOS4++rDcEAhegAV4P/qreo5
+         3rJWLxleexp6I3PQgKYLczdoKI7Lrf7waVOheGzkn+DyHUfZBpPK1JmTGwo1mItGK9
+         qP2xvlvl/pWKckbiBrxBFdFvwuxykzhQnnZwOoh8gDT9jGfXNn9rLdUhhAgw8Eb/xt
+         yIj22r2NsghGoKMQVB6OPYKF6rf1Wyq63s7A+C3y+06vSTwptNyQc1xuMuMbZrfpfY
+         PaoFQzGv/ZPQg==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 26 Sep 2023 16:10:30 +0300
+Message-Id: <CVSVH3ARQBRC.1QUTEQE3YNN5T@qgv27q77ld-mac>
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Haitao Huang" <haitao.huang@linux.intel.com>,
+        <dave.hansen@linux.intel.com>, <tj@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+        <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+        <sohil.mehta@intel.com>
+Cc:     <zhiquan1.li@intel.com>, <kristen@linux.intel.com>,
+        <seanjc@google.com>, <zhanb@microsoft.com>,
+        <anakrish@microsoft.com>, <mikko.ylinen@linux.intel.com>,
+        <yangjie@microsoft.com>
+Subject: Re: [PATCH v5 01/18] cgroup/misc: Add per resource callbacks for
+ CSS events
+X-Mailer: aerc 0.15.2
 References: <20230923030657.16148-1-haitao.huang@linux.intel.com>
  <20230923030657.16148-2-haitao.huang@linux.intel.com>
  <CVS5XFKKTTUZ.XRMYK1ADHSPG@suppilovahvero>
-Date:   Mon, 25 Sep 2023 22:04:17 -0500
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2buytfetwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <CVS5XFKKTTUZ.XRMYK1ADHSPG@suppilovahvero>
-User-Agent: Opera Mail/1.0 (Win32)
+ <op.2buytfetwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <op.2buytfetwjvjmi@hhuan26-mobl.amr.corp.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Hi Jarkko
-
-On Mon, 25 Sep 2023 12:09:21 -0500, Jarkko Sakkinen <jarkko@kernel.org>  
-wrote:
-
-> On Sat Sep 23, 2023 at 6:06 AM EEST, Haitao Huang wrote:
->> From: Kristen Carlson Accardi <kristen@linux.intel.com>
->>
->> The misc cgroup controller (subsystem) currently does not perform
->> resource type specific action for Cgroups Subsystem State (CSS) events:
->> the 'css_alloc' event when a cgroup is created and the 'css_free' event
->> when a cgroup is destroyed, or in event of user writing the max value to
->> the misc.max file to set the usage limit of a specific resource
->> [admin-guide/cgroup-v2.rst, 5-9. Misc].
->>
->> Define callbacks for those events and allow resource providers to
->> register the callbacks per resource type as needed. This will be
->> utilized later by the EPC misc cgroup support implemented in the SGX
->> driver:
->> - On css_alloc, allocate and initialize necessary structures for EPC
->> reclaiming, e.g., LRU list, work queue, etc.
->> - On css_free, cleanup and free those structures created in alloc.
->> - On max_write, trigger EPC reclaiming if the new limit is at or below
->> current usage.
->>
->> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
->> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
->> ---
->> V5:
->> - Remove prefixes from the callback names (tj)
->> - Update commit message (Jarkko)
->>
->> V4:
->> - Moved this to the front of the series.
->> - Applies on cgroup/for-6.6 with the overflow fix for misc.
->>
->> V3:
->> - Removed the released() callback
->> ---
->>  include/linux/misc_cgroup.h |  5 +++++
->>  kernel/cgroup/misc.c        | 32 +++++++++++++++++++++++++++++---
->>  2 files changed, 34 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
->> index e799b1f8d05b..96a88822815a 100644
->> --- a/include/linux/misc_cgroup.h
->> +++ b/include/linux/misc_cgroup.h
->> @@ -37,6 +37,11 @@ struct misc_res {
->>  	u64 max;
->>  	atomic64_t usage;
->>  	atomic64_t events;
->> +
->> +	/* per resource callback ops */
->> +	int (*alloc)(struct misc_cg *cg);
->> +	void (*free)(struct misc_cg *cg);
->> +	void (*max_write)(struct misc_cg *cg);
->>  };
->>
->>  /**
->> diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
->> index 79a3717a5803..62c9198dee21 100644
->> --- a/kernel/cgroup/misc.c
->> +++ b/kernel/cgroup/misc.c
->> @@ -276,10 +276,13 @@ static ssize_t misc_cg_max_write(struct  
->> kernfs_open_file *of, char *buf,
->>
->>  	cg = css_misc(of_css(of));
->>
->> -	if (READ_ONCE(misc_res_capacity[type]))
->> +	if (READ_ONCE(misc_res_capacity[type])) {
->>  		WRITE_ONCE(cg->res[type].max, max);
->> -	else
->> +		if (cg->res[type].max_write)
->> +			cg->res[type].max_write(cg);
->> +	} else {
->>  		ret = -EINVAL;
->> +	}
->>
->>  	return ret ? ret : nbytes;
->>  }
->> @@ -383,23 +386,39 @@ static struct cftype misc_cg_files[] = {
->>  static struct cgroup_subsys_state *
->>  misc_cg_alloc(struct cgroup_subsys_state *parent_css)
->>  {
->> +	struct misc_cg *parent_cg;
->>  	enum misc_res_type i;
->>  	struct misc_cg *cg;
->> +	int ret;
->>
->>  	if (!parent_css) {
->>  		cg = &root_cg;
->> +		parent_cg = &root_cg;
->>  	} else {
->>  		cg = kzalloc(sizeof(*cg), GFP_KERNEL);
->>  		if (!cg)
->>  			return ERR_PTR(-ENOMEM);
->> +		parent_cg = css_misc(parent_css);
->>  	}
->>
->>  	for (i = 0; i < MISC_CG_RES_TYPES; i++) {
->>  		WRITE_ONCE(cg->res[i].max, MAX_NUM);
->>  		atomic64_set(&cg->res[i].usage, 0);
->> +		if (parent_cg->res[i].alloc) {
->> +			ret = parent_cg->res[i].alloc(cg);
->> +			if (ret)
->> +				goto alloc_err;
->> +		}
->>  	}
->>
->>  	return &cg->css;
->> +
->> +alloc_err:
->> +	for (i = 0; i < MISC_CG_RES_TYPES; i++)
->> +		if (parent_cg->res[i].free)
->> +			cg->res[i].free(cg);
->> +	kfree(cg);
->> +	return ERR_PTR(ret);
->>  }
->>
->>  /**
->> @@ -410,7 +429,14 @@ misc_cg_alloc(struct cgroup_subsys_state  
->> *parent_css)
->>   */
->>  static void misc_cg_free(struct cgroup_subsys_state *css)
->>  {
->> -	kfree(css_misc(css));
->> +	struct misc_cg *cg = css_misc(css);
->> +	enum misc_res_type i;
->> +
->> +	for (i = 0; i < MISC_CG_RES_TYPES; i++)
->> +		if (cg->res[i].free)
->> +			cg->res[i].free(cg);
->> +
->> +	kfree(cg);
->>  }
->>
->>  /* Cgroup controller callbacks */
->> --
->> 2.25.1
+On Tue Sep 26, 2023 at 6:04 AM EEST, Haitao Huang wrote:
+> Hi Jarkko
 >
-> Since the only existing client feature requires all callbacks, should
-> this not have that as an invariant?
+> On Mon, 25 Sep 2023 12:09:21 -0500, Jarkko Sakkinen <jarkko@kernel.org> =
+=20
+> wrote:
 >
-> I.e. it might be better to fail unless *all* ops are non-nil (e.g. to
-> catch issues in the kernel code).
+> > On Sat Sep 23, 2023 at 6:06 AM EEST, Haitao Huang wrote:
+> >> From: Kristen Carlson Accardi <kristen@linux.intel.com>
+> >>
+> >> The misc cgroup controller (subsystem) currently does not perform
+> >> resource type specific action for Cgroups Subsystem State (CSS) events=
+:
+> >> the 'css_alloc' event when a cgroup is created and the 'css_free' even=
+t
+> >> when a cgroup is destroyed, or in event of user writing the max value =
+to
+> >> the misc.max file to set the usage limit of a specific resource
+> >> [admin-guide/cgroup-v2.rst, 5-9. Misc].
+> >>
+> >> Define callbacks for those events and allow resource providers to
+> >> register the callbacks per resource type as needed. This will be
+> >> utilized later by the EPC misc cgroup support implemented in the SGX
+> >> driver:
+> >> - On css_alloc, allocate and initialize necessary structures for EPC
+> >> reclaiming, e.g., LRU list, work queue, etc.
+> >> - On css_free, cleanup and free those structures created in alloc.
+> >> - On max_write, trigger EPC reclaiming if the new limit is at or below
+> >> current usage.
+> >>
+> >> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> >> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> >> ---
+> >> V5:
+> >> - Remove prefixes from the callback names (tj)
+> >> - Update commit message (Jarkko)
+> >>
+> >> V4:
+> >> - Moved this to the front of the series.
+> >> - Applies on cgroup/for-6.6 with the overflow fix for misc.
+> >>
+> >> V3:
+> >> - Removed the released() callback
+> >> ---
+> >>  include/linux/misc_cgroup.h |  5 +++++
+> >>  kernel/cgroup/misc.c        | 32 +++++++++++++++++++++++++++++---
+> >>  2 files changed, 34 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
+> >> index e799b1f8d05b..96a88822815a 100644
+> >> --- a/include/linux/misc_cgroup.h
+> >> +++ b/include/linux/misc_cgroup.h
+> >> @@ -37,6 +37,11 @@ struct misc_res {
+> >>  	u64 max;
+> >>  	atomic64_t usage;
+> >>  	atomic64_t events;
+> >> +
+> >> +	/* per resource callback ops */
+> >> +	int (*alloc)(struct misc_cg *cg);
+> >> +	void (*free)(struct misc_cg *cg);
+> >> +	void (*max_write)(struct misc_cg *cg);
+> >>  };
+> >>
+> >>  /**
+> >> diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
+> >> index 79a3717a5803..62c9198dee21 100644
+> >> --- a/kernel/cgroup/misc.c
+> >> +++ b/kernel/cgroup/misc.c
+> >> @@ -276,10 +276,13 @@ static ssize_t misc_cg_max_write(struct =20
+> >> kernfs_open_file *of, char *buf,
+> >>
+> >>  	cg =3D css_misc(of_css(of));
+> >>
+> >> -	if (READ_ONCE(misc_res_capacity[type]))
+> >> +	if (READ_ONCE(misc_res_capacity[type])) {
+> >>  		WRITE_ONCE(cg->res[type].max, max);
+> >> -	else
+> >> +		if (cg->res[type].max_write)
+> >> +			cg->res[type].max_write(cg);
+> >> +	} else {
+> >>  		ret =3D -EINVAL;
+> >> +	}
+> >>
+> >>  	return ret ? ret : nbytes;
+> >>  }
+> >> @@ -383,23 +386,39 @@ static struct cftype misc_cg_files[] =3D {
+> >>  static struct cgroup_subsys_state *
+> >>  misc_cg_alloc(struct cgroup_subsys_state *parent_css)
+> >>  {
+> >> +	struct misc_cg *parent_cg;
+> >>  	enum misc_res_type i;
+> >>  	struct misc_cg *cg;
+> >> +	int ret;
+> >>
+> >>  	if (!parent_css) {
+> >>  		cg =3D &root_cg;
+> >> +		parent_cg =3D &root_cg;
+> >>  	} else {
+> >>  		cg =3D kzalloc(sizeof(*cg), GFP_KERNEL);
+> >>  		if (!cg)
+> >>  			return ERR_PTR(-ENOMEM);
+> >> +		parent_cg =3D css_misc(parent_css);
+> >>  	}
+> >>
+> >>  	for (i =3D 0; i < MISC_CG_RES_TYPES; i++) {
+> >>  		WRITE_ONCE(cg->res[i].max, MAX_NUM);
+> >>  		atomic64_set(&cg->res[i].usage, 0);
+> >> +		if (parent_cg->res[i].alloc) {
+> >> +			ret =3D parent_cg->res[i].alloc(cg);
+> >> +			if (ret)
+> >> +				goto alloc_err;
+> >> +		}
+> >>  	}
+> >>
+> >>  	return &cg->css;
+> >> +
+> >> +alloc_err:
+> >> +	for (i =3D 0; i < MISC_CG_RES_TYPES; i++)
+> >> +		if (parent_cg->res[i].free)
+> >> +			cg->res[i].free(cg);
+> >> +	kfree(cg);
+> >> +	return ERR_PTR(ret);
+> >>  }
+> >>
+> >>  /**
+> >> @@ -410,7 +429,14 @@ misc_cg_alloc(struct cgroup_subsys_state =20
+> >> *parent_css)
+> >>   */
+> >>  static void misc_cg_free(struct cgroup_subsys_state *css)
+> >>  {
+> >> -	kfree(css_misc(css));
+> >> +	struct misc_cg *cg =3D css_misc(css);
+> >> +	enum misc_res_type i;
+> >> +
+> >> +	for (i =3D 0; i < MISC_CG_RES_TYPES; i++)
+> >> +		if (cg->res[i].free)
+> >> +			cg->res[i].free(cg);
+> >> +
+> >> +	kfree(cg);
+> >>  }
+> >>
+> >>  /* Cgroup controller callbacks */
+> >> --
+> >> 2.25.1
+> >
+> > Since the only existing client feature requires all callbacks, should
+> > this not have that as an invariant?
+> >
+> > I.e. it might be better to fail unless *all* ops are non-nil (e.g. to
+> > catch issues in the kernel code).
+> >
 >
+> These callbacks are chained from cgroup_subsys, and they are defined =20
+> separately so it'd be better follow the same pattern.  Or change together=
+ =20
+> with cgroup_subsys if we want to do that. Reasonable?
 
-These callbacks are chained from cgroup_subsys, and they are defined  
-separately so it'd be better follow the same pattern.  Or change together  
-with cgroup_subsys if we want to do that. Reasonable?
+I noticed this one later:
 
-Thanks
-Haitao
+It would better to create a separate ops struct and declare the instance
+as const at minimum.
+
+Then there is no need for dynamic assigment of ops and all that is in
+rodata. This is improves both security and also allows static analysis
+bit better.
+
+Now you have to dynamically trace the struct instance, e.g. in case of
+a bug. If this one done, it would be already in the vmlinux.
+
+BR, Jarkko
