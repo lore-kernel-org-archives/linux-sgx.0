@@ -2,42 +2,42 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD5CE7542D
-	for <linux-sgx@archiver.kernel.org>; Tue,  3 Oct 2023 07:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF103E7AD60
+	for <linux-sgx@archiver.kernel.org>; Tue,  3 Oct 2023 14:30:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239355AbjJCHCX (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 3 Oct 2023 03:02:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58214 "EHLO
+        id S240078AbjJCOaS (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 3 Oct 2023 10:30:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239860AbjJCHBy (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 3 Oct 2023 03:01:54 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B131FCE;
-        Tue,  3 Oct 2023 00:01:14 -0700 (PDT)
+        with ESMTP id S240060AbjJCOaQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 3 Oct 2023 10:30:16 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B31D7;
+        Tue,  3 Oct 2023 07:30:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696316482; x=1727852482;
+  t=1696343412; x=1727879412;
   h=to:cc:subject:references:date:mime-version:
    content-transfer-encoding:from:message-id:in-reply-to;
-  bh=C7bs14VoUMvgVSpFL051pm8lwqwqcZ/sI1LfU1fFcrI=;
-  b=JxTxvbToHrbpn6svgyw8EaC3ukh+752HkwHOLJAJ8M4HNWXHMmQs6+db
-   SeGYGxAg17PVPMhk9nW89yf/JT1SUYpIgGiPk0N0ir6ctlmQAgqPkZPv0
-   XXPBj1sVGDlKgAQQiKQEseOrCD+y6eJ29ncwYdnBy4gTHc5ag90bldiMS
-   KEbwqC6jvwSLsfy7Ob6eS4CglABqnn52id+dzWvOkqJI+3n4n03tieLCj
-   PjUEWb0SEc8VlRLMIJ4RfAgzWt3/9LKCe7fOcDaGoENjrcRhKzgO4Xk6Y
-   AuSuGoX0BODuYortWkNgQY8yPldP2k8k4NEq3Ds0rg1qluP3DjJNkPCB+
+  bh=UCQJOYqv97Otv7CHu/YgGsnF34DQhXKpnmZyn56+66U=;
+  b=VMrvM8Cv7VaaPHf1EpcL7duora/oBx5Mvin/jI0/pjMw466UNxkbylwj
+   a0iBhuSMEyp0+oHUBhb4cE4f0IAnSe9biuQuaGBkfut2wxH12sAFRaduu
+   nVdT5uIExE96FPaX8vj6EXFWw7pf9IN3NtpdCHjHJrf6aE0ZPalKqwp0S
+   eVXtFYUCZePWRo/0mhCsmiPZrwtNV/D9qot9Dl65Ycfa5YZpX0XuSNSo/
+   VjVzGu6jKyfMGvBwGFKvUerfCoSr83jroLgsgMFin8+y7fpLdYaYRpf6Q
+   sGBmPvyBF44gpKYNZeKzEbrKTbzCGFrd7aKl0BqULfM3lCGeykuAN9YD6
    Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="363077286"
-X-IronPort-AV: E=Sophos;i="6.03,196,1694761200"; 
-   d="scan'208";a="363077286"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 00:00:08 -0700
+X-IronPort-AV: E=McAfee;i="6600,9927,10852"; a="413798077"
+X-IronPort-AV: E=Sophos;i="6.03,197,1694761200"; 
+   d="scan'208";a="413798077"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 07:29:53 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="866761584"
-X-IronPort-AV: E=Sophos;i="6.03,196,1694761200"; 
-   d="scan'208";a="866761584"
+X-IronPort-AV: E=McAfee;i="6600,9927,10852"; a="1082038574"
+X-IronPort-AV: E=Sophos;i="6.03,197,1694761200"; 
+   d="scan'208";a="1082038574"
 Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.96.100])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 03 Oct 2023 00:00:06 -0700
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 03 Oct 2023 07:29:49 -0700
 Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
 To:     "hpa@zytor.com" <hpa@zytor.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
@@ -59,89 +59,60 @@ Cc:     "kristen@linux.intel.com" <kristen@linux.intel.com>,
         "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
         "Zhang, Bo" <zhanb@microsoft.com>,
         "anakrish@microsoft.com" <anakrish@microsoft.com>
-Subject: Re: [PATCH v5 02/18] cgroup/misc: Add SGX EPC resource type and
- export APIs for SGX driver
+Subject: Re: [PATCH v5 01/18] cgroup/misc: Add per resource callbacks for CSS
+ events
 References: <20230923030657.16148-1-haitao.huang@linux.intel.com>
- <20230923030657.16148-3-haitao.huang@linux.intel.com>
- <0b24d7ad4de129681a8783f930f48962e572b653.camel@intel.com>
-Date:   Tue, 03 Oct 2023 02:00:04 -0500
+ <20230923030657.16148-2-haitao.huang@linux.intel.com>
+ <8f08f0b0f2b04b90d7cdb7b628f16f9080687c43.camel@intel.com>
+Date:   Tue, 03 Oct 2023 09:29:48 -0500
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 From:   "Haitao Huang" <haitao.huang@linux.intel.com>
 Organization: Intel
-Message-ID: <op.2b78ee0awjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <0b24d7ad4de129681a8783f930f48962e572b653.camel@intel.com>
+Message-ID: <op.2b8s7yzawjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <8f08f0b0f2b04b90d7cdb7b628f16f9080687c43.camel@intel.com>
 User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Wed, 27 Sep 2023 22:59:12 -0500, Huang, Kai <kai.huang@intel.com> wrote:
+On Wed, 27 Sep 2023 04:20:55 -0500, Huang, Kai <kai.huang@intel.com> wrote:
 
 > On Fri, 2023-09-22 at 20:06 -0700, Haitao Huang wrote:
 >> From: Kristen Carlson Accardi <kristen@linux.intel.com>
 >>
->> Add SGX EPC memory, MISC_CG_RES_SGX_EPC, to be a valid resource type
->> for the misc controller.
+>> The misc cgroup controller (subsystem) currently does not perform
+>> resource type specific action for Cgroups Subsystem State (CSS) events:
+>> the 'css_alloc' event when a cgroup is created and the 'css_free' event
+>> when a cgroup is destroyed, or in event of user writing the max value to
+>> the misc.max file to set the usage limit of a specific resource
+>> [admin-guide/cgroup-v2.rst, 5-9. Misc].
 >>
->> Add per resource type private data so that SGX can store additional per
->> cgroup data in misc_cg->misc_cg_res[MISC_CG_RES_SGX_EPC].
+>> Define callbacks for those events and allow resource providers to
+>> register the callbacks per resource type as needed. This will be
+>> utilized later by the EPC misc cgroup support implemented in the SGX
+>> driver:
+>> - On css_alloc, allocate and initialize necessary structures for EPC
+>> reclaiming, e.g., LRU list, work queue, etc.
+>> - On css_free, cleanup and free those structures created in alloc.
+>> - On max_write, trigger EPC reclaiming if the new limit is at or below
+>> current usage.
 >
-> To be honest I don't quite understand why putting the above two changes  
-> in this
-> patch together with exporting misc_cg_root/parent() below.
+> Nit:
 >
-> Any reason why the above two cannot be done together with patch ("  
-> x86/sgx:
-> Limit process EPC usage with misc cgroup controller"), where these  
-> changes are
-> actually related?
+> Wondering why we should trigger EPC reclaiming if the new limit is *at*  
+> current
+> usage?
 >
-> We all already know that a new EPC misc cgroup will be added.  There's  
-> no need
-> to actually introduce the new type here only to justify exporting some  
-> helper
-> functions.
+> I actually don't quite care about why here, but writing these details in  
+> the
+> changelog may bring unnecessary confusion.  I guess you can just remove  
+> all the
+> details about what SGX driver needs to do on these callbacks.
 >
-
-I think previous authors intended to separate all prerequisite misc  
-changes from SGX changes.
-I can combine them if maintainers are fine with it.
-
->>
->> Export misc_cg_root() so the SGX driver can initialize and add those
->> additional structures to the root misc cgroup as part of initialization
->> for EPC cgroup support. This bootstraps the same additional
->> initialization for non-root cgroups in the 'alloc()' callback added in  
->> the
->> previous patch.
->>
->> The SGX driver, as the EPC memory provider, will have a background
->> worker to reclaim EPC pages to make room for new allocations in the same
->> cgroup when its usage counter reaches near the limit controlled by the
->> cgroup and its ancestors. Therefore it needs to do a walk from the
->> current cgroup up to the root. To enable this walk, move parent_misc()
->> into misc_cgroup.h and make inline to make this function available to
->> SGX, rename it to misc_cg_parent(), and update kernel/cgroup/misc.c to
->> use the new name.
 >
-> Looks too many details in the above two paragraphs.  Could we have a more
-> concise justification for exporting these two functions?
->
+Okay, I'll remove the three bullets on the SGX drive implementation  
+details.
 
-This was added to address Jarkko's question, "why does SGX driver need to  
-do iterative walks?"
-See: https://lore.kernel.org/all/CVHOU5G1SCUT.RCBVZ3W8G2NJ@suppilovahvero/
-
-> And if it were me, I would put it at a relatively later position (e.g.,  
-> before
-> the patch actually implements EPC cgroup) for better review.  This also  
-> applies
-> to the first patch.
->
-
-I was told to move all prerequisites to the front or separate out.
-
-https://lore.kernel.org/linux-sgx/CU4H43P3H35X.1BCA3CE4D1250@seitikki/
-
-
+Thanks
+Haitao
