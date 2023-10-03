@@ -2,162 +2,135 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC11E776CF
-	for <linux-sgx@archiver.kernel.org>; Mon,  2 Oct 2023 22:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F727E75420
+	for <linux-sgx@archiver.kernel.org>; Tue,  3 Oct 2023 04:49:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235711AbjJBWz2 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 2 Oct 2023 18:55:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59474 "EHLO
+        id S239088AbjJCEtw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 3 Oct 2023 00:49:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229753AbjJBWz2 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 2 Oct 2023 18:55:28 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16F84B4;
-        Mon,  2 Oct 2023 15:55:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25CDC433C8;
-        Mon,  2 Oct 2023 22:55:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696287324;
-        bh=gmdRKizE3oTVXTlKcTqPrbSyT6DkwUQHbEcrgV5Lbik=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=EjB/Tpuf7nIqhQQh1mNjV42RYxAVimZmhMyTZPwNPVZsZM52f4N0/PEqZJd6YeeRO
-         R3ROXTVmszEzYthyI/NuSVmaFAGOlpF0y2mUJ+vGRDkRn07HlFlLnhBTS3OwcCfS5q
-         +ZFRxpWiwsxEI2Cjni5hE3PgB7lFAg8LM0Aki/ZR4bAMXxa6RKJ1BcoFEKV2OiRWgF
-         tHEQF01FW7oS4Th1d7urGTxmJZhv5rFb2lcNDiln2GRLYKBuidRlI5BqD5gudQi55U
-         3HdUCcsB4wZyFMFfzxKz8tw4DHPCZlwK/Cajw38vdHzl0oq1m1acl6wJpEFL7HXya8
-         oc5FUEsIgAb2Q==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 03 Oct 2023 01:55:14 +0300
-Message-Id: <CVYBO2F1D1NC.1N7LNWPTDRG04@seitikki>
-Cc:     <zhiquan1.li@intel.com>, <kristen@linux.intel.com>,
-        <seanjc@google.com>, <zhanb@microsoft.com>,
-        <anakrish@microsoft.com>, <mikko.ylinen@linux.intel.com>,
-        <yangjie@microsoft.com>
-Subject: Re: [PATCH v5 01/18] cgroup/misc: Add per resource callbacks for
- CSS events
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Jarkko Sakkinen" <jarkko@kernel.org>,
-        "Haitao Huang" <haitao.huang@linux.intel.com>,
-        <dave.hansen@linux.intel.com>, <tj@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
-        <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
-        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
-        <sohil.mehta@intel.com>
-X-Mailer: aerc 0.14.0
+        with ESMTP id S229704AbjJCEtw (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 3 Oct 2023 00:49:52 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A35D8A4;
+        Mon,  2 Oct 2023 21:49:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1696308590; x=1727844590;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=E8tc/R+/OkMXWfpnzaO1qr4nhCDXJTuo1ZnSC3tCpro=;
+  b=Ezi3S/s4DtRPOb8WwUB7nfik2+FzpNcNIC97X4fV9DA6e3D3+wBG85g7
+   zHyWIbA9c7Vbo9dd+XzpXYIPaNbQyjQFiEy+L9ZS5NJe+UYgQkUbsFeSY
+   jg5zuXC+b0EZPthCgX4a0lxZRMEBfjPdDtH40fAYkI0lYEYPURwPEhIu7
+   2sJDb+Miv35FZaXJwDmHX/0DUCJxZCRoHPKHTDCy7xXE+hZuiRL5W0Te6
+   w1a7Tn/1GQpeAgAJSMrpFwCCFzXRnKfnbThfbueS0WUrghpbnEcMdWMYo
+   p06HldxEsAecBcYOX1p7DEn2DVl+ZXHgQOX3/XLnOFXaOiWdJpVKMErHa
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="1379595"
+X-IronPort-AV: E=Sophos;i="6.03,196,1694761200"; 
+   d="scan'208";a="1379595"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2023 21:49:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="997857606"
+X-IronPort-AV: E=Sophos;i="6.03,196,1694761200"; 
+   d="scan'208";a="997857606"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.96.100])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 02 Oct 2023 21:49:46 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Mehta, Sohil" <sohil.mehta@intel.com>,
+        "tj@kernel.org" <tj@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "Huang, Kai" <kai.huang@intel.com>
+Cc:     "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "yangjie@microsoft.com" <yangjie@microsoft.com>,
+        "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+        "Zhang, Bo" <zhanb@microsoft.com>,
+        "anakrish@microsoft.com" <anakrish@microsoft.com>
+Subject: Re: [PATCH v5 06/18] x86/sgx: Introduce EPC page states
 References: <20230923030657.16148-1-haitao.huang@linux.intel.com>
- <20230923030657.16148-2-haitao.huang@linux.intel.com>
- <CVS5XFKKTTUZ.XRMYK1ADHSPG@suppilovahvero>
- <op.2buytfetwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <CVSVH3ARQBRC.1QUTEQE3YNN5T@qgv27q77ld-mac>
- <CVSVJ8DYAME8.SMTH7VYG7ER@qgv27q77ld-mac>
- <op.2bwqct0rwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <CVYBI76N4PTF.38BQ9KIBIOGEH@seitikki>
-In-Reply-To: <CVYBI76N4PTF.38BQ9KIBIOGEH@seitikki>
+ <20230923030657.16148-7-haitao.huang@linux.intel.com>
+ <b1d7199262b9da496a04a36447541e9166f35f19.camel@intel.com>
+Date:   Mon, 02 Oct 2023 23:49:42 -0500
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.2b72c4brwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <b1d7199262b9da496a04a36447541e9166f35f19.camel@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue Oct 3, 2023 at 1:47 AM EEST, Jarkko Sakkinen wrote:
-> On Wed Sep 27, 2023 at 4:56 AM EEST, Haitao Huang wrote:
-> > On Tue, 26 Sep 2023 08:13:18 -0500, Jarkko Sakkinen <jarkko@kernel.org>=
- =20
-> > wrote:
-> >
-> > ...
-> > >> > >>  /**
-> > >> > >> @@ -410,7 +429,14 @@ misc_cg_alloc(struct cgroup_subsys_state
-> > >> > >> *parent_css)
-> > >> > >>   */
-> > >> > >>  static void misc_cg_free(struct cgroup_subsys_state *css)
-> > >> > >>  {
-> > >> > >> -	kfree(css_misc(css));
-> > >> > >> +	struct misc_cg *cg =3D css_misc(css);
-> > >> > >> +	enum misc_res_type i;
-> > >> > >> +
-> > >> > >> +	for (i =3D 0; i < MISC_CG_RES_TYPES; i++)
-> > >> > >> +		if (cg->res[i].free)
-> > >> > >> +			cg->res[i].free(cg);
-> > >> > >> +
-> > >> > >> +	kfree(cg);
-> > >> > >>  }
-> > >> > >>
-> > >> > >>  /* Cgroup controller callbacks */
-> > >> > >> --
-> > >> > >> 2.25.1
-> > >> > >
-> > >> > > Since the only existing client feature requires all callbacks, =
-=20
-> > >> should
-> > >> > > this not have that as an invariant?
-> > >> > >
-> > >> > > I.e. it might be better to fail unless *all* ops are non-nil (e.=
-g. =20
-> > >> to
-> > >> > > catch issues in the kernel code).
-> > >> > >
-> > >> >
-> > >> > These callbacks are chained from cgroup_subsys, and they are defin=
-ed
-> > >> > separately so it'd be better follow the same pattern.  Or change =
-=20
-> > >> together
-> > >> > with cgroup_subsys if we want to do that. Reasonable?
-> > >>
-> > >> I noticed this one later:
-> > >>
-> > >> It would better to create a separate ops struct and declare the inst=
-ance
-> > >> as const at minimum.
-> > >>
-> > >> Then there is no need for dynamic assigment of ops and all that is i=
-n
-> > >> rodata. This is improves both security and also allows static analys=
-is
-> > >> bit better.
-> > >>
-> > >> Now you have to dynamically trace the struct instance, e.g. in case =
-of
-> > >> a bug. If this one done, it would be already in the vmlinux.
-> > >I.e. then in the driver you can have static const struct declaration
-> > > with *all* pointers pre-assigned.
-> > >
-> > > Not sure if cgroups follows this or not but it is *objectively*
-> > > better. Previous work is not always best possible work...
-> > >
-> >
-> > IIUC, like vm_ops field in vma structs. Although function pointers in =
-=20
-> > vm_ops are assigned statically, but you still need dynamically assign =
-=20
-> > vm_ops for each instance of vma.
-> >
-> > So the code will look like this:
-> >
-> > if (parent_cg->res[i].misc_ops && parent_cg->res[i].misc_ops->alloc)
-> > {
-> > ...
-> > }
-> >
-> > I don't see this is the pattern used in cgroups and no strong opinion =
-=20
-> > either way.
-> >
-> > TJ, do you have preference on this?
+On Wed, 27 Sep 2023 05:28:36 -0500, Huang, Kai <kai.huang@intel.com> wrote:
+
+> On Fri, 2023-09-22 at 20:06 -0700, Haitao Huang wrote:
+>> Use the lower 3 bits in the flags field of sgx_epc_page struct to
+>> track EPC states in its life cycle and define an enum for possible
+>> states. More state(s) will be added later.
 >
-> I do have strong opinion on this. In the client side we want as much
-> things declared statically as we can because it gives more tools for
-> statical analysis.
+> This patch does more than what the changelog claims to do.  AFAICT it  
+> does
+> below:
 >
-> I don't want to see dynamic assignments in the SGX driver, when they
-> are not actually needed, no matter things are done in cgroups.
+>  1) Use the lower 3 bits to track EPC page status
+>  2) Rename SGX_EPC_PAGE_RECLAIMER_TRACKED to SGX_EPC_PAGE_RERCLAIMABLE
+>  3) Introduce a new state SGX_EPC_PAGE_UNRECLAIMABLE
+>  4) Track SECS and VA pages as SGX_EPC_PAGE_UNRECLAIMABLE
+>
+> The changelog only says 1) IIUC.
+>
+I don't quite get why you would view 3) as a separate item from 1).
+In my view, 4) is not done as long as there is not separate list to track  
+it.
+Maybe I should make it clear the "states" vs "tracking". States are just  
+bits in the flags, "tracking" is done using the lists by ksgxd/cgroup. And  
+this patch is really about "states"
+Would that clarify the intention of the patch?
 
-I.e. I don't really even care what crazy things cgroups subsystem
-might do or not do. It's not my problem.
+> If we really want to do all these in one patch, then the changelog  
+> should at
+> least mention the justification of all of them.
+>
+> But I don't see why 3) and 4) need to be done here.  Instead, IMHO they  
+> should
+> be done in a separate patch, and do it after the unreclaimable list is
+> introduced (or you need to bring that patch forward).
+>
+>
+> For instance, ...
+>
+> [snip]
+>
+>> +
+>> +	/* Page is in use but tracked in an unreclaimable LRU list. These are
+>> +	 * only reclaimable when the whole enclave is OOM killed or the  
+>> enclave
+>> +	 * is released, e.g., VA, SECS pages
+>> +	 * Becomes NOT_TRACKED after sgx_drop_epc()
+>> +	 */
+>> +	SGX_EPC_PAGE_UNRECLAIMABLE = 3,
+>
+> ... We even don't have the unreclaimable LRU list yet.  It's odd to have  
+> this
+> comment here.
+>
 
-All I care is that we *do not* have any use for assigning those
-pointers at run-time. So do whatever you want with cgroups side
-as long as this is not the case.
+Yeah, I should take out the mentioning of the LRUs from definitions of the  
+states.
 
-BR, Jarkko
+Thanks
+Haitao
