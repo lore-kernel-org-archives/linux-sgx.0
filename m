@@ -2,51 +2,51 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D623E7AD44
-	for <linux-sgx@archiver.kernel.org>; Thu,  5 Oct 2023 16:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5918FE71D4F
+	for <linux-sgx@archiver.kernel.org>; Thu,  5 Oct 2023 16:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240543AbjJEQPq (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:15:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36116 "EHLO
+        id S241034AbjJEQPr (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 5 Oct 2023 12:15:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240861AbjJEQOH (ORCPT
+        with ESMTP id S240841AbjJEQOH (ORCPT
         <rfc822;linux-sgx@vger.kernel.org>); Thu, 5 Oct 2023 12:14:07 -0400
-Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [134.58.240.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1608B2C287;
-        Thu,  5 Oct 2023 08:39:04 -0700 (PDT)
+Received: from icts-p-cavuit-4.kulnet.kuleuven.be (icts-p-cavuit-4.kulnet.kuleuven.be [134.58.240.134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D0E2C29F;
+        Thu,  5 Oct 2023 08:39:11 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: E614A20052.A8F73
+X-KULeuven-ID: D421CCF.A742A
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-1.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:213:242:ac11:64])
-        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id E614A20052;
-        Thu,  5 Oct 2023 17:38:59 +0200 (CEST)
+        by icts-p-cavuit-4.kulnet.kuleuven.be (Postfix) with ESMTP id D421CCF;
+        Thu,  5 Oct 2023 17:39:00 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
 BCmilterd-Report: SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#OURIPS#-35.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1696520339;
-        bh=BlYdRr32xxxqfktzP+vlGnAtIlq3iaZb2FkzpNho4RU=;
+        s=cav; t=1696520340;
+        bh=TvrXOYUN8WD16Va1NygSlX6Dl8MskIyuhN7z9sWGBeQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=NsrzLZIvKDVW64ti2b9bCgqmSt1V8BZwkfdiNoFW+XLpqhKdF8VXSgl4pp2x/75LH
-         3BhQX88eSKbbv3H0zu3QnzXAgFwboWZVm6HN1wX1i+XGZV1ES5ixnk21fyX+PIYm5l
-         owpaoPmIfDw5xkLSXOdEHYB4Gqz4BhJimPZpiwWA=
+        b=def7mrr2wUc/555S6FdfFfDN70cfPf4QDt+7ucLaG50YNqEw7vFMnxYHwU1Ts3AuS
+         HoYqrNsxSSNwNxBD3hOCQ6aOSJqzJvnbywPrbUp764/3UrpIecbPyuoxRRZBX4u35p
+         YUEySYYR+EdzGrSDoj49zGlKr4Yr9hjjWS1siaqs=
 Received: from librem.dyn.cs.kuleuven.be (unknown [IPv6:2a02:2c40:500:a006:548e:e4dd:76a4:afd8])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id BDD0FD4F34F1A;
-        Thu,  5 Oct 2023 17:38:59 +0200 (CEST)
+        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id ABB63D4F34F1A;
+        Thu,  5 Oct 2023 17:39:00 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com,
         Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: [PATCH v7 02/13] selftests/sgx: Fix uninitialized pointer dereferences in encl_get_entry
-Date:   Thu,  5 Oct 2023 17:38:43 +0200
-Message-Id: <20231005153854.25566-3-jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH v7 05/13] selftests/sgx: Specify freestanding environment for enclave compilation
+Date:   Thu,  5 Oct 2023 17:38:46 +0200
+Message-Id: <20231005153854.25566-6-jo.vanbulck@cs.kuleuven.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231005153854.25566-1-jo.vanbulck@cs.kuleuven.be>
 References: <20231005153854.25566-1-jo.vanbulck@cs.kuleuven.be>
@@ -56,47 +56,33 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Ensure sym_tab and sym_names are zero-initialized and add an early-out
-condition in the unlikely (erroneous) case that the enclave ELF file would
-not contain a symbol table.
+Use -ffreestanding to assert the enclave compilation targets a
+freestanding environment (i.e., without "main" or standard libraries).
+This fixes clang reporting "undefined reference to `memset'" after
+erroneously optimizing away the provided memset/memcpy implementations.
 
-This addresses -Werror=maybe-uninitialized compiler warnings for gcc -O2.
+Still need to instruct the linker from using standard system startup
+functions, but drop -nostartfiles as it is implied by -nostdlib.
 
-Fixes: 33c5aac3bf32 ("selftests/sgx: Test complete changing of page type flow")
 Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Acked-by: Kai Huang <kai.huang@intel.com>
 ---
- tools/testing/selftests/sgx/load.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ tools/testing/selftests/sgx/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
-index 94bdeac1cf04..c9f658e44de6 100644
---- a/tools/testing/selftests/sgx/load.c
-+++ b/tools/testing/selftests/sgx/load.c
-@@ -136,11 +136,11 @@ static bool encl_ioc_add_pages(struct encl *encl, struct encl_segment *seg)
-  */
- uint64_t encl_get_entry(struct encl *encl, const char *symbol)
- {
-+	Elf64_Sym *symtab = NULL;
-+	char *sym_names = NULL;
- 	Elf64_Shdr *sections;
--	Elf64_Sym *symtab;
- 	Elf64_Ehdr *ehdr;
--	char *sym_names;
--	int num_sym;
-+	int num_sym = 0;
- 	int i;
- 
- 	ehdr = encl->bin;
-@@ -161,6 +161,9 @@ uint64_t encl_get_entry(struct encl *encl, const char *symbol)
- 		}
- 	}
- 
-+	if (!symtab || !sym_names)
-+		return 0;
-+
- 	for (i = 0; i < num_sym; i++) {
- 		Elf64_Sym *sym = &symtab[i];
+diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
+index dcdd04b322f8..7eb890bdd3f0 100644
+--- a/tools/testing/selftests/sgx/Makefile
++++ b/tools/testing/selftests/sgx/Makefile
+@@ -14,7 +14,7 @@ endif
+ INCLUDES := -I$(top_srcdir)/tools/include
+ HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC
+ HOST_LDFLAGS := -z noexecstack -lcrypto
+-ENCL_CFLAGS += -Wall -Werror -static -nostdlib -nostartfiles -fPIC \
++ENCL_CFLAGS += -Wall -Werror -static -nostdlib -ffreestanding -fPIC \
+ 	       -fno-stack-protector -mrdrnd $(INCLUDES)
+ ENCL_LDFLAGS := -Wl,-T,test_encl.lds,--build-id=none
  
 -- 
 2.25.1
