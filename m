@@ -2,51 +2,51 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF9CE71D4F
-	for <linux-sgx@archiver.kernel.org>; Thu,  5 Oct 2023 16:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1D3E7AD44
+	for <linux-sgx@archiver.kernel.org>; Thu,  5 Oct 2023 16:16:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233676AbjJEQP7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:15:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36126 "EHLO
+        id S239994AbjJEQQA (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Thu, 5 Oct 2023 12:16:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240880AbjJEQOH (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 5 Oct 2023 12:14:07 -0400
-Received: from icts-p-cavuit-2.kulnet.kuleuven.be (icts-p-cavuit-2.kulnet.kuleuven.be [134.58.240.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3FAB2B8B5;
+        with ESMTP id S240802AbjJEQOG (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Thu, 5 Oct 2023 12:14:06 -0400
+Received: from icts-p-cavuit-3.kulnet.kuleuven.be (icts-p-cavuit-3.kulnet.kuleuven.be [IPv6:2a02:2c40:0:c0::25:133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8FF32B8BC;
         Thu,  5 Oct 2023 08:39:04 -0700 (PDT)
 X-KULeuven-Envelope-From: jo.vanbulck@cs.kuleuven.be
 X-KULeuven-Scanned: Found to be clean
-X-KULeuven-ID: BA9902017E.A5B70
+X-KULeuven-ID: ED75A2005A.A6AA2
 X-KULeuven-Information: Katholieke Universiteit Leuven
 Received: from icts-p-ceifnet-smtps-1.kuleuven.be (icts-p-ceifnet-smtps.service.icts.svcd [IPv6:2a02:2c40:0:51:213:242:ac11:64])
-        by icts-p-cavuit-2.kulnet.kuleuven.be (Postfix) with ESMTP id BA9902017E;
-        Thu,  5 Oct 2023 17:38:59 +0200 (CEST)
+        by icts-p-cavuit-3.kulnet.kuleuven.be (Postfix) with ESMTP id ED75A2005A;
+        Thu,  5 Oct 2023 17:39:01 +0200 (CEST)
 BCmilterd-Mark-Subject: no
 BCmilterd-Errors: 
 BCmilterd-Report: SA-HVU#DKIM_VALID#0.00,SA-HVU#DKIM_SIGNED#0.00,SA-HVU#DKIM_VALID_AU#0.00,SA-HVU#OURIPS#-35.00
 X-CAV-Cluster: smtps
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.kuleuven.be;
-        s=cav; t=1696520339;
-        bh=xtmX+u4oLXxcD5kcNveXLaMVQ1gztm6EzrRD+hm7dwk=;
+        s=cav; t=1696520341;
+        bh=WZhgRlHVbnRyCvq9T4Lw0eA0V/AbFZq2OMPs2QQlYdk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=P029esutEGuDDkZjzwEopN3aQKxmmbvQ3BfwA39rQeNqP4IDmrH1+6VTccJySceI+
-         ffIgIv51NkhWuwrgPpfi7bfmQc49BeZlEvziajVTe/iz22ye91D7x5KVBQNzy2sqTI
-         WkRyaLx4DbFSb1EZF+kjP8SMRPZ0r47JppuvEAQU=
+        b=Gp0lz4pNsw+kChcexTqhcQt11599XA1Ct0qnBCl+U/X9tjFyVjgKS3n+8TLRa6QgD
+         GfYzVSVTIIcN8N3eerXVYMjXXvz5XqXQ+cIcKwqGI+51qlHpQ7KkcMJiiEZvbHMoVu
+         45difQCiUIIhgH44ubLi2r5vjXAkkUHtMAzNVqnU=
 Received: from librem.dyn.cs.kuleuven.be (unknown [IPv6:2a02:2c40:500:a006:548e:e4dd:76a4:afd8])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id 9023ED4F34F1A;
-        Thu,  5 Oct 2023 17:38:59 +0200 (CEST)
+        by icts-p-ceifnet-smtps-1.kuleuven.be (Postfix) with ESMTPSA id C77A9D4F3336D;
+        Thu,  5 Oct 2023 17:39:01 +0200 (CEST)
 X-Kuleuven: This mail passed the K.U.Leuven mailcluster
 From:   Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 To:     jarkko@kernel.org, kai.huang@intel.com, linux-sgx@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     dave.hansen@linux.intel.com,
         Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
-Subject: [PATCH v7 01/13] selftests/sgx: Fix uninitialized pointer dereference in error path
-Date:   Thu,  5 Oct 2023 17:38:42 +0200
-Message-Id: <20231005153854.25566-2-jo.vanbulck@cs.kuleuven.be>
+Subject: [PATCH v7 11/13] selftests/sgx: Ensure expected location of test enclave buffer
+Date:   Thu,  5 Oct 2023 17:38:52 +0200
+Message-Id: <20231005153854.25566-12-jo.vanbulck@cs.kuleuven.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231005153854.25566-1-jo.vanbulck@cs.kuleuven.be>
 References: <20231005153854.25566-1-jo.vanbulck@cs.kuleuven.be>
@@ -56,43 +56,65 @@ Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Ensure ctx is zero-initialized, such that the encl_measure function will
-not call EVP_MD_CTX_destroy with an uninitialized ctx pointer in case of an
-early error during key generation.
+The external tests manipulating page permissions expect encl_buffer to be
+placed at the start of the test enclave's .data section. As this is not
+guaranteed per the C standard, explicitly place encl_buffer in a separate
+section that is explicitly placed at the start of the .data segment in the
+linker script to avoid the compiler placing it somewhere else in .data.
 
-Fixes: 2adcba79e69d ("selftests/x86: Add a selftest for SGX")
 Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 Acked-by: Kai Huang <kai.huang@intel.com>
 ---
- tools/testing/selftests/sgx/sigstruct.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/testing/selftests/sgx/defines.h     | 1 +
+ tools/testing/selftests/sgx/test_encl.c   | 8 ++++----
+ tools/testing/selftests/sgx/test_encl.lds | 1 +
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
-index a07896a46364..d73b29becf5b 100644
---- a/tools/testing/selftests/sgx/sigstruct.c
-+++ b/tools/testing/selftests/sgx/sigstruct.c
-@@ -318,9 +318,9 @@ bool encl_measure(struct encl *encl)
- 	struct sgx_sigstruct *sigstruct = &encl->sigstruct;
- 	struct sgx_sigstruct_payload payload;
- 	uint8_t digest[SHA256_DIGEST_LENGTH];
-+	EVP_MD_CTX *ctx = NULL;
- 	unsigned int siglen;
- 	RSA *key = NULL;
--	EVP_MD_CTX *ctx;
- 	int i;
+diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
+index b8f482667ce1..402f8787a71c 100644
+--- a/tools/testing/selftests/sgx/defines.h
++++ b/tools/testing/selftests/sgx/defines.h
+@@ -14,6 +14,7 @@
+ #define __aligned(x) __attribute__((__aligned__(x)))
+ #define __packed __attribute__((packed))
+ #define __used __attribute__((used))
++#define __section(x)__attribute__((__section__(x)))
  
- 	memset(sigstruct, 0, sizeof(*sigstruct));
-@@ -384,7 +384,8 @@ bool encl_measure(struct encl *encl)
- 	return true;
+ #include "../../../../arch/x86/include/asm/sgx.h"
+ #include "../../../../arch/x86/include/asm/enclu.h"
+diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
+index 7465f121fb74..2c4d709cce2d 100644
+--- a/tools/testing/selftests/sgx/test_encl.c
++++ b/tools/testing/selftests/sgx/test_encl.c
+@@ -6,11 +6,11 @@
  
- err:
--	EVP_MD_CTX_destroy(ctx);
-+	if (ctx)
-+		EVP_MD_CTX_destroy(ctx);
- 	RSA_free(key);
- 	return false;
- }
+ /*
+  * Data buffer spanning two pages that will be placed first in the .data
+- * segment. Even if not used internally the second page is needed by external
+- * test manipulating page permissions, so mark encl_buffer as "used" to make
+- * sure it is entirely preserved by the compiler.
++ * segment via the linker script. Even if not used internally the second page
++ * is needed by external test manipulating page permissions, so mark
++ * encl_buffer as "used" to make sure it is entirely preserved by the compiler.
+  */
+-static uint8_t __used encl_buffer[8192] = { 1 };
++static uint8_t __used __section(".data.encl_buffer") encl_buffer[8192] = { 1 };
+ 
+ enum sgx_enclu_function {
+ 	EACCEPT = 0x5,
+diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
+index 6ffdfc9fb4cf..333a3e78fdc9 100644
+--- a/tools/testing/selftests/sgx/test_encl.lds
++++ b/tools/testing/selftests/sgx/test_encl.lds
+@@ -24,6 +24,7 @@ SECTIONS
+ 	} : text
+ 
+ 	.data : {
++		*(.data.encl_buffer)
+ 		*(.data*)
+ 	} : data
+ 
 -- 
 2.25.1
 
