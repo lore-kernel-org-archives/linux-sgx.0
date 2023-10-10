@@ -2,238 +2,227 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 248A1CD80BA
-	for <linux-sgx@archiver.kernel.org>; Tue, 10 Oct 2023 12:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE74CD80D0
+	for <linux-sgx@archiver.kernel.org>; Tue, 10 Oct 2023 13:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231462AbjJJMME (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 10 Oct 2023 08:12:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50732 "EHLO
+        id S232176AbjJJN0Z (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 10 Oct 2023 09:26:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbjJJMME (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 10 Oct 2023 08:12:04 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C65994;
-        Tue, 10 Oct 2023 05:12:02 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D317BC433C7;
-        Tue, 10 Oct 2023 12:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696939922;
-        bh=2cpo158e2dohOh/JDmxhWwMUWOjqXgzWNqXCxYsXd6Y=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=LN6cBXrPPaqFiu8NESjJnpdprW8vYMQUC36ENibodthQwf+1k+zAxuufdOxW8cmJW
-         MA/9PUWjv7nKGr1qcu8gkEPosVrNT4XaB8Cow9mcIavD3pIHSBcPV7qQ6j3j2me3zD
-         iZjiDVaM8Ai8vR3CINSj7X6ncQCRy/eMyu0jeY5677qrs9etX5XQnkmhgyFrEewboo
-         n3VqZMiRXKq5HX2eB3aTNeCGwr9mD7SWo4KE4xEEom5ptL/jKD6KmTHNG7Fu9v690/
-         jc3K/zLHGXhAozq3HeBY1fgY6u7HOr6XiGf62M6qoXLLeCu0Ld9no3dpBwzC/O03+C
-         1hmcvXgzfCqhQ==
-Message-ID: <4124e803b340fc23e74fc5afe1343b1a7940c82f.camel@kernel.org>
-Subject: Re: [PATCH v7 00/13] selftests/sgx: Fix compilation errors
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>,
-        "Huang, Kai" <kai.huang@intel.com>,
+        with ESMTP id S232118AbjJJN0W (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 10 Oct 2023 09:26:22 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F2A9AC;
+        Tue, 10 Oct 2023 06:26:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1696944380; x=1728480380;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=1iKcLdvY0pEQsgy+QtjSl8KFecbKvPbHD3wfo/zirDY=;
+  b=mA6jqtux/avndJBvnpOB/hBbnua/B91nvMe+G2CMhZNOm8AKpl3iCkGO
+   jAJsUKFevwnVgLNGNgEJ++uDgOeQllVnnY2HP0tl+tECMyjsd2i/Iopv3
+   wZ0POg39pvXbh60y1jhZvYizh+MtECgT15zKKG5SHrjrJ2EqLKnuNmO0L
+   xBgYTGB6uqmIjSA6gfhy3i2aqS9isUMQOhEckhkMMZMDcwQ9aa3H9AvXh
+   6dRRAb+w/tbH+RQU9HeLhArbfC2uTgqRdhvMONXmDH3G+9GA1sIXLfQtE
+   GH5tECRH9xQ5Bwevs5rNi7vZ6sSPYAAwDm/p9Hp3JDW4VzHWx/eTrz+EC
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="448585021"
+X-IronPort-AV: E=Sophos;i="6.03,212,1694761200"; 
+   d="scan'208";a="448585021"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2023 06:26:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="782876184"
+X-IronPort-AV: E=Sophos;i="6.03,212,1694761200"; 
+   d="scan'208";a="782876184"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.96.100])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 10 Oct 2023 06:26:17 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "Christopherson,, Sean" <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>
+Cc:     "Zhang, Bo" <zhanb@microsoft.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Tue, 10 Oct 2023 15:11:58 +0300
-In-Reply-To: <7e729488e2f841f384b719d0509a4f78f491d477.camel@kernel.org>
-References: <20231005153854.25566-1-jo.vanbulck@cs.kuleuven.be>
-         <119aaa2820be5dc58144e74574cfaa7777f79604.camel@intel.com>
-         <f2726c67-87f7-409a-9ac2-e845249348cc@cs.kuleuven.be>
-         <7e729488e2f841f384b719d0509a4f78f491d477.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "yangjie@microsoft.com" <yangjie@microsoft.com>,
+        "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "tj@kernel.org" <tj@kernel.org>,
+        "anakrish@microsoft.com" <anakrish@microsoft.com>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+        "Mehta, Sohil" <sohil.mehta@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>
+Subject: Re: [PATCH v5 12/18] x86/sgx: Add EPC OOM path to forcefully reclaim
+ EPC
+References: <20230923030657.16148-1-haitao.huang@linux.intel.com>
+ <20230923030657.16148-13-haitao.huang@linux.intel.com>
+ <1b265d0c9dfe17de2782962ed26a99cc9d330138.camel@intel.com>
+ <ZSSZaFrxvCvR1SOy@google.com>
+ <op.2cksdjamwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <548d2ab828307f7d1c6d7f707e587cd27b0e7fe4.camel@intel.com>
+Date:   Tue, 10 Oct 2023 08:26:16 -0500
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.2clox2zewjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <548d2ab828307f7d1c6d7f707e587cd27b0e7fe4.camel@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Dave, since there was already sort of talk about detaching this
-code from kernel tree so that Jo could work on "pure C" runtime
-would it make sense to dual-license this first in the kernel tree?
+On Mon, 09 Oct 2023 21:23:12 -0500, Huang, Kai <kai.huang@intel.com> wrote:
 
-E.g. Jo could send a patch once this is merged with a new SPDX
-platter and we can then ack that?
+> On Mon, 2023-10-09 at 20:42 -0500, Haitao Huang wrote:
+>> Hi Sean
+>>
+>> On Mon, 09 Oct 2023 19:23:04 -0500, Sean Christopherson
+>> <seanjc@google.com> wrote:
+>>
+>> > On Mon, Oct 09, 2023, Kai Huang wrote:
+>> > > On Fri, 2023-09-22 at 20:06 -0700, Haitao Huang wrote:
+>> > > > +/**
+>> > > > + * sgx_epc_oom() - invoke EPC out-of-memory handling on target  
+>> LRU
+>> > > > + * @lru:	LRU that is low
+>> > > > + *
+>> > > > + * Return:	%true if a victim was found and kicked.
+>> > > > + */
+>> > > > +bool sgx_epc_oom(struct sgx_epc_lru_lists *lru)
+>> > > > +{
+>> > > > +	struct sgx_epc_page *victim;
+>> > > > +
+>> > > > +	spin_lock(&lru->lock);
+>> > > > +	victim = sgx_oom_get_victim(lru);
+>> > > > +	spin_unlock(&lru->lock);
+>> > > > +
+>> > > > +	if (!victim)
+>> > > > +		return false;
+>> > > > +
+>> > > > +	if (victim->flags & SGX_EPC_OWNER_PAGE)
+>> > > > +		return sgx_oom_encl_page(victim->encl_page);
+>> > > > +
+>> > > > +	if (victim->flags & SGX_EPC_OWNER_ENCL)
+>> > > > +		return sgx_oom_encl(victim->encl);
+>> > >
+>> > > I hate to bring this up, at least at this stage, but I am wondering  
+>> why
+>> > > we need
+>> > > to put VA and SECS pages to the unreclaimable list, but cannot keep  
+>> an
+>> > > "enclave_list" instead?
+>> >
+>> > The motivation for tracking EPC pages instead of enclaves was so that
+>> > the EPC
+>> > OOM-killer could "kill" VMs as well as host-owned enclaves.  The  
+>> virtual
+>> > EPC code
+>> > didn't actually kill the VM process, it instead just freed all of the
+>> > EPC pages
+>> > and abused the SGX architecture to effectively make the guest recreate
+>> > all its
+>> > enclaves (IIRC, QEMU does the same thing to "support" live migration).
+>> >
+>> > Looks like y'all punted on that with:
+>> >
+>> >   The EPC pages allocated for KVM guests by the virtual EPC driver are
+>> > not
+>> >   reclaimable by the host kernel [5]. Therefore they are not tracked  
+>> by
+>> > any
+>> >   LRU lists for reclaiming purposes in this implementation, but they  
+>> are
+>> >   charged toward the cgroup of the user processs (e.g., QEMU)  
+>> launching
+>> > the
+>> >   guest.  And when the cgroup EPC usage reaches its limit, the virtual
+>> > EPC
+>> >   driver will stop allocating more EPC for the VM, and return SIGBUS  
+>> to
+>> > the
+>> >   user process which would abort the VM launch.
+>> >
+>> > which IMO is a hack, unless returning SIGBUS is actually enforced
+>> > somehow.  Relying
+>> > on userspace to be kind enough to kill its VMs kinda defeats the  
+>> purpose
+>> > of cgroup
+>> > enforcement.  E.g. if the hard limit for a EPC cgroup is lowered,
+>> > userspace running
+>> > encalves in a VM could continue on and refuse to give up its EPC, and
+>> > thus run above
+>> > its limit in perpetuity.
+>> >
+>> Cgroup would refuse to allocate more when limit is reached so VMs can  
+>> not
+>> run above limit.
+>>
+>> IIRC VMs only support static EPC size right now, reaching limit at  
+>> launch
+>> means the EPC size given in command line for QEMU is not appropriate. So
+>> VM should not launch, hence the current behavior.
+>>
+>> [all EPC pages in guest are allocated on page fault caused by the
+>> sensitization process in guest kernel during init, which is part of the  
+>> VM
+>> Launch process. So SIGNBUS will turn into failed VM launch.]
+>>
+>> Once it is launched, guest kernel would have 'total capacity' given by  
+>> the
+>> static value from QEMU option. And it would start paging when it is used
+>> up, never would ask for more from host.
+>>
+>> For future with dynamic EPC for running guests, QEMU could handle
+>> allocation failure and pass SIGBUS to the running guest kernel.  Is that
+>> correct understanding?
+>>
+>>
+>> > I can see userspace wanting to explicitly terminate the VM instead of
+>> > "silently"
+>> > the VM's enclaves, but that seems like it should be a knob in the
+>> > virtual EPC
+>> > code.
+>>
+>> If my understanding above is correct and understanding your statement
+>> above correctly, then don't see we really need separate knob for vEPC
+>> code. Reaching a cgroup limit by a running guest (assuming dynamic
+>> allocation implemented) should not translate automatically killing the  
+>> VM.
+>> Instead, it's user space job to work with guest to handle allocation
+>> failure. Guest could page and kill enclaves.
+>>
+>
+> IIUC Sean was talking about changing misc.max _after_ you launch SGX VMs:
+>
+> 1) misc.max = 100M
+> 2) Launch VMs with total virtual EPC size = 100M	<- success
+> 3) misc.max = 50M
+>
+> 3) will also succeed, but nothing will happen, the VMs will be still  
+> holding
+> 100M EPC.
+>
+> You need to somehow track virtual EPC and kill VM instead.
+>
+> (or somehow fail to do 3) if it is also an acceptable option.)
+>
+Thanks for explaining it.
 
-Just a proposal, with the emphasis on minimal amount of work
-required from each party. Also this would help with possible
-(and likely) bug fixes, i.e. minimal friction on fixing the same
-bug.
+There is an error code to return from max_write. I can add that too to the  
+callback definition and fail it when it can't be enforced for any reason.
+Would like some community feedback if this is acceptable though.
 
-Later on of course, we can consider adding "libsgx-dev" as depedency
-similarly as today there's a few dependencies like libelf-dev.
+I think to solve it ultimately, we need be able to adjust 'capacity' of  
+VMs not to just kill them, which is basically the same as dynamic  
+allocation support for VMs (being able to increase/decrease epc size when  
+it is running). For now, we only have static allocation so max can't be  
+enforced once it is launched.
 
-I'm open for alternative proposals, just throwing something that
-came up mind.
-
-BR, Jarkko
-
-On Tue, 2023-10-10 at 12:44 +0300, Jarkko Sakkinen wrote:
-> Folks (sorry for top posting): I've now taken my old NUC7 out of the
-> dust and tested the series :-)
->=20
-> Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
->=20
-> Off-topic: I wish both Intel and AMD straighten up and deliver some=C2=A0
-> "home friendly" development hardware for the=C2=A0 latest stuff. Just my
-> stance but the biggest quality risk I see in both TDX and SNP is that
-> the patches are made by an enterprise and reviewed (properly) *only*
-> by other huge enterprises.
->=20
-> I skim status of both from time to time but yeah not much attachment
-> or motivation to do more than that as you either need a cloud access
-> or partnership with Intel or AMD. "Indie" style seems to be disliked
-> these days... You can extrapolate from this that there must be a bunch
-> of maintainers around the Linux kernel that feel the same. Not saying
-> that particularly my contribution would be that important.
->=20
-> Sort of even if let's say Intel would provide me a partner access I
-> might not be that interested because I prefer my own (physical)
-> computers.
->=20
-> BR, Jarkko
->=20
-> On Fri, 2023-10-06 at 11:51 +0200, Jo Van Bulck wrote:
-> > Thank you, Kai! I'm not familiar with any next steps to get this merged=
-=20
-> > upstream, but atm all commits in this series have been reviewed by at=
-=20
-> > least Jarkko. Let me know if anything further is needed from my side!
-> >=20
-> > Best,
-> > Jo
-> >=20
-> > On 05.10.23 23:25, Huang, Kai wrote:
-> > > Hi Jo,
-> > >=20
-> > > Just FYI I won't review the rest patches in this series.=C2=A0 One of=
- the reasons is
-> > > I am not that familiar with the rest.=C2=A0 Jarkko has reviewed anywa=
-y :-).
-> > >=20
-> > > On Thu, 2023-10-05 at 17:38 +0200, Jo Van Bulck wrote:
-> > > > Hi,
-> > > >=20
-> > > > This patch series ensures that all SGX selftests succeed when compi=
-ling with
-> > > > optimizations (as tested with -O{0,1,2,3,s} for both gcc 11.3.0 and=
- clang
-> > > > 14.0.0). The aim of the patches is to avoid reliance on undefined,
-> > > > compiler-specific behavior that can make the test results fragile.
-> > > >=20
-> > > > As far as I see, all commits in this series now have an explicit re=
-viewed-by
-> > > > tag, so hopefully this can get merged upstream? Please let me know =
-if any
-> > > > concerns remain and I'd happily address them.
-> > > >=20
-> > > > Reference output below:
-> > > >=20
-> > > > .. Testing=C2=A0=C2=A0 gcc=C2=A0=C2=A0 -O0=C2=A0=C2=A0=C2=A0 [OK]
-> > > > .. Testing=C2=A0=C2=A0 gcc=C2=A0=C2=A0 -O1=C2=A0=C2=A0=C2=A0 [OK]
-> > > > .. Testing=C2=A0=C2=A0 gcc=C2=A0=C2=A0 -O2=C2=A0=C2=A0=C2=A0 [OK]
-> > > > .. Testing=C2=A0=C2=A0 gcc=C2=A0=C2=A0 -O3=C2=A0=C2=A0=C2=A0 [OK]
-> > > > .. Testing=C2=A0=C2=A0 gcc=C2=A0=C2=A0 -Os=C2=A0=C2=A0=C2=A0 [OK]
-> > > > .. Testing=C2=A0=C2=A0 gcc=C2=A0=C2=A0 -Ofast [OK]
-> > > > .. Testing=C2=A0=C2=A0 gcc=C2=A0=C2=A0 -Og=C2=A0=C2=A0=C2=A0 [OK]
-> > > > .. Testing=C2=A0=C2=A0 clang -O0=C2=A0=C2=A0=C2=A0 [OK]
-> > > > .. Testing=C2=A0=C2=A0 clang -O1=C2=A0=C2=A0=C2=A0 [OK]
-> > > > .. Testing=C2=A0=C2=A0 clang -O2=C2=A0=C2=A0=C2=A0 [OK]
-> > > > .. Testing=C2=A0=C2=A0 clang -O3=C2=A0=C2=A0=C2=A0 [OK]
-> > > > .. Testing=C2=A0=C2=A0 clang -Os=C2=A0=C2=A0=C2=A0 [OK]
-> > > > .. Testing=C2=A0=C2=A0 clang -Ofast [OK]
-> > > > .. Testing=C2=A0=C2=A0 clang -Og=C2=A0=C2=A0=C2=A0 [OK]
-> > > >=20
-> > > > Changelog
-> > > > ---------
-> > > >=20
-> > > > v7
-> > > > =C2=A0=C2=A0 - Add reviewed-by tag (Jarkko)
-> > > >=20
-> > > > v6
-> > > > =C2=A0=C2=A0 - Collect final ack/reviewed-by tags (Jarkko, Kai)
-> > > >=20
-> > > > v5
-> > > > =C2=A0=C2=A0 - Reorder patches (Jarkko, Kai)
-> > > > =C2=A0=C2=A0 - Include fixes tag for inline asm memory clobber patc=
-h (Kai)
-> > > > =C2=A0=C2=A0 - Include linker error in static-pie commit message (K=
-ai)
-> > > > =C2=A0=C2=A0 - Include generated assembly in relocations commit (Ka=
-i)
-> > > >=20
-> > > > v4
-> > > > =C2=A0=C2=A0 - Remove redundant -nostartfiles compiler flag (Jarkko=
-)
-> > > > =C2=A0=C2=A0 - Split dynamic symbol table removal in separate commi=
-t (Kai)
-> > > > =C2=A0=C2=A0 - Split redundant push/pop elimination in separate com=
-mit (Kai)
-> > > > =C2=A0=C2=A0 - Remove (incomplete) register cleansing on enclave ex=
-it
-> > > > =C2=A0=C2=A0 - Fix possibly uninitialized pointer dereferences in l=
-oad.c
-> > > >=20
-> > > > v3
-> > > > =C2=A0=C2=A0 - Refactor encl_op_array declaration and indexing (Jar=
-kko)
-> > > > =C2=A0=C2=A0 - Annotate encl_buffer with "used" attribute (Kai)
-> > > > =C2=A0=C2=A0 - Split encl_buffer size and placement commits (Kai)
-> > > >=20
-> > > > v2
-> > > > =C2=A0=C2=A0 - Add additional check for NULL pointer (Kai)
-> > > > =C2=A0=C2=A0 - Refine to produce proper static-pie executable
-> > > > =C2=A0=C2=A0 - Fix linker script assertions
-> > > > =C2=A0=C2=A0 - Specify memory clobber for inline asm instead of vol=
-atile (Kai)
-> > > > =C2=A0=C2=A0 - Clarify why encl_buffer non-static (Jarkko, Kai)
-> > > > =C2=A0=C2=A0 - Clarify -ffreestanding (Jarkko)
-> > > >=20
-> > > > Best,
-> > > > Jo
-> > > >=20
-> > > > Jo Van Bulck (13):
-> > > > =C2=A0=C2=A0 selftests/sgx: Fix uninitialized pointer dereference i=
-n error path
-> > > > =C2=A0=C2=A0 selftests/sgx: Fix uninitialized pointer dereferences =
-in
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0 encl_get_entry
-> > > > =C2=A0=C2=A0 selftests/sgx: Include memory clobber for inline asm i=
-n test enclave
-> > > > =C2=A0=C2=A0 selftests/sgx: Separate linker options
-> > > > =C2=A0=C2=A0 selftests/sgx: Specify freestanding environment for en=
-clave
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0 compilation
-> > > > =C2=A0=C2=A0 selftests/sgx: Remove redundant enclave base address s=
-ave/restore
-> > > > =C2=A0=C2=A0 selftests/sgx: Produce static-pie executable for test =
-enclave
-> > > > =C2=A0=C2=A0 selftests/sgx: Handle relocations in test enclave
-> > > > =C2=A0=C2=A0 selftests/sgx: Fix linker script asserts
-> > > > =C2=A0=C2=A0 selftests/sgx: Ensure test enclave buffer is entirely =
-preserved
-> > > > =C2=A0=C2=A0 selftests/sgx: Ensure expected location of test enclav=
-e buffer
-> > > > =C2=A0=C2=A0 selftests/sgx: Discard unsupported ELF sections
-> > > > =C2=A0=C2=A0 selftests/sgx: Remove incomplete ABI sanitization code=
- in test enclave
-> > > >=20
-> > > > =C2=A0 tools/testing/selftests/sgx/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 12 ++--
-> > > > =C2=A0 tools/testing/selftests/sgx/defines.h=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +
-> > > > =C2=A0 tools/testing/selftests/sgx/load.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 ++-
-> > > > =C2=A0 tools/testing/selftests/sgx/sigstruct.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 5 +-
-> > > > =C2=A0 tools/testing/selftests/sgx/test_encl.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 67 +++++++++++++------
-> > > > =C2=A0 tools/testing/selftests/sgx/test_encl.lds=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 10 +--
-> > > > =C2=A0 .../selftests/sgx/test_encl_bootstrap.S=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 28 +++-----
-> > > > =C2=A0 7 files changed, 77 insertions(+), 56 deletions(-)
-> > > >=20
-> > >=20
->=20
-
+Haitao
