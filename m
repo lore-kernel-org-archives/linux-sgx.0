@@ -2,42 +2,42 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE74CD80D0
-	for <linux-sgx@archiver.kernel.org>; Tue, 10 Oct 2023 13:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51495CD8CA9
+	for <linux-sgx@archiver.kernel.org>; Tue, 10 Oct 2023 16:49:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232176AbjJJN0Z (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 10 Oct 2023 09:26:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49154 "EHLO
+        id S232356AbjJJQt6 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 10 Oct 2023 12:49:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232118AbjJJN0W (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 10 Oct 2023 09:26:22 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F2A9AC;
-        Tue, 10 Oct 2023 06:26:20 -0700 (PDT)
+        with ESMTP id S233936AbjJJQt5 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 10 Oct 2023 12:49:57 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A5C99;
+        Tue, 10 Oct 2023 09:49:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696944380; x=1728480380;
+  t=1696956594; x=1728492594;
   h=to:cc:subject:references:date:mime-version:
    content-transfer-encoding:from:message-id:in-reply-to;
-  bh=1iKcLdvY0pEQsgy+QtjSl8KFecbKvPbHD3wfo/zirDY=;
-  b=mA6jqtux/avndJBvnpOB/hBbnua/B91nvMe+G2CMhZNOm8AKpl3iCkGO
-   jAJsUKFevwnVgLNGNgEJ++uDgOeQllVnnY2HP0tl+tECMyjsd2i/Iopv3
-   wZ0POg39pvXbh60y1jhZvYizh+MtECgT15zKKG5SHrjrJ2EqLKnuNmO0L
-   xBgYTGB6uqmIjSA6gfhy3i2aqS9isUMQOhEckhkMMZMDcwQ9aa3H9AvXh
-   6dRRAb+w/tbH+RQU9HeLhArbfC2uTgqRdhvMONXmDH3G+9GA1sIXLfQtE
-   GH5tECRH9xQ5Bwevs5rNi7vZ6sSPYAAwDm/p9Hp3JDW4VzHWx/eTrz+EC
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="448585021"
-X-IronPort-AV: E=Sophos;i="6.03,212,1694761200"; 
-   d="scan'208";a="448585021"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2023 06:26:20 -0700
+  bh=HzWgG30Hk6ZxaaC2F7EqKo3OACzpOdg8RcC6CY5/PVE=;
+  b=Z3OgZYPmueg58LGNO3Gt2MiGubA1R4jrFauEYFU2ryq358S3OImQwTdq
+   DWFjhJFcT8BpiW2ekNy7/Zo+yLffjfJ+xJQBFQq4V3MY72u1zmHITW4KL
+   Mz8n+uXmMNq0ksD0DmyI8gXgvuMmRRH5ijssWKbffy1P8QZ+g42cTXY0i
+   71Z1Rn1647CwQylyU9tJ+nXeKklZI1Jfm6O/ME4T2bZOBZt6sJ3Svr4kP
+   W1vhXiGdc5u08082Z59Uqf5TYD0h+/43e4dl8DXjqjjGh8ph3eJwEZ6BS
+   T/aiFSlb+jYV3JDilUU8jIYWbEdq/3UXeCJ2uAj49/VYnVgBIODzQuNie
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="415473402"
+X-IronPort-AV: E=Sophos;i="6.03,213,1694761200"; 
+   d="scan'208";a="415473402"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2023 09:49:53 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="782876184"
-X-IronPort-AV: E=Sophos;i="6.03,212,1694761200"; 
-   d="scan'208";a="782876184"
+X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="1000775184"
+X-IronPort-AV: E=Sophos;i="6.03,213,1694761200"; 
+   d="scan'208";a="1000775184"
 Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.96.100])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 10 Oct 2023 06:26:17 -0700
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 10 Oct 2023 09:49:51 -0700
 Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
 To:     "Christopherson,, Sean" <seanjc@google.com>,
         "Huang, Kai" <kai.huang@intel.com>
@@ -45,8 +45,8 @@ Cc:     "Zhang, Bo" <zhanb@microsoft.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
         "yangjie@microsoft.com" <yangjie@microsoft.com>,
-        "Li, Zhiquan1" <zhiquan1.li@intel.com>,
         "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "Li, Zhiquan1" <zhiquan1.li@intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "mingo@redhat.com" <mingo@redhat.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
@@ -64,28 +64,24 @@ References: <20230923030657.16148-1-haitao.huang@linux.intel.com>
  <20230923030657.16148-13-haitao.huang@linux.intel.com>
  <1b265d0c9dfe17de2782962ed26a99cc9d330138.camel@intel.com>
  <ZSSZaFrxvCvR1SOy@google.com>
- <op.2cksdjamwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <548d2ab828307f7d1c6d7f707e587cd27b0e7fe4.camel@intel.com>
-Date:   Tue, 10 Oct 2023 08:26:16 -0500
+ <06142144151da06772a9f0cc195a3c8ffcbc07b7.camel@intel.com>
+ <1f7a740f3acff8a04ec95be39864fb3e32d2d96c.camel@intel.com>
+Date:   Tue, 10 Oct 2023 11:49:49 -0500
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 From:   "Haitao Huang" <haitao.huang@linux.intel.com>
 Organization: Intel
-Message-ID: <op.2clox2zewjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <548d2ab828307f7d1c6d7f707e587cd27b0e7fe4.camel@intel.com>
+Message-ID: <op.2clydbf8wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <1f7a740f3acff8a04ec95be39864fb3e32d2d96c.camel@intel.com>
 User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 09 Oct 2023 21:23:12 -0500, Huang, Kai <kai.huang@intel.com> wrote:
+On Mon, 09 Oct 2023 20:34:29 -0500, Huang, Kai <kai.huang@intel.com> wrote:
 
-> On Mon, 2023-10-09 at 20:42 -0500, Haitao Huang wrote:
->> Hi Sean
->>
->> On Mon, 09 Oct 2023 19:23:04 -0500, Sean Christopherson
->> <seanjc@google.com> wrote:
->>
+> On Tue, 2023-10-10 at 00:50 +0000, Huang, Kai wrote:
+>> On Mon, 2023-10-09 at 17:23 -0700, Sean Christopherson wrote:
 >> > On Mon, Oct 09, 2023, Kai Huang wrote:
 >> > > On Fri, 2023-09-22 at 20:06 -0700, Haitao Huang wrote:
 >> > > > +/**
@@ -113,116 +109,142 @@ On Mon, 09 Oct 2023 21:23:12 -0500, Huang, Kai <kai.huang@intel.com> wrote:
 >> > > > +		return sgx_oom_encl(victim->encl);
 >> > >
 >> > > I hate to bring this up, at least at this stage, but I am wondering  
->> why
->> > > we need
+>> why we need
 >> > > to put VA and SECS pages to the unreclaimable list, but cannot keep  
 >> an
 >> > > "enclave_list" instead?
 >> >
->> > The motivation for tracking EPC pages instead of enclaves was so that
->> > the EPC
->> > OOM-killer could "kill" VMs as well as host-owned enclaves.  The  
->> virtual
->> > EPC code
->> > didn't actually kill the VM process, it instead just freed all of the
->> > EPC pages
->> > and abused the SGX architecture to effectively make the guest recreate
->> > all its
+>> > The motivation for tracking EPC pages instead of enclaves was so that  
+>> the EPC
+>> > OOM-killer could "kill" VMs as well as host-owned enclaves. >
+>>
+>> Ah this seems a fair argument. :-)
+>>
+>> > The virtual EPC code
+>> > didn't actually kill the VM process, it instead just freed all of the  
+>> EPC pages
+>> > and abused the SGX architecture to effectively make the guest  
+>> recreate all its
 >> > enclaves (IIRC, QEMU does the same thing to "support" live migration).
+>>
+>> It returns SIGBUS.  SGX VM live migration also requires enough EPC  
+>> being able to
+>> be allocated on the destination machine to work AFAICT.
+>>
 >> >
 >> > Looks like y'all punted on that with:
 >> >
->> >   The EPC pages allocated for KVM guests by the virtual EPC driver are
->> > not
+>> >   The EPC pages allocated for KVM guests by the virtual EPC driver  
+>> are not
 >> >   reclaimable by the host kernel [5]. Therefore they are not tracked  
->> by
->> > any
+>> by any
 >> >   LRU lists for reclaiming purposes in this implementation, but they  
 >> are
 >> >   charged toward the cgroup of the user processs (e.g., QEMU)  
->> launching
->> > the
->> >   guest.  And when the cgroup EPC usage reaches its limit, the virtual
->> > EPC
+>> launching the
+>> >   guest.  And when the cgroup EPC usage reaches its limit, the  
+>> virtual EPC
 >> >   driver will stop allocating more EPC for the VM, and return SIGBUS  
->> to
->> > the
+>> to the
 >> >   user process which would abort the VM launch.
 >> >
->> > which IMO is a hack, unless returning SIGBUS is actually enforced
->> > somehow.  Relying
+>> > which IMO is a hack, unless returning SIGBUS is actually enforced  
+>> somehow. >
+>>
+>> "enforced" do you mean?
+>>
+>> Currently the sgx_vepc_fault() returns VM_FAULT_SIGBUS when it cannot  
+>> allocate
+>> EPC page.  And when this happens, KVM returns KVM_PFN_ERR_FAULT in  
+>> hva_to_pfn(),
+>> which eventually results in KVM returning -EFAULT to userspace in  
+>> vcpu_run().
+>> And Qemu then kills the VM with some nonsense message:
+>>
+>>         error: kvm run failed Bad address
+>>         <dump guest registers nonsense>
+>>
+>> > Relying
 >> > on userspace to be kind enough to kill its VMs kinda defeats the  
->> purpose
->> > of cgroup
->> > enforcement.  E.g. if the hard limit for a EPC cgroup is lowered,
->> > userspace running
->> > encalves in a VM could continue on and refuse to give up its EPC, and
->> > thus run above
+>> purpose of cgroup
+>> > enforcement.  E.g. if the hard limit for a EPC cgroup is lowered,  
+>> userspace running
+>> > encalves in a VM could continue on and refuse to give up its EPC, and  
+>> thus run above
 >> > its limit in perpetuity.
+>>
 >> >
->> Cgroup would refuse to allocate more when limit is reached so VMs can  
->> not
->> run above limit.
->>
->> IIRC VMs only support static EPC size right now, reaching limit at  
->> launch
->> means the EPC size given in command line for QEMU is not appropriate. So
->> VM should not launch, hence the current behavior.
->>
->> [all EPC pages in guest are allocated on page fault caused by the
->> sensitization process in guest kernel during init, which is part of the  
->> VM
->> Launch process. So SIGNBUS will turn into failed VM launch.]
->>
->> Once it is launched, guest kernel would have 'total capacity' given by  
->> the
->> static value from QEMU option. And it would start paging when it is used
->> up, never would ask for more from host.
->>
->> For future with dynamic EPC for running guests, QEMU could handle
->> allocation failure and pass SIGBUS to the running guest kernel.  Is that
->> correct understanding?
->>
->>
->> > I can see userspace wanting to explicitly terminate the VM instead of
->> > "silently"
->> > the VM's enclaves, but that seems like it should be a knob in the
->> > virtual EPC
+>> > I can see userspace wanting to explicitly terminate the VM instead of  
+>> "silently"
+>> > the VM's enclaves, but that seems like it should be a knob in the  
+>> virtual EPC
 >> > code.
->>
->> If my understanding above is correct and understanding your statement
->> above correctly, then don't see we really need separate knob for vEPC
->> code. Reaching a cgroup limit by a running guest (assuming dynamic
->> allocation implemented) should not translate automatically killing the  
->> VM.
->> Instead, it's user space job to work with guest to handle allocation
->> failure. Guest could page and kill enclaves.
->>
 >
-> IIUC Sean was talking about changing misc.max _after_ you launch SGX VMs:
+> I guess I slightly misunderstood your words.
 >
-> 1) misc.max = 100M
-> 2) Launch VMs with total virtual EPC size = 100M	<- success
-> 3) misc.max = 50M
+> You mean we want to kill VM when the limit is set to be lower than  
+> virtual EPC
+> size.
 >
-> 3) will also succeed, but nothing will happen, the VMs will be still  
-> holding
-> 100M EPC.
+> This patch adds SGX_ENCL_NO_MEMORY.  I guess we can use it for virtual  
+> EPC too?
 >
-> You need to somehow track virtual EPC and kill VM instead.
->
-> (or somehow fail to do 3) if it is also an acceptable option.)
->
-Thanks for explaining it.
 
-There is an error code to return from max_write. I can add that too to the  
-callback definition and fail it when it can't be enforced for any reason.
-Would like some community feedback if this is acceptable though.
+That flag is set for enclaves, do you mean we set similar flag in vepc  
+struct?
 
-I think to solve it ultimately, we need be able to adjust 'capacity' of  
-VMs not to just kill them, which is basically the same as dynamic  
-allocation support for VMs (being able to increase/decrease epc size when  
-it is running). For now, we only have static allocation so max can't be  
-enforced once it is launched.
+> In the sgx_vepc_fault(), we check this flag at early time and return  
+> SIGBUS if
+> it is set.
+>
+> But this also requires keeping virtual EPC pages in some list, and  
+> handles them
+> in sgx_epc_oom() too.
+>
+> And for virtual EPC pages, I guess the "young" logic can be applied thus
+> probably it's better to keep the actual virtual EPC pages to a  
+> (separate?) list
+> instead of keeping the virtual EPC instance.
+>
+> 	struct sgx_epc_lru {
+> 		struct list_head reclaimable;
+> 		struct sgx_encl *enclaves;
+> 		struct list_head vepc_pages;
+> 	}
+>
+> Or still tracking VA/SECS and virtual EPC pages in a single  
+> unrecliamable list?
+>
+
+One LRU should be OK as we only need relative order in which they are  
+loaded?
+If an VA page is in front of vEPC, we just kill host side enclave first  
+before disrupting VMs in the same group.
+As the group is not in a good situation anyway so kernel just pick  
+something reasonable to force kill.
+
+Also after rereading the sentences "The virtual EPC code didn't actually  
+kill the VM process, it instead just freed all of the  EPC pages and  
+abused the SGX architecture to effectively make the guest  recreate all  
+its enclaves..."
+
+Maybe by "kill" vm, Sean means EREMOVE the vepc pages in the unreclaimable  
+LRU, which effectively make enclaves in guest receiving "EPC lost" error  
+and those enclaves are forced to be reloaded (all reasonable user space  
+impl should already handle that). Not sure about free *all* of EPC pages  
+though. we should just EREMOVE enough to bring down the usage. And disable  
+new allocation in sgx_vepc_fault as kai outlined above. It also means user  
+space needs to inject/pass the SIGBUS to guest (I'm not really familiar  
+with this part, or maybe it's already there?). @sean is that what you  
+mean? Sorry I've been slow on understanding this.
+
+If this is the case, some may still think it's too disruptive to guest  
+because the guest did not have a chance to paging out less active enclave  
+pages. But it's user's limit to set so it is justifiable as long as we  
+document this behavior.
+
+Thanks to both of you for great insights.
 
 Haitao
+
+
