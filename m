@@ -2,216 +2,158 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6277CD6E7E
-	for <linux-sgx@archiver.kernel.org>; Wed, 11 Oct 2023 15:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A047CD98EA
+	for <linux-sgx@archiver.kernel.org>; Wed, 11 Oct 2023 16:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232582AbjJKPCg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 11 Oct 2023 11:02:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56108 "EHLO
+        id S232608AbjJKQE7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 11 Oct 2023 12:04:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232246AbjJKPCf (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 11 Oct 2023 11:02:35 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FCD592;
-        Wed, 11 Oct 2023 08:02:33 -0700 (PDT)
+        with ESMTP id S232345AbjJKQE6 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 11 Oct 2023 12:04:58 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E15079D;
+        Wed, 11 Oct 2023 09:04:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697036553; x=1728572553;
+  t=1697040296; x=1728576296;
   h=to:cc:subject:references:date:mime-version:
    content-transfer-encoding:from:message-id:in-reply-to;
-  bh=rcaM/QXDjeb5pjruo3uYNr3IKZQ2KQs7ApHKV/3WpXM=;
-  b=iqd82FuhnxYDwVQQP70P18aHwlOHipKJJSY2jHtIa+C5qQDN2CwsPf0s
-   xajHocPqD4ObDZ7KLbpKxIhB8QKSYAftK0PlNA4fcDC6f+hxkX5oTiduu
-   s8MvNJX2mvElph/Vhox58KJkr694/J+Me87vkMSb6ZzCxuTA95nBFXvT8
-   G0TWuaflFp8upZDFOc1Ly0B4tdfoxg7Pt5+xrDoxEN7ef4KFYuB4oYidp
-   Mlz2XTTnbpWfX6wVKvDg1dQHnP5iuoYI269/N9RNS//2MgxOTE0MV2Dci
-   w451h7cwwEzyekvnymdhWqjG+hh9l7MUuHY8dFkRjyBlaRuKuBGUeY/5y
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10860"; a="383550872"
+  bh=inxQ3IranDcT46Lz+YqsdFYxNjUb8dv9j72WAW4wQlI=;
+  b=m27ZUF+o1gWw7R+i6U3fDCvmJeyvJwQFcnWSUSNK+SoR3wWWPdlDfwai
+   jmb7ppkSV6aH+Np7wroDCs3cdv18De6aWVim8N1v7GXR480/sIv2x61Q4
+   +DixMdzCB9MLPZ8DWYqHvzWDpCPafd5XCIJ8VZJSdfTs2v343weuu5ttO
+   C+FK1ukKrFAAUqER3+ysnkTgvdo/dbeN0DyZSDKX6i+S936TwNA8oEuk0
+   W7TCwOd3U6yrCIjgrxkYybmI171qYQUNgqHBPDpVvJTfNqBeV9hhdszwz
+   YWEVKBVqBylnV00HXcJMYk8UWgGp/AVEDxcdVepe3ibL7JmCeng7io+DS
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10860"; a="451193463"
 X-IronPort-AV: E=Sophos;i="6.03,216,1694761200"; 
-   d="scan'208";a="383550872"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2023 08:02:31 -0700
+   d="scan'208";a="451193463"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2023 09:04:56 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10860"; a="897655926"
+X-IronPort-AV: E=McAfee;i="6600,9927,10860"; a="877736596"
 X-IronPort-AV: E=Sophos;i="6.03,216,1694761200"; 
-   d="scan'208";a="897655926"
+   d="scan'208";a="877736596"
 Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.96.100])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 11 Oct 2023 08:00:42 -0700
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 11 Oct 2023 09:04:54 -0700
 Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "Sean Christopherson" <seanjc@google.com>
-Cc:     "Kai Huang" <kai.huang@intel.com>,
-        "Bo Zhang" <zhanb@microsoft.com>,
+To:     "Mehta, Sohil" <sohil.mehta@intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "yangjie@microsoft.com" <yangjie@microsoft.com>,
-        "Zhiquan1 Li" <zhiquan1.li@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
         "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "anakrish@microsoft.com" <anakrish@microsoft.com>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
         "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "tj@kernel.org" <tj@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Huang, Kai" <kai.huang@intel.com>
+Cc:     "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "yangjie@microsoft.com" <yangjie@microsoft.com>,
+        "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+        "Christopherson,, Sean" <seanjc@google.com>,
         "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
-        "Sohil Mehta" <sohil.mehta@intel.com>,
-        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>
+        "Zhang, Bo" <zhanb@microsoft.com>,
+        "anakrish@microsoft.com" <anakrish@microsoft.com>
 Subject: Re: [PATCH v5 12/18] x86/sgx: Add EPC OOM path to forcefully reclaim
  EPC
 References: <20230923030657.16148-1-haitao.huang@linux.intel.com>
  <20230923030657.16148-13-haitao.huang@linux.intel.com>
  <1b265d0c9dfe17de2782962ed26a99cc9d330138.camel@intel.com>
- <ZSSZaFrxvCvR1SOy@google.com>
- <op.2cksdjamwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <548d2ab828307f7d1c6d7f707e587cd27b0e7fe4.camel@intel.com>
- <op.2clox2zewjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <ZSXl1VXTM0c8qpZj@google.com>
-Date:   Wed, 11 Oct 2023 10:02:25 -0500
+ <op.2ckqmgs9wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <fc6aa778ddbde9536cafe48b847cf6c45b640ea4.camel@intel.com>
+ <op.2ckr5yetwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <badbe0da60a2b35e8eace98714c6f7d4bcd6f202.camel@intel.com>
+ <op.2cly3ffmwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <8593359034d9173be5efd9c055ea782e44fbcdad.camel@intel.com>
+Date:   Wed, 11 Oct 2023 11:04:53 -0500
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 From:   "Haitao Huang" <haitao.huang@linux.intel.com>
 Organization: Intel
-Message-ID: <op.2cnn2bplwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <ZSXl1VXTM0c8qpZj@google.com>
+Message-ID: <op.2cnqyfdzwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <8593359034d9173be5efd9c055ea782e44fbcdad.camel@intel.com>
 User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 10 Oct 2023 19:01:25 -0500, Sean Christopherson  
-<seanjc@google.com> wrote:
+On Tue, 10 Oct 2023 19:31:19 -0500, Huang, Kai <kai.huang@intel.com> wrote:
 
-> On Tue, Oct 10, 2023, Haitao Huang wrote:
->> On Mon, 09 Oct 2023 21:23:12 -0500, Huang, Kai <kai.huang@intel.com>  
+> On Tue, 2023-10-10 at 12:05 -0500, Haitao Huang wrote:
+>> On Mon, 09 Oct 2023 21:12:27 -0500, Huang, Kai <kai.huang@intel.com>  
 >> wrote:
 >>
->> > On Mon, 2023-10-09 at 20:42 -0500, Haitao Huang wrote:
->> > > Hi Sean
+>> >
+>> > > > > >
+>> > > > > Later the hosting process could migrated/reassigned to another
+>> > > cgroup?
+>> > > > > What to do when the new cgroup is OOM?
+>> > > > >
+>> > > >
+>> > > > You addressed in the documentation, no?
+>> > > >
+>> > > > +Migration
+>> > > > +---------
+>> > > > +
+>> > > > +Once an EPC page is charged to a cgroup (during allocation), it
+>> > > > +remains charged to the original cgroup until the page is released
+>> > > > +or reclaimed.  Migrating a process to a different cgroup doesn't
+>> > > > +move the EPC charges that it incurred while in the previous  
+>> cgroup
+>> > > > +to its new cgroup.
 >> > >
->> > > On Mon, 09 Oct 2023 19:23:04 -0500, Sean Christopherson
->> > > <seanjc@google.com> wrote:
->> > > > I can see userspace wanting to explicitly terminate the VM  
->> instead of
->> > > > "silently"
->> > > > the VM's enclaves, but that seems like it should be a knob in the
->> > > > virtual EPC
->> > > > code.
->> > >
->> > > If my understanding above is correct and understanding your  
->> statement
->> > > above correctly, then don't see we really need separate knob for  
->> vEPC
->> > > code. Reaching a cgroup limit by a running guest (assuming dynamic
->> > > allocation implemented) should not translate automatically killing
->> > > the VM.
->> > > Instead, it's user space job to work with guest to handle allocation
->> > > failure. Guest could page and kill enclaves.
->> > >
->> >
->> > IIUC Sean was talking about changing misc.max _after_ you launch SGX  
->> VMs:
->> >
->> > 1) misc.max = 100M
->> > 2) Launch VMs with total virtual EPC size = 100M	<- success
->> > 3) misc.max = 50M
->> >
->> > 3) will also succeed, but nothing will happen, the VMs will be still
->> > holding 100M EPC.
->> >
->> > You need to somehow track virtual EPC and kill VM instead.
->> >
->> > (or somehow fail to do 3) if it is also an acceptable option.)
->> >
->> Thanks for explaining it.
->>
->> There is an error code to return from max_write. I can add that too to  
+>> > > Should we kill the enclave though because some VA pages may be in  
 >> the
->> callback definition and fail it when it can't be enforced for any  
->> reason.
->> Would like some community feedback if this is acceptable though.
+>> > > new
+>> > > group?
+>> > >
+>> >
+>> > I guess acceptable?
+>> >
+>> > And any difference if you keep VA/SECS to unreclaimabe list?
+>>
+>> Tracking VA/SECS allows all cgroups, in which an enclave has allocation,
+>> to identify the enclave following the back pointer and kill it as  
+>> needed.
+>>
+>> > If you migrate one
+>> > enclave to another cgroup, the old EPC pages stay in the old cgroup
+>> > while the
+>> > new one is charged to the new group IIUC.
+>> >
+>> > I am not cgroup expert, but by searching some old thread it appears  
+>> this
+>> > isn't a
+>> > supported model:
+>> >
+>> > https://lore.kernel.org/lkml/YEyR9181Qgzt+Ps9@mtj.duckdns.org/
+>> >
+>>
+>> IIUC it's a different problem here. If we don't track the allocated VAs  
+>> in
+>> the new group, then the enclave that spans the two groups can't be  
+>> killed
+>> by the new group. If so, some enclave could just hide in some small  
+>> group
+>> and never gets killed but keeps allocating in a different group?
+>>
 >
-> That likely isn't acceptable.  E.g. create a cgroup with both a host  
-> enclave and
-> virtual EPC, set the hard limit to 100MiB.  Virtual EPC consumes 50MiB,  
-> and the
-> host enclave consumes 50MiB.  Userspace lowers the limit to 49MiB.  The  
-> cgroup
-> code would reclaim all of the enclave's reclaimable EPC, and then kill  
-> the enclave
-> because it's still over the limit.  And then fail the max_write because  
-> the cgroup
-> is *still* over the limit.  So in addition to burning a lot of cycles,  
-> from
-> userspace's perspective its enclave was killed for no reason, as the new  
-> limit
-> wasn't actually set.
+> I mean from the link above IIUC migrating enclave among different  
+> cgroups simply
+> isn't a supported model, thus any bad behaviour isn't a big concern in  
+> terms of
+> decision making.
 
-I was thinking before reclaiming enclave pages, if we know the untracked  
-vepc pages (current-tracked) is larger than limit, we just return error  
-without enforcing the limit. That way user also knows something is wrong.
+If we leave some pages in a cgroup unkillable, we are in the same  
+situation of not able to enforce a cgroup limit as that we are are in if  
+we don't kill VMs for lower limits.
 
-But I get that we want to be able to kill VMs to enforce the newer lower  
-limit. I assume we can't optimize efficiency/priority of killing: enclave  
-pages will be reclaimed first no matter what just because they are  
-reclaimable; no good rules to choose victim between enclave and VMs in  
-your example so enclaves could be killed still before VMs.
+I think not supporting migration of pages between cgroups should not leave  
+a gap for enforcement just like we don't want to have an enforcement gap  
+if we let VMs to hold pages once it is launched.
 
->> I think to solve it ultimately, we need be able to adjust 'capacity' of  
->> VMs
->> not to just kill them, which is basically the same as dynamic allocation
->> support for VMs (being able to increase/decrease epc size when it is
->> running). For now, we only have static allocation so max can't be  
->> enforced
->> once it is launched.
->
-> No, reclaiming virtual EPC is not a requirement.  VMM EPC  
-> oversubscription is
-> insanely complex, and I highly doubt any users actually want to  
-> oversubcribe VMs.
->
-> There are use cases for cgroups beyond oversubscribing/swapping, e.g.  
-> privileged
-> userspace may set limits on a container to ensure the container doesn't  
-> *accidentally*
-> consume more EPC than it was allotted, e.g. due to a configuration bug  
-> that created
-> a VM with more EPC than it was supposed to have.
->
-> My comments on virtual EPC vs. cgroups is much more about having sane,  
-> well-defined
-> behavior, not about saying the kernel actually needs to support  
-> oversubscribing EPC
-> for KVM guests.
-
-So here are the steps I see now, let me know if this is aligned with your  
-thinking or I'm off track.
-
-0) when all left are enclave VA, SECS pages and VEPC in a cgroup, the OOM  
-kill process starts.
-1) The cgroup identifies a victim vepc for OOM kill(this could be before  
-or after enclaves being killed), sets a new flag VEPC_NO_MEMORY in the  
-vepc.
-2) call sgx_vepc_remove_all(), ignore failure counts returned. This will  
-perform best effort to eremove all normal pages used by the vepc.
-3) Guest may trigger fault again, return SIGBUS in sgx_vepc_fault when  
-VEPC_NO_MEMORY is set. Do the same for mmap.
-4) That would eventually cause sgx_vepc_release() before VM dies or killed  
-by user space, which does the final cleanup.
-
-Q: should we reset VEPC_NO_MEMORY flag if #4 never happens and cgroup  
-usage is below limit? I suppose we can do it, but not sure it is sane  
-because VM would try to load as much pages as configured originally.
-
-I'm still thinking about using one unreclaimable list, justification is  
-simplicity and lack of rules to select items from separate lists, but may  
-change my mind if I found it's inconvenient.
-
-Not sure how age/youngness can be accounted for guest pages though Kai  
-indicated we don't need that for first version. So I assume we can deal  
-with it later and add separate list for vEPC if needed
-for that reason.
-
-Thanks a lot for your input.
 Haitao
