@@ -2,101 +2,166 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579ABCDB47E
-	for <linux-sgx@archiver.kernel.org>; Thu, 12 Oct 2023 13:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9736FCDB47E
+	for <linux-sgx@archiver.kernel.org>; Fri, 13 Oct 2023 11:45:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347209AbjJLN2J (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Thu, 12 Oct 2023 09:28:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36482 "EHLO
+        id S230501AbjJMLpo (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Fri, 13 Oct 2023 07:45:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343952AbjJLN2I (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Thu, 12 Oct 2023 09:28:08 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5813CF;
-        Thu, 12 Oct 2023 06:28:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697117287; x=1728653287;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=Gy2okrDMRW3GgiY3/crBu9Q7pncM9KlkB5/NL5Quijg=;
-  b=Yn0JRNdd++zjwRyPCUWgitTdkYMA8iYhHwh8VR4paQm5ypD1k8s4AWc3
-   MVc/wS1//p7hTOMDKVHAZbBIRSj9jtoLYNnXdRnLkwhukohiF9lVLaPXe
-   tIF+UxaEx3KNBI0HU779It8pq5zzE78WwgZIiHsnhnfMRY5tLIcGfZtFc
-   OvpR5mq9rwMM+yd0XRdX+4Svu35ER/lgBPruXrOoQRLOWmCosIOyDi9+3
-   +0jIuJcesMFhU/8/ZU9k2d605WM9JsUj6zbQIWFThULnsPDC66OdmFkJt
-   AoDmsDsRg+vplPUJg2DduWf+DS7+Sgc3cwhfUx4LC6nV2e+QWiYD/AlJC
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10861"; a="3521942"
-X-IronPort-AV: E=Sophos;i="6.03,219,1694761200"; 
-   d="scan'208";a="3521942"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2023 06:27:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10861"; a="927987468"
-X-IronPort-AV: E=Sophos;i="6.03,219,1694761200"; 
-   d="scan'208";a="927987468"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.96.100])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 12 Oct 2023 06:27:39 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "Christopherson,, Sean" <seanjc@google.com>,
-        "Huang, Kai" <kai.huang@intel.com>
-Cc:     "Zhang, Bo" <zhanb@microsoft.com>,
+        with ESMTP id S230357AbjJMLpm (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Fri, 13 Oct 2023 07:45:42 -0400
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2089.outbound.protection.outlook.com [40.107.6.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C4FBD;
+        Fri, 13 Oct 2023 04:45:36 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Sl64TowclS4iozfeMWwhJcaPBAUlwIcR6p4MuDEc1+cxiauF+R1sXzG0lq+ZtVRprVp8asK/1ryNhkWzGyrZePDO0VPx9NkMNqlgBfMF+BQahdI4if46txV9g6msiu7/AC8gFmRLEhLDBT7XQyTX6VA/Zm+C5Vuc0hlnMx2uAjRZy6hUVSbTpnJIxNf3T9AKNeiMOs8mcLnn+PBoaRnZA6NUqZcHAIWtGmTuZaX/V9214qxSB6X8la7dxFHUEqgNWJxyFBBU3GKl2/usUf+qFzzsUPS3An/7hm32eBVYHTan8sbD6vrtpVIpiBrXDo47Mu4+l6o8CUWv4kTqNESgTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uHoqflSqsNoHqX8+WspC6YSEfahdFNBGeHPVxAnk7l8=;
+ b=XwEkZj7rFYEaYqTWZeEOC4Dkjr4n3J/NuGHoy/WxzhHCHxcpo6KHqejzW3tols2MukBbJDCu00zLFS6kDzp+7UPDnSp9e7o50+kpFLnG6TB/XIqsWUsKh1sfOjcWSjheOwzZLqhYGjOLRznizyLZg1kLRhKYho4ihGVtyxyCEQZqq5OsCyqshMepwpGYQZlySC0nAjYWQ5J0wAq2gTGyzsK1iozuBvG9wWGGPWRrKeqRE/cnhJym7ohomSHHov0Z7N+TMXI7hDTLU0LuUi4lc6RQ1eiy9BjjNdhDHu9tdaep1VneQ5mdnNoWP4F8lppure3PLC/1kLjN7x/EW+ATUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kuleuven.be; dmarc=pass action=none header.from=kuleuven.be;
+ dkim=pass header.d=kuleuven.be; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=KULeuven.onmicrosoft.com; s=selector2-KULeuven-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uHoqflSqsNoHqX8+WspC6YSEfahdFNBGeHPVxAnk7l8=;
+ b=lacdVuyDz+Wn3DrbY33wJgWM3dJpB0BlVZWo8tTwtI3+lAHN105kF1ewdzeQ5A0E+XXetWIPrz4yjFOvTZ05Egi0IMKR+e8Nf8Z3BJmINPcP3kTWJ2kHrkz9DXbup08VSAX0seme5u7I9kbx3RBDC4AqLVtHN+xdG4e4IS7PLyo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kuleuven.be;
+Received: from DB4PR08MB9334.eurprd08.prod.outlook.com (2603:10a6:10:3f5::20)
+ by PAWPR08MB8888.eurprd08.prod.outlook.com (2603:10a6:102:33c::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.45; Fri, 13 Oct
+ 2023 11:45:34 +0000
+Received: from DB4PR08MB9334.eurprd08.prod.outlook.com
+ ([fe80::f21b:70b2:5484:6a31]) by DB4PR08MB9334.eurprd08.prod.outlook.com
+ ([fe80::f21b:70b2:5484:6a31%6]) with mapi id 15.20.6863.043; Fri, 13 Oct 2023
+ 11:45:34 +0000
+Message-ID: <be63771f-080e-4832-955e-13f5b06b2010@kuleuven.be>
+Date:   Fri, 13 Oct 2023 13:45:39 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/13] selftests/sgx: Fix compilation errors
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "yangjie@microsoft.com" <yangjie@microsoft.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "Li, Zhiquan1" <zhiquan1.li@intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "anakrish@microsoft.com" <anakrish@microsoft.com>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>
-Subject: Re: [PATCH v5 12/18] x86/sgx: Add EPC OOM path to forcefully reclaim
- EPC
-References: <20230923030657.16148-1-haitao.huang@linux.intel.com>
- <20230923030657.16148-13-haitao.huang@linux.intel.com>
- <1b265d0c9dfe17de2782962ed26a99cc9d330138.camel@intel.com>
- <ZSSZaFrxvCvR1SOy@google.com>
- <06142144151da06772a9f0cc195a3c8ffcbc07b7.camel@intel.com>
- <1f7a740f3acff8a04ec95be39864fb3e32d2d96c.camel@intel.com>
- <op.2clydbf8wjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <631f34613bcc8b5aa41cf519fa9d76bcd57a7650.camel@intel.com>
-Date:   Thu, 12 Oct 2023 08:27:37 -0500
-MIME-Version: 1.0
+        Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+Cc:     "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+References: <20231005153854.25566-1-jo.vanbulck@cs.kuleuven.be>
+ <119aaa2820be5dc58144e74574cfaa7777f79604.camel@intel.com>
+ <f2726c67-87f7-409a-9ac2-e845249348cc@cs.kuleuven.be>
+ <7e729488e2f841f384b719d0509a4f78f491d477.camel@kernel.org>
+From:   Jo Van Bulck <jo.vanbulck@kuleuven.be>
+In-Reply-To: <7e729488e2f841f384b719d0509a4f78f491d477.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2cpecbevwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <631f34613bcc8b5aa41cf519fa9d76bcd57a7650.camel@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+X-ClientProxiedBy: AS4PR09CA0018.eurprd09.prod.outlook.com
+ (2603:10a6:20b:5d4::6) To DB4PR08MB9334.eurprd08.prod.outlook.com
+ (2603:10a6:10:3f5::20)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB4PR08MB9334:EE_|PAWPR08MB8888:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8e8e24b-762b-462e-d405-08dbcbe1e903
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: SR864t2seVZAs8JPRf+0NqWW1iRy2tK44EMmH0I+wyg930owAZXw1IH1uDJWEwIyhO1hUnqrx5Q6bZUA+zFXa//UGKFYHjzFtVmqQrLRhIlqrvLXvxVIGkW0PMU4f8mM0p2wg0dpN8TAPL3m59DDroHgLjFFZWhblQd+45Cl07gdV+/ccHJjQhRb20VTmowe55yI5DJcbY5KEq75CwejHWBdUk0moes4F75+Bl8PNa7KZuwO9w+h6LeECzsMn4hIMBA8yDtSrunAWZa81VpR3qIKuvhGzYxn/LKfXVlPL1aoFIjsv2c0p8/u76VX/0HBCdkVM79uWGWZ6W45QB7erzOPRPkUh5yHT5SPnL5tbU1eTYDxfzgIpGxuPqH0wkcnNfhQihMNXX8quICFiquf3usAY48xQ2qyXfXO6FbWVidNxi60jktza4Um2OUL12GWlH0Eu5daUu0amKZ4/vvnAGQBnrvArui/S8glyFGfmMNOI9+6pTSjSEUoWSNFJMmE35Pd8e989hNUX9OkHVwTF7omXSYrw/GkpbT/wEyVUec38btVY4TJT1vdi3W8wLcnWrgkndRbFckwY2zJe+qoyeNlRJX1SNHPq2yapMae1daChbdrG27n12Ri+KXA4eb89wiBoPAyuIIMEmraZTXRPA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB4PR08MB9334.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(136003)(346002)(366004)(39860400002)(376002)(230922051799003)(64100799003)(186009)(1800799009)(451199024)(6506007)(36756003)(786003)(316002)(66476007)(83380400001)(66556008)(66946007)(110136005)(53546011)(86362001)(2616005)(38100700002)(31686004)(6512007)(6486002)(478600001)(31696002)(2906002)(5660300002)(8676002)(4326008)(8936002)(66899024)(41300700001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QlJ2RTdBenBGRGhrQzhlT3N1Kzc0OG9vV0tHYTRFenozWGVUTzA5VHVEdkpn?=
+ =?utf-8?B?M0p4d1hZN3RRci9mekZ5bVRKL1pzQVM4bGY3UGdjQmZ4dTFmbm5XN2M2dUw1?=
+ =?utf-8?B?aGE3bG9aVHViK0NMd3BnTDJZRFkwK3BkQ001MVY3THBiTVcyS2xxbkpsaWFy?=
+ =?utf-8?B?SERDZmxUVGhtMnBrZVJOZGE2bWJ2R1dTUUVxMWF2MUZ3aVVOaGdhcDJ1Q2R3?=
+ =?utf-8?B?eHQ1MDNsNWFycWtWeE1VbVcxMTdSaGZWVGh3WkpsMzlrWjAwdHhaNUl4V1Ev?=
+ =?utf-8?B?ZzB1TlFsY2V0VGtsdjF3Y2dUTHRDRzNRa09BcFJFRXZHNmJSOG5rYWU3cjZ5?=
+ =?utf-8?B?TUx1WS9EMzFpekt1Rm9pUUdMMGhCRFZ1QWh4bXI4ZHE2em5OWWFpK2RHbmxF?=
+ =?utf-8?B?WXR1WGxZQWpycy9GcXhyYVpsYi9YN0xHMitHQnEzZ2x0UkJGWG9yU3k3WmJE?=
+ =?utf-8?B?S3R4a1hyelJyT1BFVmJTQzh4L1VyUUxQc0d2UnNQUTNGTlFSazFQNHpwUnBY?=
+ =?utf-8?B?d0NKeGF1alRwb21yQTVXb1lhOXJOajIvS3VKSjVsSkY2c0s1eTVFcit4NnZH?=
+ =?utf-8?B?QmtpbmdKdXp2KytyVWY1eEJRNzRsdXZvY1U1S1VpNEZweWY0ZW5UY0FCWnYx?=
+ =?utf-8?B?Y2JRS1c4OXA4cVRmVUlkTGdqMUxkVDU1VkwzVldReVp4Yk5sOWtjU2M2b2ZM?=
+ =?utf-8?B?V2gxeExYb3laOWZxSVhLSTR1UzFLRXhMTW9uZUtHYjZuTWRHVTQwWUVGWFFN?=
+ =?utf-8?B?dHdqdWUvdFcreG5lUXVLL25OSDZoVDlWWE5HZGdLNCtvRlA1a1FOaDZvNDZF?=
+ =?utf-8?B?UFAxcUZpOFVKODNnbjRraHZMbnZhMDQ4UGtHVHVhYWFFc3hMZVI4dEJldGRK?=
+ =?utf-8?B?RW9JK212N0JZYk9tM3BHNnh1K1lWdlVqcFprY0VuRWFsSXhEb3VUR3FWMmQv?=
+ =?utf-8?B?eUhTWWRYenBTZmE1WjVXK1NZZzBTRmpzSmR3L2taV3lKeDVxZHJ4Wnl0NTAv?=
+ =?utf-8?B?WW1iOXRJWEkvcVFha05ib3dCS0c3UzBJWW95RkNLRGdXQ2pnUlJjUWNpWnlH?=
+ =?utf-8?B?OUlMVmhQTmJrbEpSVkVRRzFtRTBoVlNLUGZEamtVdUZQTWlHZU1Md1llY0wz?=
+ =?utf-8?B?OXlWb21VaHZacXJtbW9QcXFzbDE1VVBwamYyUkxTUDlLTWdMb1VSNENab2pF?=
+ =?utf-8?B?ZkhXc0FGdmZHazhPQUR2dVp1dis4Z2oxc3dSakg3WmI4V0N1QWRkZTlTQ2Rz?=
+ =?utf-8?B?bmI2a0swbFRzdzV0UXo0TkhHT3h2ZC9wblZkVkE0bzRscUpxeDZaZW0rdmVC?=
+ =?utf-8?B?SFRsYkx3Z0tXTXhiRWVEUDN6RVpyTVpnaGJ3RitnclZJdEhZaDJYZXBmR3VX?=
+ =?utf-8?B?ekh6WDI1V3dIbXJxSU5vakVYT2tYZ0xQMk1aUzFJdVI1a3FQNis2SVZhU3VS?=
+ =?utf-8?B?dXhwZk5hSnJWcEFYTUNSSWhsOVpBZWlVSXN5L0F5cHlhZGQvSHdIQTNvKyt1?=
+ =?utf-8?B?SmRwMzVMQ2lQTzhibjkrLzBoQWdwYTlKbHB5TGU5UnpwR3Y5S0NwNlR1WE5s?=
+ =?utf-8?B?WmZxWG9kSlNyeTNHZS9kVmxtZlN0OFFKVy9hUkQzRmtJZU9FUkZ5MllTOXVt?=
+ =?utf-8?B?RVhrbFlubW5hR055YUhoUjdMUWtGMlBXTk8zbEIyblZOSzFoMUZpMVVKcjEx?=
+ =?utf-8?B?M2FEQXBMaTB0dkhBNEJuRXpGTkEzeWRnMi8rVW9qQkFGLzVicUZmeFZwMjNn?=
+ =?utf-8?B?VWIxalFMV051Y1AzRGk5cnpHM0cxUE5FVTJyQzEyaWtKTkx3aENzcVhVSnpy?=
+ =?utf-8?B?RC8ycUh5amZTS2ZMUEdkVnlzcFlDYTBGS1Jxdmw5cDVUZnJleHluUldma1dv?=
+ =?utf-8?B?ODhhek5ySkpCeU5Mdi9JY3o5MDVoVDJKZjdBb2w0WVhjdXpxTmVPUmpBUzlo?=
+ =?utf-8?B?U3F1ZEw1RE9NT1JGZmZPckdzemhwSHRBVHluVGRSU2w3YUFDMDliUFNRMHBI?=
+ =?utf-8?B?SC81R3FLUDhlRmpaM1RNR1BpZ3U5SUhDQnUzTGtXNWlBT2gxWEZNYVJTdzdI?=
+ =?utf-8?B?aE4wT3lIRWEva3kwQ25qOWJNUmRGdUIrM3BvZytOUWxMV0IzZWZkdUJuNEhM?=
+ =?utf-8?B?dGx5TmIrOTVadjdDMkRCUDNZQTZaaURWQzNseisxcmp2OWtHWk15dVlQVGpV?=
+ =?utf-8?B?YnJzUUplMUl5NnUyOFBzN1dBTnd4Y2MzTXdPUzJ1ay9KUjhKdWpoUkJiNXJO?=
+ =?utf-8?B?VmVLaERuZlhpQ3A0cXgxMUtIaXNBPT0=?=
+X-OriginatorOrg: kuleuven.be
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8e8e24b-762b-462e-d405-08dbcbe1e903
+X-MS-Exchange-CrossTenant-AuthSource: DB4PR08MB9334.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2023 11:45:34.1403
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3973589b-9e40-4eb5-800e-b0b6383d1621
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: inTfj5Co2yMZs26PuKlTDkZ1vh56uPMZ2ermdnwpyHBakVJiLnMlcutQwjoKRVA2Qz4BqPSbWiv5ZSvGGhmsbQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB8888
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Tue, 10 Oct 2023 19:51:17 -0500, Huang, Kai <kai.huang@intel.com> wrote:
-[...]
-> (btw, even you track VA/SECS pages in unreclaimable list, given they  
-> both have
-> 'enclave' as the owner,  do you still need SGX_EPC_OWNER_ENCL and
-> SGX_EPC_OWNER_PAGE ?)
+On 10.10.23 11:44, Jarkko Sakkinen wrote:
+> Folks (sorry for top posting): I've now taken my old NUC7 out of the
+> dust and tested the series :-)
+> 
+> Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Let me think about it, there might be also a way just track encl objects  
-not unreclaimable pages.
+Thanks for testing this Jarkko! Not sure on next steps, do you want me 
+to re-post the series with the Tested-by tag for all commits or will you 
+add that? Let me know if something from my side is needed.
 
-I still not get why we need kill the VM not just remove just enough pages.  
-Is it due to the static allocation not able to reclaim?
+> Off-topic: I wish both Intel and AMD straighten up and deliver some
+> "home friendly" development hardware for the  latest stuff. Just my
+> stance but the biggest quality risk I see in both TDX and SNP is that
+> the patches are made by an enterprise and reviewed (properly) *only*
+> by other huge enterprises.
 
+Yes, I totally agree on this. It is really unfortunate that things like 
+SGX are not (anymore) available on home consumer hardware and you have 
+to buy expensive servers for this, which also change every new CPU 
+generation. Having some kind of "developer boards" like is more the case 
+in embedded systems would be a great and very welcome evolution, if only 
+it were to happen..
 
-If we always remove all vEPC pages/kill VM, then we should not need track  
-individual vepc pages.
+> I skim status of both from time to time but yeah not much attachment
+> or motivation to do more than that as you either need a cloud access
+> or partnership with Intel or AMD. "Indie" style seems to be disliked
+> these days... You can extrapolate from this that there must be a bunch
+> of maintainers around the Linux kernel that feel the same. Not saying
+> that particularly my contribution would be that important.
+> 
+> Sort of even if let's say Intel would provide me a partner access I
+> might not be that interested because I prefer my own (physical)
+> computers.
 
-Thanks
+I also understand this and share the concern. FWIW for some things 
+(e.g., uarch attack research) remote access does also not really hold up 
+to bare-metal access IMO.
 
-Haitao
+Best,
+Jo
