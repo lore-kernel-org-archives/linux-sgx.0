@@ -2,68 +2,53 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D36C46CA1
-	for <linux-sgx@archiver.kernel.org>; Tue, 17 Oct 2023 15:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D6FCDB474
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Oct 2023 18:54:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344348AbjJQPnO (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Tue, 17 Oct 2023 11:43:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39152 "EHLO
+        id S232763AbjJQSyw (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 17 Oct 2023 14:54:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344230AbjJQPnO (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Tue, 17 Oct 2023 11:43:14 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ABE4B0
-        for <linux-sgx@vger.kernel.org>; Tue, 17 Oct 2023 08:43:12 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d9a5a3f2d4fso8125979276.3
-        for <linux-sgx@vger.kernel.org>; Tue, 17 Oct 2023 08:43:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1697557392; x=1698162192; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=afIEXriDw7jR2OJmvlYsK5e8xjDzcS+IGLCS2GPyEaM=;
-        b=mrzTpio76QStYgRsezbdWzx3S6MEiwNa7MbZutTB7mbca7K8vxFaL+FaYUWEJNVK6t
-         g5cDfuRnPPO1BRC1u3+vFpdozvXu//2qUr76dH6x7ZYFgyucnIykBlhD1UOFmRCxwIOM
-         SEPJiZIUsJGjJlfX/U7dMlLrd660fKTnsm2NSbgF3QW2GBBhZ9WPzA+lS45vy1jGi5Ml
-         QyUePYtFkHU/pE/zUEweXfHBOxvLnfX85cz7woAa1RnB8DVIZeJrqE2oszW82J70KLs5
-         oDpoY6YmoTt97YV63GFi1sh2hWf5eMTeuusao4InlN/qylIiRsgvCzdhNlP25aJHmjMx
-         1lQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697557392; x=1698162192;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=afIEXriDw7jR2OJmvlYsK5e8xjDzcS+IGLCS2GPyEaM=;
-        b=d2FgeKciAq+jXGOXw6RgFAdc5ehhbhqpTiXNvknHh4GQj++R4kOnv1auLX/+FFnttt
-         isrmd1GJ6jAQcOLEblW1BHLAsxeOqRHzCS5B3MEIZpunGZ69XDhpeAmC7iyQF4gDH3ZY
-         6x5eaUTB4Psi+ycCJMNOnrfx7hLb0KPGrZbbSwo31shy6NEj0CrJXVotKy81qL/A4Y73
-         xnjSWRf2HFfSigDgy4jzPS5ga9UGq6g3qpII0Iy5QcsB/xygRvFDdX2qPt1fNoFS4a8D
-         rw+xAhwC11ljMd55AF/lwYcvPWkP2gzdIf97CV4vzbLXnb6I6m/n2ZURoGx+iNbOPDFC
-         eajw==
-X-Gm-Message-State: AOJu0YwUFghOOLcCj1lw+v+VNpuiPd4YFrS+8pvJkunwJMcD9XWsSRq4
-        NjheGVQ82o469Ba11ZqYKINwQMAceeA=
-X-Google-Smtp-Source: AGHT+IFgFUQkHTOxsDh5kg7JObNGko3z6UdVNpTTp7isgRewlD1X4IdVH+92V/I/WdEsF3jIGvSWi88MtXA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:d885:0:b0:d9a:c27e:5f38 with SMTP id
- p127-20020a25d885000000b00d9ac27e5f38mr49168ybg.12.1697557391852; Tue, 17 Oct
- 2023 08:43:11 -0700 (PDT)
-Date:   Tue, 17 Oct 2023 08:43:10 -0700
-In-Reply-To: <op.2cxmpe1awjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Mime-Version: 1.0
-References: <ZSSZaFrxvCvR1SOy@google.com> <06142144151da06772a9f0cc195a3c8ffcbc07b7.camel@intel.com>
- <1f7a740f3acff8a04ec95be39864fb3e32d2d96c.camel@intel.com>
- <op.2clydbf8wjvjmi@hhuan26-mobl.amr.corp.intel.com> <631f34613bcc8b5aa41cf519fa9d76bcd57a7650.camel@intel.com>
- <op.2cpecbevwjvjmi@hhuan26-mobl.amr.corp.intel.com> <aa404549c7e292dd2ec93a5e6a8c9d6d880c06b3.camel@intel.com>
- <op.2cxatlafwjvjmi@hhuan26-mobl.amr.corp.intel.com> <ZS2r7-EAEovpV4BN@google.com>
- <op.2cxmpe1awjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Message-ID: <ZS6rjthamgvlzoXD@google.com>
-Subject: Re: [PATCH v5 12/18] x86/sgx: Add EPC OOM path to forcefully reclaim EPC
-From:   Sean Christopherson <seanjc@google.com>
+        with ESMTP id S232228AbjJQSyv (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 17 Oct 2023 14:54:51 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3EC8C6;
+        Tue, 17 Oct 2023 11:54:49 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 0881421CFC;
+        Tue, 17 Oct 2023 18:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1697568888; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WV8+QfL+W0GjUUx4DVAHsFccb/fwVlTGl0IqfxdfoSI=;
+        b=hLnG6JFP3CdGIUwngJLGTg1Pjd+QkNnRPjs0lMTnDR4yiNmTTwaFJrGgiaiyQNDd+27Qk1
+        MhoccU3MgS2tABD7xx+ADwcnn25XXp4MRS5pptOW6luVxMfvx8ob50SVQHOaiM0KDb1r2b
+        qhTrQ9Kg8OlKfpwVZg9X2sGHNiJfg9M=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AB4C913584;
+        Tue, 17 Oct 2023 18:54:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id lHYZKXfYLmWmIgAAMHmgww
+        (envelope-from <mkoutny@suse.com>); Tue, 17 Oct 2023 18:54:47 +0000
+Date:   Tue, 17 Oct 2023 20:54:46 +0200
+From:   Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
 To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     Kai Huang <kai.huang@intel.com>, Bo Zhang <zhanb@microsoft.com>,
+Cc:     "Christopherson,, Sean" <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Zhang, Bo" <zhanb@microsoft.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
         "yangjie@microsoft.com" <yangjie@microsoft.com>,
         "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        Zhiquan1 Li <zhiquan1.li@intel.com>,
+        "Li, Zhiquan1" <zhiquan1.li@intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "mingo@redhat.com" <mingo@redhat.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
@@ -72,46 +57,110 @@ Cc:     Kai Huang <kai.huang@intel.com>, Bo Zhang <zhanb@microsoft.com>,
         "jarkko@kernel.org" <jarkko@kernel.org>,
         "hpa@zytor.com" <hpa@zytor.com>,
         "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>,
+        "Mehta, Sohil" <sohil.mehta@intel.com>,
         "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
         "kristen@linux.intel.com" <kristen@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+Subject: Re: [PATCH v5 12/18] x86/sgx: Add EPC OOM path to forcefully reclaim
+ EPC
+Message-ID: <6lrq4xmk42zteq6thpyah7jy25rmvkp7mqxtll6sl7z62m7n4m@vrbbedtgxeq4>
+References: <1f7a740f3acff8a04ec95be39864fb3e32d2d96c.camel@intel.com>
+ <op.2clydbf8wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <631f34613bcc8b5aa41cf519fa9d76bcd57a7650.camel@intel.com>
+ <op.2cpecbevwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <aa404549c7e292dd2ec93a5e6a8c9d6d880c06b3.camel@intel.com>
+ <op.2cxatlafwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <35a7fde056037a40b3b4b170e2ecd45bf8c4ba9f.camel@intel.com>
+ <op.2cxmq7c2wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <915907d56861ef4aa7f9f68e0eb8d136a60bee39.camel@intel.com>
+ <op.2cyma0e9wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="d2qvdlt5oh6ne5ty"
+Content-Disposition: inline
+In-Reply-To: <op.2cyma0e9wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+Authentication-Results: smtp-out1.suse.de;
+        none
+X-Spamd-Result: default: False [-12.70 / 50.00];
+         ARC_NA(0.00)[];
+         TO_DN_EQ_ADDR_SOME(0.00)[];
+         RCVD_VIA_SMTP_AUTH(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         NEURAL_HAM_LONG(-3.00)[-1.000];
+         MIME_GOOD(-0.20)[multipart/signed,text/plain];
+         REPLY(-4.00)[];
+         DKIM_SIGNED(0.00)[suse.com:s=susede1];
+         NEURAL_HAM_SHORT(-1.00)[-1.000];
+         RCPT_COUNT_TWELVE(0.00)[21];
+         SIGNED_PGP(-2.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+,1:+,2:~];
+         MID_RHS_NOT_FQDN(0.50)[];
+         RCVD_COUNT_TWO(0.00)[2];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%]
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Oct 16, 2023, Haitao Huang wrote:
-> Hi Sean
-> 
-> On Mon, 16 Oct 2023 16:32:31 -0500, Sean Christopherson <seanjc@google.com>
-> wrote:
-> 
-> > On Mon, Oct 16, 2023, Haitao Huang wrote:
-> > > From this perspective, I think the current implementation is
-> > > "well-defined":
-> > > EPC cgroup limits for VMs are only enforced at VM launch time, not
-> > > runtime.  In practice,  SGX VM can be launched only with fixed EPC size
-> > > and all those EPCs are fully committed to the VM once launched.
-> > 
-> > Fully committed doesn't mean those numbers are reflected in the cgroup.  A
-> > VM scheduler can easily "commit" EPC to a guest, but allocate EPC on
-> > demand, i.e.  when the guest attempts to actually access a page.
-> > Preallocating memory isn't free, e.g. it can slow down guest boot, so it's
-> > entirely reasonable to have virtual EPC be allocated on-demand.  Enforcing
-> > at launch time doesn't work for such setups, because from the cgroup's
-> > perspective, the VM is using 0 pages of EPC at launch.
-> > 
-> Maybe I understood the current implementation wrong. From what I see, vEPC
-> is impossible not fully commit at launch time. The guest would EREMOVE all
-> pages during initialization resulting #PF and all pages allocated. This
-> essentially makes "prealloc=off" the same as "prealloc=on".
-> Unless you are talking about some custom OS or kernel other than upstream
-> Linux here?
 
-Yes, a customer could be running an older kernel, something other than Linux, a
-custom kernel, an out-of-tree SGX driver, etc.  The host should never assume
-anything about the guest kernel when it comes to correctness (unless the guest
-kernel is controlled by the host).
+--d2qvdlt5oh6ne5ty
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Doing EREMOVE on all pages is definitely not mandatory, especially if the kernel
-detects a hypervisor, i.e. knows its running as a guest.
+Hello Haitao.
+
+On Tue, Oct 17, 2023 at 07:58:02AM -0500, Haitao Huang <haitao.huang@linux.intel.com> wrote:
+> AFAIK, before we introducing max_write() callback in this series, no misc
+> controller would possibly enforce the limit when misc.max is reduced. e.g. I
+> don't think CVMs be killed when ASID limit is reduced and the cgroup was
+> full before limit is reduced.
+
+Yes, misccontroller was meant to be simple, current >= max serves to
+prevent new allocations.
+
+FTR, at some point in time memory.max was considered for reclaim control
+of regular pages but it turned out to be too coarse (and OOM killing
+processes if amount was not sensed correctly) and this eventually
+evolved into specific mechanism of memory.reclaim.
+So I'm mentioning this should that be an interface with better semantic
+for your use case (and misc.max writes can remain non-preemptive).
+
+One more note -- I was quite confused when I read in the rest of the
+series about OOM and _kill_ing but then I found no such measure in the
+code implementation. So I would suggest two terminological changes:
+
+- the basic premise of the series (00/18) is that EPC pages are a
+  different resource than memory, hence choose a better suiting name
+  than OOM (out of memory) condition,
+- killing -- (unless you have an intention to implement process
+  termination later) My current interpretation that it is rather some
+  aggressive unmapping within address space, so less confusing name for
+  that would be "reclaim".
+
+
+> I think EPC pages to VMs could have the same behavior, once they are given
+> to a guest, never taken back by the host. For enclaves on host side, pages
+> are reclaimable, that allows us to enforce in a similar way to memcg.
+
+Is this distinction between preemptability of EPC pages mandated by the
+HW implementation? (host/"process" enclaves vs VM enclaves) Or do have
+users an option to lock certain pages in memory that yields this
+difference?
+
+Regards,
+Michal
+
+--d2qvdlt5oh6ne5ty
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZS7YdAAKCRAGvrMr/1gc
+jpc5AP9tTv+0BiQvCbDojRuouQdurDiPml67Obr1FdJ6Jqfb1AEAvxfWBD/03b86
+jE2isDspp+sfjhBkmc8tAl7umLlKJwc=
+=3VCm
+-----END PGP SIGNATURE-----
+
+--d2qvdlt5oh6ne5ty--
