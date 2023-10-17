@@ -2,69 +2,51 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85269CDB465
-	for <linux-sgx@archiver.kernel.org>; Mon, 16 Oct 2023 21:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 786C3CDB474
+	for <linux-sgx@archiver.kernel.org>; Tue, 17 Oct 2023 00:09:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233384AbjJPVcg (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 16 Oct 2023 17:32:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40930 "EHLO
+        id S232411AbjJQAJL (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 16 Oct 2023 20:09:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232345AbjJPVcf (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 16 Oct 2023 17:32:35 -0400
-Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDFFFA2
-        for <linux-sgx@vger.kernel.org>; Mon, 16 Oct 2023 14:32:33 -0700 (PDT)
-Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1c9e0b9b96cso34474195ad.2
-        for <linux-sgx@vger.kernel.org>; Mon, 16 Oct 2023 14:32:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1697491953; x=1698096753; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+t15XOMF8Yqimk8R2WgZJ6PJZRWQZddWx2hFeG4o13M=;
-        b=hFvcy9PEmmo0QNNVLwXpHUcGnJ4AhGnvtLiZO4Ks+tOeAE4FGzQLiycFdaC0F3Wwgk
-         94ikGqvnGcqoRuteuXz1aeWfwnW6veqLdXZpMit3d/vmpUEYjtcd5IYKu2seOO5iJlY9
-         +rxcKhVtghO1MyNbBF1FwFjKq+QZK1KfqSZg4+hW0uZDa0G07+jXtLKRActVuEht41Np
-         +IeU2JsFK3TpVGDhtI1g3IJgu1GNZH9Z08dUBLnrP/w6f1/QALgZrk3THJGUo4zefnyj
-         fcK1+wQMC01Oh/0/FkYVa48h/vHuPVv1EWVnc6uYl6Uzf9KXMyQTdrf+2VYYgg3cyP/1
-         Lf+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697491953; x=1698096753;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+t15XOMF8Yqimk8R2WgZJ6PJZRWQZddWx2hFeG4o13M=;
-        b=PIT4FxEd9+xe5yaqTajyRdgq29HfaZQOE8TXZVD1F1oEvZjDY40XHbJrJ9vqWLJDDi
-         ueAmuHbWFBLx1zrc/F/0WwDCFLNE91U1Pr9QpSArFPtm2UevhXTzrdHYP1G6XYVfT+Mx
-         rdh0CMIN2VDj5hM1szw94QUxXFkeYRyHMoufpg6LS+0icy35LfHqi/uq2e8pHIgCsJEb
-         VyTFCoMHGU6GQOqySrIFcLIwXEZc4tQI3E52gSzgp6mM5WEfyEd9EtV2t95dKcHRI13Y
-         6vmLCvmNco9LJPAyhlFu4clbzwMF0dAWZuM1Nv8ohirKDATfaxL+VlYbG2FisnPCoimw
-         rwng==
-X-Gm-Message-State: AOJu0YxHwqa+P6yAzymOfyE/SnicwtDO5tVhy87VVrP1HLvZt8N6ApgN
-        lcA/C6bA4qW4iaDzyHA0zfOVs7z3TN0=
-X-Google-Smtp-Source: AGHT+IE6Gm95fqx0JC6BEhdIzOrR5zXb+sa8Sase/8Z7RiVJkC4hqH8082U4743Kum3fpsqf1eYfGLxMISc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:706:b0:1c5:7c07:e403 with SMTP id
- kk6-20020a170903070600b001c57c07e403mr9215plb.10.1697491953065; Mon, 16 Oct
- 2023 14:32:33 -0700 (PDT)
-Date:   Mon, 16 Oct 2023 14:32:31 -0700
-In-Reply-To: <op.2cxatlafwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Mime-Version: 1.0
-References: <20230923030657.16148-13-haitao.huang@linux.intel.com>
- <1b265d0c9dfe17de2782962ed26a99cc9d330138.camel@intel.com>
- <ZSSZaFrxvCvR1SOy@google.com> <06142144151da06772a9f0cc195a3c8ffcbc07b7.camel@intel.com>
- <1f7a740f3acff8a04ec95be39864fb3e32d2d96c.camel@intel.com>
- <op.2clydbf8wjvjmi@hhuan26-mobl.amr.corp.intel.com> <631f34613bcc8b5aa41cf519fa9d76bcd57a7650.camel@intel.com>
- <op.2cpecbevwjvjmi@hhuan26-mobl.amr.corp.intel.com> <aa404549c7e292dd2ec93a5e6a8c9d6d880c06b3.camel@intel.com>
- <op.2cxatlafwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Message-ID: <ZS2r7-EAEovpV4BN@google.com>
-Subject: Re: [PATCH v5 12/18] x86/sgx: Add EPC OOM path to forcefully reclaim EPC
-From:   Sean Christopherson <seanjc@google.com>
-To:     Haitao Huang <haitao.huang@linux.intel.com>
-Cc:     Kai Huang <kai.huang@intel.com>, Bo Zhang <zhanb@microsoft.com>,
+        with ESMTP id S232096AbjJQAJK (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 16 Oct 2023 20:09:10 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D48D92;
+        Mon, 16 Oct 2023 17:09:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697501349; x=1729037349;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=156Vrx2+XHjHglrddNuXHYlGZ2Y4gw7x8LsBHYyeQQw=;
+  b=XCcd8jxYaNl/CFoFVJmsVvi/WpC8LYZQTKBlORWu0L1YGan2PNg3mjkY
+   6TP58q6cHtKMNPn0RzDSvyzZl6f4a3am1Vo4kz+eUd+/4uuGV+px/0EtF
+   hiP35Z/+P9ENgugeZi1wvOGmkpnwv/q5wij4zIch2XK6oI9Fs8+JV7FqD
+   0lPaLnNuqGuWlTHvK6LmJae0V3il9t8xYkuSNoXli9LVXZSulaoh6i62i
+   lrlEIf2bMD6gGFmYzsFVNzvcpvScPYVr3lPaWOyvG+V/DVhiaUF7QbU+B
+   pmy2AFfSuNeWU9RmFWjm6zGW4OGnspUMJxHSG+pmY3Okb1Q1lOo/+dEyT
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10865"; a="376036887"
+X-IronPort-AV: E=Sophos;i="6.03,230,1694761200"; 
+   d="scan'208";a="376036887"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2023 17:09:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10865"; a="755882542"
+X-IronPort-AV: E=Sophos;i="6.03,230,1694761200"; 
+   d="scan'208";a="755882542"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.92])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 16 Oct 2023 17:09:06 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     "Sean Christopherson" <seanjc@google.com>
+Cc:     "Kai Huang" <kai.huang@intel.com>,
+        "Bo Zhang" <zhanb@microsoft.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
         "yangjie@microsoft.com" <yangjie@microsoft.com>,
         "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        Zhiquan1 Li <zhiquan1.li@intel.com>,
+        "Zhiquan1 Li" <zhiquan1.li@intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "mingo@redhat.com" <mingo@redhat.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
@@ -73,67 +55,67 @@ Cc:     Kai Huang <kai.huang@intel.com>, Bo Zhang <zhanb@microsoft.com>,
         "jarkko@kernel.org" <jarkko@kernel.org>,
         "hpa@zytor.com" <hpa@zytor.com>,
         "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>,
+        "Sohil Mehta" <sohil.mehta@intel.com>,
         "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
         "kristen@linux.intel.com" <kristen@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+Subject: Re: [PATCH v5 12/18] x86/sgx: Add EPC OOM path to forcefully reclaim
+ EPC
+References: <20230923030657.16148-13-haitao.huang@linux.intel.com>
+ <1b265d0c9dfe17de2782962ed26a99cc9d330138.camel@intel.com>
+ <ZSSZaFrxvCvR1SOy@google.com>
+ <06142144151da06772a9f0cc195a3c8ffcbc07b7.camel@intel.com>
+ <1f7a740f3acff8a04ec95be39864fb3e32d2d96c.camel@intel.com>
+ <op.2clydbf8wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <631f34613bcc8b5aa41cf519fa9d76bcd57a7650.camel@intel.com>
+ <op.2cpecbevwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <aa404549c7e292dd2ec93a5e6a8c9d6d880c06b3.camel@intel.com>
+ <op.2cxatlafwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <ZS2r7-EAEovpV4BN@google.com>
+Date:   Mon, 16 Oct 2023 19:09:04 -0500
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.2cxmpe1awjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <ZS2r7-EAEovpV4BN@google.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, Oct 16, 2023, Haitao Huang wrote:
-> From this perspective, I think the current implementation is "well-defined":
-> EPC cgroup limits for VMs are only enforced at VM launch time, not runtime.
-> In practice,  SGX VM can be launched only with fixed EPC size and all those
-> EPCs are fully committed to the VM once launched.
+Hi Sean
 
-Fully committed doesn't mean those numbers are reflected in the cgroup.  A VM
-scheduler can easily "commit" EPC to a guest, but allocate EPC on demand, i.e.
-when the guest attempts to actually access a page.  Preallocating memory isn't
-free, e.g. it can slow down guest boot, so it's entirely reasonable to have virtual
-EPC be allocated on-demand.  Enforcing at launch time doesn't work for such setups,
-because from the cgroup's perspective, the VM is using 0 pages of EPC at launch.
+On Mon, 16 Oct 2023 16:32:31 -0500, Sean Christopherson  
+<seanjc@google.com> wrote:
 
-> Because of that, I imagine people are using VMs to primarily partition the
-> physical EPCs, i.e, the static size itself is the 'limit' for the workload of
-> a single VM and not expecting EPCs taken away at runtime.
+> On Mon, Oct 16, 2023, Haitao Huang wrote:
+>> From this perspective, I think the current implementation is  
+>> "well-defined":
+>> EPC cgroup limits for VMs are only enforced at VM launch time, not  
+>> runtime.
+>> In practice,  SGX VM can be launched only with fixed EPC size and all  
+>> those
+>> EPCs are fully committed to the VM once launched.
+>
+> Fully committed doesn't mean those numbers are reflected in the cgroup.   
+> A VM
+> scheduler can easily "commit" EPC to a guest, but allocate EPC on  
+> demand, i.e.
+> when the guest attempts to actually access a page.  Preallocating memory  
+> isn't
+> free, e.g. it can slow down guest boot, so it's entirely reasonable to  
+> have virtual
+> EPC be allocated on-demand.  Enforcing at launch time doesn't work for  
+> such setups,
+> because from the cgroup's perspective, the VM is using 0 pages of EPC at  
+> launch.
+>
+Maybe I understood the current implementation wrong. From what I see, vEPC  
+is impossible not fully commit at launch time. The guest would EREMOVE all  
+pages during initialization resulting #PF and all pages allocated. This  
+essentially makes "prealloc=off" the same as "prealloc=on".
+Unless you are talking about some custom OS or kernel other than upstream  
+Linux here?
 
-If everything goes exactly as planned, sure.  But it's not hard to imagine some
-configuration change way up the stack resulting in the hard limit for an EPC cgroup
-being lowered.
-
-> So killing does not really add much value for the existing usages IIUC.
-
-As I said earlier, the behavior doesn't have to result in terminating a VM, e.g.
-the virtual EPC code could provide a knob to send a signal/notification if the
-owning cgroup has gone above the limit and the VM is targeted for forced reclaim.
-
-> That said, I don't anticipate adding the enforcement of killing VMs at
-> runtime would break such usages as admin/user can simply choose to set the
-> limit equal to the static size to launch the VM and forget about it.
-> 
-> Given that, I'll propose an add-on patch to this series as RFC and have some
-> feedback from community before we decide if that needs be included in first
-> version or we can skip it until we have EPC reclaiming for VMs.
-
-Gracefully *swapping* virtual EPC isn't required for oversubscribing virtual EPC.
-Think of it like airlines overselling tickets.  The airline sells more tickets
-than they have seats, and banks on some passengers canceling.  If too many people
-show up, the airline doesn't swap passengers to the cargo bay, they just shunt them
-to a different plane.
-
-The same could be easily be done for hosts and virtual EPC.  E.g. if every VM
-*might* use 1GiB, but in practice 99% of VMs only consume 128MiB, then it's not
-too crazy to advertise 1GiB to each VM, but only actually carve out 256MiB per VM
-in order to pack more VMs on a host.  If the host needs to free up EPC, then the
-most problematic VMs can be migrated to a different host.
-
-Genuinely curious, who is asking for EPC cgroup support that *isn't* running VMs?
-AFAIK, these days, SGX is primarily targeted at cloud.  I assume virtual EPC is
-the primary use case for an EPC cgroup.
-
-I don't have any skin in the game beyond my name being attached to some of the
-patches, i.e. I certainly won't stand in the way.  I just don't understand why
-you would go through all the effort of adding an EPC cgroup and then not go the
-extra few steps to enforce limits for virtual EPC.  Compared to the complexity
-of the rest of the series, that little bit seems quite trivial.
+Thanks
+Haitap
