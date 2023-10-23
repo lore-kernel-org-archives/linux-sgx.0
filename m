@@ -2,103 +2,90 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2389C25B47
-	for <linux-sgx@archiver.kernel.org>; Mon, 23 Oct 2023 21:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC93AC00A8F
+	for <linux-sgx@archiver.kernel.org>; Mon, 23 Oct 2023 23:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230356AbjJWVc3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 23 Oct 2023 17:32:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45672 "EHLO
+        id S229829AbjJWXaU (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 23 Oct 2023 19:30:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbjJWVc3 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 23 Oct 2023 17:32:29 -0400
+        with ESMTP id S229441AbjJWXaT (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 23 Oct 2023 19:30:19 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746AC97;
-        Mon, 23 Oct 2023 14:32:26 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D48C4C433C7;
-        Mon, 23 Oct 2023 21:32:24 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09A65A6;
+        Mon, 23 Oct 2023 16:30:18 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34448C433C7;
+        Mon, 23 Oct 2023 23:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698096746;
-        bh=046BbSnuuWdcYPSzolRwZTbVs8gPcYCCdAkG0ebMAvU=;
+        s=k20201202; t=1698103817;
+        bh=/Cp0OWUVyZIik3/L+URbEHtp91y6DDa0GoZFwNGqVMk=;
         h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=qeAqI6S9asg0wCthFJZpfapBLLZDaeGI0JNWpoIYMLfrYU/+kLJAdgCs1+MyZV45G
-         tshZD/TmBAsC5W9wtsNjqt65oUsIXKGvBCHYKra5ftuzB8Ll4k5A6oBOchLGWb2qth
-         LMPdaQQAjDBqRVOFSbZUoxp8vhwMUWUNxSSF3ULGnO/1MCwL6YcXZ10kge7oSNxaQu
-         ID3bJ3/jvZ4MVwX3biR4WSlP2PtbkBAcloaDqRRJln34sRZqayFaYpQPphbjwBtR9b
-         +l00z+C4qGPcN5YApWL6U8wJhOQShW+XBu6V1rGJBzrqjQnsCLxQG/WN4+gDp+G0Z0
-         297o4scJAgX9g==
+        b=Kpad+aHh5nu0l7B4yeOPwCDVBB26oZaqTCNYorKEJfmhfDxGfNPZf+tA5YAhZWdKV
+         NUIaFcQX7uNAk1QG+wuDXryuxFU9a6S7PzBWkuHIou5M0LXFZhZdUaWtUzu5Fyq7Cg
+         /EselnecXKyodJzfQroPpKzrOdgkUFYPk6USD5gVdbXBNT5aH2mWz0SwkvM0alP+cU
+         ryd9fwsuUedqfjrFpzAbSqhPSLk6UBgEsBKk6x9asCy3416Vmz/1VTTbhW+PTdQZCc
+         Pjqv9Fv/EOTIzxLKHCi042Malcym3yrRaYbaapQ7REq3MqYOUD7rm0Zz6yiC71aAT3
+         a7oEgQ5t1Xdrg==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 24 Oct 2023 00:32:22 +0300
-Message-Id: <CWG522A78YHD.37CO0T9F3FVXB@suppilovahvero>
-Cc:     "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v7 00/13] selftests/sgx: Fix compilation errors
+Date:   Tue, 24 Oct 2023 02:30:13 +0300
+Message-Id: <CWG7KARCO4TX.257MYGX7AHV8T@suppilovahvero>
+Cc:     <reinette.chatre@intel.com>, <kai.huang@intel.com>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH] x86/sgx: Return VM_FAULT_SIGBUS for EPC exhaustion
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Jo Van Bulck" <jo.vanbulck@kuleuven.be>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>
+To:     "Haitao Huang" <haitao.huang@linux.intel.com>,
+        <dave.hansen@linux.intel.com>, <linux-sgx@vger.kernel.org>,
+        <x86@kernel.org>
 X-Mailer: aerc 0.15.2
-References: <20231005153854.25566-1-jo.vanbulck@cs.kuleuven.be>
- <119aaa2820be5dc58144e74574cfaa7777f79604.camel@intel.com>
- <f2726c67-87f7-409a-9ac2-e845249348cc@cs.kuleuven.be>
- <7e729488e2f841f384b719d0509a4f78f491d477.camel@kernel.org>
- <be63771f-080e-4832-955e-13f5b06b2010@kuleuven.be>
-In-Reply-To: <be63771f-080e-4832-955e-13f5b06b2010@kuleuven.be>
+References: <20231020025353.29691-1-haitao.huang@linux.intel.com>
+In-Reply-To: <20231020025353.29691-1-haitao.huang@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Fri Oct 13, 2023 at 2:45 PM EEST, Jo Van Bulck wrote:
-> On 10.10.23 11:44, Jarkko Sakkinen wrote:
-> > Folks (sorry for top posting): I've now taken my old NUC7 out of the
-> > dust and tested the series :-)
-> >=20
-> > Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Fri Oct 20, 2023 at 5:53 AM EEST, Haitao Huang wrote:
+> In the EAUG on page fault path, VM_FAULT_OOM is returned when the
+> Enclave Page Cache (EPC) runs out. This may trigger unneeded OOM kill
+> that will not free any EPCs. Return VM_FAULT_SIGBUS instead.
 >
-> Thanks for testing this Jarkko! Not sure on next steps, do you want me=20
-> to re-post the series with the Tested-by tag for all commits or will you=
-=20
-> add that? Let me know if something from my side is needed.
+> Fixes: 5a90d2c3f5ef ("x86/sgx: Support adding of pages to an initialized =
+enclave")
+> Cc: stable@vger.kernel.org # v6.0+
+> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/encl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/enc=
+l.c
+> index 279148e72459..d13b7e4ad0f5 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -322,7 +322,7 @@ struct sgx_encl_page *sgx_encl_load_page(struct sgx_e=
+ncl *encl,
+>   * ENCLS[EAUG] instruction.
+>   *
+>   * Returns: Appropriate vm_fault_t: VM_FAULT_NOPAGE when PTE was install=
+ed
+> - * successfully, VM_FAULT_SIGBUS or VM_FAULT_OOM as error otherwise.
+> + * successfully, VM_FAULT_SIGBUS as error otherwise.
+>   */
+>  static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+>  				     struct sgx_encl *encl, unsigned long addr)
+> @@ -348,7 +348,7 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_s=
+truct *vma,
+>  	secinfo_flags =3D SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X;
+>  	encl_page =3D sgx_encl_page_alloc(encl, addr - encl->base, secinfo_flag=
+s);
+>  	if (IS_ERR(encl_page))
+> -		return VM_FAULT_OOM;
+> +		return VM_FAULT_SIGBUS;
+> =20
+>  	mutex_lock(&encl->lock);
+> =20
 
-Dave, can you pick these patches to the x86 tree with my tested-by
-added? Sorry for latency. It is flu season in Finland and I've been
-functional varying last week because of that.
-
-> > Off-topic: I wish both Intel and AMD straighten up and deliver some "ho=
-me friendly" development hardware for the  latest stuff. Just my
-> > stance but the biggest quality risk I see in both TDX and SNP is that
-> > the patches are made by an enterprise and reviewed (properly) *only*
-> > by other huge enterprises.
->
-> Yes, I totally agree on this. It is really unfortunate that things like=
-=20
-> SGX are not (anymore) available on home consumer hardware and you have=20
-> to buy expensive servers for this, which also change every new CPU=20
-> generation. Having some kind of "developer boards" like is more the case=
-=20
-> in embedded systems would be a great and very welcome evolution, if only=
-=20
-> it were to happen..
->
-> > I skim status of both from time to time but yeah not much attachment
-> > or motivation to do more than that as you either need a cloud access
-> > or partnership with Intel or AMD. "Indie" style seems to be disliked
-> > these days... You can extrapolate from this that there must be a bunch
-> > of maintainers around the Linux kernel that feel the same. Not saying
-> > that particularly my contribution would be that important.
-> >=20
-> > Sort of even if let's say Intel would provide me a partner access I
-> > might not be that interested because I prefer my own (physical)
-> > computers.
->
-> I also understand this and share the concern. FWIW for some things=20
-> (e.g., uarch attack research) remote access does also not really hold up=
-=20
-> to bare-metal access IMO.
->
-> Best,
-> Jo
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
