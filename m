@@ -2,245 +2,103 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FEDCDB474
-	for <linux-sgx@archiver.kernel.org>; Sun, 22 Oct 2023 18:26:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2389C25B47
+	for <linux-sgx@archiver.kernel.org>; Mon, 23 Oct 2023 21:32:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229500AbjJVS0c (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Sun, 22 Oct 2023 14:26:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36386 "EHLO
+        id S230356AbjJWVc3 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Mon, 23 Oct 2023 17:32:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjJVS0b (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Sun, 22 Oct 2023 14:26:31 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDEEF9B;
-        Sun, 22 Oct 2023 11:26:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697999189; x=1729535189;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=eTsWqBWafCdXTNGag5ZT8TNA45C1EOwV8XDQKPm082Y=;
-  b=X+OxnZ4fblnY3bGt7s8tbgKGq7pqltyj4R5DrOy/oUi86WBjnpzQabWA
-   q3yqQf4KryctCV9qhUwpUAyFdlUXnvYwXQLokBu8qFx3b5mUeMsckY8W3
-   dOMiPdMLGZoZfG/zntE3Cq+Jp0jSInQH9iIYwfsiPI5RY1/iPG7FGxjB1
-   /uuMOTuzWK7J6n29awaS0U+SHZnAmlQVb9E5rCI3pKtRL80AxUy5D85wZ
-   5FccUfOuZKw8GYjYlL0WYZZiqewqoFQpy+98ZFenDCIxDQI76ahRSCr8b
-   qV3l5GrzntWdL/Bjf9OSUGC/KM7GecNS5Fsj/pJH2W+Bd/U3sdRmOst36
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10871"; a="385605817"
-X-IronPort-AV: E=Sophos;i="6.03,243,1694761200"; 
-   d="scan'208";a="385605817"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2023 11:26:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10871"; a="792900835"
-X-IronPort-AV: E=Sophos;i="6.03,243,1694761200"; 
-   d="scan'208";a="792900835"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.93.48.198])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 22 Oct 2023 11:26:21 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "hpa@zytor.com" <hpa@zytor.com>,
+        with ESMTP id S229853AbjJWVc3 (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Mon, 23 Oct 2023 17:32:29 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746AC97;
+        Mon, 23 Oct 2023 14:32:26 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D48C4C433C7;
+        Mon, 23 Oct 2023 21:32:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1698096746;
+        bh=046BbSnuuWdcYPSzolRwZTbVs8gPcYCCdAkG0ebMAvU=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=qeAqI6S9asg0wCthFJZpfapBLLZDaeGI0JNWpoIYMLfrYU/+kLJAdgCs1+MyZV45G
+         tshZD/TmBAsC5W9wtsNjqt65oUsIXKGvBCHYKra5ftuzB8Ll4k5A6oBOchLGWb2qth
+         LMPdaQQAjDBqRVOFSbZUoxp8vhwMUWUNxSSF3ULGnO/1MCwL6YcXZ10kge7oSNxaQu
+         ID3bJ3/jvZ4MVwX3biR4WSlP2PtbkBAcloaDqRRJln34sRZqayFaYpQPphbjwBtR9b
+         +l00z+C4qGPcN5YApWL6U8wJhOQShW+XBu6V1rGJBzrqjQnsCLxQG/WN4+gDp+G0Z0
+         297o4scJAgX9g==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 24 Oct 2023 00:32:22 +0300
+Message-Id: <CWG522A78YHD.37CO0T9F3FVXB@suppilovahvero>
+Cc:     "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v7 00/13] selftests/sgx: Fix compilation errors
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Jo Van Bulck" <jo.vanbulck@kuleuven.be>,
+        "Huang, Kai" <kai.huang@intel.com>,
         "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "bp@alien8.de" <bp@alien8.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "Huang, Kai" <kai.huang@intel.com>
-Cc:     "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "yangjie@microsoft.com" <yangjie@microsoft.com>,
-        "Li, Zhiquan1" <zhiquan1.li@intel.com>,
-        "Christopherson,, Sean" <seanjc@google.com>,
-        "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
-        "Zhang, Bo" <zhanb@microsoft.com>,
-        "anakrish@microsoft.com" <anakrish@microsoft.com>
-Subject: Re: [PATCH v5 16/18] x86/sgx: Limit process EPC usage with misc
- cgroup controller
-References: <20230923030657.16148-1-haitao.huang@linux.intel.com>
- <20230923030657.16148-17-haitao.huang@linux.intel.com>
- <0005a998dab64c182c22abc436cbcd36de4240a1.camel@intel.com>
-Date:   Sun, 22 Oct 2023 13:26:19 -0500
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2c8at5ggwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <0005a998dab64c182c22abc436cbcd36de4240a1.camel@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+        "Jo Van Bulck" <jo.vanbulck@cs.kuleuven.be>
+X-Mailer: aerc 0.15.2
+References: <20231005153854.25566-1-jo.vanbulck@cs.kuleuven.be>
+ <119aaa2820be5dc58144e74574cfaa7777f79604.camel@intel.com>
+ <f2726c67-87f7-409a-9ac2-e845249348cc@cs.kuleuven.be>
+ <7e729488e2f841f384b719d0509a4f78f491d477.camel@kernel.org>
+ <be63771f-080e-4832-955e-13f5b06b2010@kuleuven.be>
+In-Reply-To: <be63771f-080e-4832-955e-13f5b06b2010@kuleuven.be>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 09 Oct 2023 19:26:01 -0500, Huang, Kai <kai.huang@intel.com> wrote:
-
+On Fri Oct 13, 2023 at 2:45 PM EEST, Jo Van Bulck wrote:
+> On 10.10.23 11:44, Jarkko Sakkinen wrote:
+> > Folks (sorry for top posting): I've now taken my old NUC7 out of the
+> > dust and tested the series :-)
+> >=20
+> > Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
 >
->> @@ -332,6 +336,7 @@ void sgx_isolate_epc_pages(struct sgx_epc_lru_lists  
->> *lru, size_t nr_to_scan,
->>   * sgx_reclaim_epc_pages() - Reclaim EPC pages from the consumers
->>   * @nr_to_scan:		 Number of EPC pages to scan for reclaim
->>   * @ignore_age:		 Reclaim a page even if it is young
->> + * @epc_cg:		 EPC cgroup from which to reclaim
->>   *
->>   * Take a fixed number of pages from the head of the active page pool  
->> and
->>   * reclaim them to the enclave's private shmem files. Skip the pages,  
->> which have
->> @@ -345,7 +350,8 @@ void sgx_isolate_epc_pages(struct sgx_epc_lru_lists  
->> *lru, size_t nr_to_scan,
->>   * problematic as it would increase the lock contention too much,  
->> which would
->>   * halt forward progress.
->>   */
->> -size_t sgx_reclaim_epc_pages(size_t nr_to_scan, bool ignore_age)
->> +size_t sgx_reclaim_epc_pages(size_t nr_to_scan, bool ignore_age,
->> +			     struct sgx_epc_cgroup *epc_cg)
->>  {
->>  	struct sgx_backing backing[SGX_NR_TO_SCAN_MAX];
->>  	struct sgx_epc_page *epc_page, *tmp;
->> @@ -355,7 +361,15 @@ size_t sgx_reclaim_epc_pages(size_t nr_to_scan,  
->> bool ignore_age)
->>  	LIST_HEAD(iso);
->>  	size_t ret, i;
->>
->> -	sgx_isolate_epc_pages(&sgx_global_lru, nr_to_scan, &iso);
->> +	/*
->> +	 * If a specific cgroup is not being targeted, take from the global
->> +	 * list first, even when cgroups are enabled.  If there are
->> +	 * pages on the global LRU then they should get reclaimed asap.
->> +	 */
+> Thanks for testing this Jarkko! Not sure on next steps, do you want me=20
+> to re-post the series with the Tested-by tag for all commits or will you=
+=20
+> add that? Let me know if something from my side is needed.
 
-This is probably some obsolete comments I should have removed. When cgroup  
-is enabled, reclaimables will be always in a cgroup, the root by default.  
-(!epc_cg) condition is harmless but not needed because the global list  
-will be empty if cgroup is enabled.
+Dave, can you pick these patches to the x86 tree with my tested-by
+added? Sorry for latency. It is flu season in Finland and I've been
+functional varying last week because of that.
 
->> +	if (!IS_ENABLED(CONFIG_CGROUP_SGX_EPC) || !epc_cg)
->> +		sgx_isolate_epc_pages(&sgx_global_lru, &nr_to_scan, &iso);
->> +
->> +	sgx_epc_cgroup_isolate_pages(epc_cg, &nr_to_scan, &iso);
+> > Off-topic: I wish both Intel and AMD straighten up and deliver some "ho=
+me friendly" development hardware for the  latest stuff. Just my
+> > stance but the biggest quality risk I see in both TDX and SNP is that
+> > the patches are made by an enterprise and reviewed (properly) *only*
+> > by other huge enterprises.
 >
+> Yes, I totally agree on this. It is really unfortunate that things like=
+=20
+> SGX are not (anymore) available on home consumer hardware and you have=20
+> to buy expensive servers for this, which also change every new CPU=20
+> generation. Having some kind of "developer boards" like is more the case=
+=20
+> in embedded systems would be a great and very welcome evolution, if only=
+=20
+> it were to happen..
+>
+> > I skim status of both from time to time but yeah not much attachment
+> > or motivation to do more than that as you either need a cloud access
+> > or partnership with Intel or AMD. "Indie" style seems to be disliked
+> > these days... You can extrapolate from this that there must be a bunch
+> > of maintainers around the Linux kernel that feel the same. Not saying
+> > that particularly my contribution would be that important.
+> >=20
+> > Sort of even if let's say Intel would provide me a partner access I
+> > might not be that interested because I prefer my own (physical)
+> > computers.
+>
+> I also understand this and share the concern. FWIW for some things=20
+> (e.g., uarch attack research) remote access does also not really hold up=
+=20
+> to bare-metal access IMO.
+>
+> Best,
+> Jo
 
-So it should have been:
-
-+	if (!IS_ENABLED(CONFIG_CGROUP_SGX_EPC))
-+		sgx_isolate_epc_pages(&sgx_global_lru, &nr_to_scan, &iso);
-+	else
-+		sgx_epc_cgroup_isolate_pages(epc_cg, &nr_to_scan, &iso);
-
-Or just encapsulate the difference in  sgx_epc_cgroup_isolate_pages
-
-> (I wish such code can be somehow moved to the earlier patches, so that  
-> we can
-> get early idea that how sgx_reclaim_epc_pages() is supposed to be used.)
->
-
-I'll will try to restructure and split this patch. Now that we are not  
-going to deal with unreclaimable, it'd be simpler and also easier to  
-restructure.
-
-> So here when we are not targeting a specific EPC cgroup, we always  
-> reclaim from
-> the global list first, ...
->
-> [...]
->
->>
->>  	if (list_empty(&iso))
->>  		return 0;
->> @@ -423,7 +437,7 @@ static bool sgx_should_reclaim(unsigned long  
->> watermark)
->>  void sgx_reclaim_direct(void)
->>  {
->>  	if (sgx_should_reclaim(SGX_NR_LOW_PAGES))
->> -		sgx_reclaim_epc_pages(SGX_NR_TO_SCAN, false);
->> +		sgx_reclaim_epc_pages(SGX_NR_TO_SCAN, false, NULL);
->
-> ... and we always try to reclaim the global list first when directly  
-> reclaim is
-> desired, even the enclave is within some EPC cgroup.  ...
->
->>  }
->>
->>  static int ksgxd(void *p)
->> @@ -446,7 +460,7 @@ static int ksgxd(void *p)
->>  				     sgx_should_reclaim(SGX_NR_HIGH_PAGES));
->>
->>  		if (sgx_should_reclaim(SGX_NR_HIGH_PAGES))
->> -			sgx_reclaim_epc_pages(SGX_NR_TO_SCAN, false);
->> +			sgx_reclaim_epc_pages(SGX_NR_TO_SCAN, false, NULL);
->
-> ... and in ksgxd() as well, which I guess is somehow acceptable.  ...
->
->>
->>  		cond_resched();
->>  	}
->> @@ -600,6 +614,11 @@ int sgx_drop_epc_page(struct sgx_epc_page *page)
->>  struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
->>  {
->>  	struct sgx_epc_page *page;
->> +	struct sgx_epc_cgroup *epc_cg;
->> +
->> +	epc_cg = sgx_epc_cgroup_try_charge(reclaim);
->> +	if (IS_ERR(epc_cg))
->> +		return ERR_CAST(epc_cg);
-
-I think I need add comments to clarify after this point is the global  
-reclaimer only to keep the global free page water mark satisfied. So all  
-reclaiming is from the root if cgroup is enabled, otherwise from the  
-global LRU (no change from current implementation).
-
->>
->>  	for ( ; ; ) {
->>  		page = __sgx_alloc_epc_page();
->> @@ -608,8 +627,10 @@ struct sgx_epc_page *sgx_alloc_epc_page(void  
->> *owner, bool reclaim)
->>  			break;
->>  		}
->>
->> -		if (!sgx_can_reclaim())
->> -			return ERR_PTR(-ENOMEM);
->> +		if (!sgx_can_reclaim()) {
->> +			page = ERR_PTR(-ENOMEM);
->> +			break;
->> +		}
->>
->>  		if (!reclaim) {
->>  			page = ERR_PTR(-EBUSY);
->> @@ -621,10 +642,17 @@ struct sgx_epc_page *sgx_alloc_epc_page(void  
->> *owner, bool reclaim)
->>  			break;
->>  		}
->>
->> -		sgx_reclaim_epc_pages(SGX_NR_TO_SCAN, false);
->> +		sgx_reclaim_epc_pages(SGX_NR_TO_SCAN, false, NULL);
->
-> ... and when an EPC page is allocated, no matter whether the EPC page  
-> belongs to
-> any cgroup or not.
->
-> When we are allocating EPC page for one enclave, if that enclave belongs  
-> to some
-> cgroup, is it more reasonable to reclaim EPC pages from it's own group  
-> (and the
-> children under it)?
->
-> You already got the current EPC cgroup at the beginning of  
-> sgx_alloc_epc_page()
-> when you want to charge the EPC allocation.
->
->>  		cond_resched();
->>  	}
->>
-
-I hope the above comments make it clear that all these calls on  
-sgx_reclaim_epc_pages(SGX_NR_TO_SCAN, false, NULL) are to reclaim from the  
-global list if cgroup is not enabled, or from the root if cgroup is  
-enabled.
-
-Thanks
-Haitao
+BR, Jarkko
