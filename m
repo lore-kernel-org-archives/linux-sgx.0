@@ -2,44 +2,79 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFCBC4332F
-	for <linux-sgx@archiver.kernel.org>; Tue,  7 Nov 2023 02:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C414CC4167B
+	for <linux-sgx@archiver.kernel.org>; Tue,  7 Nov 2023 19:08:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbjKGCJ7 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Mon, 6 Nov 2023 21:09:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38018 "EHLO
+        id S229886AbjKGTIR (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Tue, 7 Nov 2023 14:08:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231975AbjKGCJ6 (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Mon, 6 Nov 2023 21:09:58 -0500
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9877010A;
-        Mon,  6 Nov 2023 18:09:51 -0800 (PST)
+        with ESMTP id S229737AbjKGTIQ (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Tue, 7 Nov 2023 14:08:16 -0500
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0B5B10A;
+        Tue,  7 Nov 2023 11:08:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1699322991; x=1730858991;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=ZHhrLsAbY+01aibkrj3PgqbaJGRt7ZXSmtweYn7WIYc=;
-  b=Q7Zux7xEXzW/9zVxdKq/1PfgbTLRqa+utCLA87Yv5qrWCRgHHEoATaLU
-   5czn346oHl2vcKDJGQaZvNp1tjTBcAR0oMDsk5qUeYVid/zk4g4TzgBK4
-   7iO4YJj6aimdVjyXhHr5hdKvZzJG7I6eJd1aEZRlEqwuwG/xpmevs8gY+
-   eEUPZv4k1JRdJ36jXO1p+O/YOs099xW3s2AhpPE5BLWcLRjbm507FyNWA
-   Qz3N5L6bm194Ksef+gaSuHqeDaqukkGac+npVa/nDGFKSzLdJirjq60ij
-   GMbXc1yFPxihmUKAdCgkExPP961ch3aEpajoMyHsdXjPQuuJ0hFebjE1A
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10886"; a="475652929"
-X-IronPort-AV: E=Sophos;i="6.03,282,1694761200"; 
-   d="scan'208";a="475652929"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2023 18:08:46 -0800
+  t=1699384094; x=1730920094;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Umu6Vs+KmLXdWw21B7JEUtRxN8UDsP4Gv8pfLsEOGEA=;
+  b=l9ABqdz9E4glTNYl8AlKxbB/6MAPEsl5RqFAlXEDD0puUSACY90VdZSP
+   Ie56bNtg6ZoeLkC47ngp1GWS3vbTC4L5eb3yWcgGauwINXoFjg+jf4Azd
+   EnosziH4K2nQN/7cZyeuVxO4IbkBG6zs+ai+rh6wsj5hJLduul4STjIuw
+   Mm1le4p5bwmm/LPKbrG/GO7SEWUhYC0+4kdB3LzOVjSS/E1n48TlJcWHu
+   Wy7V8qjy9DkTiQbkIfSOKUENXGTi42tsGm+wjDuEOQ4RAYaOB9+OSsjwY
+   NLdOke3H0lB2wYUWvDGFca3vVCer48V83xcDgzDOx466mMuzZdDdhJ61W
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10887"; a="393491580"
+X-IronPort-AV: E=Sophos;i="6.03,284,1694761200"; 
+   d="scan'208";a="393491580"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2023 11:08:13 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10886"; a="766148743"
-X-IronPort-AV: E=Sophos;i="6.03,282,1694761200"; 
-   d="scan'208";a="766148743"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.93.50.175])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 06 Nov 2023 18:08:44 -0800
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To:     "mingo@redhat.com" <mingo@redhat.com>,
+X-IronPort-AV: E=Sophos;i="6.03,284,1694761200"; 
+   d="scan'208";a="4094910"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Nov 2023 11:08:13 -0800
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34; Tue, 7 Nov 2023 11:08:12 -0800
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34; Tue, 7 Nov 2023 11:08:12 -0800
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34 via Frontend Transport; Tue, 7 Nov 2023 11:08:12 -0800
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.40) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.34; Tue, 7 Nov 2023 11:08:08 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ss6v1FhEd6hb8fHAW7tR7km+T5Lb/6JtvZDm8C0iHDY9rP8uuek7b/Kh/DwasHnenDegsiD/W2Ov2MzJVh0aJFUhE3owMbKtDMzGtg0yXiff6OogzfM87OOuEH/NvhEw0Xx3tWSQ5nt9ESq5z1wkp9t0FeE4UxV7ZKm78nC85W1fQ6dRNbB1+2e4YA2Pa1g7o0uJqCzJygkZtwIY+SWR/51dA2vtyiCjX3lPlpIZQPit33lxZQ1Enyqs7hc5ixjBcV4h8u2y6QrgwPByRqYD+V4iOLlxNanFaebaXquwnqM1zUtLRBHDYDnwmc7MuM70V4Y3ehrwklYyjk+r5aOqLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Umu6Vs+KmLXdWw21B7JEUtRxN8UDsP4Gv8pfLsEOGEA=;
+ b=ic1z7NZehPOzoBUURbdAApGFRUk9gBIfIuNYrbPWnYtqJ5IThgOG6fHyKTSxiwRFjr4fyZ2jx5gQZ+2NZ7fQ3QHFawktb18Msv65nYgdAzQRjNmBErmDlrk+sTHO8RD1PW2XhW5syLNJx/Uqj8F52Qed/+2BzhzZO964jUfv67btB9OzKoCWklQhgeUM3dt30bA+rZ5XDblJJtEP3KKHe66dvPhiX3OD2Ozu64ZK0EXf/LvmEahaUu9pcs4Lfjfk/iAlBNqcOIk0f2hr34v40J2VoChj4H6tOvqHe4nRI8RcWzOPpPXsS1BEE8pPOUJu77HNsJwb85Zvw8H6p+bkLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from PH7PR11MB5983.namprd11.prod.outlook.com (2603:10b6:510:1e2::13)
+ by DM4PR11MB6456.namprd11.prod.outlook.com (2603:10b6:8:bc::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.30; Tue, 7 Nov
+ 2023 19:08:00 +0000
+Received: from PH7PR11MB5983.namprd11.prod.outlook.com
+ ([fe80::64e:c72b:e390:6248]) by PH7PR11MB5983.namprd11.prod.outlook.com
+ ([fe80::64e:c72b:e390:6248%7]) with mapi id 15.20.6954.028; Tue, 7 Nov 2023
+ 19:08:00 +0000
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     Haitao Huang <haitao.huang@linux.intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
         "jarkko@kernel.org" <jarkko@kernel.org>,
         "x86@kernel.org" <x86@kernel.org>,
         "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
@@ -51,9 +86,8 @@ To:     "mingo@redhat.com" <mingo@redhat.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
         "tj@kernel.org" <tj@kernel.org>,
         "Mehta, Sohil" <sohil.mehta@intel.com>,
-        "bp@alien8.de" <bp@alien8.de>, "Huang, Kai" <kai.huang@intel.com>,
-        "Haitao Huang" <haitao.huang@linux.intel.com>
-Cc:     "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+        "bp@alien8.de" <bp@alien8.de>
+CC:     "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
         "Christopherson,, Sean" <seanjc@google.com>,
         "Zhang, Bo" <zhanb@microsoft.com>,
         "kristen@linux.intel.com" <kristen@linux.intel.com>,
@@ -61,221 +95,91 @@ Cc:     "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
         "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
         "Li, Zhiquan1" <zhiquan1.li@intel.com>,
         "yangjie@microsoft.com" <yangjie@microsoft.com>
-Subject: Re: [PATCH v6 04/12] x86/sgx: Implement basic EPC misc cgroup
+Subject: RE: [PATCH v6 04/12] x86/sgx: Implement basic EPC misc cgroup
  functionality
+Thread-Topic: [PATCH v6 04/12] x86/sgx: Implement basic EPC misc cgroup
+ functionality
+Thread-Index: AQHaC13a8dHEeRpnz0q8yAogc4UDz7BtPX+AgAByoYCAADd4gIAAMb8AgAAOl4CAARxH4A==
+Date:   Tue, 7 Nov 2023 19:07:59 +0000
+Message-ID: <PH7PR11MB5983039E8636155051E68BACF7A9A@PH7PR11MB5983.namprd11.prod.outlook.com>
 References: <20231030182013.40086-1-haitao.huang@linux.intel.com>
  <20231030182013.40086-5-haitao.huang@linux.intel.com>
  <ad7aafb88e45e5176d15eedea60695e104d24751.camel@intel.com>
  <op.2dz4d5b2wjvjmi@hhuan26-mobl.amr.corp.intel.com>
  <34a337b96a5a917612c4ec4eff2b5a378c21879b.camel@intel.com>
  <op.2d0ltsxxwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Date:   Mon, 06 Nov 2023 20:08:43 -0600
+ <op.2d0n8tjtwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <op.2d0n8tjtwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR11MB5983:EE_|DM4PR11MB6456:EE_
+x-ms-office365-filtering-correlation-id: 5046911f-0d01-48c3-3808-08dbdfc4dbef
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: hplI6q9rCQ4bJpJLZnDZlt7nJiA0Yu8Eabrn/7WP8RajtI7YgPx8dUiy4uiSMdsl4AbHZo0QHHC2dEwdMZHXrm4BcglqG8hitEHUEZAEwz1xf/l36BpMYOFtYV4Eguyo8kNSGfjHy3R0kaahiaSKHg0ZNUU43o0WZf01wNt72k4PUWgIsnOKw2P3gR+NVwmi0jUmiuTjbxTvM6wdNKaRGf6ZjkXZK1PxzpaCaZ6M/D/CvE45iMh65qQkwjy651FH8OPRLirsD50ZIe1WEQ4T6rLEBgqbMJA/TTGRGgqCezOWzliD6ckx+H2b+awpvH9ScdyttZ194JSJc4B60nVY/yW8GljN0w3cgsG0MGdDN3qEQlYBxiMdN4nFfcRaJXesSCwZNPevX2uMtV3M7CF7u80KlyFK55YiKhAYXK4emXi/GXbOj2IPhh0a8/4lE+xtek/KFt6SZO+lq0B0xhIKUtdnfLIXSzhf8lR0dV4J8KaeRQTPXnp0EnoflImKHqZ98SFcMhSN6lQ62HJ6BZlk51Ug9UtAZ79Q+QoIaTq/B9gHdBPjsB1qQLosWHeftMXio6NrBdHfp2pdpuPJwTEBsEQK0DbXInhLxl45vDxM8oVDeuOoWTYlb0mTGRVcZmsqGP2jCbvML0MLIiFs3jpooQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB5983.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(376002)(39860400002)(366004)(136003)(346002)(230922051799003)(64100799003)(186009)(451199024)(1800799009)(4744005)(71200400001)(38100700002)(8936002)(4326008)(52536014)(316002)(7416002)(2906002)(8676002)(41300700001)(5660300002)(54906003)(478600001)(9686003)(6506007)(110136005)(64756008)(76116006)(66446008)(66476007)(66556008)(66946007)(7696005)(86362001)(33656002)(82960400001)(38070700009)(921008)(122000001)(55016003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?4TEpMGBddg8P3l0sbKUIqYHbRWLKabIq+uIEmMEvSLbQmGIz4kj8QydioxNG?=
+ =?us-ascii?Q?Tnsm08NCcYz2pab4FcuDBELa5IfpHp6EalVtjmRkGVnkTWcyfYWzQbpGq6qX?=
+ =?us-ascii?Q?tPrg+BWVdX7ZXdcX+ytc0zsrEmtHfhcGlNjQimyQLt5XVNBZYR5aqCU0GF4y?=
+ =?us-ascii?Q?S2LJqJZt74Jx3hRLKh648gXA3gvWRp+0c2CrYP5auN+fcf1RfSV1HqRJrnPy?=
+ =?us-ascii?Q?eAkLzvINhRAbZ8BhgEfT3SLQfRuOfQcF3ExDitfZ8VRnENTvycHAzmpKOQVT?=
+ =?us-ascii?Q?E6WhjQnyxVnkvdmeiX0x+R31s6dIYwOC6lmna7ZgnzO6QiQxdFYcmkraTVZA?=
+ =?us-ascii?Q?tg0sWGXUpbVEBp98V5DKixySIsSZYPj3G5nRZzuRVeZ15EwbGzL7KSG5q+uz?=
+ =?us-ascii?Q?UdUjrnjrSP1NwBv2r9QlrLyRyXvTNmfpojxkXfZXx+TaMvpCFI2g6ZeV4tPK?=
+ =?us-ascii?Q?uJZy964phPW4ARs0Elpp0hEr4hgvgD/X3Si2cVJebFksC5UOAL/YQXbZtDkk?=
+ =?us-ascii?Q?tYO5HW/T9WC8H07TF0ihTMHE7CkW8KnuxsWbB0aZD0CZgoOdIcqDkXXgfbFI?=
+ =?us-ascii?Q?8/JVjp+xhu0T3JK058Mz8XM4rSrs5kF7x+q3DPCFBcLkZgyrVBgeXM7l+gbM?=
+ =?us-ascii?Q?1sCXr9UC0y1YJatOd4axDq8SLTfm6LYgKhsGG+WCdUC+9KDUcUbt62PtYdah?=
+ =?us-ascii?Q?3SWdpez4uhY3a/nkE8koFpqGKKAJjogP9+MMbvWLpYbZcULOazCZXBnJ/wC5?=
+ =?us-ascii?Q?g6gKhZZuJssF2bq+1QKwWHsaskjfwHsbCjgI71g1R81MzrFqMKY4ksEJcIDJ?=
+ =?us-ascii?Q?7+R+PWF5qnRvNKKODFyY8Xvp10ZJThNq9mbClYoqkQDVVL+YHHHNsf9jMDs3?=
+ =?us-ascii?Q?kwPgi+0GeViW1GJqPXbYh2A2O+ZbOEqpwtG3fUxxCtMtv/GP2BAyzvBO07/Z?=
+ =?us-ascii?Q?O3+ZkyBvckC796z7t4/nTsS+cV0V/N8TuwsuN+u9BJTKTppx3V/iHgV6THov?=
+ =?us-ascii?Q?lcHF7fyaQBGYdPAG94N+bx57u3J6nEev/rSU254nTFNz0REhj3Fh+/gaDlRe?=
+ =?us-ascii?Q?qF4ovwowBlbGX0Tkfzk8VLG6/5yM8LgCl1+P/Ouk60J6Ohs3RxLHgu+pYi/R?=
+ =?us-ascii?Q?afwkqwO1NYT9IrhMFAlMNo6swMNG7CkSk6+D5aGASkjr/0VDPHyBh9aUq8lK?=
+ =?us-ascii?Q?b/r/2QJaegI0ON+l9cp6R37kDkfGyxqizvtYIEaBpU+b4tuc7CSqkXkdaV3d?=
+ =?us-ascii?Q?conziUQJmvDw5DIYJM04lUK0CJuz3x0U39YSz/iWc999+WfpxGI+ngPEFcOa?=
+ =?us-ascii?Q?xDhED3UYHwRWNFrFH7qc1UXK+pjrm8m+uOkQ4dUWG5qFVXRik9mmRo1mqWq8?=
+ =?us-ascii?Q?re4SPM6Fw37hhxLmQAaN1F4X31HBmACAlsacGTkwUBRvSvUYEbL7GisAIopy?=
+ =?us-ascii?Q?d9Xtn5dOmy3iHn5WTZKH80l/41jEv1jllWoh5F/API/PlDfVmmdv7V5p4nv5?=
+ =?us-ascii?Q?H3SG8cnm80iRvkHSlpDvo5isCABVSpFCQZKnOQ6delvy94/BvtOLppGS9tQB?=
+ =?us-ascii?Q?IEnzZZcSicw9QQte7Ycs8xKFkJUTEPUW5XJQg2OqsxrcLrU1Xq3eWF0HtE1J?=
+ =?us-ascii?Q?f4W1jp4BlU/bSiuZ6VCppbesOtCqvEvy7otYoxFKcG8U?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2d0n8tjtwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <op.2d0ltsxxwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB5983.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5046911f-0d01-48c3-3808-08dbdfc4dbef
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2023 19:07:59.8986
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: l820iyoelF9Nbk8LTreVKxbVCReti2vwRT5VnZ64IHQfJuGq3QiOj/+2vKPGUK8c2DQiBE4twx/VrfEkkocCUA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6456
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-On Mon, 06 Nov 2023 19:16:30 -0600, Haitao Huang  
-<haitao.huang@linux.intel.com> wrote:
+> I should have sticked to the orignial comment added in code. Actually
+> __sgx_alloc_epc_page() can fail if system runs out of EPC. That's the rea=
+lly reason
+> for global reclaim. The free count enforcement is near the end of this me=
+thod
+> after should_reclaim() check.
 
-> On Mon, 06 Nov 2023 16:18:30 -0600, Huang, Kai <kai.huang@intel.com>  
-> wrote:
->
->>>
->>> > > +/**
->>> > > + * sgx_epc_cgroup_try_charge() - hierarchically try to charge a  
->>> single
->>> > > EPC page
->>> > > + *
->>> > > + * Returns EPC cgroup or NULL on success, -errno on failure.
->>> > > + */
->>> > > +struct sgx_epc_cgroup *sgx_epc_cgroup_try_charge(void)
->>> > > +{
->>> > > +	struct sgx_epc_cgroup *epc_cg;
->>> > > +	int ret;
->>> > > +
->>> > > +	if (sgx_epc_cgroup_disabled())
->>> > > +		return NULL;
->>> > > +
->>> > > +	epc_cg = sgx_epc_cgroup_from_misc_cg(get_current_misc_cg());
->>> > > +	ret = misc_cg_try_charge(MISC_CG_RES_SGX_EPC, epc_cg->cg,  
->>> PAGE_SIZE);
->>> > > +
->>> > > +	if (!ret) {
->>> > > +		/* No epc_cg returned, release ref from get_current_misc_cg() */
->>> > > +		put_misc_cg(epc_cg->cg);
->>> > > +		return ERR_PTR(-ENOMEM);
->>> >
->>> > misc_cg_try_charge() returns 0 when successfully charged, no?
->>>
->>> Right. I really made some mess in rebasing :-(
->>>
->>> >
->>> > > +	}
->>> > > +
->>> > > +	/* Ref released in sgx_epc_cgroup_uncharge() */
->>> > > +	return epc_cg;
->>> > > +}
->>> >
->>> > IMHO the above _try_charge() returning a pointer of EPC cgroup is a
->>> > little bit
->>> > odd, because it doesn't match the existing misc_cg_try_charge() which
->>> > returns
->>> > whether the charge is successful or not.  sev_misc_cg_try_charge()
->>> > matches
->>> > misc_cg_try_charge() too.
->>> >
->>> > I think it's better to split "getting EPC cgroup" part out as a  
->>> separate
->>> > helper,
->>> > and make this _try_charge() match existing pattern:
->>> >
->>> > 	struct sgx_epc_cgroup *sgx_get_current_epc_cg(void)
->>> > 	{
->>> > 		if (sgx_epc_cgroup_disabled())
->>> > 			return NULL;
->>> > 	
->>> > 		return sgx_epc_cgroup_from_misc_cg(get_current_misc_cg());
->>> > 	}
->>> >
->>> > 	int sgx_epc_cgroup_try_charge(struct sgx_epc_cgroup *epc_cg)
->>> > 	{
->>> > 		if (!epc_cg)
->>> > 			return -EINVAL;
->>> > 	
->>> > 		return misc_cg_try_charge(epc_cg->cg);
->>> > 	}
->>> >
->>> > Having sgx_get_current_epc_cg() also makes the caller easier to read,
->>> > because we
->>> > can immediately know we are going to charge the *current* EPC cgroup,
->>> > but not
->>> > some cgroup hidden within sgx_epc_cgroup_try_charge().
->>> >
->>>
->>> Actually, unlike other misc controllers, we need charge and get the  
->>> epc_cg
->>> reference at the same time.
->>
->> Can you elaborate?
->>
->> And in practice you always call sgx_epc_cgroup_try_charge() right after
->> sgx_get_current_epc_cg() anyway.  The only difference is the whole  
->> thing is done
->> in one function or in separate functions.
->>
->> [...]
->>
->
-> That's true. I was thinking no need to have them done in separate calls.  
-> The caller has to check the return value for epc_cg instance first, then  
-> check result of try_charge. But there is really only one caller,  
-> sgx_alloc_epc_page() below, so I don't have strong opinions now.
->
-> With them separate, the checks will look like this:
-> if (epc_cg = sgx_get_current_epc_cg()) // NULL means cgroup disabled,  
-> should continue for allocation
-> {
-> 	if (ret =  sgx_epc_cgroup_try_charge())
-> 		return ret
-> }
-> // continue...
->
-> I can go either way.
->
->>
->>> > >  struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)
->>> > >  {
->>> > >  	struct sgx_epc_page *page;
->>> > > +	struct sgx_epc_cgroup *epc_cg;
->>> > > +
->>> > > +	epc_cg = sgx_epc_cgroup_try_charge();
->>> > > +	if (IS_ERR(epc_cg))
->>> > > +		return ERR_CAST(epc_cg);
->>> > >
->>> > >  	for ( ; ; ) {
->>> > >  		page = __sgx_alloc_epc_page();
->>> > > @@ -580,10 +587,21 @@ struct sgx_epc_page *sgx_alloc_epc_page(void
->>> > > *owner, bool reclaim)
->>> > >  			break;
->>> > >  		}
->>> > >
->>> > > +		/*
->>> > > +		 * Need to do a global reclamation if cgroup was not full but  
->>> free
->>> > > +		 * physical pages run out, causing __sgx_alloc_epc_page() to  
->>> fail.
->>> > > +		 */
->>> > >  		sgx_reclaim_pages();
->>> >
->>> > What's the final behaviour?  IIUC it should be reclaiming from the
->>> > *current* EPC
->>> > cgroup?  If so shouldn't we just pass the @epc_cg to it here?
->>> >
->>> > I think we can make this patch as "structure" patch w/o actually  
->>> having
->>> > EPC
->>> > cgroup enabled, i.e., sgx_get_current_epc_cg() always return NULL.
->>> >
->>> > And we can have one patch to change sgx_reclaim_pages() to take the
->>> > 'struct
->>> > sgx_epc_lru_list *' as argument:
->>> >
->>> > 	void sgx_reclaim_pages_lru(struct sgx_epc_lru_list * lru)
->>> > 	{
->>> > 		...
->>> > 	}
->>> >
->>> > Then here we can have something like:
->>> >
->>> > 	void sgx_reclaim_pages(struct sgx_epc_cg *epc_cg)
->>> > 	{
->>> > 		struct sgx_epc_lru_list *lru =			epc_cg ? &epc_cg->lru :
->>> > &sgx_global_lru;
->>> >
->>> > 		sgx_reclaim_pages_lru(lru);
->>> > 	}
->>> >
->>> > Makes sense?
->>> >
->>>
->>> This is purely global reclamation. No cgroup involved.
->>
->> Again why?  Here you are allocating one EPC page for enclave in a  
->> particular EPC
->> cgroup.  When that fails, shouldn't you try only to reclaim from the  
->> *current*
->> EPC cgroup?  Or at least you should try to reclaim from the *current*  
->> EPC cgroup
->> first?
->>
->
-> Later sgx_epc_cg_try_charge will take a 'reclaim' flag, if true, cgroup  
-> reclaims synchronously, otherwise in background and returns -EBUSY in  
-> that case. This function also returns if no valid epc_cg pointer  
-> returned.
->
-> All reclamation for *current* cgroup is done in sgx_epc_cg_try_charge().
->
-> So, by reaching to this point,  a valid epc_cg pointer was returned,  
-> that means allocation is allowed for the cgroup (it has reclaimed if  
-> necessary, and its usage is not above limit after charging).
->
-> But the system level free count may be low (e.g., limits of all cgroups  
-> may add up to be more than capacity). so we need to do a global  
-> reclamation here, which may involve reclaiming a few pages (from current  
-> or other groups) so the system can be at a performant state with minimal  
-> free count. (current behavior of ksgxd).
->
-I should have sticked to the orignial comment added in code. Actually  
-__sgx_alloc_epc_page() can fail if system runs out of EPC. That's the  
-really reason for global reclaim. The free count enforcement is near the  
-end of this method after should_reclaim() check.
+Hi Haitao,
 
-Haitao
+Sorry I have something else to do at this moment and will continue this ser=
+ies next week.
