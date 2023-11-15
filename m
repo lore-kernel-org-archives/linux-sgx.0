@@ -2,37 +2,41 @@ Return-Path: <linux-sgx-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77ECAC072A2
-	for <linux-sgx@archiver.kernel.org>; Wed, 15 Nov 2023 20:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F80C54FB9
+	for <linux-sgx@archiver.kernel.org>; Wed, 15 Nov 2023 20:53:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235694AbjKOU0L (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
-        Wed, 15 Nov 2023 15:26:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58564 "EHLO
+        id S234893AbjKOUx0 (ORCPT <rfc822;linux-sgx@archiver.kernel.org>);
+        Wed, 15 Nov 2023 15:53:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235683AbjKOU0J (ORCPT
-        <rfc822;linux-sgx@vger.kernel.org>); Wed, 15 Nov 2023 15:26:09 -0500
+        with ESMTP id S234884AbjKOUxY (ORCPT
+        <rfc822;linux-sgx@vger.kernel.org>); Wed, 15 Nov 2023 15:53:24 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8A501A3;
-        Wed, 15 Nov 2023 12:26:05 -0800 (PST)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A47D5C433C7;
-        Wed, 15 Nov 2023 20:26:01 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB33A8F;
+        Wed, 15 Nov 2023 12:53:20 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 305E7C4E779;
+        Wed, 15 Nov 2023 20:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1700079965;
-        bh=SOtNdL3JNKTm9VZJNKO/kZNG8OS7jX2bdSzi5ufh4lE=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=SEcG3JwWR9EHg0HanBYt9kAKoVhebzyuN8a5B/Bnjnx2gmbTSqlc5Sr68shkiBImV
-         sHG41zk7Gtm7zoich93lUtwe4S6ME5fuKaEjIWg2/qCAjo2iq2xKZQA47SlfgO1Syi
-         crxwNUMZRnkMvkofc/G22ogt0s2I3wDWaECpJXr9d8iguwvtXthk35q/KuJT5I+3Hg
-         AcwMLM4Jdljot9Ty9Yqdo3dq3TLQUSJrrGaNwcmyFObPNdzaalds/F1UriqeBBIGyi
-         uESZrM65RXUZ1BzIZIRq2UpYhBd8/4V7S/ZYoNCb8zBOGn9ZfmQGfXI7gFjqUwVmsE
-         rNzWEH0zXxUJQ==
+        s=k20201202; t=1700081600;
+        bh=5SyGbnc/3QrHrfdukn5FK/7O7SeZI2Im+g7ZkCC4toI=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=MUAzOOxI59if2eEeWiRYHzaEU2MSB606aFU/nOKkh08A9xZFJ5ZlpV2FOc85nNeGO
+         kCiaEKyGEfeHEVyBP9F3FqbTsmrV3uqiunBuDn631cnoTs8XeTm4DBcKVYVwkUqtsL
+         XD/xqN9i9JDuvzvq6PwzUcRav+pHejbDigflIZQ51XiNWt7Oex785ztIBklO2SDjVF
+         B23OfTZLu1VkVg9X/Jpbziu0tWrBi+Gy7aZBzZa5JhAKg/U6KhZm6V2CpBxpmEbW1U
+         83THK9k/Hb6uWr3QWZThoRFfcCy5BArGDxbyXylkhH3/a2Y2X80CpEmHsSbyRS+MHE
+         VSAsUd9hsh/lA==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Wed, 15 Nov 2023 22:25:59 +0200
-Message-Id: <CWZO1RHFPIS6.P82WIOYW54YP@kernel.org>
-Subject: Re: [PATCH v6 01/12] cgroup/misc: Add per resource callbacks for
- CSS events
+Date:   Wed, 15 Nov 2023 22:53:14 +0200
+Message-Id: <CWZOMMET6NDV.UVZQZ5VPS3NP@kernel.org>
+Cc:     <zhiquan1.li@intel.com>, <kristen@linux.intel.com>,
+        <seanjc@google.com>, <zhanb@microsoft.com>,
+        <anakrish@microsoft.com>, <mikko.ylinen@linux.intel.com>,
+        <yangjie@microsoft.com>,
+        "Sean Christopherson" <sean.j.christopherson@intel.com>
+Subject: Re: [PATCH v6 07/12] x86/sgx: Introduce EPC page states
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
 To:     "Haitao Huang" <haitao.huang@linux.intel.com>,
         <dave.hansen@linux.intel.com>, <tj@kernel.org>, <mkoutny@suse.com>,
@@ -40,181 +44,246 @@ To:     "Haitao Huang" <haitao.huang@linux.intel.com>,
         <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
         <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
         <sohil.mehta@intel.com>
-Cc:     <zhiquan1.li@intel.com>, <kristen@linux.intel.com>,
-        <seanjc@google.com>, <zhanb@microsoft.com>,
-        <anakrish@microsoft.com>, <mikko.ylinen@linux.intel.com>,
-        <yangjie@microsoft.com>
 X-Mailer: aerc 0.15.2
 References: <20231030182013.40086-1-haitao.huang@linux.intel.com>
- <20231030182013.40086-2-haitao.huang@linux.intel.com>
-In-Reply-To: <20231030182013.40086-2-haitao.huang@linux.intel.com>
+ <20231030182013.40086-8-haitao.huang@linux.intel.com>
+In-Reply-To: <20231030182013.40086-8-haitao.huang@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
 On Mon Oct 30, 2023 at 8:20 PM EET, Haitao Huang wrote:
-> From: Kristen Carlson Accardi <kristen@linux.intel.com>
+> Use the lower 2 bits in the flags field of sgx_epc_page struct to track
+> EPC states and define an enum for possible states for EPC pages tracked
+> for reclamation.
 >
-> The misc cgroup controller (subsystem) currently does not perform
-> resource type specific action for Cgroups Subsystem State (CSS) events:
-> the 'css_alloc' event when a cgroup is created and the 'css_free' event
-> when a cgroup is destroyed.
+> Add the RECLAIM_IN_PROGRESS state to explicitly indicate a page that is
+> identified as a candidate for reclaiming, but has not yet been
+> reclaimed, instead of relying on list_empty(&epc_page->list). A later
+> patch will replace the array on stack with a temporary list to store the
+> candidate pages, so list_empty() should no longer be used for this
+> purpose.
 >
-> Define callbacks for those events and allow resource providers to
-> register the callbacks per resource type as needed. This will be
-> utilized later by the EPC misc cgroup support implemented in the SGX
-> driver.
->
-> Also add per resource type private data for those callbacks to store and
-> access resource specific data.
->
+> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Kristen Carlson Accardi <kristen@linux.intel.com>
 > Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> Co-developed-by: Haitao Huang <haitao.huang@linux.intel.com>
 > Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> Cc: Sean Christopherson <seanjc@google.com>
 > ---
 > V6:
-> - Create ops struct for per resource callbacks (Jarkko)
-> - Drop max_write callback (Dave, Michal)
-> - Style fixes (Kai)
+> - Drop UNRECLAIMABLE and use only 2 bits for states (Kai)
+> - Combine the patch for RECLAIM_IN_PROGRESS
+> - Style fixes (Jarkko and Kai)
 > ---
->  include/linux/misc_cgroup.h | 14 ++++++++++++++
->  kernel/cgroup/misc.c        | 27 ++++++++++++++++++++++++---
->  2 files changed, 38 insertions(+), 3 deletions(-)
+>  arch/x86/kernel/cpu/sgx/encl.c |  2 +-
+>  arch/x86/kernel/cpu/sgx/main.c | 33 +++++++++---------
+>  arch/x86/kernel/cpu/sgx/sgx.h  | 62 +++++++++++++++++++++++++++++++---
+>  3 files changed, 76 insertions(+), 21 deletions(-)
 >
-> diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
-> index e799b1f8d05b..5dc509c27c3d 100644
-> --- a/include/linux/misc_cgroup.h
-> +++ b/include/linux/misc_cgroup.h
-> @@ -27,16 +27,30 @@ struct misc_cg;
-> =20
->  #include <linux/cgroup.h>
-> =20
-> +/**
-> + * struct misc_operations_struct: per resource callback ops.
-> + * @alloc: invoked for resource specific initialization when cgroup is a=
-llocated.
-> + * @free: invoked for resource specific cleanup when cgroup is deallocat=
-ed.
-> + */
-> +struct misc_operations_struct {
-> +	int (*alloc)(struct misc_cg *cg);
-> +	void (*free)(struct misc_cg *cg);
-> +};
-
-Maybe just misc_operations, or even misc_ops?
-
-> +
->  /**
->   * struct misc_res: Per cgroup per misc type resource
->   * @max: Maximum limit on the resource.
->   * @usage: Current usage of the resource.
->   * @events: Number of times, the resource limit exceeded.
-> + * @priv: resource specific data.
-> + * @misc_ops: resource specific operations.
->   */
->  struct misc_res {
->  	u64 max;
->  	atomic64_t usage;
->  	atomic64_t events;
-> +	void *priv;
-
-priv is the wrong patch, it just confuses the overall picture heere.
-please move it to 04/12. Let's deal with the callbacks here.
-
-> +	const struct misc_operations_struct *misc_ops;
->  };
-
-misc_ops would be at least consistent with this, as misc_res also has an
-acronym.
-
-> =20
->  /**
-> diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-> index 79a3717a5803..d971ede44ebf 100644
-> --- a/kernel/cgroup/misc.c
-> +++ b/kernel/cgroup/misc.c
-> @@ -383,23 +383,37 @@ static struct cftype misc_cg_files[] =3D {
->  static struct cgroup_subsys_state *
->  misc_cg_alloc(struct cgroup_subsys_state *parent_css)
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/enc=
+l.c
+> index 279148e72459..17dc108d3ff7 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -1315,7 +1315,7 @@ void sgx_encl_free_epc_page(struct sgx_epc_page *pa=
+ge)
 >  {
-> +	struct misc_cg *parent_cg, *cg;
->  	enum misc_res_type i;
-> -	struct misc_cg *cg;
-> +	int ret;
+>  	int ret;
 > =20
->  	if (!parent_css) {
-> -		cg =3D &root_cg;
-> +		parent_cg =3D cg =3D &root_cg;
->  	} else {
->  		cg =3D kzalloc(sizeof(*cg), GFP_KERNEL);
->  		if (!cg)
->  			return ERR_PTR(-ENOMEM);
-> +		parent_cg =3D css_misc(parent_css);
+> -	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
+> +	WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_STATE_MASK);
+> =20
+>  	ret =3D __eremove(sgx_get_epc_virt_addr(page));
+>  	if (WARN_ONCE(ret, EREMOVE_ERROR_MESSAGE, ret, ret))
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/mai=
+n.c
+> index d347acd717fd..e27ac73d8843 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -315,13 +315,14 @@ static void sgx_reclaim_pages(void)
+>  		list_del_init(&epc_page->list);
+>  		encl_page =3D epc_page->owner;
+> =20
+> -		if (kref_get_unless_zero(&encl_page->encl->refcount) !=3D 0)
+> +		if (kref_get_unless_zero(&encl_page->encl->refcount) !=3D 0) {
+> +			sgx_epc_page_set_state(epc_page, SGX_EPC_PAGE_RECLAIM_IN_PROGRESS);
+>  			chunk[cnt++] =3D epc_page;
+> -		else
+> +		} else
+>  			/* The owner is freeing the page. No need to add the
+>  			 * page back to the list of reclaimable pages.
+>  			 */
+> -			epc_page->flags &=3D ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
+> +			sgx_epc_page_reset_state(epc_page);
 >  	}
+>  	spin_unlock(&sgx_global_lru.lock);
 > =20
->  	for (i =3D 0; i < MISC_CG_RES_TYPES; i++) {
->  		WRITE_ONCE(cg->res[i].max, MAX_NUM);
->  		atomic64_set(&cg->res[i].usage, 0);
-> +		if (parent_cg->res[i].misc_ops && parent_cg->res[i].misc_ops->alloc) {
-> +			ret =3D parent_cg->res[i].misc_ops->alloc(cg);
-> +			if (ret)
-> +				goto alloc_err;
+> @@ -347,6 +348,7 @@ static void sgx_reclaim_pages(void)
+> =20
+>  skip:
+>  		spin_lock(&sgx_global_lru.lock);
+> +		sgx_epc_page_set_state(epc_page, SGX_EPC_PAGE_RECLAIMABLE);
+>  		list_add_tail(&epc_page->list, &sgx_global_lru.reclaimable);
+>  		spin_unlock(&sgx_global_lru.lock);
+> =20
+> @@ -370,7 +372,7 @@ static void sgx_reclaim_pages(void)
+>  		sgx_reclaimer_write(epc_page, &backing[i]);
+> =20
+>  		kref_put(&encl_page->encl->refcount, sgx_encl_release);
+> -		epc_page->flags &=3D ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
+> +		sgx_epc_page_reset_state(epc_page);
+> =20
+>  		sgx_free_epc_page(epc_page);
+>  	}
+> @@ -509,7 +511,8 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
+>  void sgx_mark_page_reclaimable(struct sgx_epc_page *page)
+>  {
+>  	spin_lock(&sgx_global_lru.lock);
+> -	page->flags |=3D SGX_EPC_PAGE_RECLAIMER_TRACKED;
+> +	WARN_ON_ONCE(sgx_epc_page_reclaimable(page->flags));
+> +	page->flags |=3D SGX_EPC_PAGE_RECLAIMABLE;
+>  	list_add_tail(&page->list, &sgx_global_lru.reclaimable);
+>  	spin_unlock(&sgx_global_lru.lock);
+>  }
+> @@ -527,16 +530,13 @@ void sgx_mark_page_reclaimable(struct sgx_epc_page =
+*page)
+>  int sgx_unmark_page_reclaimable(struct sgx_epc_page *page)
+>  {
+>  	spin_lock(&sgx_global_lru.lock);
+> -	if (page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED) {
+> -		/* The page is being reclaimed. */
+> -		if (list_empty(&page->list)) {
+> -			spin_unlock(&sgx_global_lru.lock);
+> -			return -EBUSY;
+> -		}
+> -
+> -		list_del(&page->list);
+> -		page->flags &=3D ~SGX_EPC_PAGE_RECLAIMER_TRACKED;
+> +	if (sgx_epc_page_reclaim_in_progress(page->flags)) {
+> +		spin_unlock(&sgx_global_lru.lock);
+> +		return -EBUSY;
+>  	}
+> +
+> +	list_del(&page->list);
+> +	sgx_epc_page_reset_state(page);
+>  	spin_unlock(&sgx_global_lru.lock);
+> =20
+>  	return 0;
+> @@ -623,6 +623,7 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+>  	struct sgx_epc_section *section =3D &sgx_epc_sections[page->section];
+>  	struct sgx_numa_node *node =3D section->node;
+> =20
+> +	WARN_ON_ONCE(page->flags & (SGX_EPC_PAGE_STATE_MASK));
+>  	if (page->epc_cg) {
+>  		sgx_epc_cgroup_uncharge(page->epc_cg);
+>  		page->epc_cg =3D NULL;
+> @@ -635,7 +636,7 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+>  		list_add(&page->list, &node->sgx_poison_page_list);
+>  	else
+>  		list_add_tail(&page->list, &node->free_page_list);
+> -	page->flags =3D SGX_EPC_PAGE_IS_FREE;
+> +	page->flags =3D SGX_EPC_PAGE_FREE;
+> =20
+>  	spin_unlock(&node->lock);
+>  	atomic_long_inc(&sgx_nr_free_pages);
+> @@ -737,7 +738,7 @@ int arch_memory_failure(unsigned long pfn, int flags)
+>  	 * If the page is on a free list, move it to the per-node
+>  	 * poison page list.
+>  	 */
+> -	if (page->flags & SGX_EPC_PAGE_IS_FREE) {
+> +	if (page->flags =3D=3D SGX_EPC_PAGE_FREE) {
+>  		list_move(&page->list, &node->sgx_poison_page_list);
+>  		goto out;
+>  	}
+> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.=
+h
+> index 0fbe6a2a159b..dd7ab65b5b27 100644
+> --- a/arch/x86/kernel/cpu/sgx/sgx.h
+> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
+> @@ -23,11 +23,44 @@
+>  #define SGX_NR_LOW_PAGES		32
+>  #define SGX_NR_HIGH_PAGES		64
+> =20
+> -/* Pages, which are being tracked by the page reclaimer. */
+> -#define SGX_EPC_PAGE_RECLAIMER_TRACKED	BIT(0)
+> +enum sgx_epc_page_state {
+> +	/*
+> +	 * Allocated but not tracked by the reclaimer.
+> +	 *
+> +	 * Pages allocated for virtual EPC which are never tracked by the host
+> +	 * reclaimer; pages just allocated from free list but not yet put in
+> +	 * use; pages just reclaimed, but not yet returned to the free list.
+> +	 * Becomes FREE after sgx_free_epc().
+> +	 * Becomes RECLAIMABLE after sgx_mark_page_reclaimable().
+> +	 */
+> +	SGX_EPC_PAGE_NOT_TRACKED =3D 0,
+> +
+> +	/*
+> +	 * Page is in the free list, ready for allocation.
+> +	 *
+> +	 * Becomes NOT_TRACKED after sgx_alloc_epc_page().
+> +	 */
+> +	SGX_EPC_PAGE_FREE =3D 1,
+> +
+> +	/*
+> +	 * Page is in use and tracked in a reclaimable LRU list.
+> +	 *
+> +	 * Becomes NOT_TRACKED after sgx_unmark_page_reclaimable().
+> +	 * Becomes RECLAIM_IN_PROGRESS in sgx_reclaim_pages() when identified
+> +	 * for reclaiming.
+> +	 */
+> +	SGX_EPC_PAGE_RECLAIMABLE =3D 2,
+> +
+> +	/*
+> +	 * Page is in the middle of reclamation.
+> +	 *
+> +	 * Back to RECLAIMABLE if reclamation fails for any reason.
+> +	 * Becomes NOT_TRACKED if reclaimed successfully.
+> +	 */
+> +	SGX_EPC_PAGE_RECLAIM_IN_PROGRESS =3D 3,
+> +};
+> =20
+> -/* Pages on free list */
+> -#define SGX_EPC_PAGE_IS_FREE		BIT(1)
+> +#define SGX_EPC_PAGE_STATE_MASK GENMASK(1, 0)
+> =20
+>  struct sgx_epc_cgroup;
+> =20
+> @@ -40,6 +73,27 @@ struct sgx_epc_page {
+>  	struct sgx_epc_cgroup *epc_cg;
+>  };
+> =20
+> +static inline void sgx_epc_page_reset_state(struct sgx_epc_page *page)
+> +{
+> +	page->flags &=3D ~SGX_EPC_PAGE_STATE_MASK;
+> +}
+> +
+> +static inline void sgx_epc_page_set_state(struct sgx_epc_page *page, uns=
+igned long flags)
+> +{
+> +	page->flags &=3D ~SGX_EPC_PAGE_STATE_MASK;
+> +	page->flags |=3D (flags & SGX_EPC_PAGE_STATE_MASK);
+> +}
+> +
+> +static inline bool sgx_epc_page_reclaim_in_progress(unsigned long flags)
+> +{
+> +	return SGX_EPC_PAGE_RECLAIM_IN_PROGRESS =3D=3D (flags & SGX_EPC_PAGE_ST=
+ATE_MASK);
+> +}
+> +
+> +static inline bool sgx_epc_page_reclaimable(unsigned long flags)
+> +{
+> +	return SGX_EPC_PAGE_RECLAIMABLE =3D=3D (flags & SGX_EPC_PAGE_STATE_MASK=
+);
+> +}
+> +
+>  /*
+>   * Contains the tracking data for NUMA nodes having EPC pages. Most impo=
+rtantly,
+>   * the free page list local to the node is stored here.
 
-The patch set only has a use case for both operations defined - any
-partial combinations should never be allowed.
-
-To enforce this invariant you could create a set of operations (written
-out of top of my head):
-
-static int misc_res_init(struct misc_res *res, struct misc_ops *ops)
-{
-	if (!misc_ops->alloc) {
-		pr_err("%s: alloc missing\n", __func__);
-		return -EINVAL;
-	}
-
-	if (!misc_ops->free) {
-		pr_err("%s: free missing\n", __func__);
-		return -EINVAL;
-	}
-
-	res->misc_ops =3D misc_ops;
-	return 0;
-}
-
-static inline int misc_res_alloc(struct misc_cg *cg, struct misc_res *res)
-{
-	int ret;
-
-	if (!res->misc_ops)
-		return 0;
-=09
-	return res->misc_ops->alloc(cg);
-}
-
-static inline void misc_res_free(struct misc_cg *cg, struct misc_res *res)
-{
-	int ret;
-
-	if (!res->misc_ops)
-		return 0;
-=09
-	return res->misc_ops->alloc(cg);
-}
-
-Now if anything has misc_ops, it will also always have *both* callback,
-and nothing half-baked gets in.
-
-The above loops would be then:
-
-	for (i =3D 0; i < MISC_CG_RES_TYPES; i++) {
-		WRITE_ONCE(cg->res[i].max, MAX_NUM);
-		atomic64_set(&cg->res[i].usage, 0);
-		ret =3D misc_res_alloc(&parent_cg->res[i]);
-		if (ret)
-			goto alloc_err;
-
-Cleaner and better guards for state consistency. In 04/12 you need to
-then call misc_res_init() instead of direct assignment.
+Looks pretty good to me. I'll hold ack's a bit until everything looks as
+a whole good, but I agree with the general idea in this patch.
 
 BR, Jarkko
