@@ -1,94 +1,76 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Af+UlocV"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC20FE3;
-	Sun, 26 Nov 2023 08:32:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701016341; x=1732552341;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=C1szmEvCxxp64F0iuaAQ1E2knC5KLnUYXFCFe3nV1KE=;
-  b=Af+UlocVkTSShDLcOqH+0uPkMMSYGUT7uX1irolSvU5z9rp6qUjSh3Ae
-   4yRFA1Yy/tfC2BsN4cK8xmdfWmmbwJeIzy8jVH1OoJ+sQH7jjVR+JG909
-   I2zt80PmbKi8orFeCdGoneMAfRMEic5RLjvV08dgkZPmjv+qcUhXETwsQ
-   t1ehA+QUQ61tGWQPtR3SaQB7fU33VqqwI8ZtGCn00gW+T58hepUOf1mZ1
-   x4fcz5zGmTp/mYIghGQXhkTCAXFfQwT/R9ixJMITyXNulM19XgfzITaf3
-   DM0kpI2SRtEwrhFa5dqpSSXNkCjoTIO75t6dHRPJFpHUktlq+2mbgwM4+
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10906"; a="377624607"
-X-IronPort-AV: E=Sophos;i="6.04,229,1695711600"; 
-   d="scan'208";a="377624607"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2023 08:32:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.04,229,1695711600"; 
-   d="scan'208";a="9407085"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.124.112.56])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 26 Nov 2023 08:32:16 -0800
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: "tj@kernel.org" <tj@kernel.org>, "jarkko@kernel.org" <jarkko@kernel.org>,
- "x86@kernel.org" <x86@kernel.org>, "dave.hansen@linux.intel.com"
- <dave.hansen@linux.intel.com>, "cgroups@vger.kernel.org"
- <cgroups@vger.kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com"
- <mingo@redhat.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "linux-sgx@vger.kernel.org"
- <linux-sgx@vger.kernel.org>, "Mehta, Sohil" <sohil.mehta@intel.com>,
- "bp@alien8.de" <bp@alien8.de>, "Huang, Kai" <kai.huang@intel.com>, "Haitao
- Huang" <haitao.huang@linux.intel.com>
-Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
- "seanjc@google.com" <seanjc@google.com>, "Zhang, Bo" <zhanb@microsoft.com>,
- "kristen@linux.intel.com" <kristen@linux.intel.com>, "yangjie@microsoft.com"
- <yangjie@microsoft.com>, "sean.j.christopherson@intel.com"
- <sean.j.christopherson@intel.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
- "anakrish@microsoft.com" <anakrish@microsoft.com>
-Subject: Re: [PATCH v6 04/12] x86/sgx: Implement basic EPC misc cgroup
- functionality
-References: <20231030182013.40086-1-haitao.huang@linux.intel.com>
- <20231030182013.40086-5-haitao.huang@linux.intel.com>
- <ad7aafb88e45e5176d15eedea60695e104d24751.camel@intel.com>
- <op.2dz4d5b2wjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <34a337b96a5a917612c4ec4eff2b5a378c21879b.camel@intel.com>
- <op.2d0ltsxxwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <op.2d0n8tjtwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <d9ad4bac3ac51fe2e8d14931054f681a8264622c.camel@intel.com>
- <op.2e0xhigjwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Date: Mon, 27 Nov 2023 00:32:14 +0800
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Snz5MQ2O"
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D13E18E;
+	Mon, 27 Nov 2023 00:40:20 -0800 (PST)
+Received: from [100.98.85.67] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madras.collabora.co.uk (Postfix) with ESMTPSA id B2ADA66022D0;
+	Mon, 27 Nov 2023 08:40:13 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1701074418;
+	bh=rZXsF737DimmD6akpQH1k64WG7vCDa/yrvr/Hhcm6dQ=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Snz5MQ2OHBon5UJH+98mdDbgTrFRKjLtGTX5KRDipqlr95JztPXgEMEhEl7fdNZfy
+	 K1pHJorNBvh8Y7mSbjXC9MIgzJ3jGm7YSs6SxNLTsG+NvGXBSbifiplJZPGt8LaxJx
+	 qYAtbVmdbZRrvWnJwfFDRH3p8tAtvWeLbf33iGk9PNyWoTo9qJluOSofDzJAQDEycD
+	 sxtkv3tlLlN6WSfY5LFv3kXoNEALMVKgd8ZqAUirOS4Wptzrl4GblpaqnNj50tTIOn
+	 l7/eMnPlFHQLOG0Q1zRxQYHNRSV5AHsHvD3srWytZfUhSVAlbaEbVqOjv3G0/AAl1Q
+	 ks7Y75il3qS/g==
+Message-ID: <ce4b8316-1529-48d2-aadf-2ea25670edcf@collabora.com>
+Date: Mon, 27 Nov 2023 13:40:13 +0500
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Subject: Re: [v5.15] WARNING in kvm_arch_vcpu_ioctl_run
+Content-Language: en-US
+To: syzbot <syzbot+412c9ae97b4338c5187e@syzkaller.appspotmail.com>,
+ bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, jarkko@kernel.org,
+ jmattson@google.com, joro@8bytes.org, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, mingo@redhat.com,
+ pbonzini@redhat.com, seanjc@google.com, syzkaller-lts-bugs@googlegroups.com,
+ tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
+ x86@kernel.org
+References: <0000000000001bfd01060b0fc7dc@google.com>
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <0000000000001bfd01060b0fc7dc@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2e0yv0bnwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <op.2e0xhigjwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
 
-On Mon, 27 Nov 2023 00:01:56 +0800, Haitao Huang  
-<haitao.huang@linux.intel.com> wrote:
->>> > > > > Then here we can have something like:
->>> > > > >
->>> > > > > 	void sgx_reclaim_pages(struct sgx_epc_cg *epc_cg)
->>> > > > > 	{
->>> > > > > 		struct sgx_epc_lru_list *lru =			epc_cg ? &epc_cg->lru :
->>> > > > > &sgx_global_lru;
->>> > > > >
->>> > > > > 		sgx_reclaim_pages_lru(lru);
->>> > > > > 	}
->>> > > > >
->>> > > > > Makes sense?
->>> > > > >
->
-> The reason we 'isolate' first then do real 'reclaim' is that the actual  
-> reclaim is expensive and especially for eblock, etrack, etc.
-Sorry this is out of context. It was meant to be in the other response for  
-patch 9/12.
+On 11/26/23 8:24 PM, syzbot wrote:
+> This bug is marked as fixed by commit:
+> KVM: x86: Remove WARN sanity check on hypervisor timer vs. UNINITIALIZED vCPU
+> 
+> But I can't find it in the tested trees[1] for more than 90 days.
+The commit is already in 6.7-rc3:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7b0151caf73a656b75b550e361648430233455a0
 
-Also FYI I'm traveling for a vacation and email access may be sporadic.
+> Is it a correct commit? Please update it by replying:
+> 
+> #syz fix: exact-commit-title
+The title is already correct.
 
-BR
-Haitao
+> 
+> Until then the bug is still considered open and new crashes with
+> the same signature are ignored.
+> 
+> Kernel: Linux 5.15
+> Dashboard link: https://syzkaller.appspot.com/bug?extid=412c9ae97b4338c5187e
+> 
+> ---
+> [1] I expect the commit to be present in:
+> 
+> 1. linux-5.15.y branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+
+-- 
+BR,
+Muhammad Usama Anjum
