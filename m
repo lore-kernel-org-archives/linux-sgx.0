@@ -1,174 +1,236 @@
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524A14184B;
+	Fri, 15 Dec 2023 19:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WIq+PrE8"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D2D9B0
-	for <linux-sgx@vger.kernel.org>; Wed, 13 Dec 2023 03:52:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JkidRgrB"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702468375; x=1734004375;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=fMERQEXC35yV7hKsoRllubNNmP8F4SikXphrVJFDRl4=;
-  b=WIq+PrE8wQXxVPYnJQOYI29iNVt7s+lvcqea3VbjuqHjt7VdSc5wyWem
-   x6RSNLUUBV3UrLyLnaWVu2qyrAztZeNyfDNSD/gnwnC6Qg1/6QVHqxEKT
-   rp3e3g0MH52u98xSamGC5/fW8cW6Q8m3ptuzKa70Liu9xLQ/ppch6vAeh
-   SsqoRFG1KNz+yhhBiWwMro+vN2vhdjIrlPxL2ZfItGuvZs6ueuHiY4nPv
-   UMB13ACHiFPb3p1lKf8R9YEJzIuF64wemaSbIf0ri/JdM7PP1QWsU6WWJ
-   4F6ujvy7XNESsfhxsXz0a3MWb5Y/eX5hBPaM21fHzYWA5/N87Tr7LPZm9
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="459271183"
-X-IronPort-AV: E=Sophos;i="6.04,272,1695711600"; 
-   d="scan'208";a="459271183"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 03:52:55 -0800
+  t=1702669794; x=1734205794;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=WojIJ8tfQpeG1nk5JkrHEAkZCsPYyURIVgFsketY5C0=;
+  b=JkidRgrBa8QHgnHogC5+Z611GrfrCg9h+Pye9LM1xElleevCjCgvOLE5
+   yYiFhjNHLkLS96CM65LFFW9UpgrLZqFdf3VR8EirhwVDuc344N1YGDB1q
+   q/JBsW/CWYeaXTIGyjcV3oHwGn354O3Z4LsWcKA63Zc+vDjwfeumUinYE
+   enVeC2hCAlzfV6xZArpopN89lfdzZl3aZDKAC3+UL7x2DX0poHMz7JYwF
+   HrK7wD7rrOsVw6xnR8o6N6xC/eKx88mwmdDfBZS43PjrEco+3axjsj6vY
+   n5Y6mEoLM3p/293i/qGCL75QwCnN2UhB5Oo3oeG6QPivJtORrZ40SzDTa
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10925"; a="2143110"
+X-IronPort-AV: E=Sophos;i="6.04,279,1695711600"; 
+   d="scan'208";a="2143110"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2023 11:49:54 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.04,272,1695711600"; 
-   d="scan'208";a="21929551"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Dec 2023 03:52:55 -0800
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 13 Dec 2023 03:52:54 -0800
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 13 Dec 2023 03:52:54 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Wed, 13 Dec 2023 03:52:54 -0800
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.169)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 13 Dec 2023 03:52:52 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IfVDq5hYI1rDqQOAlPi5X/XoMp3rtgebVMUTMkcSvewr+cSUpkN8Tj+YwPcRhsxIKIqWozP4XleY86wQHUVvdneLEtH3Ywfc2eEBEBMqkSrjWZ86DbhIwmJol0flgGF33E7r5lXvYcYznAXUp7r82Fu5hephYUlPusODtE083BeG/iW0fxbiOErIOwwTmHW157YgCpzpmFMNLG5ZWm2r5jIebXD2IR/kp0tDuUtxA4W+TCURgOcWii3/PtjcuzOeommIiWZY4C0JO077qrIprLK7209whczINxqqFsqPLg51KCIzWc5xcs+Ecf2CQoFtcNRR9xnPcdA5xm4Z4KOTYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fMERQEXC35yV7hKsoRllubNNmP8F4SikXphrVJFDRl4=;
- b=nRJ62nMe0bkdr7AqHnIjuH7xahQ4OCvmRP8/XTF4tm2/vQH4h+k/NnYoVmXpTAKZueS4tmq04+no8gFvIfyoA5EZJiqL6/pTt4k7kd4H+n6AJEiPMrnsLydjxuQZT/1m65cCbHmv3t2CdQOW1H6lMUG/kVJxW70bz7AWoXBg5SoZbFYGv71nz5x0srpuR5NQDVqZxxmDSn5I+n/tKEOpB36YghHhtG7ZRPsoAunfgwdSxItJRWHgTvaht+ZiSLTLmczNP0iy8DK+qaqUZv8kJaIKbRyJUSoVkA0MC8+ZwOo6awyut2sFpUflaLdD7vythiDVnJfXgRHGtJdoqaraNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by SN7PR11MB7137.namprd11.prod.outlook.com (2603:10b6:806:2a0::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.26; Wed, 13 Dec
- 2023 11:52:49 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::5d1:aa22:7c98:f3c6]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::5d1:aa22:7c98:f3c6%7]) with mapi id 15.20.7068.033; Wed, 13 Dec 2023
- 11:52:49 +0000
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"haokexin@gmail.com" <haokexin@gmail.com>, "x86@kernel.org" <x86@kernel.org>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>, "pavel@ucw.cz" <pavel@ucw.cz>,
-	"mingo@redhat.com" <mingo@redhat.com>, "jarkko@kernel.org"
-	<jarkko@kernel.org>, "rafael@kernel.org" <rafael@kernel.org>, "bp@alien8.de"
-	<bp@alien8.de>
-Subject: Re: [PATCH] x86/sgx: Remove unnecessary try_to_freeze()
-Thread-Topic: [PATCH] x86/sgx: Remove unnecessary try_to_freeze()
-Thread-Index: AQHaLaNeVDij+7PIikK5R8uKsrUG9rCnGn0A
-Date: Wed, 13 Dec 2023 11:52:49 +0000
-Message-ID: <300f4f5aac293a843fcffca2ff6154edfe16ad69.camel@intel.com>
-References: <20231213090343.1070577-1-haokexin@gmail.com>
-In-Reply-To: <20231213090343.1070577-1-haokexin@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.50.2 (3.50.2-1.fc39) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|SN7PR11MB7137:EE_
-x-ms-office365-filtering-correlation-id: fe31215b-2940-448f-47f7-08dbfbd207be
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 9ddL7LYFfZl2HfVK+sYPRtkwcfF/onxti73AUtsuK69iHPJWAZ85+2gBLa6oA1DC0V9ouUyn+8Kbxpm2iyDjf7M5ntO5lSWP3HnO9REMvDBv+jKeB21IfDh7RbVr9wTj5jrbocSKXkalgGc96MXGw1dDuC6mfFKPCOm7M392InHMy068lO+F2PbvPnIN1V/tJeg8GQ6faU5wI3OxnBy2f99+YtuEHOikS5zhggq+s0eakwVU/XWQqulRXsLMEZUfWeOvU0xPjHaL7x1a8aBiE4j3huyHbK5RV4u0l6UwOjPwdkGBVWkWbjhhaGpxTgeVwwIpBr17o5DecQ4RmT78uZxwvN66oFrdEYDzrY4o6QtQLp1d8Hp1cXoBjTgBIt35mQ7PJ14nqqh+jDUXjcflcNr9j3K1Kk5n+YCMdu0PcAA/7eUkzotb10WeGStu9nmSDzoVKJUwF1VS2WpJOfzI3d1qQ5/LwvvTbIpsc0l0JSyyu6A+3SE7xiHuoc11i7hVZtJ6ThdNqDeNvZi0YqX/8S2yHbcDgjPcxM4zEAA50vbMcRpXUaSSsJxKB18S9MW5RgvIjn8LHqTe2iWysBieRoSUX+zoTtV8YkP8DjPYNu62W8pkK1qX0aIhjwy3I+uC
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(366004)(396003)(376002)(136003)(346002)(230922051799003)(186009)(1800799012)(64100799003)(451199024)(26005)(2616005)(71200400001)(6512007)(83380400001)(5660300002)(4326008)(41300700001)(4001150100001)(2906002)(8676002)(478600001)(6486002)(91956017)(76116006)(8936002)(110136005)(316002)(66946007)(54906003)(64756008)(66446008)(66476007)(66556008)(6506007)(82960400001)(36756003)(86362001)(122000001)(38100700002)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OFdGb210OGozcXFxLzcvSFRRRmMrcldUL04xTFlDeXNXZnpmQ0gwbk94ZjU5?=
- =?utf-8?B?aTlCYS8wK0VVc0hEQjhIU0VuRWt4NTc4TVRVYStGcnhuZk50ZVFtSlY0dHdU?=
- =?utf-8?B?TGVRZ0xFeWlIb2tJR015Q0NDcXpEandzYUhOWHBJWDE2NGZkTXlTcEd1WkpZ?=
- =?utf-8?B?K1N2alJTLzBYcUxIM203U1FnMEtJVUpVRXBCd0NuamtSYUZPMkRzNXZRaXA2?=
- =?utf-8?B?VnlsUkpjaHZqbU5Wbm9PZkZ6SGtSeEM5SWoydGVXdTlkcUZHSWhHQ0Vob3kr?=
- =?utf-8?B?RXB4S2lkWmFlditWV3VqSkhCT01lWU1qS3Z1aTJld0lERWt0bVh3aDVyckZq?=
- =?utf-8?B?cmRTU1ZFOWRvSEhLbGw4UU5zTEQ0MWgxNzZHNnhYY0Ixd3JTNVFZeFZJcHcv?=
- =?utf-8?B?cm9IVjNpQkllQVZqaFZDWFQxV3pBTitIUlVyZ09UOWxQKzhaWUNVdDF4Skpw?=
- =?utf-8?B?cG5ueWxmdDI4OGJYVEVXZUEwUS94Q3ozTkMrVk1IUHJMTVBPSWpSdW00VjIv?=
- =?utf-8?B?UHJJa1RaTkJyb1NEcHFGL3RhS211T0FOd2tGNEtDVWNrOFJIUnkvZXYzbHo4?=
- =?utf-8?B?c3lMcmtJcndpZ2tKVG1WRjBBNFByNjFWd3NWTFY2VVcxdDVBMFNpa0dFTDNx?=
- =?utf-8?B?Z1orbVE3ZERVUFFjdkZPOG5JUitzaTR3OFVNakZaejc2dTNaR2E2WEx5WUxF?=
- =?utf-8?B?OUtvMWRpNWtxOE9VS1lOanpvQjhuNXMvcktzN3g5SS9kcGxkcWtsaWx4RWtX?=
- =?utf-8?B?cE12ejFuMGN6QVNrUTNIeUtrUWk5MnQ4VE9zL1ZRQzNvY0NvMGZhYkgvVXVK?=
- =?utf-8?B?aVFOZTR6RitXajh2dVVLZG4vbldtQTBBUGMrOHNmcWJFQWFSV0xzd2pxb251?=
- =?utf-8?B?ditmSXEyQ2ZPU0RabUtKd3MvZFZqQnk2NmRNT0o2U3JXeVVwbXBBdlROZFJp?=
- =?utf-8?B?emFHK3dtOU5VQ1NKRHo1QzNzRHg0WDZVT1RPYmxQR3hiK2IzZnRRclZVbEdi?=
- =?utf-8?B?OHlGMjdXbEpCdkgwTnExN2JCZ3FNb0g0a0NhcFY1QTRZM2JKRFFobDZkL25R?=
- =?utf-8?B?WGVNZ2NGc3l5cFVkSDhQeHlySk5oSHRCMmx4aW5VYjkveVRSdkRwUk1pWkd0?=
- =?utf-8?B?aXZCeURjcHI5eDF1bUhnK1d0bG9FM056WmlSRUMwWEtKMGgwbndJWFF4MEw0?=
- =?utf-8?B?RlRFSlVSeDdaTFdBR2tRKzV3K2xRNFdpOWJBM3RxejgvR0NtWVRTT3lEKzk0?=
- =?utf-8?B?NDFrUE9xWjZ2Q0EveHJJc041cFFvTVVHQm8raDg1VWs0WjA3a0UxZFJGNVZG?=
- =?utf-8?B?ZzVod1dZWTUzSW1XTmZLMEQvVXovR3B5K0VJY1E2ZG0yK2ZQNTZxdjI1MlJO?=
- =?utf-8?B?Rm0wU2F6SWxSMTFmWllUWTBpYTFRSXlPak9rOTNVek9hOUIyZHFwdS9hLzVw?=
- =?utf-8?B?MGZpcDV6aVJXNXlIbEdDeER2RUpJOWZGOUxpQmZsRHpmUk52K00zUlJRUitJ?=
- =?utf-8?B?TTFKU3VPeEd0dzM1RlRWSE5TcXhLd2ZzSXRtUGU2N2VCV2QvLzlFRnhpbWc2?=
- =?utf-8?B?eVM3OVNseHRBUUkrZ1FSajNIL3FhVkliRS9TcVgvU29rcUt3TTFYRklZeTFZ?=
- =?utf-8?B?djBZamM1QVpmMHpPMGc4Wi80RGh4WWpmMnVRUTJGa1BTazk3SW1WVUFqeWdB?=
- =?utf-8?B?N1BnSERQTFZWV0dRZi83ZkhQUUJuYjFKWTJ4Q3Bra0xaUXhFM1BKZXBZaXE3?=
- =?utf-8?B?Q3gzUmR2eHU1STcxaTVKSks4UVI2NXFhSDNSelBOWnpVdTJSUmprSU96ZTJK?=
- =?utf-8?B?VWl4Z1JPb25RdSs2emNWZnZkS3BEV2R2c3E5d25YVW9WSGFDMkNIMGJ5ei9i?=
- =?utf-8?B?Z3VTamVNRDNaQ0VvTjlVL1praXluK3JNOTdwTzZNQmJBZ2kyVnVGSEZTRnlx?=
- =?utf-8?B?RFFBby82VXY5Y3ZZMlh1M0s3enQ5TUt0ZlY2QWtkV21kZ1NLZm5Va0RUSkxo?=
- =?utf-8?B?ekhDaTd5WjNyeUFmL2dGZHRselFtSUx6YTRqZC93TWJuWVcyTFVBWkhXTXdH?=
- =?utf-8?B?S1RtL0RoWnBXOXdiMmVXaExvMk90RXZLNTRIZ1NNNlZyalVNSlE5VmxrcjBx?=
- =?utf-8?B?bGRhTS94RHJ6YksxR3BkVzZ1M05SSUs2dFdHRm9SWVZ4SGFocStoVWF1VWxH?=
- =?utf-8?B?R3c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <566D3FD2410B9542BE008467671B5825@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+X-IronPort-AV: E=McAfee;i="6600,9927,10925"; a="840774022"
+X-IronPort-AV: E=Sophos;i="6.04,279,1695711600"; 
+   d="scan'208";a="840774022"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.124.162.147])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 15 Dec 2023 11:49:51 -0800
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To: "tj@kernel.org" <tj@kernel.org>, "jarkko@kernel.org" <jarkko@kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>, "dave.hansen@linux.intel.com"
+ <dave.hansen@linux.intel.com>, "cgroups@vger.kernel.org"
+ <cgroups@vger.kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com"
+ <mingo@redhat.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "linux-sgx@vger.kernel.org"
+ <linux-sgx@vger.kernel.org>, "Mehta, Sohil" <sohil.mehta@intel.com>,
+ "bp@alien8.de" <bp@alien8.de>, "Huang, Kai" <kai.huang@intel.com>
+Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+ "seanjc@google.com" <seanjc@google.com>, "Zhang, Bo" <zhanb@microsoft.com>,
+ "kristen@linux.intel.com" <kristen@linux.intel.com>, "yangjie@microsoft.com"
+ <yangjie@microsoft.com>, "sean.j.christopherson@intel.com"
+ <sean.j.christopherson@intel.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+ "anakrish@microsoft.com" <anakrish@microsoft.com>
+Subject: Re: [PATCH v6 09/12] x86/sgx: Restructure top-level EPC reclaim
+ function
+References: <20231030182013.40086-1-haitao.huang@linux.intel.com>
+ <20231030182013.40086-10-haitao.huang@linux.intel.com>
+ <c8fc40dc56b853fbff14ba22db197c80a6d31820.camel@intel.com>
+ <op.2e0yod2lwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <431c5d7f5aee7d11ec2e8aa2e526fde438fa53b4.camel@intel.com>
+ <op.2ftmyampwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <3c27bca678c1b041920a14a7da0d958c9861ebca.camel@intel.com>
+Date: Fri, 15 Dec 2023 13:49:46 -0600
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe31215b-2940-448f-47f7-08dbfbd207be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2023 11:52:49.4419
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tL5bAws600mC3mfl/nrKFLD1soMvohdu792CfeAavyyQE5DeRXoxcq6Sjjtdo4S7Qvb1NvdHdeCYvaDUl4scwA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7137
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 7bit
+From: "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.2f0eo8r1wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <3c27bca678c1b041920a14a7da0d958c9861ebca.camel@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 
-T24gV2VkLCAyMDIzLTEyLTEzIGF0IDE3OjAzICswODAwLCBLZXZpbiBIYW8gd3JvdGU6DQo+IEEg
-ZnJlZXphYmxlIGtlcm5lbCB0aHJlYWQgY2FuIGVudGVyIGZyb3plbiBzdGF0ZSBkdXJpbmcgZnJl
-ZXppbmcgYnkNCj4gZWl0aGVyIGNhbGxpbmcgdHJ5X3RvX2ZyZWV6ZSgpIG9yIHVzaW5nIHdhaXRf
-ZXZlbnRfZnJlZXphYmxlKCkgYW5kIGl0cw0KPiB2YXJpYW50cy4gSG93ZXZlciwgdGhlcmUgaXMg
-bm8gbmVlZCB0byB1c2UgYm90aCBtZXRob2RzIHNpbXVsdGFuZW91c2x5Lg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogS2V2aW4gSGFvIDxoYW9rZXhpbkBnbWFpbC5jb20+DQo+IENjOiBKYXJra28gU2Fr
-a2luZW4gPGphcmtrb0BrZXJuZWwub3JnPg0KPiBDYzogVGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxp
-bnV0cm9uaXguZGU+DQo+IENjOiBJbmdvIE1vbG5hciA8bWluZ29AcmVkaGF0LmNvbT4NCj4gQ2M6
-IEJvcmlzbGF2IFBldGtvdiA8YnBAYWxpZW44LmRlPg0KPiBDYzogIlJhZmFlbCBKLiBXeXNvY2tp
-IiA8cmFmYWVsQGtlcm5lbC5vcmc+DQo+IENjOiBQYXZlbCBNYWNoZWsgPHBhdmVsQHVjdy5jej4N
-Cj4gLS0tDQo+ICBhcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9tYWluLmMgfCAzIC0tLQ0KPiAgMSBm
-aWxlIGNoYW5nZWQsIDMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYv
-a2VybmVsL2NwdS9zZ3gvbWFpbi5jIGIvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvbWFpbi5jDQo+
-IGluZGV4IDE2NjY5MmYyZDUwMS4uMzE4MTY1YjNmZjc4IDEwMDY0NA0KPiAtLS0gYS9hcmNoL3g4
-Ni9rZXJuZWwvY3B1L3NneC9tYWluLmMNCj4gKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gv
-bWFpbi5jDQo+IEBAIC00MDQsOSArNDA0LDYgQEAgc3RhdGljIGludCBrc2d4ZCh2b2lkICpwKQ0K
-PiAgCVdBUk5fT04oX19zZ3hfc2FuaXRpemVfcGFnZXMoJnNneF9kaXJ0eV9wYWdlX2xpc3QpKTsN
-Cj4gIA0KPiAgCXdoaWxlICgha3RocmVhZF9zaG91bGRfc3RvcCgpKSB7DQo+IC0JCWlmICh0cnlf
-dG9fZnJlZXplKCkpDQo+IC0JCQljb250aW51ZTsNCj4gLQ0KPiAgCQl3YWl0X2V2ZW50X2ZyZWV6
-YWJsZShrc2d4ZF93YWl0cSwNCj4gIAkJCQkgICAgIGt0aHJlYWRfc2hvdWxkX3N0b3AoKSB8fA0K
-PiAgCQkJCSAgICAgc2d4X3Nob3VsZF9yZWNsYWltKFNHWF9OUl9ISUdIX1BBR0VTKSk7DQoNClJl
-dmlld2VkLWJ5OiBLYWkgSHVhbmcgPGthaS5odWFuZ0BpbnRlbC5jb20+DQoNCg==
+On Wed, 13 Dec 2023 05:17:11 -0600, Huang, Kai <kai.huang@intel.com> wrote:
+
+> On Mon, 2023-12-11 at 22:04 -0600, Haitao Huang wrote:
+>> Hi Kai
+>>
+>> On Mon, 27 Nov 2023 03:57:03 -0600, Huang, Kai <kai.huang@intel.com>  
+>> wrote:
+>>
+>> > On Mon, 2023-11-27 at 00:27 +0800, Haitao Huang wrote:
+>> > > On Mon, 20 Nov 2023 11:45:46 +0800, Huang, Kai <kai.huang@intel.com>
+>> > > wrote:
+>> > >
+>> > > > On Mon, 2023-10-30 at 11:20 -0700, Haitao Huang wrote:
+>> > > > > From: Sean Christopherson <sean.j.christopherson@intel.com>
+>> > > > >
+>> > > > > To prepare for per-cgroup reclamation, separate the top-level
+>> > > reclaim
+>> > > > > function, sgx_reclaim_epc_pages(), into two separate functions:
+>> > > > >
+>> > > > > - sgx_isolate_epc_pages() scans and isolates reclaimable pages  
+>> from
+>> > > a
+>> > > > > given LRU list.
+>> > > > > - sgx_do_epc_reclamation() performs the real reclamation for the
+>> > > > > already isolated pages.
+>> > > > >
+>> > > > > Create a new function, sgx_reclaim_epc_pages_global(), calling
+>> > > those two
+>> > > > > in succession, to replace the original sgx_reclaim_epc_pages().  
+>> The
+>> > > > > above two functions will serve as building blocks for the
+>> > > reclamation
+>> > > > > flows in later EPC cgroup implementation.
+>> > > > >
+>> > > > > sgx_do_epc_reclamation() returns the number of reclaimed pages.  
+>> The
+>> > > EPC
+>> > > > > cgroup will use the result to track reclaiming progress.
+>> > > > >
+>> > > > > sgx_isolate_epc_pages() returns the additional number of pages  
+>> to
+>> > > scan
+>> > > > > for current epoch of reclamation. The EPC cgroup will use the
+>> > > result to
+>> > > > > determine if more scanning to be done in LRUs in its children
+>> > > groups.
+>> > > >
+>> > > > This changelog says nothing about "why", but only mentions the
+>> > > > "implementation".
+>> > > >
+>> > > > For instance, assuming we need to reclaim @npages_to_reclaim from  
+>> the
+>> > > > @epc_cgrp_to_reclaim and its descendants, why cannot we do:
+>> > > >
+>> > > > 	for_each_cgroup_and_descendants(&epc_cgrp_to_reclaim, &epc_cgrp)  
+>> {
+>> > > > 		if (npages_to_reclaim <= 0)
+>> > > > 			return;
+>> > > >
+>> > > > 		npages_to_reclaim -= sgx_reclaim_pages_lru(&epc_cgrp->lru,
+>> > > > 					npages_to_reclaim);
+>> > > > 	}
+>> > > >
+>> > > > Is there any difference to have "isolate" + "reclaim"?
+>> > > >
+>> > >
+>> > > This is to optimize "reclaim". See how etrack was done in  
+>> sgx_encl_ewb.
+>> > > Here we just follow the same design as ksgxd for each reclamation  
+>> cycle.
+>> >
+>> > I don't see how did you "follow" ksgxd.  If I am guessing correctly,  
+>> you
+>> > are
+>> > afraid of there might be less than 16 pages in a given EPC cgroup,  
+>> thus
+>> > w/o
+>> > splitting into "isolate" + "reclaim" you might feed the "reclaim" less
+>> > than 16
+>> > pages, which might cause some performance degrade?
+>> >
+>> > But is this a common case?  Should we even worry about this?
+>> >
+>> > I suppose for such new feature we should bring functionality first and
+>> > then
+>> > optimization if you have real performance data to show.
+>> >
+>> The concern is not about "reclaim less than 16".
+>> I mean this is just refactoring with exactly the same design of ksgxd
+>> preserved,
+>
+> I literally have no idea what you are talking about here.  ksgxd() just  
+> calls
+> sgx_reclaim_pages(), which tries to reclaim 16 pages at once.
+>
+>> in that we first isolate as many candidate EPC pages (up  to
+>> 16, ignore the unneeded SGX_NR_TO_SCAN_MAX for now), then does the ewb  
+>> in
+>> one shot without anything else done in between.
+>
+> Assuming you are referring the implementation of sgx_reclaim_pages(), and
+> assuming the "isolate" you mean removing EPC pages from the list (which  
+> is
+> exactly what the sgx_isolate_epc_pages() in this patch does), what  
+> happens to
+> the loops of "backing store allocation" and "EBLOCK", before the loop of  
+> EWB?Eaten by you?
+>
+
+I skipped those as what really matters is to keep ewb loop separate and  
+run in one shot for each reclaiming cycle, not dependent on number of  
+LRUs.  All those loops in original sgx_reclaim_pages() except the  
+"isolate" loop are not dealing with multiple LRUs of cgroups later. That's  
+the reason to refactor out only the "isolate" part and loop it through  
+cgroup LRUs in later patches.
+
+>
+>> As described in original
+>> comments for the function sgx_reclaim_pages and sgx_encl_ewb, this is to
+>> finish all ewb quickly while minimizing impact of IPI.
+>>
+>> The way you proposed will work but alters the current design and  
+>> behavior
+>> if cgroups is enabled and EPCs of an enclave are tracked across multiple
+>> LRUs within the descendant cgroups, in that you will have isolation  
+>> loop,
+>> backing store allocation loop, eblock loop interleaved with the ewb  
+>> loop.
+>>
+>
+> I have no idea what you are talking about.
+>
+> The point is, with or w/o this patch, you can only reclaim 16 EPC pages  
+> in one
+> function call (as you have said you are going to remove  
+> SGX_NR_TO_SCAN_MAX,
+> which is a cipher to both of us).  The only difference I can see is,  
+> with this
+> patch, you can have multiple calls of "isolate" and then call the  
+> "do_reclaim"
+> once.
+>
+> But what's the good of having the "isolate" if the "do_reclaim" can only  
+> reclaim
+> 16 pages anyway?
+>
+> Back to my last reply, are you afraid of any LRU has less than 16 pages  
+> to
+> "isolate", therefore you need to loop LRUs of descendants to get 16?   
+> Cause I
+> really cannot think of any other reason why you are doing this.
+>
+>
+
+I think I see your point. By capping pages reclaimed per cycle to 16,  
+there is not much difference even if those 16 pages are spread in separate  
+LRUs . The difference is only significant when we ever raise that cap. To  
+preserve the current behavior of ewb loops independent on number of LRUs  
+to loop through for each reclaiming cycle, regardless of the exact value  
+of the page cap, I would still think current approach in the patch is  
+reasonable choice.  What do you think?
+
+Thanks
+Haitao
