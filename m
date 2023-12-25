@@ -1,163 +1,66 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6AA42361;
-	Mon, 18 Dec 2023 21:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h8Ubogei"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702934688; x=1734470688;
-  h=cc:references:subject:to:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=mqgrmvBtHedkNI0LE/BC0GzzPcNrQtoOXK9vjdIUqhg=;
-  b=h8UbogeiEpkYDXFqU7b9QCXDUMy+31Q8LvGGzhz+1GcRdzOaIlqhpaYE
-   uhmIlKkoQZ4wLYzm0KUnjTVPPGR7VOIlcobTeji1WYGnK64brPiqOwDe7
-   yZe3M83KxDB/kKF+EZ/7cQWXFvnMrUVEKvOWCS4OmZYemnT0BEfyER7UH
-   5rgtzl7ky/oQ9ax1zeJJzmYck6xizD7/LPs35fSaueVeQGSBOzLiFNz0i
-   3Q1YYa7AwZb1AXdSC2jbeh8wq8Bixq1SlRYeV+xv/IGA0KOueTodnFaK7
-   Mr5WWwxGsYJd24+dG7F6rJ2tyhHXP8d8IDJjgcMghQDhcTZAVYYbOC2PF
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10928"; a="9015487"
-X-IronPort-AV: E=Sophos;i="6.04,286,1695711600"; 
-   d="scan'208";a="9015487"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Dec 2023 13:24:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10928"; a="725479292"
-X-IronPort-AV: E=Sophos;i="6.04,286,1695711600"; 
-   d="scan'208";a="725479292"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.124.145.138])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 18 Dec 2023 13:24:44 -0800
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
- "seanjc@google.com" <seanjc@google.com>, "Zhang, Bo" <zhanb@microsoft.com>,
- "kristen@linux.intel.com" <kristen@linux.intel.com>, "anakrish@microsoft.com"
- <anakrish@microsoft.com>, "sean.j.christopherson@intel.com"
- <sean.j.christopherson@intel.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
- "yangjie@microsoft.com" <yangjie@microsoft.com>
-References: <20231030182013.40086-1-haitao.huang@linux.intel.com>
- <20231030182013.40086-10-haitao.huang@linux.intel.com>
- <c8fc40dc56b853fbff14ba22db197c80a6d31820.camel@intel.com>
- <op.2e0yod2lwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <431c5d7f5aee7d11ec2e8aa2e526fde438fa53b4.camel@intel.com>
- <op.2ftmyampwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <3c27bca678c1b041920a14a7da0d958c9861ebca.camel@intel.com>
- <op.2f0eo8r1wjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <73ed579be8ad81835df1c309b7c69b491b7f2c8e.camel@intel.com>
-Subject: Re: [PATCH v6 09/12] x86/sgx: Restructure top-level EPC reclaim
- function
-To: "Mehta, Sohil" <sohil.mehta@intel.com>, "jarkko@kernel.org"
- <jarkko@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>, "hpa@zytor.com"
- <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>, "tj@kernel.org"
- <tj@kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "bp@alien8.de"
- <bp@alien8.de>, "Huang, Kai" <kai.huang@intel.com>
-Date: Mon, 18 Dec 2023 15:24:40 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FEE185A
+	for <linux-sgx@vger.kernel.org>; Mon, 25 Dec 2023 08:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-35ff23275b8so15773975ab.2
+        for <linux-sgx@vger.kernel.org>; Mon, 25 Dec 2023 00:42:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703493734; x=1704098534;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HNpK7gVVocd6D97UNc/uU33LSZEMZP8thvqp4QD621w=;
+        b=p97J8T4yJmfdWaXPHNi4vRi058848NxKzGx3tNd8Q+3E2O48J+ZJ7AfVes1zbVIKlL
+         5aGfhPILnE9mwebGXEKVlFNBY8ImTh4kv+Lswh7HptlJQYepaJIeY8zQLFz9a6RIlSGs
+         6Ob0KMQzTlVWR1nwVvzVPeWfbpVFY5Z7Nvmu5yXaqes4hixKnXMj+Coy4OzJtUxFM/ov
+         Lxgk+/fbGOTF9JP8lRjeJ0krocShGTjO6yqm3+FmwpPH77M19eu40ObYQXCxgjwpH2Z7
+         B//D/E06z6M1nY1YH99+0uZekZE4QpsZ6oxZaX88SzEhYuRN9kE+/voVuDr2RiXtpxER
+         u7kA==
+X-Gm-Message-State: AOJu0Yx/1lgU3w995VaJypTTq+YVsuh3GT3UBsn13EqrlfG3frYzLwiV
+	0djTYnc0mc/NEX7VP4K6c8TfEvCQP3n+ciIrnfYO0mQxzn19
+X-Google-Smtp-Source: AGHT+IG3dYA8NKJcN7EVOtfhsfJebVt6ntLuqWhU4s5iyxWjBECkL6g/8PzJsZReEl/yaZ8GUJMt+8bHRF8dIhO+grGV128vuQw/
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2f523elowjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <73ed579be8ad81835df1c309b7c69b491b7f2c8e.camel@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+X-Received: by 2002:a05:6e02:1d87:b0:35f:8652:5ce8 with SMTP id
+ h7-20020a056e021d8700b0035f86525ce8mr619071ila.4.1703493733927; Mon, 25 Dec
+ 2023 00:42:13 -0800 (PST)
+Date: Mon, 25 Dec 2023 00:42:13 -0800
+In-Reply-To: <000000000000ad704b05f8de7e19@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e355bc060d518a7e@google.com>
+Subject: Re: [v5.15] WARNING in kvm_arch_vcpu_ioctl_run
+From: syzbot <syzbot+412c9ae97b4338c5187e@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	jarkko@kernel.org, jmattson@google.com, joro@8bytes.org, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, mingo@redhat.com, 
+	pbonzini@redhat.com, seanjc@google.com, syzkaller-lts-bugs@googlegroups.com, 
+	tglx@linutronix.de, usama.anjum@collabora.com, vkuznets@redhat.com, 
+	wanpengli@tencent.com, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 17 Dec 2023 19:44:56 -0600, Huang, Kai <kai.huang@intel.com> wrote:
+This bug is marked as fixed by commit:
+KVM: x86: Remove WARN sanity check on hypervisor timer vs. UNINITIALIZED vCPU
 
->
->> >
->> > The point is, with or w/o this patch, you can only reclaim 16 EPC  
->> pages
->> > in one
->> > function call (as you have said you are going to remove
->> > SGX_NR_TO_SCAN_MAX,
->> > which is a cipher to both of us).  The only difference I can see is,
->> > with this
->> > patch, you can have multiple calls of "isolate" and then call the
->> > "do_reclaim"
->> > once.
->> >
->> > But what's the good of having the "isolate" if the "do_reclaim" can  
->> only
->> > reclaim
->> > 16 pages anyway?
->> >
->> > Back to my last reply, are you afraid of any LRU has less than 16  
->> pages
->> > to
->> > "isolate", therefore you need to loop LRUs of descendants to get 16?
->> > Cause I
->> > really cannot think of any other reason why you are doing this.
->> >
->> >
->>
->> I think I see your point. By capping pages reclaimed per cycle to 16,
->> there is not much difference even if those 16 pages are spread in  
->> separate
->> LRUs . The difference is only significant when we ever raise that cap.  
->> To
->> preserve the current behavior of ewb loops independent on number of LRUs
->> to loop through for each reclaiming cycle, regardless of the exact value
->> of the page cap, I would still think current approach in the patch is
->> reasonable choice.  What do you think?
->
-> To me I won't bother to do that.  Having less than 16 pages in one LRU is
-> *extremely rare* that should never happen in practice.  It's pointless  
-> to make
-> such code adjustment at this stage.
->
-> Let's focus on enabling functionality first.  When you have some real
-> performance issue that is related to this, we can come back then.
->
-> Btw, I think you need to step back even further.  IIUC the whole  
-> multiple LRU
-> thing isn't mandatory in this initial support.
->
-> Please (again) take a look at the comments from Dave and Michal:
->
-> https://lore.kernel.org/lkml/7a1a5125-9da2-47b6-ba0f-cf24d84df16b@intel.com/#t
-> https://lore.kernel.org/lkml/yz44wukoic3syy6s4fcrngagurkjhe2hzka6kvxbajdtro3fwu@zd2ilht7wcw3/
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
-Thanks for raising this. Actually my understanding the above discussion  
-was mainly about not doing reclaiming by killing enclaves, i.e., I assumed  
-"reclaiming" within that context only meant for that particular kind.
+#syz fix: exact-commit-title
 
-As Mikko pointed out, without reclaiming per-cgroup, the max limit of each  
-cgroup needs to accommodate the peak usage of enclaves within that cgroup.  
-That may be inconvenient for practical usage and limits could be forced to  
-be set larger than necessary to run enclaves performantly. For example, we  
-can observe following undesired consequences comparing a system with  
-current kernel loaded with enclaves whose total peak usage is greater than  
-the EPC capacity.
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
 
-1) If a user wants to load the same exact enclaves but in separate  
-cgroups, then the sum of cgroup limits must be higher than the capacity  
-and the system will end up doing the same old global reclaiming as it is  
-currently doing. Cgroup is not useful at all for isolating EPC  
-consumptions.
+Kernel: Linux 5.15
+Dashboard link: https://syzkaller.appspot.com/bug?extid=412c9ae97b4338c5187e
 
-2) To isolate impact of usage of each cgroup on other cgroups and yet  
-still being able to load each enclave, the user basically has to carefully  
-plan to ensure the sum of cgroup max limits, i.e., the sum of peak usage  
-of enclaves, is not reaching over the capacity. That means no  
-over-commiting allowed and the same system may not be able to load as many  
-enclaves as with current kernel.
+---
+[1] I expect the commit to be present in:
 
-@Dave and @Michal, Your thoughts? Or could you confirm we should not do  
-reclaim per cgroup at
-all?
-
-If confirmed as desired, then this series can stop at patch 4.
-
-Thanks
-Haitao
+1. linux-5.15.y branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
