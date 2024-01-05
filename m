@@ -1,140 +1,141 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414CD2C860;
-	Thu,  4 Jan 2024 21:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE16524201;
+	Fri,  5 Jan 2024 09:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gv0a367Q"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1704402124; x=1735938124;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=jNkbhszzShPbArPxx0L05m7z25QEwrp4u/6skEB2hTk=;
-  b=Gv0a367Qp1IWVeihxWrbKGOoUtniuMwOkajAvtpXUlF7C65xwRq7n4nm
-   eqYcNXSSXZJVnkvJBQizHK3PZr24isxyE9lgSvYyNwuVapVvSeyxdPQ12
-   4OJ4RxpJh1uYhGWyxcEQZBfEo0YVEFmOysLfHo0WkIr2vYBrNaDE1Okm0
-   QTQ00UuD2Cpy03mN7lVkUVBMSnBWekP+h92aPHxHElEgNpLo91oGsFE5O
-   65Wn0Er/xWBFLOnXkH0FFNE6W0goc09F9QTEubZ6A/1ykKGtu00/WOpAq
-   0Wz5r6RXzg/LQ76vFE7Q56jvk3GkkS52xTwLOd1tBeAXTy7WdA+L/LkN9
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10943"; a="376847776"
-X-IronPort-AV: E=Sophos;i="6.04,331,1695711600"; 
-   d="scan'208";a="376847776"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jan 2024 13:02:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10943"; a="1027567628"
-X-IronPort-AV: E=Sophos;i="6.04,331,1695711600"; 
-   d="scan'208";a="1027567628"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 04 Jan 2024 13:02:00 -0800
-Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
-To: "Mehta, Sohil" <sohil.mehta@intel.com>, "jarkko@kernel.org"
- <jarkko@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>, "hpa@zytor.com"
- <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>, "tj@kernel.org"
- <tj@kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "bp@alien8.de"
- <bp@alien8.de>, "Huang, Kai" <kai.huang@intel.com>, "Dave Hansen"
- <dave.hansen@intel.com>
-Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
- "seanjc@google.com" <seanjc@google.com>, "Zhang, Bo" <zhanb@microsoft.com>,
- "kristen@linux.intel.com" <kristen@linux.intel.com>, "anakrish@microsoft.com"
- <anakrish@microsoft.com>, "sean.j.christopherson@intel.com"
- <sean.j.christopherson@intel.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
- "yangjie@microsoft.com" <yangjie@microsoft.com>
-Subject: Re: [PATCH v6 09/12] x86/sgx: Restructure top-level EPC reclaim
- function
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="p1Gvid2Y";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Tqecptw3"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id F05761F850;
+	Fri,  5 Jan 2024 09:45:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1704447908; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WjMAyVdiebrt/Q0pS2dmmJub9qx0XoEkNWeuoUlkfwo=;
+	b=p1Gvid2Yx7rB6xquGDuCYppBhbc/gAtKc0wrv0gBT50BqlzJK8hTKFQrytCCjyOzHWLfbE
+	Y2XGpbQrz1c7Q21Zex4/mE+1dqaHMGda58PuiBXIVOfXVJlhO8bcPm8+xGa+sclP5720lq
+	1jW4vWn0cOfeFiuLR8q9NrkKVPpNXnk=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1704447907; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WjMAyVdiebrt/Q0pS2dmmJub9qx0XoEkNWeuoUlkfwo=;
+	b=Tqecptw3BTnIUZiudoZwWXFz8DvrhvVQ0cdCR01ZJWtLoMYC076yGW/+VYDFm0jYgsOFWe
+	9XhBmBIqpkC/1O3YAtp2rYCgoCC3vXVrS9ggqVEcJJ0V4NRKYrrUJNQcVQxP0nnzdtm9Dk
+	/+AT7ckcg18sWIFSJ0Q9pX8pMUvyYqg=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D8D5413C99;
+	Fri,  5 Jan 2024 09:45:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id P5C6NKPPl2WQUgAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Fri, 05 Jan 2024 09:45:07 +0000
+Date: Fri, 5 Jan 2024 10:45:02 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Haitao Huang <haitao.huang@linux.intel.com>
+Cc: jarkko@kernel.org, dave.hansen@linux.intel.com, tj@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org, 
+	cgroups@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	hpa@zytor.com, sohil.mehta@intel.com, zhiquan1.li@intel.com, 
+	kristen@linux.intel.com, seanjc@google.com, zhanb@microsoft.com, anakrish@microsoft.com, 
+	mikko.ylinen@linux.intel.com, yangjie@microsoft.com
+Subject: Re: [PATCH v6 01/12] cgroup/misc: Add per resource callbacks for CSS
+ events
+Message-ID: <5qfjx2vvirtffkro5u6zdbbwia2bhhbjxwgij2igdnxk5hysaq@kpqboajvuzbc>
 References: <20231030182013.40086-1-haitao.huang@linux.intel.com>
- <20231030182013.40086-10-haitao.huang@linux.intel.com>
- <c8fc40dc56b853fbff14ba22db197c80a6d31820.camel@intel.com>
- <op.2e0yod2lwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <431c5d7f5aee7d11ec2e8aa2e526fde438fa53b4.camel@intel.com>
- <op.2ftmyampwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <3c27bca678c1b041920a14a7da0d958c9861ebca.camel@intel.com>
- <op.2f0eo8r1wjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <73ed579be8ad81835df1c309b7c69b491b7f2c8e.camel@intel.com>
- <op.2f523elowjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <4b28fc01-50cf-469b-8161-7d56b863b42b@intel.com>
- <op.2g1d81fqwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <2aee5f75-836e-4a47-a29c-b272150227a8@intel.com>
-Date: Thu, 04 Jan 2024 15:01:59 -0600
+ <20231030182013.40086-2-haitao.huang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: Quoted-Printable
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2g1jdlojwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <2aee5f75-836e-4a47-a29c-b272150227a8@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
-
-On Thu, 04 Jan 2024 13:27:07 -0600, Dave Hansen <dave.hansen@intel.com> =
- =
-
-wrote:
-
-> On 1/4/24 11:11, Haitao Huang wrote:
->> If those are OK with users and also make it acceptable for merge
->> quickly, I'm happy to do that =F0=9F=99=82
->
-> How about we put some actual numbers behind this?  How much complexity=
-
-> are we talking about here?  What's the diffstat for the utterly
-> bare-bones implementation and what does it cost on top of that to do t=
-he
-> per-cgroup reclaim?
->
-
-For bare-bone:
-
-  arch/x86/Kconfig                     |  13 ++++++++++++
-  arch/x86/kernel/cpu/sgx/Makefile     |   1 +
-  arch/x86/kernel/cpu/sgx/epc_cgroup.c | 104  =
-
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++++++++++++++++
-  arch/x86/kernel/cpu/sgx/epc_cgroup.h |  39  =
-
-+++++++++++++++++++++++++++++++++++
-  arch/x86/kernel/cpu/sgx/main.c       |  41  =
-
-++++++++++++++++++++++++++++++++++++
-  arch/x86/kernel/cpu/sgx/sgx.h        |   5 +++++
-  include/linux/misc_cgroup.h          |  42  =
-
-+++++++++++++++++++++++++++++++++++++
-  kernel/cgroup/misc.c                 |  52  =
-
-+++++++++++++++++++++++++++++++---------------
-  8 files changed, 281 insertions(+), 16 deletions(-)
-
-Additional for per-cgroup reclaim:
-
-  arch/x86/kernel/cpu/sgx/encl.c       |  41 +++++++++--------
-  arch/x86/kernel/cpu/sgx/encl.h       |   3 +-
-  arch/x86/kernel/cpu/sgx/epc_cgroup.c | 224  =
-
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-+++++++++++++++++--
-  arch/x86/kernel/cpu/sgx/epc_cgroup.h |  18 ++++++--
-  arch/x86/kernel/cpu/sgx/main.c       | 226  =
-
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------=
---------------------
-  arch/x86/kernel/cpu/sgx/sgx.h        |  85  =
-
-+++++++++++++++++++++++++++++++++--
-  6 files changed, 480 insertions(+), 117 deletions(-)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gkycr2ejudi4nnse"
+Content-Disposition: inline
+In-Reply-To: <20231030182013.40086-2-haitao.huang@linux.intel.com>
+X-Spam-Level: 
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spamd-Result: default: False [-2.90 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 SIGNED_PGP(-2.00)[];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+,1:+,2:~];
+	 BAYES_HAM(-0.00)[19.25%];
+	 ARC_NA(0.00)[];
+	 URIBL_BLOCKED(0.00)[intel.com:email];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	 DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	 RCPT_COUNT_TWELVE(0.00)[20];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.90
 
 
-Thanks
-Haitao
+--gkycr2ejudi4nnse
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Oct 30, 2023 at 11:20:02AM -0700, Haitao Huang <haitao.huang@linux.=
+intel.com> wrote:
+> From: Kristen Carlson Accardi <kristen@linux.intel.com>
+>=20
+> The misc cgroup controller (subsystem) currently does not perform
+> resource type specific action for Cgroups Subsystem State (CSS) events:
+> the 'css_alloc' event when a cgroup is created and the 'css_free' event
+> when a cgroup is destroyed.
+>=20
+> Define callbacks for those events and allow resource providers to
+> register the callbacks per resource type as needed. This will be
+> utilized later by the EPC misc cgroup support implemented in the SGX
+> driver.
+
+I notice now that the callbacks are per resource and per cgroup.
+I think that is an overkill that complicates misc_cg allocation code
+with parent's callbacks while freeing is done by own callbacks.
+It's possibly too much liberal to keep objects' lifecycle understandable
+in the long term too.=20
+
+For some uniformity, I'd suggest struct blkcg_policy array in
+block/blk-cgroup.c as the precedent. (Perhaps indexed with static enum
+misc_res_type instead of dynamic index assignment as
+blkcg_policy_registeer() does.)
+
+I hope you don't really need per-cgroup callbacks :-)
+
+Michal
+
+--gkycr2ejudi4nnse
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZZfPnAAKCRAGvrMr/1gc
+jiP8AP0Q8YvyVS22t8yNx/wVtFr60JLTA5zAgGTIFU7k+w/G+AEA9Jr2ZtxN0QWV
+FYzPie0m1EL3RCqoPrIQleZGYmOfMAw=
+=d7Pm
+-----END PGP SIGNATURE-----
+
+--gkycr2ejudi4nnse--
