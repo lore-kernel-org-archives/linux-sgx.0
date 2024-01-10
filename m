@@ -1,80 +1,72 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE638CA4A;
-	Wed, 10 Jan 2024 05:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54B43E472;
+	Wed, 10 Jan 2024 09:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="N+ySi0IK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1704863388;
-	bh=LF9k27EaTdGjd/ELz7vnWNnV+yYPr8oFSfpOovS9tS4=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=N+ySi0IKD5ADkKwT8bG/Ac6HiBfnqkCLqhnG+tWYaE3X1eLfqHgSxepKY/TSAXvQ/
-	 8tx54XbuO/qoYNuCe2rI/4g8tl+uQGlXQGEQD3bemrSO9lrTK+JM+mkXc7g2i+6VB8
-	 3AFbb2wEqD67WPjpIV8fpKhf7THQ3VlW/gQKGhkjcMJR+koNF24XPP15OgktjY+pSh
-	 2P3OqI43EdyHUNtAoZw3Jlc6l+cO6XT8Aj83hJXbYG8X3jyP28VIQ8wFiqt8kW7/Uu
-	 jtXlc20SUrZBWUONMlIQR74ey6RR7XxCqBsZ/g3MS176YHGP9jOAK78E2f+g077nvJ
-	 24/RRxEA/cE3Q==
-Received: from [100.96.234.34] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D61233780C1F;
-	Wed, 10 Jan 2024 05:09:42 +0000 (UTC)
-Message-ID: <e000707c-79ce-4ef9-a42c-52997d14c08d@collabora.com>
-Date: Wed, 10 Jan 2024 10:09:48 +0500
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BzqKa9NU"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=Fed6Wh38yLZ4VW44UQIVxDeEah6yaESJroVirbnMcCQ=; b=BzqKa9NUJWdXYv/6rgJZ4RYlWu
+	NoYKk1B6vvpRdx9T5jBwEbUpXKbB8ClufPgK2+QxrMZA4mYpvYPlrZBfhNN3Eq3c8NvdELaZfWQBA
+	qfmN5Oux/8hGs/+KFHxmTyEKgilboZcGvJOxMoPkRpYoolaZ1yYG44FbLUe8cXpQ9CY8mS090847h
+	8HR55gJQTas2JOmu7+yt1dCZ3PU9LzfzRPVSS2UoIJ3XSSYdwsP/jr3oxtjv80gPLeoMHrEtLbaUc
+	e8MTRADeIe8t1pag7oAFYXTjJvi3NNL5SVv5oRpf857r0P1F947fMRc+a1lIOdOLRinVn/+IgWgWD
+	ujp50hSg==;
+Received: from [2001:4bb8:191:2f6b:27f:45ef:e74a:3466] (helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1rNUls-00AsAW-1I;
+	Wed, 10 Jan 2024 09:21:12 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>,
+	Chandan Babu R <chandan.babu@oracle.com>
+Cc: "Darrick J . Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	x86@kernel.org,
+	linux-sgx@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	keyrings@vger.kernel.org
+Subject: disable large folios for shmem file used by xfs xfile
+Date: Wed, 10 Jan 2024 10:21:07 +0100
+Message-Id: <20240110092109.1950011-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: Re: [v5.15] WARNING in kvm_arch_vcpu_ioctl_run
-Content-Language: en-US
-To: syzbot <syzbot+412c9ae97b4338c5187e@syzkaller.appspotmail.com>,
- bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, jarkko@kernel.org,
- jmattson@google.com, joro@8bytes.org, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, mingo@redhat.com,
- pbonzini@redhat.com, seanjc@google.com, syzkaller-lts-bugs@googlegroups.com,
- tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
- x86@kernel.org
-References: <000000000000c237b7060e875640@google.com>
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <000000000000c237b7060e875640@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 1/9/24 11:18 PM, syzbot wrote:
-> This bug is marked as fixed by commit:
-> KVM: x86: Remove WARN sanity check on hypervisor timer vs. UNINITIALIZED vCPU
-> 
-> But I can't find it in the tested trees[1] for more than 90 days.
-Just found out that the fix hasn't been back ported to this kernel. The fix
-could be backported and sent to be included in this stable kernel.
+Hi all,
 
-#syz unfix
+Darrick reported that the fairly new XFS xfile code blows up when force
+enabling large folio for shmem.  This series fixes this quickly by disabling
+large folios for this particular shmem file for now until it can be fixed
+properly, which will be a lot more invasive.
 
-> Is it a correct commit? Please update it by replying:
-> 
-> #syz fix: exact-commit-title
-> 
-> Until then the bug is still considered open and new crashes with
-> the same signature are ignored.
-> 
-> Kernel: Linux 5.15
-> Dashboard link: https://syzkaller.appspot.com/bug?extid=412c9ae97b4338c5187e
-> 
-> ---
-> [1] I expect the commit to be present in:
-> 
-> 1. linux-5.15.y branch of
-> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-
--- 
-BR,
-Muhammad Usama Anjum
+I've added most of you to the CC list as I suspect most other users of
+shmem_file_setup and friends will have similar issues.
