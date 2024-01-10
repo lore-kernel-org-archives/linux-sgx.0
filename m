@@ -1,66 +1,80 @@
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB43A3C062
-	for <linux-sgx@vger.kernel.org>; Tue,  9 Jan 2024 18:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3607ad143c2so27522865ab.1
-        for <linux-sgx@vger.kernel.org>; Tue, 09 Jan 2024 10:18:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704824299; x=1705429099;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HNpK7gVVocd6D97UNc/uU33LSZEMZP8thvqp4QD621w=;
-        b=GQXdCO6QVwozpul4YbGGdCYfautlwL37/gHp1AMW46ZJCuOPqdruAN67H6f3hULbUK
-         71qmZyNeFwU/1to795FgOUYydCJoVPxWTDrJxTDPSCrV2OApUPmVozKdUnPpFkXPTXoN
-         LL1PK5bRzltLJiHqLm9yH3ulUuZ6pyb7epPQyVxFuevplcUjkAa4XWZrEbjtOV4F+tBp
-         fF5Ll10wnrgbaHt4jjUP8PEQIvwZAGf7RP+ROIzTucRyt7+5N9kU5KZ+VwMzYzBJZiLi
-         jbRB3OKDPD4O4SaGaknuEiervKruHM0LUZDoImJPn2LVUtjEqNB6r4lCkoRkyo/jv5r/
-         P5IA==
-X-Gm-Message-State: AOJu0YzWwuN3taYDLEv5gxJ45snJlkDJzPLWaT9FDCuu6z5BF/QWuwqK
-	nCknX9lBbzGxuCkR6qrdOHwKKz2ywlC2MRNf8TeH8MJjGd0Z
-X-Google-Smtp-Source: AGHT+IFgdzZhVll0vqDBLPtBr0CdUuR3oPuenR201DKKqtRq5gwIMqq5HsJitrmlvd2DvVekAcF1MZDcpzq97v7Ch3Jr1fu3gxYN
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE638CA4A;
+	Wed, 10 Jan 2024 05:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="N+ySi0IK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1704863388;
+	bh=LF9k27EaTdGjd/ELz7vnWNnV+yYPr8oFSfpOovS9tS4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=N+ySi0IKD5ADkKwT8bG/Ac6HiBfnqkCLqhnG+tWYaE3X1eLfqHgSxepKY/TSAXvQ/
+	 8tx54XbuO/qoYNuCe2rI/4g8tl+uQGlXQGEQD3bemrSO9lrTK+JM+mkXc7g2i+6VB8
+	 3AFbb2wEqD67WPjpIV8fpKhf7THQ3VlW/gQKGhkjcMJR+koNF24XPP15OgktjY+pSh
+	 2P3OqI43EdyHUNtAoZw3Jlc6l+cO6XT8Aj83hJXbYG8X3jyP28VIQ8wFiqt8kW7/Uu
+	 jtXlc20SUrZBWUONMlIQR74ey6RR7XxCqBsZ/g3MS176YHGP9jOAK78E2f+g077nvJ
+	 24/RRxEA/cE3Q==
+Received: from [100.96.234.34] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D61233780C1F;
+	Wed, 10 Jan 2024 05:09:42 +0000 (UTC)
+Message-ID: <e000707c-79ce-4ef9-a42c-52997d14c08d@collabora.com>
+Date: Wed, 10 Jan 2024 10:09:48 +0500
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b43:b0:35f:ebc7:6065 with SMTP id
- f3-20020a056e020b4300b0035febc76065mr497173ilu.1.1704824299204; Tue, 09 Jan
- 2024 10:18:19 -0800 (PST)
-Date: Tue, 09 Jan 2024 10:18:19 -0800
-In-Reply-To: <000000000000ad704b05f8de7e19@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c237b7060e875640@google.com>
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>
 Subject: Re: [v5.15] WARNING in kvm_arch_vcpu_ioctl_run
-From: syzbot <syzbot+412c9ae97b4338c5187e@syzkaller.appspotmail.com>
-To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	jarkko@kernel.org, jmattson@google.com, joro@8bytes.org, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, mingo@redhat.com, 
-	pbonzini@redhat.com, seanjc@google.com, syzkaller-lts-bugs@googlegroups.com, 
-	tglx@linutronix.de, usama.anjum@collabora.com, vkuznets@redhat.com, 
-	wanpengli@tencent.com, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+To: syzbot <syzbot+412c9ae97b4338c5187e@syzkaller.appspotmail.com>,
+ bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, jarkko@kernel.org,
+ jmattson@google.com, joro@8bytes.org, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, mingo@redhat.com,
+ pbonzini@redhat.com, seanjc@google.com, syzkaller-lts-bugs@googlegroups.com,
+ tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
+ x86@kernel.org
+References: <000000000000c237b7060e875640@google.com>
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <000000000000c237b7060e875640@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This bug is marked as fixed by commit:
-KVM: x86: Remove WARN sanity check on hypervisor timer vs. UNINITIALIZED vCPU
+On 1/9/24 11:18 PM, syzbot wrote:
+> This bug is marked as fixed by commit:
+> KVM: x86: Remove WARN sanity check on hypervisor timer vs. UNINITIALIZED vCPU
+> 
+> But I can't find it in the tested trees[1] for more than 90 days.
+Just found out that the fix hasn't been back ported to this kernel. The fix
+could be backported and sent to be included in this stable kernel.
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+#syz unfix
 
-#syz fix: exact-commit-title
+> Is it a correct commit? Please update it by replying:
+> 
+> #syz fix: exact-commit-title
+> 
+> Until then the bug is still considered open and new crashes with
+> the same signature are ignored.
+> 
+> Kernel: Linux 5.15
+> Dashboard link: https://syzkaller.appspot.com/bug?extid=412c9ae97b4338c5187e
+> 
+> ---
+> [1] I expect the commit to be present in:
+> 
+> 1. linux-5.15.y branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
 
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
-
-Kernel: Linux 5.15
-Dashboard link: https://syzkaller.appspot.com/bug?extid=412c9ae97b4338c5187e
-
----
-[1] I expect the commit to be present in:
-
-1. linux-5.15.y branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+-- 
+BR,
+Muhammad Usama Anjum
