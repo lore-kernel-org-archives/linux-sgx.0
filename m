@@ -1,19 +1,28 @@
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800A14C626;
-	Wed, 10 Jan 2024 16:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id A18A568D07; Wed, 10 Jan 2024 17:19:07 +0100 (CET)
-Date: Wed, 10 Jan 2024 17:19:07 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@lst.de>, Matthew Wilcox <willy@infradead.org>,
-	Hugh Dickins <hughd@google.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DB44D125;
+	Wed, 10 Jan 2024 17:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAygTEqZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCE8BC433F1;
+	Wed, 10 Jan 2024 17:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704909315;
+	bh=fu4Rj/eN06CEkV5JbSMpnHawgZaPLeLIgtEFRQv1w5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JAygTEqZWVfylCFiDRG7P1l/VNgkre3NkIa+TSKWtjTWzTjqWxGd+6jLl9JLq9Ff0
+	 HkUiC0YShB3RTedTUqQpvGmjzfg4QuMwsAoJ/Jdw+Tb8AoAVZ2vkZw9wgCj3kSgF+j
+	 yzwcPO01+qwLDH/Y73uLhuwWnuWnal0emVdoFNiftr94w2BLYKTYdnr0oMLshOaGDd
+	 NBbRCi0am1LWayVzGsz33cPYmCO/+nX7iUneIlV6CMd6eTt5zF+47RDDPWe+BOqgei
+	 Z9rVGGi0mIBlfrbcxwOpuT5Te9ccn5QkF6yosVtLxF4wzyuFarxC28PHW4SJAiMXg/
+	 agoDkyYabdckg==
+Date: Wed, 10 Jan 2024 09:55:15 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
 	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J . Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	David Howells <dhowells@redhat.com>,
 	Jarkko Sakkinen <jarkko@kernel.org>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
@@ -30,9 +39,10 @@ Cc: Christoph Hellwig <hch@lst.de>, Matthew Wilcox <willy@infradead.org>,
 	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
 	x86@kernel.org, linux-sgx@vger.kernel.org, linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: disable large folios for shmem file used by xfs xfile
-Message-ID: <20240110161907.GA1388@lst.de>
-References: <20240110092109.1950011-1-hch@lst.de> <20240110073843.d663fa6610785a8611b2cebe@linux-foundation.org>
+Subject: Re: [PATCH 2/2] xfs: disable large folio support in xfile_create
+Message-ID: <20240110175515.GA722950@frogsfrogsfrogs>
+References: <20240110092109.1950011-1-hch@lst.de>
+ <20240110092109.1950011-3-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -41,15 +51,51 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240110073843.d663fa6610785a8611b2cebe@linux-foundation.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20240110092109.1950011-3-hch@lst.de>
 
-On Wed, Jan 10, 2024 at 07:38:43AM -0800, Andrew Morton wrote:
-> I assume that kernels which contain 137db333b29186 ("xfs: teach xfile
-> to pass back direct-map pages to caller") want this, so a Fixes: that
-> and a cc:stable are appropriate?
+On Wed, Jan 10, 2024 at 10:21:09AM +0100, Christoph Hellwig wrote:
+> The xfarray code will crash if large folios are force enabled using:
+> 
+>    echo force > /sys/kernel/mm/transparent_hugepage/shmem_enabled
+> 
+> Fixing this will require a bit of an API change, and prefeably sorting out
+> the hwpoison story for pages vs folio and where it is placed in the shmem
+> API.  For now use this one liner to disable large folios.
+> 
+> Reported-by: Darrick J. Wong <djwong@kernel.org>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-I think it needs to back all the way back to 3934e8ebb7c
-("xfs: create a big array data structure") as that only clears the page
-sized chunk of a new allocation and could lead to corruption / or
-information leaks.
+Can someone who knows more about shmem.c than I do please review
+https://lore.kernel.org/linux-xfs/20240103084126.513354-4-hch@lst.de/
+so that I can feel slightly more confident as hch and I sort through the
+xfile.c issues?
+
+For this patch,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+> ---
+>  fs/xfs/scrub/xfile.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
+> index 090c3ead43fdf1..1a8d1bedd0b0dc 100644
+> --- a/fs/xfs/scrub/xfile.c
+> +++ b/fs/xfs/scrub/xfile.c
+> @@ -94,6 +94,11 @@ xfile_create(
+>  
+>  	lockdep_set_class(&inode->i_rwsem, &xfile_i_mutex_key);
+>  
+> +	/*
+> +	 * We're not quite ready for large folios yet.
+> +	 */
+> +	mapping_clear_large_folios(inode->i_mapping);
+> +
+>  	trace_xfile_create(xf);
+>  
+>  	*xfilep = xf;
+> -- 
+> 2.39.2
+> 
+> 
