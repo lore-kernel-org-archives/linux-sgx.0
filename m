@@ -1,155 +1,246 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D406D39;
-	Sat, 13 Jan 2024 21:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752EF3F8D3;
+	Mon, 22 Jan 2024 17:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1705944051; cv=none; b=dcs2Ft6LWIXzvn1qlVobhjyJdWySQW9Kc/ZhYwgtuEPormaJIDDL7TOVKck2t19mkzPPKp7MaJLCQo8cPgwRpg0p9omp+dtWBjU9xYNZUjdUst95J7DIHc1Fi4Y/3hlILS3flXCmV4g+40p2x1CcErdTQkjZVqgag9MtYgKsmco=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1705944051; c=relaxed/simple;
+	bh=82OWhuoYS1GjdlkPieFq7gaYKjlu2VU9BJ2KlGOFoCQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=CAAPL/Fq2fVeCLVi4x55gtCFHDi0OQ8wNgOCV4qhPyjb3oE+KeOCFy/TD228w6Fqq9A4fB2czBpr6Yvgfcg+bKaEBIlSevMuBb2HFGATZ70eFTMYM2eSM1u0L1XVa5YT4yVOYLE1OUprAOZGqPj6pR3lRF8YHd+PsQ3/WAK6JRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P9JsFyFa; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvJHloTA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C547DC433C7;
-	Sat, 13 Jan 2024 21:08:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705180114;
-	bh=/TNLO2AHSSeY1QxNIwdHcGp50JbrIeyM7eeOvhR2GEA=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=hvJHloTA1IJhePcatJ6eiLNfNpvj0yzXV5lKofDa1YcDnMtNhwb/iAUKN0vh7x862
-	 uff1qyVsKlevQsSjro5hRG6VygRTK8vG7KGpb9e+4rEGwHwCiF01whUXL3zMiiqOVE
-	 fxUWTy3lwuTgeaiAvtOqAjojnJzHrsn1GExoI9IxxgCSM/X4ve2yMZc4pNcgZXCfRc
-	 s0FSb4NBdzRP+PUXMvbx43FrIf7zmY8kfvMU6DqeBLHMU1XVrVUJUrj4HK6Up53r4t
-	 7bgHUpxqHT5Yw1DbheEynG/RtjZZLWsXIvVP0rj1i8bWBKG40YyBiWbfZgoRKjRX3O
-	 1tEvN4YuctynA==
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P9JsFyFa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1705944050; x=1737480050;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=82OWhuoYS1GjdlkPieFq7gaYKjlu2VU9BJ2KlGOFoCQ=;
+  b=P9JsFyFaSDZo2DaSlWd+hIHvv2Ru3lAhthhkJtNffMLxkrAJvB+XGxI6
+   iALGNXiT6Ep9T+NhbqM6ZwX5Y8022h9wrBZh2uOgu/aGTYaCwq4eYCQng
+   oFtIKjZA8iVJxA9RqxfEhye1iFmCU8aiY7/qEYdqVVBsGItSEPDcpmnxP
+   Au9GNXDek8AsKZ4atZM5SK4dyrM02pcVXGTjzX5JkX7hY+WmXmUvdtaPz
+   QRJYIZp7TPowbXszXGRKRd3QzNtgmWI8lTUc151XJPoT+R3lUKyG5DPva
+   Fosle9Fq2EVc9U5vMPF5W6YKstEvQgNikhgNqHuDIVk1cj9487wzWCnR1
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10961"; a="1150099"
+X-IronPort-AV: E=Sophos;i="6.05,211,1701158400"; 
+   d="scan'208";a="1150099"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2024 09:20:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,211,1701158400"; 
+   d="scan'208";a="1262857"
+Received: from b4969161e530.jf.intel.com ([10.165.56.46])
+  by orviesa005.jf.intel.com with ESMTP; 22 Jan 2024 09:20:48 -0800
+From: Haitao Huang <haitao.huang@linux.intel.com>
+To: jarkko@kernel.org,
+	dave.hansen@linux.intel.com,
+	tj@kernel.org,
+	mkoutny@suse.com,
+	linux-kernel@vger.kernel.org,
+	linux-sgx@vger.kernel.org,
+	x86@kernel.org,
+	cgroups@vger.kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	hpa@zytor.com,
+	sohil.mehta@intel.com
+Cc: zhiquan1.li@intel.com,
+	kristen@linux.intel.com,
+	seanjc@google.com,
+	zhanb@microsoft.com,
+	anakrish@microsoft.com,
+	mikko.ylinen@linux.intel.com,
+	yangjie@microsoft.com
+Subject: [PATCH v7 01/15] cgroup/misc: Add per resource callbacks for CSS events
+Date: Mon, 22 Jan 2024 09:20:34 -0800
+Message-Id: <20240122172048.11953-2-haitao.huang@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240122172048.11953-1-haitao.huang@linux.intel.com>
+References: <20240122172048.11953-1-haitao.huang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 13 Jan 2024 23:08:27 +0200
-Message-Id: <CYDVWF9BY27K.2MXXROH30QHBT@kernel.org>
-Subject: Re: [PATCH v6 09/12] x86/sgx: Restructure top-level EPC reclaim
- function
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Haitao Huang"
- <haitao.huang@linux.intel.com>, "Mehta, Sohil" <sohil.mehta@intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "dave.hansen@linux.intel.com"
- <dave.hansen@linux.intel.com>, "cgroups@vger.kernel.org"
- <cgroups@vger.kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "mingo@redhat.com" <mingo@redhat.com>, "tj@kernel.org" <tj@kernel.org>,
- "mkoutny@suse.com" <mkoutny@suse.com>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "linux-sgx@vger.kernel.org"
- <linux-sgx@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>, "Huang, Kai"
- <kai.huang@intel.com>
-Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
- "seanjc@google.com" <seanjc@google.com>, "Zhang, Bo" <zhanb@microsoft.com>,
- "kristen@linux.intel.com" <kristen@linux.intel.com>,
- "anakrish@microsoft.com" <anakrish@microsoft.com>,
- "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>, "Li,
- Zhiquan1" <zhiquan1.li@intel.com>, "yangjie@microsoft.com"
- <yangjie@microsoft.com>
-X-Mailer: aerc 0.16.0
-References: <20231030182013.40086-1-haitao.huang@linux.intel.com>
- <20231030182013.40086-10-haitao.huang@linux.intel.com>
- <c8fc40dc56b853fbff14ba22db197c80a6d31820.camel@intel.com>
- <op.2e0yod2lwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <431c5d7f5aee7d11ec2e8aa2e526fde438fa53b4.camel@intel.com>
- <op.2ftmyampwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <3c27bca678c1b041920a14a7da0d958c9861ebca.camel@intel.com>
- <op.2f0eo8r1wjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <73ed579be8ad81835df1c309b7c69b491b7f2c8e.camel@intel.com>
- <op.2hf1t7sywjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <CYDVTPABVUJK.1BTJY8YUF9WPI@kernel.org>
-In-Reply-To: <CYDVTPABVUJK.1BTJY8YUF9WPI@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sat Jan 13, 2024 at 11:04 PM EET, Jarkko Sakkinen wrote:
-> On Fri Jan 12, 2024 at 7:07 PM EET, Haitao Huang wrote:
-> > On Sun, 17 Dec 2023 19:44:56 -0600, Huang, Kai <kai.huang@intel.com> wr=
-ote:
-> >
-> > >
-> > >> >
-> > >> > The point is, with or w/o this patch, you can only reclaim 16 EPC =
-=20
-> > >> pages
-> > >> > in one
-> > >> > function call (as you have said you are going to remove
-> > >> > SGX_NR_TO_SCAN_MAX,
-> > >> > which is a cipher to both of us).  The only difference I can see i=
-s,
-> > >> > with this
-> > >> > patch, you can have multiple calls of "isolate" and then call the
-> > >> > "do_reclaim"
-> > >> > once.
-> > >> >
-> > >> > But what's the good of having the "isolate" if the "do_reclaim" ca=
-n =20
-> > >> only
-> > >> > reclaim
-> > >> > 16 pages anyway?
-> > >> >
-> > >> > Back to my last reply, are you afraid of any LRU has less than 16 =
-=20
-> > >> pages
-> > >> > to
-> > >> > "isolate", therefore you need to loop LRUs of descendants to get 1=
-6?
-> > >> > Cause I
-> > >> > really cannot think of any other reason why you are doing this.
-> > >> >
-> > >> >
-> > >>
-> > >> I think I see your point. By capping pages reclaimed per cycle to 16=
-,
-> > >> there is not much difference even if those 16 pages are spread in =
-=20
-> > >> separate
-> > >> LRUs . The difference is only significant when we ever raise that ca=
-p. =20
-> > >> To
-> > >> preserve the current behavior of ewb loops independent on number of =
-LRUs
-> > >> to loop through for each reclaiming cycle, regardless of the exact v=
-alue
-> > >> of the page cap, I would still think current approach in the patch i=
-s
-> > >> reasonable choice.  What do you think?
-> > >
-> > > To me I won't bother to do that.  Having less than 16 pages in one LR=
-U is
-> > > *extremely rare* that should never happen in practice.  It's pointles=
-s =20
-> > > to make
-> > > such code adjustment at this stage.
-> > >
-> > > Let's focus on enabling functionality first.  When you have some real
-> > > performance issue that is related to this, we can come back then.
-> > >
-> >
-> > I have done some rethinking about this and realize this does save quite=
- =20
-> > some significant work: without breaking out isolation part from =20
-> > sgx_reclaim_pages(), I can remove the changes to use a list for isolate=
-d =20
-> > pages, and no need to introduce "state" such as RECLAIM_IN_PROGRESS. Ab=
-out =20
-> > 1/3 of changes for per-cgroup reclamation will be gone.
-> >
-> > So I think I'll go this route now. The only downside may be performance=
- if =20
-> > a enclave spreads its pages in different cgroups and even that is minim=
-um =20
-> > impact as we limit reclamation to 16 pages a time. Let me know if someo=
-ne =20
-> > feel strongly we need dealt with that and see some other potential issu=
-es =20
-> > I may have missed.
->
-> We could deal with possible performance regression later on (if there
-> is need). I mean there should we a workload first that would so that
-> sort stimulus...
+From: Kristen Carlson Accardi <kristen@linux.intel.com>
 
-I.e. no reason to deal with imaginary workload :-) Go ahead and we'll
-go through it.
+The misc cgroup controller (subsystem) currently does not perform
+resource type specific action for Cgroups Subsystem State (CSS) events:
+the 'css_alloc' event when a cgroup is created and the 'css_free' event
+when a cgroup is destroyed.
 
-BR, Jarkko
+Define callbacks for those events and allow resource providers to
+register the callbacks per resource type as needed. This will be
+utilized later by the EPC misc cgroup support implemented in the SGX
+driver.
+
+Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+Co-developed-by: Haitao Huang <haitao.huang@linux.intel.com>
+Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+---
+V7:
+- Make ops one per resource type and store them in array (Michal)
+- Rename the ops struct to misc_res_ops, and enforce the constraints of required callback
+functions (Jarkko)
+- Moved addition of priv field to patch 4 where it was used first. (Jarkko)
+
+V6:
+- Create ops struct for per resource callbacks (Jarkko)
+- Drop max_write callback (Dave, Michal)
+- Style fixes (Kai)
+---
+ include/linux/misc_cgroup.h | 11 +++++++
+ kernel/cgroup/misc.c        | 60 +++++++++++++++++++++++++++++++++++--
+ 2 files changed, 68 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
+index e799b1f8d05b..0806d4436208 100644
+--- a/include/linux/misc_cgroup.h
++++ b/include/linux/misc_cgroup.h
+@@ -27,6 +27,16 @@ struct misc_cg;
+ 
+ #include <linux/cgroup.h>
+ 
++/**
++ * struct misc_res_ops: per resource type callback ops.
++ * @alloc: invoked for resource specific initialization when cgroup is allocated.
++ * @free: invoked for resource specific cleanup when cgroup is deallocated.
++ */
++struct misc_res_ops {
++	int (*alloc)(struct misc_cg *cg);
++	void (*free)(struct misc_cg *cg);
++};
++
+ /**
+  * struct misc_res: Per cgroup per misc type resource
+  * @max: Maximum limit on the resource.
+@@ -56,6 +66,7 @@ struct misc_cg {
+ 
+ u64 misc_cg_res_total_usage(enum misc_res_type type);
+ int misc_cg_set_capacity(enum misc_res_type type, u64 capacity);
++int misc_cg_set_ops(enum misc_res_type type, const struct misc_res_ops *ops);
+ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg, u64 amount);
+ void misc_cg_uncharge(enum misc_res_type type, struct misc_cg *cg, u64 amount);
+ 
+diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
+index 79a3717a5803..b8c32791334c 100644
+--- a/kernel/cgroup/misc.c
++++ b/kernel/cgroup/misc.c
+@@ -39,6 +39,9 @@ static struct misc_cg root_cg;
+  */
+ static u64 misc_res_capacity[MISC_CG_RES_TYPES];
+ 
++/* Resource type specific operations */
++static const struct misc_res_ops *misc_res_ops[MISC_CG_RES_TYPES];
++
+ /**
+  * parent_misc() - Get the parent of the passed misc cgroup.
+  * @cgroup: cgroup whose parent needs to be fetched.
+@@ -105,6 +108,36 @@ int misc_cg_set_capacity(enum misc_res_type type, u64 capacity)
+ }
+ EXPORT_SYMBOL_GPL(misc_cg_set_capacity);
+ 
++/**
++ * misc_cg_set_ops() - set resource specific operations.
++ * @type: Type of the misc res.
++ * @ops: Operations for the given type.
++ *
++ * Context: Any context.
++ * Return:
++ * * %0 - Successfully registered the operations.
++ * * %-EINVAL - If @type is invalid, or the operations missing any required callbacks.
++ */
++int misc_cg_set_ops(enum misc_res_type type, const struct misc_res_ops *ops)
++{
++	if (!valid_type(type))
++		return -EINVAL;
++
++	if (!ops->alloc) {
++		pr_err("%s: alloc missing\n", __func__);
++		return -EINVAL;
++	}
++
++	if (!ops->free) {
++		pr_err("%s: free missing\n", __func__);
++		return -EINVAL;
++	}
++
++	misc_res_ops[type] = ops;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(misc_cg_set_ops);
++
+ /**
+  * misc_cg_cancel_charge() - Cancel the charge from the misc cgroup.
+  * @type: Misc res type in misc cg to cancel the charge from.
+@@ -383,23 +416,37 @@ static struct cftype misc_cg_files[] = {
+ static struct cgroup_subsys_state *
+ misc_cg_alloc(struct cgroup_subsys_state *parent_css)
+ {
++	struct misc_cg *parent_cg, *cg;
+ 	enum misc_res_type i;
+-	struct misc_cg *cg;
++	int ret;
+ 
+ 	if (!parent_css) {
+-		cg = &root_cg;
++		parent_cg = cg = &root_cg;
+ 	} else {
+ 		cg = kzalloc(sizeof(*cg), GFP_KERNEL);
+ 		if (!cg)
+ 			return ERR_PTR(-ENOMEM);
++		parent_cg = css_misc(parent_css);
+ 	}
+ 
+ 	for (i = 0; i < MISC_CG_RES_TYPES; i++) {
+ 		WRITE_ONCE(cg->res[i].max, MAX_NUM);
+ 		atomic64_set(&cg->res[i].usage, 0);
++		if (misc_res_ops[i]) {
++			ret = misc_res_ops[i]->alloc(cg);
++			if (ret)
++				goto alloc_err;
++		}
+ 	}
+ 
+ 	return &cg->css;
++
++alloc_err:
++	for (i = 0; i < MISC_CG_RES_TYPES; i++)
++		if (misc_res_ops[i])
++			misc_res_ops[i]->free(cg);
++	kfree(cg);
++	return ERR_PTR(ret);
+ }
+ 
+ /**
+@@ -410,7 +457,14 @@ misc_cg_alloc(struct cgroup_subsys_state *parent_css)
+  */
+ static void misc_cg_free(struct cgroup_subsys_state *css)
+ {
+-	kfree(css_misc(css));
++	struct misc_cg *cg = css_misc(css);
++	enum misc_res_type i;
++
++	for (i = 0; i < MISC_CG_RES_TYPES; i++)
++		if (misc_res_ops[i])
++			misc_res_ops[i]->free(cg);
++
++	kfree(cg);
+ }
+ 
+ /* Cgroup controller callbacks */
+-- 
+2.25.1
+
