@@ -1,45 +1,44 @@
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF4262A02;
-	Tue, 23 Jan 2024 16:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.134.136.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A446281F;
+	Tue, 23 Jan 2024 16:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706025886; cv=none; b=BJ68h7z1zsBEvSMzLBrxsqI+nNZPJONFQVFs2VFlUnZwESTta7Qcsb2YrvGWwovh/FaVR787BmX8UE2SfHIVVck9odjziKlVKv+tkwUnkDNb7xHCM1mMgYAtaLcrxvPu4VFbOpsAi4AuFTrk5Pnjb4Ta2zpLHfhA8uBa/IWOQsY=
+	t=1706026760; cv=none; b=q+feC5LvqDJDadZyXqsBl3vdfr1t8kYsmIXKD6p5lc4KQOp/n/twVr81N6RXpWP33JDWBdSB/s3gsfN53VcuhsbuEFAD25fOOs4F/C81bhQkQYtUoapZdtxF7VeAHfvMFg0be27SgFYGU6JIs7fv+1dc5BeZ4eTB0O7jKzIQm3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706025886; c=relaxed/simple;
-	bh=DZh35DyC6FHYWUcZPRMJlKZaRbb6awdzQL3Ie3ptU0k=;
+	s=arc-20240116; t=1706026760; c=relaxed/simple;
+	bh=/ApKXRNT1KVzfZ6kukPu6+bsMy5rMlGsIXDqu39eeD0=;
 	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=arCzmObJRATc+sVzNx/nUhR6Sgr0nTBxk7L5lJ2Ja2kvDjdlk8eOLjeILWq0I6uwqLiR9Rrc7O+aLAGY0zOVikAp0VugpdLZ/8PQSgHf0XSbCG6GSE1CyV3Z/d5pVaFicVtvEcLSfF8O+YBCxRiGD9ifuMIb9I4/TVWNq+rwdcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uluhp6u6; arc=none smtp.client-ip=134.134.136.20
+	 Message-ID:In-Reply-To; b=LJud2HBqPv4ydoSrakrUPjIiE1TWPfOMbLEF8FxES0CeJoQD5mCXFK7C6ktNbdtMJ3ord5jFh09v0rg4thpqj1LoSKe2iCDfIXjVICGBRtqzARDCkBVEG2/WEBahIxPuvKaLQHTuTXjBVLBrWUS9degV8AUAfjmhBgKQFjxvYSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SB7sFiAG; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uluhp6u6"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SB7sFiAG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1706025884; x=1737561884;
+  t=1706026758; x=1737562758;
   h=to:cc:subject:references:date:mime-version:
    content-transfer-encoding:from:message-id:in-reply-to;
-  bh=DZh35DyC6FHYWUcZPRMJlKZaRbb6awdzQL3Ie3ptU0k=;
-  b=Uluhp6u6LMMbONVY6MmR52EINvo1NVWdnxyYGYeCLPAtJbVEqJZXxnDU
-   C4NjPmWqjhrtlx5UhpdMS0JXmbAl1qFrIzXFGg0TvLQmvFF+/d4vpGKjX
-   cQVl1Y7KQiCSBDlDDGE7Sh5/FQN4aoNp3/rXXoK9qXkrYeswwG4W9zKv1
-   4uJLi93Z04DIGk+2HqgVbcdBVLy244YtDBMUFrQRz63TziQ3wmKTQD7jj
-   scRTQ8osNA8IcJuVcpuVIwv/wk8VpBVJS3PvHp40nbT0o8rp2cl4FUBtN
-   iMdpwYWS1VYEsT4gCxC63pIc2Mb2z2czEq1A84X5OzOooW8VTPDRmsNq1
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10962"; a="391985955"
+  bh=/ApKXRNT1KVzfZ6kukPu6+bsMy5rMlGsIXDqu39eeD0=;
+  b=SB7sFiAGg2GIzzEjnxSQT/Wbv3WaQhF3gTN9j48AZG7Z9sN8UOpPfPcQ
+   MNZo8y8EeJcUl9bbf6dz/jLy3rxuXOCNmJSGhdh3bGI8d1sTr+kmigTom
+   u4To5fIQj3t4vMB/yikFB1xz5hWDXr5XFPXtwH88XcS7TQb4xdHMNWmfF
+   +tIWcHqxxrTzTGmcmwFzgpeX90vvm6EC36lnfrAMG6MgsifD1eYptvHhM
+   wgJ2uk97X0LJv9OTWfOOQ6B041IvI13ncvrPiqayyL8Gzy80HZdbLcEg6
+   BlXlIQOrICXzdzxCZrb8fGLGMDF4jCygJMOrVgKIk2NNRIJnIDVbGOqJg
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10962"; a="15086993"
 X-IronPort-AV: E=Sophos;i="6.05,214,1701158400"; 
-   d="scan'208";a="391985955"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jan 2024 08:04:43 -0800
+   d="scan'208";a="15086993"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jan 2024 08:19:17 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10962"; a="876389590"
 X-IronPort-AV: E=Sophos;i="6.05,214,1701158400"; 
-   d="scan'208";a="876389590"
+   d="scan'208";a="34455278"
 Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 23 Jan 2024 08:04:40 -0800
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 23 Jan 2024 08:19:15 -0800
 Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
 To: dave.hansen@linux.intel.com, tj@kernel.org, mkoutny@suse.com,
  linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
@@ -48,12 +47,12 @@ To: dave.hansen@linux.intel.com, tj@kernel.org, mkoutny@suse.com,
 Cc: zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
  zhanb@microsoft.com, anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
  yangjie@microsoft.com
-Subject: Re: [PATCH v7 04/15] x86/sgx: Implement basic EPC misc cgroup
- functionality
+Subject: Re: [PATCH v7 01/15] cgroup/misc: Add per resource callbacks for CSS
+ events
 References: <20240122172048.11953-1-haitao.huang@linux.intel.com>
- <20240122172048.11953-5-haitao.huang@linux.intel.com>
- <CYLIJZZJON62.24BNN310T3B2F@suppilovahvero>
-Date: Tue, 23 Jan 2024 10:04:40 -0600
+ <20240122172048.11953-2-haitao.huang@linux.intel.com>
+ <CYLIDNAH2GKZ.2GZXE5Z7EXKSI@suppilovahvero>
+Date: Tue, 23 Jan 2024 10:19:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -63,183 +62,171 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 From: "Haitao Huang" <haitao.huang@linux.intel.com>
 Organization: Intel
-Message-ID: <op.2h0b9dglwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <CYLIJZZJON62.24BNN310T3B2F@suppilovahvero>
+Message-ID: <op.2h0cx9pdwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <CYLIDNAH2GKZ.2GZXE5Z7EXKSI@suppilovahvero>
 User-Agent: Opera Mail/1.0 (Win32)
 
-On Mon, 22 Jan 2024 14:25:53 -0600, Jarkko Sakkinen <jarkko@kernel.org>  
+On Mon, 22 Jan 2024 14:14:01 -0600, Jarkko Sakkinen <jarkko@kernel.org>  
 wrote:
 
 > On Mon Jan 22, 2024 at 7:20 PM EET, Haitao Huang wrote:
 >> From: Kristen Carlson Accardi <kristen@linux.intel.com>
 >>
->> SGX Enclave Page Cache (EPC) memory allocations are separate from normal
->> RAM allocations, and are managed solely by the SGX subsystem. The
->> existing cgroup memory controller cannot be used to limit or account for
->> SGX EPC memory, which is a desirable feature in some environments.  For
->> example, in a Kubernates environment, a user can request certain EPC
->> quota for a pod but the orchestrator can not enforce the quota to limit
->> runtime EPC usage of the pod without an EPC cgroup controller.
+>> The misc cgroup controller (subsystem) currently does not perform
+>> resource type specific action for Cgroups Subsystem State (CSS) events:
+>> the 'css_alloc' event when a cgroup is created and the 'css_free' event
+>> when a cgroup is destroyed.
 >>
->> Utilize the misc controller [admin-guide/cgroup-v2.rst, 5-9. Misc] to
->> limit and track EPC allocations per cgroup. Earlier patches have added
->> the "sgx_epc" resource type in the misc cgroup subsystem. Add basic
->> support in SGX driver as the "sgx_epc" resource provider:
+>> Define callbacks for those events and allow resource providers to
+>> register the callbacks per resource type as needed. This will be
+>> utilized later by the EPC misc cgroup support implemented in the SGX
+>> driver.
 >>
->> - Set "capacity" of EPC by calling misc_cg_set_capacity()
->> - Update EPC usage counter, "current", by calling charge and uncharge
->> APIs for EPC allocation and deallocation, respectively.
->> - Setup sgx_epc resource type specific callbacks, which perform
->> initialization and cleanup during cgroup allocation and deallocation,
->> respectively.
->>
->> With these changes, the misc cgroup controller enables user to set a  
->> hard
->> limit for EPC usage in the "misc.max" interface file. It reports current
->> usage in "misc.current", the total EPC memory available in
->> "misc.capacity", and the number of times EPC usage reached the max limit
->> in "misc.events".
->>
->> For now, the EPC cgroup simply blocks additional EPC allocation in
->> sgx_alloc_epc_page() when the limit is reached. Reclaimable pages are
->> still tracked in the global active list, only reclaimed by the global
->> reclaimer when the total free page count is lower than a threshold.
->>
->> Later patches will reorganize the tracking and reclamation code in the
->> global reclaimer and implement per-cgroup tracking and reclaiming.
->>
->> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 >> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
 >> Co-developed-by: Haitao Huang <haitao.huang@linux.intel.com>
 >> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
->
-> For consistency sake I'd also add co-developed-by for Kristen. This is
-> at least the format suggested by kernel documentation.
->
 >> ---
 >> V7:
->> - Use a static for root cgroup (Kai)
->> - Wrap epc_cg field in sgx_epc_page struct with #ifdef (Kai)
->> - Correct check for charge API return (Kai)
->> - Start initialization in SGX device driver init (Kai)
->> - Remove unneeded BUG_ON (Kai)
->> - Split  sgx_get_current_epc_cg() out of sgx_epc_cg_try_charge() (Kai)
+>> - Make ops one per resource type and store them in array (Michal)
+>> - Rename the ops struct to misc_res_ops, and enforce the constraints of  
+>> required callback
+>> functions (Jarkko)
+>> - Moved addition of priv field to patch 4 where it was used first.  
+>> (Jarkko)
 >>
 >> V6:
->> - Split the original large patch"Limit process EPC usage with misc
->> cgroup controller"  and restructure it (Kai)
+>> - Create ops struct for per resource callbacks (Jarkko)
+>> - Drop max_write callback (Dave, Michal)
+>> - Style fixes (Kai)
 >> ---
->>  arch/x86/Kconfig                     | 13 +++++
->>  arch/x86/kernel/cpu/sgx/Makefile     |  1 +
->>  arch/x86/kernel/cpu/sgx/epc_cgroup.c | 79 ++++++++++++++++++++++++++++
->>  arch/x86/kernel/cpu/sgx/epc_cgroup.h | 73 +++++++++++++++++++++++++
->>  arch/x86/kernel/cpu/sgx/main.c       | 52 +++++++++++++++++-
->>  arch/x86/kernel/cpu/sgx/sgx.h        |  5 ++
->>  include/linux/misc_cgroup.h          |  2 +
->>  7 files changed, 223 insertions(+), 2 deletions(-)
->>  create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.c
->>  create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.h
+>>  include/linux/misc_cgroup.h | 11 +++++++
+>>  kernel/cgroup/misc.c        | 60 +++++++++++++++++++++++++++++++++++--
+>>  2 files changed, 68 insertions(+), 3 deletions(-)
 >>
->> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->> index 5edec175b9bf..10c3d1d099b2 100644
->> --- a/arch/x86/Kconfig
->> +++ b/arch/x86/Kconfig
->> @@ -1947,6 +1947,19 @@ config X86_SGX
+>> diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
+>> index e799b1f8d05b..0806d4436208 100644
+>> --- a/include/linux/misc_cgroup.h
+>> +++ b/include/linux/misc_cgroup.h
+>> @@ -27,6 +27,16 @@ struct misc_cg;
 >>
->>  	  If unsure, say N.
+>>  #include <linux/cgroup.h>
 >>
->> +config CGROUP_SGX_EPC
->> +	bool "Miscellaneous Cgroup Controller for Enclave Page Cache (EPC)  
->> for Intel SGX"
->> +	depends on X86_SGX && CGROUP_MISC
->> +	help
->> +	  Provides control over the EPC footprint of tasks in a cgroup via
->> +	  the Miscellaneous cgroup controller.
->> +
->> +	  EPC is a subset of regular memory that is usable only by SGX
->> +	  enclaves and is very limited in quantity, e.g. less than 1%
->> +	  of total DRAM.
->> +
->> +	  Say N if unsure.
->> +
->>  config X86_USER_SHADOW_STACK
->>  	bool "X86 userspace shadow stack"
->>  	depends on AS_WRUSS
->> diff --git a/arch/x86/kernel/cpu/sgx/Makefile  
->> b/arch/x86/kernel/cpu/sgx/Makefile
->> index 9c1656779b2a..12901a488da7 100644
->> --- a/arch/x86/kernel/cpu/sgx/Makefile
->> +++ b/arch/x86/kernel/cpu/sgx/Makefile
->> @@ -4,3 +4,4 @@ obj-y += \
->>  	ioctl.o \
->>  	main.o
->>  obj-$(CONFIG_X86_SGX_KVM)	+= virt.o
->> +obj-$(CONFIG_CGROUP_SGX_EPC)	       += epc_cgroup.o
->> diff --git a/arch/x86/kernel/cpu/sgx/epc_cgroup.c  
->> b/arch/x86/kernel/cpu/sgx/epc_cgroup.c
->> new file mode 100644
->> index 000000000000..938695816a9e
->> --- /dev/null
->> +++ b/arch/x86/kernel/cpu/sgx/epc_cgroup.c
->> @@ -0,0 +1,79 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// Copyright(c) 2022 Intel Corporation.
->> +
->> +#include <linux/atomic.h>
->> +#include <linux/kernel.h>
->> +#include "epc_cgroup.h"
->> +
->> +static struct sgx_epc_cgroup epc_cg_root;
->> +
 >> +/**
->> + * sgx_epc_cgroup_try_charge() - try to charge cgroup for a single EPC  
->> page
+>> + * struct misc_res_ops: per resource type callback ops.
+>> + * @alloc: invoked for resource specific initialization when cgroup is  
+>> allocated.
+>> + * @free: invoked for resource specific cleanup when cgroup is  
+>> deallocated.
+>> + */
+>> +struct misc_res_ops {
+>> +	int (*alloc)(struct misc_cg *cg);
+>> +	void (*free)(struct misc_cg *cg);
+>> +};
+>> +
+>>  /**
+>>   * struct misc_res: Per cgroup per misc type resource
+>>   * @max: Maximum limit on the resource.
+>> @@ -56,6 +66,7 @@ struct misc_cg {
+>>
+>>  u64 misc_cg_res_total_usage(enum misc_res_type type);
+>>  int misc_cg_set_capacity(enum misc_res_type type, u64 capacity);
+>> +int misc_cg_set_ops(enum misc_res_type type, const struct misc_res_ops  
+>> *ops);
+>>  int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg,  
+>> u64 amount);
+>>  void misc_cg_uncharge(enum misc_res_type type, struct misc_cg *cg, u64  
+>> amount);
+>>
+>> diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
+>> index 79a3717a5803..b8c32791334c 100644
+>> --- a/kernel/cgroup/misc.c
+>> +++ b/kernel/cgroup/misc.c
+>> @@ -39,6 +39,9 @@ static struct misc_cg root_cg;
+>>   */
+>>  static u64 misc_res_capacity[MISC_CG_RES_TYPES];
+>>
+>> +/* Resource type specific operations */
+>> +static const struct misc_res_ops *misc_res_ops[MISC_CG_RES_TYPES];
+>> +
+>>  /**
+>>   * parent_misc() - Get the parent of the passed misc cgroup.
+>>   * @cgroup: cgroup whose parent needs to be fetched.
+>> @@ -105,6 +108,36 @@ int misc_cg_set_capacity(enum misc_res_type type,  
+>> u64 capacity)
+>>  }
+>>  EXPORT_SYMBOL_GPL(misc_cg_set_capacity);
+>>
+>> +/**
+>> + * misc_cg_set_ops() - set resource specific operations.
+>> + * @type: Type of the misc res.
+>> + * @ops: Operations for the given type.
 >> + *
->> + * @epc_cg:	The EPC cgroup to be charged for the page.
+>> + * Context: Any context.
 >> + * Return:
->> + * * %0 - If successfully charged.
->> + * * -errno - for failures.
+>> + * * %0 - Successfully registered the operations.
+>> + * * %-EINVAL - If @type is invalid, or the operations missing any  
+>> required callbacks.
 >> + */
->> +int sgx_epc_cgroup_try_charge(struct sgx_epc_cgroup *epc_cg)
+>> +int misc_cg_set_ops(enum misc_res_type type, const struct misc_res_ops  
+>> *ops)
 >> +{
->> +	if (!epc_cg)
+>> +	if (!valid_type(type))
 >> +		return -EINVAL;
->
-> Is there legit flow where the function is called with nil?
->
 >> +
->> +	return  misc_cg_try_charge(MISC_CG_RES_SGX_EPC, epc_cg->cg,  
->> PAGE_SIZE);
->               ~
-> 	      extra space
->
+>> +	if (!ops->alloc) {
+>> +		pr_err("%s: alloc missing\n", __func__);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (!ops->free) {
+>> +		pr_err("%s: free missing\n", __func__);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	misc_res_ops[type] = ops;
+>> +	return 0;
 >> +}
+>> +EXPORT_SYMBOL_GPL(misc_cg_set_ops);
 >> +
->> +/**
->> + * sgx_epc_cgroup_uncharge() - uncharge a cgroup for an EPC page
->> + * @epc_cg:	The charged epc cgroup
->> + */
->> +void sgx_epc_cgroup_uncharge(struct sgx_epc_cgroup *epc_cg)
->> +{
->> +	if (!epc_cg)
->> +		return;
+>>  /**
+>>   * misc_cg_cancel_charge() - Cancel the charge from the misc cgroup.
+>>   * @type: Misc res type in misc cg to cancel the charge from.
+>> @@ -383,23 +416,37 @@ static struct cftype misc_cg_files[] = {
+>>  static struct cgroup_subsys_state *
+>>  misc_cg_alloc(struct cgroup_subsys_state *parent_css)
+>>  {
+>> +	struct misc_cg *parent_cg, *cg;
+>>  	enum misc_res_type i;
+>> -	struct misc_cg *cg;
+>> +	int ret;
+>>
+>>  	if (!parent_css) {
+>> -		cg = &root_cg;
+>> +		parent_cg = cg = &root_cg;
+>>  	} else {
+>>  		cg = kzalloc(sizeof(*cg), GFP_KERNEL);
+>>  		if (!cg)
+>>  			return ERR_PTR(-ENOMEM);
+>> +		parent_cg = css_misc(parent_css);
+>>  	}
+>>
+>>  	for (i = 0; i < MISC_CG_RES_TYPES; i++) {
+>>  		WRITE_ONCE(cg->res[i].max, MAX_NUM);
+>>  		atomic64_set(&cg->res[i].usage, 0);
+>> +		if (misc_res_ops[i]) {
+>> +			ret = misc_res_ops[i]->alloc(cg);
+>> +			if (ret)
+>> +				goto alloc_err;
 >
-> If there was, this function also should have a return value (i.e. return
-> -EINVAL).
+> So I'd consider pattern like this to avoid repetition:
 >
-> This API does not look good tbh.
+> 			if (ret) {
+> 				__misc_cg_free(cg);
+> 				return PERR_PTR(ret);
+> 			}
 >
-> Perhaps you want to emit error message in both functions? Now there is
-> asymmetry that other goes silent and other returns error. I'm neither
-> not sure why exactly -EINVAL was picked (does not mean the same that
-> I would ultimately oppose picking that).
+> and call __misc_cg_free() also in misc_cg_free().
 >
->
-Good points.
-I'll remove the NULL check for both cases. They should not happen if  
-kernel is configured with EPC cgroup. There are separate versions when EPC  
-cgroup disabled.
-
-Thanks for your quick response.
+Will change to do that.
+Thanks
 Haitao
