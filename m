@@ -1,110 +1,89 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3433A1869;
-	Fri, 26 Jan 2024 16:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D803CF67;
+	Sun, 28 Jan 2024 16:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706286091; cv=none; b=ke/HyvOH5L5gUYHkulXmiq2WxqloO+4cU7eRKwpKbdxPmsN0KtLxpeF7SyzJV36E/pjhvpTr+RnDgbYPd1T6eewiPXjgcJicakXxpf5fzACuFLZ8W8b040H26xNSIXDQoq7DBoXaCajah0zYTwQ5tP9F3nd+3DHXots9bik+jw0=
+	t=1706458306; cv=none; b=G/ZKcs2IPdsrtjgunRTBrIhRkYcH3psYWf2BkPnW3wiABRJ/T+JDNH7WnFIkBQpTFw00nUPdr8/+93cN03WWRsLP7hZGVBDh34LMtIcmAmBAAJxwSfjDWcMB5ZoH4/MDF+oOZe5sEJ9hFrIYlDUjLR3hAilO+SZcxiPr371y1N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706286091; c=relaxed/simple;
-	bh=qADy1ppHLODrkpaiBhX12RYbvSDcazYVsUJT8jx33Cg=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=NM05dWjxd4uVqEWFiWyHuauhRkEe9557oAWyQM/JFYw0RZgspEyQNp6nHCEh+MYVsrbZnHU3Y6zwkUH/B55d5701ITQ/WJ1zON7PPJhaPYZZha3OPGfVPJ5tujaZHrjY8kbFPp7bhKCF13zNTuvc5LqGnAoBEpt8RNvGGXbxSc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E85DPW04; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1706458306; c=relaxed/simple;
+	bh=VBn9Yltm5cfWYKt+VTGYGKZwWroFJx7UMerJX8Wpfqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pW2RLVS0fYcdqzcLlFSeYu6ylv9++7safOH9Yk4dhycyaiOa9RsG52JsoTXJ9LTGCPcf1OeWxm2r1utN6lPx22e0H7r814zuCrgfbgyKgBlDjWuklrANl8mX604/kQz6b2FMWTJFVq2BZuGCmrQe6A4ftNeQBUWILlfZ6fB8kDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+eXwc6Q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E85DPW04"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1706286090; x=1737822090;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=qADy1ppHLODrkpaiBhX12RYbvSDcazYVsUJT8jx33Cg=;
-  b=E85DPW04VnbFN3dcBqFdJuz4rTChKdl44hw9MK/poVgt15CZ6zffeQ5+
-   kz68KSAozXYrxOh4J4GSKOYk5Y3P8Kbwcyv6ALIreNk80PVqgvrBGPGi7
-   5c59d5f6hCljNtrYJ3t6kh1Kspt+86x1nEpY/c9ZbVdnZnQ+igbGsyhnH
-   kSkdVu/BEYFsRWTxKTpDqlP/QOR/UWNEfO2qwmtQo5ZPkFE8/9c1Zsr6c
-   I0A/Y0qBEREEVtxoLAWiv7eCulAncw8gaiBJD5mJZS7D43pZdW2buHZo1
-   Mg1v/iY5ey5TV5jPwldTOznABQK797WAt+YTXfKla9NcCb97hA/fJW1Dg
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10964"; a="9884190"
-X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
-   d="scan'208";a="9884190"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2024 08:21:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10964"; a="857438086"
-X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
-   d="scan'208";a="857438086"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 26 Jan 2024 08:21:25 -0800
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: "hpa@zytor.com" <hpa@zytor.com>, "linux-sgx@vger.kernel.org"
- <linux-sgx@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "jarkko@kernel.org" <jarkko@kernel.org>, "cgroups@vger.kernel.org"
- <cgroups@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "Mehta, Sohil"
- <sohil.mehta@intel.com>, "tj@kernel.org" <tj@kernel.org>, "mingo@redhat.com"
- <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, "Huang, Kai"
- <kai.huang@intel.com>
-Cc: "kristen@linux.intel.com" <kristen@linux.intel.com>,
- "yangjie@microsoft.com" <yangjie@microsoft.com>, "Li, Zhiquan1"
- <zhiquan1.li@intel.com>, "seanjc@google.com" <seanjc@google.com>,
- "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>, "Zhang, Bo"
- <zhanb@microsoft.com>, "anakrish@microsoft.com" <anakrish@microsoft.com>
-Subject: Re: [PATCH v7 09/15] x86/sgx: Charge mem_cgroup for per-cgroup
- reclamation
-References: <20240122172048.11953-1-haitao.huang@linux.intel.com>
- <20240122172048.11953-10-haitao.huang@linux.intel.com>
- <195eff7f2814b918a570b8c2c9e21288ac9df4b7.camel@intel.com>
-Date: Fri, 26 Jan 2024 10:21:22 -0600
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+eXwc6Q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4737CC43394;
+	Sun, 28 Jan 2024 16:11:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706458306;
+	bh=VBn9Yltm5cfWYKt+VTGYGKZwWroFJx7UMerJX8Wpfqg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=h+eXwc6QRUmXuDyPRCdjuB3dBN+Nz9UWDMHm0vO+VRD4+B5pQD8zZlVDjiBVUsPlX
+	 BP/RdedcPXkgR+ZGthvyGbyPm5rHUEHHyPCtaOZAOF3bWc2YCm0//VW21HmeETaK/g
+	 lyiQBwQx1DGCy73+t4muds1KfiqnA+WxFCICKAzJGc66njPiMlzfywys70sbdOELzh
+	 uvsb0D4HKF+gj6LMNwNFOWwCf4ORuRUWjLOOVXafPa9MwQcS9N+Mq/Nd+ErJ6eZ6WR
+	 g8Hjo1aV1svJo1tdFCP+xWTCl1zbC5UqmBS7+dKyBAY0ojUfHFrMZ/Rvm1HEkezS1u
+	 DyUd0nhsK/Unw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	shuah@kernel.org,
+	linux-sgx@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.7 08/39] selftests/sgx: Fix linker script asserts
+Date: Sun, 28 Jan 2024 11:10:28 -0500
+Message-ID: <20240128161130.200783-8-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240128161130.200783-1-sashal@kernel.org>
+References: <20240128161130.200783-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2h5w1w0awjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <195eff7f2814b918a570b8c2c9e21288ac9df4b7.camel@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.7.2
+Content-Transfer-Encoding: 8bit
 
-On Fri, 26 Jan 2024 08:37:25 -0600, Huang, Kai <kai.huang@intel.com> wrote:
+From: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
 
->
->>
->> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
->> Reported-by: Mikko Ylinen <mikko.ylinen@linux.intel.com>
->> ---
->
-> Non-technical staff:
->
-> I believe checkpatch requires you to have a "Closes" tag after  
-> "Reported-by"
-> otherwise it complains something like this:
->
->   WARNING: Reported-by: should be immediately followed by Closes: with a  
-> URL
->   to the report
->
-> Not sure how strict this rule is, but seems you forgot to run checkpatch  
-> so just
-> a reminder.
+[ Upstream commit 9fd552ee32c6c1e27c125016b87d295bea6faea7 ]
 
-Yeah I did remember run checkpatch this time and last time :-)
-Here is what I see from documentation[1]:"The tag should be followed by a  
-Closes: tag pointing to the report, unless the report is not available on  
-the web". So it seems to allow exceptions.
-Mikko mentioned this issue to me in private IM so this is not available on  
-web.
+DEFINED only considers symbols, not section names. Hence, replace the
+check for .got.plt with the _GLOBAL_OFFSET_TABLE_ symbol and remove other
+(non-essential) asserts.
 
-Thanks
-Haitao
+Signed-off-by: Jo Van Bulck <jo.vanbulck@cs.kuleuven.be>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Link: https://lore.kernel.org/all/20231005153854.25566-10-jo.vanbulck%40cs.kuleuven.be
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/testing/selftests/sgx/test_encl.lds | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-https://docs.kernel.org/process/submitting-patches.html#using-reported-by-tested-by-reviewed-by-suggested-by-and-fixes
+diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
+index a1ec64f7d91f..108bc11d1d8c 100644
+--- a/tools/testing/selftests/sgx/test_encl.lds
++++ b/tools/testing/selftests/sgx/test_encl.lds
+@@ -34,8 +34,4 @@ SECTIONS
+ 	}
+ }
+ 
+-ASSERT(!DEFINED(.altinstructions), "ALTERNATIVES are not supported in enclaves")
+-ASSERT(!DEFINED(.altinstr_replacement), "ALTERNATIVES are not supported in enclaves")
+-ASSERT(!DEFINED(.discard.retpoline_safe), "RETPOLINE ALTERNATIVES are not supported in enclaves")
+-ASSERT(!DEFINED(.discard.nospec), "RETPOLINE ALTERNATIVES are not supported in enclaves")
+-ASSERT(!DEFINED(.got.plt), "Libcalls are not supported in enclaves")
++ASSERT(!DEFINED(_GLOBAL_OFFSET_TABLE_), "Libcalls through GOT are not supported in enclaves")
+-- 
+2.43.0
+
