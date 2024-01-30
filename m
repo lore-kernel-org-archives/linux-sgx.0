@@ -1,204 +1,218 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C48553E22;
-	Tue, 30 Jan 2024 02:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706580592; cv=none; b=iaa5fDttlwQnIwFYvxAUO+B4UaHEGXrtce3YtiS92y2INPHGmhR63kC3cXgRl3r3pDx7430ZOYPTx3UVEiQCyt9x0pzbGRIS+EPy4SV5PxS7jgXR8zp2+BXoo5wqwYE0QTE4NfajgwAczc0d1eZiy/vJW8nbFxmk3XZd4f9h9kY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706580592; c=relaxed/simple;
-	bh=9w5lQ2pOZdanN4uPSlw3FqAR9K1n/EpTv9COUE47BCo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t+Sq7J8EJe2HowbyY1q+sVs952PxBUHo2M1AfUl//WI81avVLHBDX8c00MnHE/dBQsdQ0EBOq7XyyR3HaefUGgRCNDWKqCKeLCBbYpkTKOtZim1TfdzR6RVXeBGYanwTylEKsfNSkWRS9FSsWRL43Xn97jF9Q/5FiIj2xWu8sds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XmuJfFn5; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3D8811E0;
+	Tue, 30 Jan 2024 15:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706628208; cv=fail; b=lmT/m0lt1dBAa6NfstrAXKyaLQuYfxxZIO0rmWYqeQhgT5meVq272Yer4mFK6yG6SLG0XnQERq1ayvxoAObTE1q424UJucUE1qAE0c5y6zyhHNjN806z65cdZspEcqnVKLucF5Ay19Frf8AdgSNQJVMdJPzqhTeDPESt7s2Z9EM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706628208; c=relaxed/simple;
+	bh=oUV1F8lWcqndslM7Mvgxqjsv7KPAhYLlcW1Hqn8ITGs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EedmtVcr9EkVewBJyAy0dBsvhzESmtfna6nW7uoV73PYCf8FfetJeLyA8BlXm7MrRpn+YnGMyUslEwidGkAL+ohPjs/UtVhbWW0Gpqq9jo+n+oWovBUXOOg36HhEpBFkd5QUdCovDOmEkgVRbg1/mVmfJnjrY/0XS9JY/TUWDtQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lca1CCHr; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XmuJfFn5"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lca1CCHr"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1706580591; x=1738116591;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9w5lQ2pOZdanN4uPSlw3FqAR9K1n/EpTv9COUE47BCo=;
-  b=XmuJfFn5sR0gIfTeqXdJANuhrkcM5p4430vksCsV2y/J1IazHJK09rTK
-   b92HkrTtd6kkhlRlbC6MqPi5arwX/umA3hwjkWsKaJi1Uj4iFcs6LP8pM
-   52KolE/nldSlsjTjIvqrbE4E9lZ4pGhlrfNN2YTWh9AEDANM2RwH5myua
-   EtiLv3kBE42+s1TjLKW8gWpsctQctV9Ftgp7mn+qZZEerlbXime7FW8Eg
-   trLu8iTae9p09mvmrnJIVtBmipsdLPo+miKTrIWX5ek3oFuB5nRc5Auuw
-   A+kyZZIlBa8FItow2duuCjr4jC3IzEsh4hS7hhT5u9hN7Rz0O9xRNCAB8
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10968"; a="16531031"
-X-IronPort-AV: E=Sophos;i="6.05,707,1701158400"; 
-   d="scan'208";a="16531031"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jan 2024 18:09:42 -0800
+  t=1706628207; x=1738164207;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=oUV1F8lWcqndslM7Mvgxqjsv7KPAhYLlcW1Hqn8ITGs=;
+  b=Lca1CCHrjFGaSC0v4QoohguNi+Gv64AcBrCzGF5ZgbAMWUvS6ob05Gv7
+   dEVZpW9O++z6sEA54M3cssLOHJ+OLyJBb9smw9E4Mve8Yp6NssU2fIdVp
+   t/dq7vO1fu1BTWWLibJ2daxWf/lT0b+Z1Yvs9WXJAxp7eXqrjVFDaxqQl
+   0G6glYna3t8wW8cGlIjwGh9go0IeL9RIcCYu0BPM8ED9uKs6h7NGC3udb
+   dli12kv62LHRMwvPycpXX8JftLz/6nSGHFulKNX0Hhq2KNtIwMWP1PYEI
+   VQ5q6xbGbtlRcxTZQvVn5Hv+rFHyoJQmovSTIVSQHTj+aBGAsbBispN7a
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10968"; a="24782157"
+X-IronPort-AV: E=Sophos;i="6.05,230,1701158400"; 
+   d="scan'208";a="24782157"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jan 2024 07:22:23 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10968"; a="822042360"
-X-IronPort-AV: E=Sophos;i="6.05,707,1701158400"; 
-   d="scan'208";a="822042360"
-Received: from b4969161e530.jf.intel.com ([10.165.56.46])
-  by orsmga001.jf.intel.com with ESMTP; 29 Jan 2024 18:09:41 -0800
-From: Haitao Huang <haitao.huang@linux.intel.com>
-To: jarkko@kernel.org,
-	dave.hansen@linux.intel.com,
-	tj@kernel.org,
-	mkoutny@suse.com,
-	linux-kernel@vger.kernel.org,
-	linux-sgx@vger.kernel.org,
-	x86@kernel.org,
-	cgroups@vger.kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	hpa@zytor.com,
-	sohil.mehta@intel.com
-Cc: zhiquan1.li@intel.com,
-	kristen@linux.intel.com,
-	seanjc@google.com,
-	zhanb@microsoft.com,
-	anakrish@microsoft.com,
-	mikko.ylinen@linux.intel.com,
-	yangjie@microsoft.com,
-	chrisyan@microsoft.com
-Subject: [PATCH v8 14/15] Docs/x86/sgx: Add description for cgroup support
-Date: Mon, 29 Jan 2024 18:09:37 -0800
-Message-Id: <20240130020938.10025-15-haitao.huang@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240130020938.10025-1-haitao.huang@linux.intel.com>
+X-IronPort-AV: E=Sophos;i="6.05,230,1701158400"; 
+   d="scan'208";a="22463075"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Jan 2024 07:22:23 -0800
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 30 Jan 2024 07:22:22 -0800
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Tue, 30 Jan 2024 07:22:22 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.101)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 30 Jan 2024 07:22:22 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jJ8z7WdlGWtxVAJ1wgk4fkomvBdYgFJI36aRzPz4kKnIitR2T1aT/i4Akd/0Zw8J1U5+2wBLv+6dOmV8RIwmxxzyebinVAg5DA8H9T34wf91VXaDTWbIRma7ybsbMaTSVOsFEaVOlVJrbqjMb9Dy00f1XvsYr9QKLbAwT6eGdU7hH7XivJRL3q160t15+zs+lFKbf4qwFMw0sK/aue+2zOR0bpbGrkz9MSuDuQSaA2FSjf+iRUqU/yBMuqwFk5meeichFLa2OEzInswO/pR6ArQw4QafU7bzMDZ7CmGbIoznRFG6TZZxprM/+dehcvTjx+t3om+MRXMOiEzdCneoSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AD0nDsZgnHV+K3ruAFHLIBjC7TDy7jUELJHyWXMUcys=;
+ b=cVoHot6RDBy2GI/JWjl/rwzR9t+/cQog8QojOrCWNsNx99M5FYWc1LuEm93tMYYjaI+2i5QN0KSsqmQV526v69AiHpDHlv52k27oTo5iH+4NkmayNBH4iLH6mx1GME5vK52/9EWoznkXRzgKl9TEfjsEgPHDOrirOpA8bW0PxWq7goHAwB0mXbVf+sXbheEnNSY7S7gVKbxZyQYFV9cpaXVY6gaS1Hj7rPFqu876f2MBBDdoKiTSZhPiqRyZx49vslKIuStq+sT4Y+XV0hlpe5EpnYuFjlVa4LnpzQd/gl+ozzxdEb2ghXbWw8+JN+B4/qvURixp3Aif+lTuLJ1uRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by SA1PR11MB7110.namprd11.prod.outlook.com (2603:10b6:806:2b3::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.32; Tue, 30 Jan
+ 2024 15:22:17 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::124d:fbd5:113b:16ec]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::124d:fbd5:113b:16ec%4]) with mapi id 15.20.7228.029; Tue, 30 Jan 2024
+ 15:22:17 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: Haitao Huang <haitao.huang@linux.intel.com>, "jarkko@kernel.org"
+	<jarkko@kernel.org>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "tj@kernel.org" <tj@kernel.org>,
+	"mkoutny@suse.com" <mkoutny@suse.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-sgx@vger.kernel.org"
+	<linux-sgx@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
+	<bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>, "Mehta, Sohil"
+	<sohil.mehta@intel.com>
+CC: "Li, Zhiquan1" <zhiquan1.li@intel.com>, "kristen@linux.intel.com"
+	<kristen@linux.intel.com>, "seanjc@google.com" <seanjc@google.com>, "Zhang,
+ Bo" <zhanb@microsoft.com>, "anakrish@microsoft.com" <anakrish@microsoft.com>,
+	"mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+	"yangjie@microsoft.com" <yangjie@microsoft.com>, "chrisyan@microsoft.com"
+	<chrisyan@microsoft.com>
+Subject: RE: [PATCH v8 04/15] x86/sgx: Implement basic EPC misc cgroup
+ functionality
+Thread-Topic: [PATCH v8 04/15] x86/sgx: Implement basic EPC misc cgroup
+ functionality
+Thread-Index: AQHaUyGOl9vfNFvwQEi7DaOozhX++bDyd+Mw
+Date: Tue, 30 Jan 2024 15:22:14 +0000
+Message-ID: <BL1PR11MB59784620554CDAD5E2C2BF45F77D2@BL1PR11MB5978.namprd11.prod.outlook.com>
 References: <20240130020938.10025-1-haitao.huang@linux.intel.com>
+ <20240130020938.10025-5-haitao.huang@linux.intel.com>
+In-Reply-To: <20240130020938.10025-5-haitao.huang@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|SA1PR11MB7110:EE_
+x-ms-office365-filtering-correlation-id: 627b2990-ed2a-4472-5584-08dc21a73d40
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Mufuw/+xICGhP1ndMTH6xOqFO/2bdxfsC41ogLpjgdWYx/mjJp7bE6rk9utBSz9E4/XJnxLUTGcPuPsmdH/MVdXl/I9tA4K3KVsVm9o5tua+wfe4W8FRkuBW06xpDmG4i2ZTUQrewqunjCHXyFrrrzQj+obhS9vcVqKbOGphEoXv+yaEWm7o49vyf4P3QzINYBgq6zGfHED8x6aQrwSDJ1pt1PMzfBqLRid2TZJrebEadB9ra5Up9F91+aQIyUY99JCKsPRM/hVCl0VEfmclPr7+Oeb/R4bxaIB+RyCi07p/TbAvBJQDITqvGRQgimuDM6Xiq2t4i4BGY8mpT4/Ud1ximWJ6OVBf30yqU2BZ2QSyCIu6ntOuT697mckp7Z385vJJ7iGEUlAboFHPpGdsjjh1Wr+PHSxJFo9BqdKB4xmwspOD83NLEbewJ8VFBKlwyO9p7pg82mfQCeEeQj+480bUbhtQVGWuGNnjjB9L0SKT80O1nSPDQ3s2LADU8yGAhk3b3oTndhadeYEUla4HfN6i3GVMpx3Z+ReAAvBePZQYyAANasGcMLEUPzH2yoXhCkSiHPgN4BfuSAP9/ixUrJ/yau6FT5Tx0KmKfihOHGpyBXz95B7+B/0tYMWKjpvb
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(366004)(396003)(376002)(39860400002)(136003)(230922051799003)(64100799003)(186009)(451199024)(1800799012)(41300700001)(82960400001)(38100700002)(122000001)(55016003)(110136005)(66946007)(66446008)(316002)(76116006)(86362001)(6506007)(54906003)(6636002)(7696005)(8676002)(66476007)(8936002)(921011)(64756008)(33656002)(9686003)(5660300002)(7416002)(52536014)(478600001)(4326008)(45080400002)(26005)(71200400001)(2906002)(6666004)(66556008)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?sW2oVbiat7Ftp2/s8JTyYn5SuKxUvvm7oBqtxcBr7IRp1o3Xc2IQZUQb8582?=
+ =?us-ascii?Q?zmjKV7Ewyv+eX5fNK11KUatj7OR7kQg774pgRkYKbP6I3Zzbu2wgABZINw2y?=
+ =?us-ascii?Q?2qFScVle9dkQ8WdhsWqbaQFU+6Y45UrxlUQGMSoBarW1rD7izFCf0FZYFXOX?=
+ =?us-ascii?Q?O3t+1+ZswJBxsBelP4LnXOvkgJg7u0b0QigPpmY7GRDElz6mQaR/Uq32i4kc?=
+ =?us-ascii?Q?YR5tFiV+KVLmFI2agicTeAIzW//15TW0FBttnZqW5wkOMz9Iuk4jPxhXz2RC?=
+ =?us-ascii?Q?zMD/PMM81qMzLOYfIgVhr4rSBH+CIVHCYbgfL3IQqZhrNbaUpQ+ESAw+GukK?=
+ =?us-ascii?Q?ZJ7Aiw8nTuU993Qr2czoFBD0fZ/zDcMVE0REpaKFhM3+zucrdYSUop7liA21?=
+ =?us-ascii?Q?JJrmuRNWeGQuB35nyPRQJ3WPovGh6rjV9lPrXwLxAKtwpMf147CxkKstU2v8?=
+ =?us-ascii?Q?AUS2a6AN6bmHaiQrwr0dxxmV+F73GNtZP2V4h0wOSugjdtK5gkt1hF0OgghI?=
+ =?us-ascii?Q?LCEwFgnzboEA2K0TAEQYny0w+Hcw0gjpejd01DGxYWXlnBWOuxVRAabM0qi3?=
+ =?us-ascii?Q?9NfkSVUPX/4nULRC9YtLyC/FIPiX9nNYbcSBf6KrgYj7W9VwzCeq3XD28t7Y?=
+ =?us-ascii?Q?1M6WU6GkcCujUcQiuaJV5diIsVsb/rNjeESHphqlx6p86AnJLpu0eBon5JDi?=
+ =?us-ascii?Q?igbB3uTSm58wU6PWVqOv0g01nVAmxW2CGA/+yilegZmYQyXq3WtXanhPOwky?=
+ =?us-ascii?Q?XPeqJw73XJYhbfrvc6G4wCNAObnZFIEkR+OThboVaOS6wM87kwEFvFksNhOD?=
+ =?us-ascii?Q?E3xuZXqTm+MpUvZORIbxth8QqwPsB307F0T3pGuYIVZfMvgjYCQd+smENvPv?=
+ =?us-ascii?Q?+cCHChYOdrqKJA3nCwJia+Pm/xJUkjhUWZwSthu448NYfBlDX38JO0EnCkBE?=
+ =?us-ascii?Q?6jcd6UowFYO/yeNZ0DbkeT39s+raAGXM42jt6ry8v8mPmdhMzbJmOxFJLyG4?=
+ =?us-ascii?Q?8IoMLbYtyRH6P2JaNuIbFTg1fAvBDXxiqWe2YPMi3pvkcm5iUm5IqnJbn1O9?=
+ =?us-ascii?Q?1GAPiUoL/HqhZhwbFNigZvx/ODq0DkJLgNwsRv1h87sctu3Vrcz9wpHi8+Jt?=
+ =?us-ascii?Q?DqmN4cjk61E5BM67iykQi0eCxfJnIHN9Uv3Tsvc6T8Iut9baPm3gkqJqrsQQ?=
+ =?us-ascii?Q?yQMI3R7t//9XaUi66CCTvhiaIlnE5bsCM9v8znIGQrxS5p81gq5lxORuOSnm?=
+ =?us-ascii?Q?u04z6mQQ/Afn+w0jpIErD4eF85tpYsiywK679LdhA3Qfj2B1ThP0zjvNLqQa?=
+ =?us-ascii?Q?kFQCP8Cm3tOutaob1Ikl6wAy4fb6NAdXMOwNCKqvCXJj2BC+V1jrXxmcsE3/?=
+ =?us-ascii?Q?BNfHZTX204C8VNyxFPpAZNEjK1NPZtUSnld3+2o/jYcsgjLr45SZaH80A+Ke?=
+ =?us-ascii?Q?hKg+HT0ioTL3fnBy5Z57YWJI5lSnqAQPWDdgPXReoomFKUYKQG9Dgbyw6PWn?=
+ =?us-ascii?Q?Xa/v++ZqGe2CITTx9FYLKEFO6pATFtVRADdVKlwTOKI5wkMHQqFB0exwA01D?=
+ =?us-ascii?Q?9pREVaa5rLMvQWQzRibERpo2V/m6R8N+UGXXvaEv?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 627b2990-ed2a-4472-5584-08dc21a73d40
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2024 15:22:14.7549
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PieDWbcswV/RlQFNhQeoIu3ACJVW3OpeQ2rmFIYZMcjjXF5BWRcxbfJQpJ8cUXQXVrbzQm5GLkdRUCg0Ph1x6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7110
+X-OriginatorOrg: intel.com
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+>  struct sgx_epc_page *sgx_alloc_epc_page(void *owner, bool reclaim)  {
+> +	struct sgx_epc_cgroup *epc_cg;
+>  	struct sgx_epc_page *page;
+> +	int ret;
+> +
+> +	epc_cg =3D sgx_get_current_epc_cg();
+> +	ret =3D sgx_epc_cgroup_try_charge(epc_cg);
+> +	if (ret) {
+> +		sgx_put_epc_cg(epc_cg);
+> +		return ERR_PTR(ret);
+> +	}
+>=20
+>  	for ( ; ; ) {
+>  		page =3D __sgx_alloc_epc_page();
+> @@ -567,8 +578,10 @@ struct sgx_epc_page *sgx_alloc_epc_page(void
+> *owner, bool reclaim)
+>  			break;
+>  		}
+>=20
+> -		if (list_empty(&sgx_active_page_list))
+> -			return ERR_PTR(-ENOMEM);
+> +		if (list_empty(&sgx_active_page_list)) {
+> +			page =3D ERR_PTR(-ENOMEM);
+> +			break;
+> +		}
 
-Add initial documentation of how to regulate the distribution of
-SGX Enclave Page Cache (EPC) memory via the Miscellaneous cgroup
-controller.
+(Sorry for replying from Outlook because I am in travel for Chinese New Yea=
+r.)
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-Co-developed-by: Haitao Huang<haitao.huang@linux.intel.com>
-Signed-off-by: Haitao Huang<haitao.huang@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>
----
-V8:
-- Limit text width to 80 characters to be consistent.
+Perhaps I am missing something but I don't understand this change.
 
-V6:
-- Remove mentioning of VMM specific behavior on handling SIGBUS
-- Remove statement of forced reclamation, add statement to specify
-ENOMEM returned when no reclamation possible.
-- Added statements on the non-preemptive nature for the max limit
-- Dropped Reviewed-by tag because of changes
+An empty sgx_active_page_list means you cannot reclaim any page from it, so=
+ why need to break?
 
-V4:
-- Fix indentation (Randy)
-- Change misc.events file to be read-only
-- Fix a typo for 'subsystem'
-- Add behavior when VMM overcommit EPC with a cgroup (Mikko)
----
- Documentation/arch/x86/sgx.rst | 83 ++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+>=20
+>  		if (!reclaim) {
+>  			page =3D ERR_PTR(-EBUSY);
+> @@ -580,10 +593,25 @@ struct sgx_epc_page *sgx_alloc_epc_page(void
+> *owner, bool reclaim)
+>  			break;
+>  		}
+>=20
+> +		/*
+> +		 * Need to do a global reclamation if cgroup was not full but
+> free
+> +		 * physical pages run out, causing __sgx_alloc_epc_page() to
+> fail.
+> +		 */
+>  		sgx_reclaim_pages();
+>  		cond_resched();
+>  	}
 
-diff --git a/Documentation/arch/x86/sgx.rst b/Documentation/arch/x86/sgx.rst
-index d90796adc2ec..c537e6a9aa65 100644
---- a/Documentation/arch/x86/sgx.rst
-+++ b/Documentation/arch/x86/sgx.rst
-@@ -300,3 +300,86 @@ to expected failures and handle them as follows:
-    first call.  It indicates a bug in the kernel or the userspace client
-    if any of the second round of ``SGX_IOC_VEPC_REMOVE_ALL`` calls has
-    a return code other than 0.
-+
-+
-+Cgroup Support
-+==============
-+
-+The "sgx_epc" resource within the Miscellaneous cgroup controller regulates
-+distribution of SGX EPC memory, which is a subset of system RAM that is used to
-+provide SGX-enabled applications with protected memory, and is otherwise
-+inaccessible, i.e. shows up as reserved in /proc/iomem and cannot be
-+read/written outside of an SGX enclave.
-+
-+Although current systems implement EPC by stealing memory from RAM, for all
-+intents and purposes the EPC is independent from normal system memory, e.g. must
-+be reserved at boot from RAM and cannot be converted between EPC and normal
-+memory while the system is running.  The EPC is managed by the SGX subsystem and
-+is not accounted by the memory controller.  Note that this is true only for EPC
-+memory itself, i.e.  normal memory allocations related to SGX and EPC memory,
-+e.g. the backing memory for evicted EPC pages, are accounted, limited and
-+protected by the memory controller.
-+
-+Much like normal system memory, EPC memory can be overcommitted via virtual
-+memory techniques and pages can be swapped out of the EPC to their backing store
-+(normal system memory allocated via shmem).  The SGX EPC subsystem is analogous
-+to the memory subsystem, and it implements limit and protection models for EPC
-+memory.
-+
-+SGX EPC Interface Files
-+-----------------------
-+
-+For a generic description of the Miscellaneous controller interface files,
-+please see Documentation/admin-guide/cgroup-v2.rst
-+
-+All SGX EPC memory amounts are in bytes unless explicitly stated otherwise. If
-+a value which is not PAGE_SIZE aligned is written, the actual value used by the
-+controller will be rounded down to the closest PAGE_SIZE multiple.
-+
-+  misc.capacity
-+        A read-only flat-keyed file shown only in the root cgroup. The sgx_epc
-+        resource will show the total amount of EPC memory available on the
-+        platform.
-+
-+  misc.current
-+        A read-only flat-keyed file shown in the non-root cgroups. The sgx_epc
-+        resource will show the current active EPC memory usage of the cgroup and
-+        its descendants. EPC pages that are swapped out to backing RAM are not
-+        included in the current count.
-+
-+  misc.max
-+        A read-write single value file which exists on non-root cgroups. The
-+        sgx_epc resource will show the EPC usage hard limit. The default is
-+        "max".
-+
-+        If a cgroup's EPC usage reaches this limit, EPC allocations, e.g., for
-+        page fault handling, will be blocked until EPC can be reclaimed from the
-+        cgroup. If there are no pages left that are reclaimable within the same
-+        group, the kernel returns ENOMEM.
-+
-+        The EPC pages allocated for a guest VM by the virtual EPC driver are not
-+        reclaimable by the host kernel. In case the guest cgroup's limit is
-+        reached and no reclaimable pages left in the same cgroup, the virtual
-+        EPC driver returns SIGBUS to the user space process to indicate failure
-+        on new EPC allocation requests.
-+
-+        The misc.max limit is non-preemptive. If a user writes a limit lower
-+        than the current usage to this file, the cgroup will not preemptively
-+        deallocate pages currently in use, and will only start blocking the next
-+        allocation and reclaiming EPC at that time.
-+
-+  misc.events
-+        A read-only flat-keyed file which exists on non-root cgroups.
-+        A value change in this file generates a file modified event.
-+
-+          max
-+                The number of times the cgroup has triggered a reclaim due to
-+                its EPC usage approaching (or exceeding) its max EPC boundary.
-+
-+Migration
-+---------
-+
-+Once an EPC page is charged to a cgroup (during allocation), it remains charged
-+to the original cgroup until the page is released or reclaimed. Migrating a
-+process to a different cgroup doesn't move the EPC charges that it incurred
-+while in the previous cgroup to its new cgroup.
--- 
-2.25.1
+And why adding this comment, especially in this patch?
 
+I don't see it brings additional clarity because there's only global reclai=
+m now, no matter whether cgroup is enabled or not.=20
