@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCBC46435;
-	Mon, 12 Feb 2024 19:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EE347A6F;
+	Mon, 12 Feb 2024 20:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707767944; cv=none; b=TddtHNIrpktRdWcYcQOYOu/S88epkI943eI0w2CJSu+zKf5AQRAy+DiX8kLgP/tp3IOM0BONoCrUQIOje3XFu32+NLJGIdVlDATpYeHHbj4+1+6/7nS/mTmxRJ6W6ICpyuFswbdT+r/4W8Dut1FSIWk1KanYlr6D2+Ru8yZ6fd8=
+	t=1707768021; cv=none; b=WsjDOFrG5g8OISS21/730vB28c/lcjQBV4RiXOpfJxYspQcdFQq2RTfOIWFK+o3VdOkEriBkQf+5zBsXn0FrDbY/IpBwrNEBf5TIhIpdUE8dAO1JQ83BurrZXfHAH0Fbldk3LbsGdO6vl72pU6QZRVDd1R6dHSQYMk2ip6F22vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707767944; c=relaxed/simple;
-	bh=r8S/sbIq2+trVDIDyjR/VHgzjICcRo23QMsda6iYpfk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=HOlxMmi4rXLnez9KuOFmPK/2h7B8d+sEUlp6EKUckMBOViKDO33IBuAY9WFqGTvSm78voyMSEUEPMiL1/v2ntRAmpbV1CG8qrcn9uIkwQDGmT2LPAXfYONI5Fw+7eIns3sFLMGqbW4DwUPPqQkSQBTQxloIEF2F3Zwb0u4NtUU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FV2S7L0n; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707768021; c=relaxed/simple;
+	bh=wyl9knvIggF/HM3rHnTsgcR+8vF6KjdZXU5A19UcB/o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=O30ueeZeTpFU0MjAVVCVt3bmA6cERjaK0wOmzLPJ4uwc8dJ4974OaEhN7IfTciXCNB1B0QZgRFaBO5Qyd4UjB82gnrffje108VxowanNwBxQqRZwZoC5kFfwg4sJRjBFbRDzaA0NiX/j4RZ/gxA2jaJPPU/oUwyGCJU4WuxSbP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijI2R8Nl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FV2S7L0n"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BE52C43390;
-	Mon, 12 Feb 2024 19:58:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijI2R8Nl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C506C43390;
+	Mon, 12 Feb 2024 20:00:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707767943;
-	bh=r8S/sbIq2+trVDIDyjR/VHgzjICcRo23QMsda6iYpfk=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=FV2S7L0nDFE2yfQnloBYTUlUjVyBRgw9vTy54dqn5UTflrxuJwX46jmL4i07inaf0
-	 FmczWV5V82RukiWZyujS/YuRWViV/7kBgtqI2oIGc9dr44gjfrysnREfu3Ud71AVwO
-	 wrV9IKAsalHUUsPWCpBy87CAkEFtwzD0zBPZsshasC8giOTayIaAlufIyQp+zGsGE/
-	 M1Hik2uj6jTpsDcM9QziQc81GnXp6rb7016VwRC5X+6pnxZzaihdUHDrIXQXrOtWtx
-	 l/OHzF2/1W/DTE+SJStJ+oqf6rImSy5kijTlE2QcjGGtsIrIYuKF4KIHsK/SG/Ys7F
-	 QnwNoOLm/1ybQ==
+	s=k20201202; t=1707768020;
+	bh=wyl9knvIggF/HM3rHnTsgcR+8vF6KjdZXU5A19UcB/o=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=ijI2R8NliQiyAoV+aL+oTS+R9fytpZ6NTSIctPqirhj1N3sDZ8EmPwjNFJ7xOJB2W
+	 a8slDzuJcRRoqd5cKuLXyQIOy6r1geDT/KE1yuYP1/WlL9uERCbEs8QwfnWPcYTDJn
+	 29ZJaWjJ3r/5CdTZGsKmCCteJZF6gJWiZFFD7du4Y/EnCaZJR7aLRJIoS/8RiJRqNa
+	 gYchRXhge/hqSaOmxshAiej/ub8yhkuChVhWwhMD6cOAcWipQDrRGnuR3Pr6837z3G
+	 CAlTOO3xiiln2aVAnsAHVIhhhPd4IVfaeR1cR9y6gg2iHHnAryD6QG52eIgY4RMypp
+	 I9MQuV5NgNBYQ==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -34,69 +34,54 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 12 Feb 2024 21:58:57 +0200
-Message-Id: <CZ3D7JMQC1PK.3PRW2YCMLE3G5@kernel.org>
-Subject: Re: [PATCH v9 12/15] x86/sgx: Expose sgx_epc_cgroup_reclaim_pages()
- for global reclaimer
+Date: Mon, 12 Feb 2024 22:00:17 +0200
+Message-Id: <CZ3D8KKRVFH4.Y7KBNMB4YXTS@kernel.org>
+To: "Randy Dunlap" <rdunlap@infradead.org>, <linux-kernel@vger.kernel.org>
+Cc: "Dave Hansen" <dave.hansen@linux.intel.com>,
+ <linux-sgx@vger.kernel.org>, <x86@kernel.org>, "Kai Huang"
+ <kai.huang@intel.com>
+Subject: Re: [PATCH v2] x86/sgx: fix kernel-doc comment misuse
 From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Haitao Huang" <haitao.huang@linux.intel.com>,
- <dave.hansen@linux.intel.com>, <tj@kernel.org>, <mkoutny@suse.com>,
- <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
- <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>
-Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
- <zhanb@microsoft.com>, <anakrish@microsoft.com>,
- <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
- <chrisyan@microsoft.com>
 X-Mailer: aerc 0.16.0
-References: <20240205210638.157741-1-haitao.huang@linux.intel.com>
- <20240205210638.157741-13-haitao.huang@linux.intel.com>
-In-Reply-To: <20240205210638.157741-13-haitao.huang@linux.intel.com>
+References: <20240211062434.16351-1-rdunlap@infradead.org>
+In-Reply-To: <20240211062434.16351-1-rdunlap@infradead.org>
 
-On Mon Feb 5, 2024 at 11:06 PM EET, Haitao Huang wrote:
-> From: Kristen Carlson Accardi <kristen@linux.intel.com>
+On Sun Feb 11, 2024 at 8:24 AM EET, Randy Dunlap wrote:
+> Don't use "/**" for a non-kernel-doc comment. This prevents a warning
+> from scripts/kernel-doc:
 >
-> When cgroup is enabled, all reclaimable pages will be tracked in cgroup
-> LRUs. The global reclaimer needs to start reclamation from the root
-> cgroup. Expose the top level cgroup reclamation function so the global
-> reclaimer can reuse it.
+> main.c:740: warning: expecting prototype for A section metric is concaten=
+ated in a way that @low bits 12(). Prototype was for sgx_calc_section_metri=
+c() instead
 >
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> Co-developed-by: Haitao Huang <haitao.huang@linux.intel.com>
-> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: linux-sgx@vger.kernel.org
+> Cc: x86@kernel.org
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 > ---
-> V8:
-> - Remove unneeded breaks in function declarations. (Jarkko)
+> v2: add Rev-by: Kai Huang
 >
-> V7:
-> - Split this out from the big patch, #10 in V6. (Dave, Kai)
-> ---
->  arch/x86/kernel/cpu/sgx/epc_cgroup.c | 2 +-
->  arch/x86/kernel/cpu/sgx/epc_cgroup.h | 7 +++++++
->  2 files changed, 8 insertions(+), 1 deletion(-)
+>  arch/x86/kernel/cpu/sgx/main.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/arch/x86/kernel/cpu/sgx/epc_cgroup.c b/arch/x86/kernel/cpu/s=
-gx/epc_cgroup.c
-> index abf74fdb12b4..6e31f8727b8a 100644
-> --- a/arch/x86/kernel/cpu/sgx/epc_cgroup.c
-> +++ b/arch/x86/kernel/cpu/sgx/epc_cgroup.c
-> @@ -96,7 +96,7 @@ bool sgx_epc_cgroup_lru_empty(struct misc_cg *root)
->   * @indirect:   In ksgxd or EPC cgroup work queue context.
->   * Return:	Number of pages reclaimed.
->   */
-> -static unsigned int sgx_epc_cgroup_reclaim_pages(struct misc_cg *root, b=
-ool indirect)
-> +unsigned int sgx_epc_cgroup_reclaim_pages(struct misc_cg *root, bool ind=
-irect)
+> diff -- a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -731,7 +731,7 @@ out:
+>  	return 0;
+>  }
+> =20
+> -/**
+> +/*
+>   * A section metric is concatenated in a way that @low bits 12-31 define=
+ the
+>   * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of=
+ the
+>   * metric.
 
-Now that is an ugly function name...
 
-IMHO, be would not lost a lot of information if these would be shortened
-as sgx_cgroup_reclaim_pages() and such and so forth.
-
-No risk for amiguity and much much more digestable code to read.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
