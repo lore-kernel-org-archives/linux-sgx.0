@@ -1,80 +1,119 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DB3168A8;
-	Sun, 11 Feb 2024 06:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC40547A40;
+	Mon, 12 Feb 2024 19:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707632678; cv=none; b=tCS5Hq4Wg9/V1urY6WUq9l2NsEFyckc3S3mLOMYjiwzZAMxNyJmhuhv/3Mat5CPhBAOhvPAnazwt/ymr0RZmzSnoiQYPmhR4O5QwAULAgn5PAxbu8Ehotda89+QXFp3WfCkNfd027Vmv7r0+OfjHZuarR4Lb9qWABvz7QeE4C48=
+	t=1707766277; cv=none; b=ioHNIYnmyvfi1mx93zZ+wITHLH2cWhB6c3nfNu5gutNHv+/vGcconuD3qsAsDf8YTNWGVtml2nZRdh3c7Ct00Dz8Iat0G0wb8Es1BfVKpUefVCHzhjjE3nqBiIx7jHocy4tZbu3dVK1KR7bu3gV9LkeTr3waHlBACkgCYy9giNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707632678; c=relaxed/simple;
-	bh=+TrLYy5AwqdeTtpC+LsvU5GZLUqJuRLQoaEknBAH7PE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lR1WupF5DFBBup9qcFaZs0YSZxvvAIjkxcptWYa3sIwWKzfX3F6S+JwEVO7rGXFinp57SrcuiIZsAtkEUqT/yltA0Km4ZMQzgy5q8RKslm2FpwPUCB2yN3stsy4Tm2Xc68BjzHCzzzQXDcKUZZJ8y+P7WP0mBqRVMaG9hBgszx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uBM1d/oh; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1707766277; c=relaxed/simple;
+	bh=lqtTxODlI6wN7MvPNb4ijKFqQ3MMR+vfaRCRevA/znQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=VaukP8unQnOxVF4OrxR9D0Kvj+JxMUWaDN6I9tUFltBDwlg5psI9IDWOaebIL48iuGe/+N2donrdjqkQ8Zwqq/yaV8Cym2rqXeA0+MUoziiZNvPbFxxfGOWdT12MjYsbRTRCHodQKbEoUW7lJ9zt47Gy2e6PeMIOdWZf+MIRb0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gidEnOJp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uBM1d/oh"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=RDiM/MvnYaGZ/zoyP+kqI6CbVgG9JJwnDMdv6wBtCkQ=; b=uBM1d/ohYqdzMcHAnRoL6QOtHR
-	fCaX68gai2F0jDr45Ed5CZQtw0qWgv58yfZSPfCb/Kqssz6PjHRqnzPfO4asSHzNednnsfrJIXoUQ
-	8lnmSYTXj0HWXLd8hBCyiIROLyLJve0sxaapgO7Y3VjKmPCNiuDtMwGmrAngGVjxnUwpZZ2FHXEk3
-	zHp6CVXfGx+s7Cen5qmtWe2MSDDvyqZoeqgoqI5Gr2zhOHOvd7sNJUKmri91ZTrhYBbtiOwTiBDgm
-	ih5vVpauDipzF3a8vNuQubPDr61sm5z5l9ATqGHPaB5eBVcG6EsyuwL8KxT4+P2dLZMS4pmQ4CuXk
-	Qqw7Lmxw==;
-Received: from [50.53.50.0] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rZ3GV-00000002PAU-2EdR;
-	Sun, 11 Feb 2024 06:24:35 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	linux-sgx@vger.kernel.org,
-	x86@kernel.org,
-	Kai Huang <kai.huang@intel.com>
-Subject: [PATCH v2] x86/sgx: fix kernel-doc comment misuse
-Date: Sat, 10 Feb 2024 22:24:34 -0800
-Message-ID: <20240211062434.16351-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gidEnOJp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05134C43394;
+	Mon, 12 Feb 2024 19:31:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707766277;
+	bh=lqtTxODlI6wN7MvPNb4ijKFqQ3MMR+vfaRCRevA/znQ=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=gidEnOJp3j3WMy2tty1q8NqQcT6e2BzBs4tyIqvBgkZcmYlZWTO5tElxH32b2mp3V
+	 4UP3e+dRV08OoV4zi4DA19+WTo6H9lT3L2F356g3/iEHhRKeRZ3oKM/u94CKG2JQBA
+	 auGBgB0mSEmtmoke2TlzdAHvx9P1yoTO5ItUdt/46LVRCVfa83iJ7hxotSPF6FLts0
+	 6pEDjqElWDebQF6cKApxEkN5Y7H6Aq6Kw3P2PFNd97NRJfNd3m5oAb/qTlgQpqR+kZ
+	 /kvMmluFZYRgL5D9wBmyIMyB1sjGFl37rdhAmTmw2eoS9FTRweGoK/6Pnv4SdN4IXg
+	 PF9GgfAR5DZSg==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 12 Feb 2024 21:31:10 +0200
+Message-Id: <CZ3CM9ZE39Q0.222HRSEUF8RFP@kernel.org>
+Subject: Re: [PATCH v8 01/15] cgroup/misc: Add per resource callbacks for
+ CSS events
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Haitao Huang" <haitao.huang@linux.intel.com>,
+ <dave.hansen@linux.intel.com>, <tj@kernel.org>, <mkoutny@suse.com>,
+ <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+ <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <sohil.mehta@intel.com>
+Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
+ <zhanb@microsoft.com>, <anakrish@microsoft.com>,
+ <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
+ <chrisyan@microsoft.com>
+X-Mailer: aerc 0.16.0
+References: <20240130020938.10025-1-haitao.huang@linux.intel.com>
+ <20240130020938.10025-2-haitao.huang@linux.intel.com>
+ <CYU4P2CYNVSK.1UECAD4N86P8Z@suppilovahvero>
+ <op.2iiwbrjpwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <op.2iiwbrjpwjvjmi@hhuan26-mobl.amr.corp.intel.com>
 
-Don't use "/**" for a non-kernel-doc comment. This prevents a warning
-from scripts/kernel-doc:
+On Fri Feb 2, 2024 at 6:34 PM EET, Haitao Huang wrote:
+> On Thu, 01 Feb 2024 17:24:40 -0600, Jarkko Sakkinen <jarkko@kernel.org> =
+=20
+> wrote:
+>
+> > On Tue Jan 30, 2024 at 4:09 AM EET, Haitao Huang wrote:
+> >> From: Kristen Carlson Accardi <kristen@linux.intel.com>
+> >>
+> >> The misc cgroup controller (subsystem) currently does not perform
+> >> resource type specific action for Cgroups Subsystem State (CSS) events=
+:
+> >> the 'css_alloc' event when a cgroup is created and the 'css_free' even=
+t
+> >> when a cgroup is destroyed.
+> >>
+> >> Define callbacks for those events and allow resource providers to
+> >> register the callbacks per resource type as needed. This will be
+> >> utilized later by the EPC misc cgroup support implemented in the SGX
+> >> driver.
+> >>
+> >> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
+> >> Co-developed-by: Haitao Huang <haitao.huang@linux.intel.com>
+> >> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
+> >> ---
+> >> V8:
+> >> - Abstract out _misc_cg_res_free() and _misc_cg_res_alloc() (Jarkko)
+> >> V7:
+> >> - Make ops one per resource type and store them in array (Michal)
+> >> - Rename the ops struct to misc_res_ops, and enforce the constraints o=
+f =20
+> >> required callback
+> >> functions (Jarkko)
+> >> - Moved addition of priv field to patch 4 where it was used first. =20
+> >> (Jarkko)
+> >>
+> >> V6:
+> >> - Create ops struct for per resource callbacks (Jarkko)
+> >> - Drop max_write callback (Dave, Michal)
+> >> - Style fixes (Kai)
+> >
+> > This version looks nice and smooth:
+> >
+> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> >
+> > BR, Jarkko
+> >
+> Thanks Jarkko!
+>
+> @tj, I had your Reviewed-by tags previously but dropped it due to some =
+=20
+> changes for refactoring suggested by other reviewers. Could you take a =
+=20
+> look at patches 1-2 for MiscController and confirm if I can have your =20
+> Reviewed-by tags again?
+> Thanks
+>
+> Haitao
 
-main.c:740: warning: expecting prototype for A section metric is concatenated in a way that @low bits 12(). Prototype was for sgx_calc_section_metric() instead
+you can add tags
 
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-sgx@vger.kernel.org
-Cc: x86@kernel.org
-Reviewed-by: Kai Huang <kai.huang@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
-v2: add Rev-by: Kai Huang
-
- arch/x86/kernel/cpu/sgx/main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -- a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -731,7 +731,7 @@ out:
- 	return 0;
- }
- 
--/**
-+/*
-  * A section metric is concatenated in a way that @low bits 12-31 define the
-  * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
-  * metric.
+BR, Jarkko
