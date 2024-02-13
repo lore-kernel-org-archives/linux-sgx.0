@@ -1,44 +1,44 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25A64EB5C;
-	Mon, 12 Feb 2024 23:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E278BFC;
+	Tue, 13 Feb 2024 03:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707779752; cv=none; b=NSfzakD2PwpZh3GnrPmCZA2C0e6yN2NA1qTSJ+v5NyzJu3mvhkOsVnD1zXQmUvsJnRqnNKF/nYnHCTWKBR2Tobfm8MTvW+QPiv5vRkaF20sIvGan4LjlWjTnc8H4DSX0Ff4pp7i1ih9pWMRHQ2yEtoOPgvGxRebcTwWWH3VhVIk=
+	t=1707794513; cv=none; b=G+iyDHQVoI4H1+yHjOpaQrQJGvEGAXEIcIx4mWOLuU6pPgi0M4dBh1Hc86pHDT8CbRQ2b9NTFn3OjUMFk7bv/fhzS7ZbQtDkWWohZfd3W+oweZMk7ftoKUohDTRhKYRLxH82O+iDd0lPCCA/uxbAKTXdZyUvK2VI7t9Uaaz0rdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707779752; c=relaxed/simple;
-	bh=2V5ih+rh+uJ8v7Og2vnvqzcZcn7X0cF6QU3gjcKFHDs=;
+	s=arc-20240116; t=1707794513; c=relaxed/simple;
+	bh=COC+DgrRwbOsMKFiXhxGIvmheeowK1HumSOtDo0gkkc=;
 	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=hIEM8fCqTLn83H87Y0NW8XhXqSrrgDKeNXUHEOSr6wHjW5sCS9YOQdyCfyzTcmF9W4SORZPhgTDmx1H4CUdgcIyQyiMWvwxqM+aGV3Vd2hts/xInxReaZTfkqwlRmE59wSsrOHdfA3Kh7j335cN5I32yJ++pTdVw/Z5vwNt47ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M7LvsJfA; arc=none smtp.client-ip=198.175.65.12
+	 Message-ID:In-Reply-To; b=SepHE84sR4B1OX9KprxyEAtecCGsViJD2ihd0frR1RHpY3CD7AO73z+XxigyhxlydqXs3+rxW+3ZIu65nH4NhE27dESZR+UUzQl6nRqoHDHvlQHzP8Lnr02DcQrKdo/Jv82JTjVg0oGZGbrM+u9wbKGvSivzEEG2KsVuTITwHHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WD7+87SC; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M7LvsJfA"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WD7+87SC"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1707779752; x=1739315752;
+  t=1707794512; x=1739330512;
   h=to:cc:subject:references:date:mime-version:
    content-transfer-encoding:from:message-id:in-reply-to;
-  bh=2V5ih+rh+uJ8v7Og2vnvqzcZcn7X0cF6QU3gjcKFHDs=;
-  b=M7LvsJfARDw6F4p+ajzBS3HSK3zm/gYlXaKiXAgOXv2v6deiD7p12dHF
-   966KWYiG5eJtj+0t1Ue+VrfO0cyQrOGvgzfqYB9wxBLTNDKyZV9HH6wAe
-   KFDyPE3iIPZwg/WnAVEWgg4qitBTPgFKeFpc62EfIpUgN7aZRTByigDBQ
-   XevQYO3Ju5lVFw1VIlFbFBwLsSO6sdZ6wM/4SuPPXxk6siIxhAhaCayzh
-   4P2auVAQby5hjiC0fyzqifgxlJLBomn98C62RW3ihhgJA2pJ+wM9NLsln
-   99aZN793VZU4kk0Os97kDvhvGpna0yI6vCDkgmfJKFhz1+qNISjogAm+t
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10982"; a="13173245"
+  bh=COC+DgrRwbOsMKFiXhxGIvmheeowK1HumSOtDo0gkkc=;
+  b=WD7+87SCjTdrGx6z19Nt0fti1JFFp0jyyzOu7Ma53VCv0Pt6BflsmpSB
+   3d3VbhfIpsGi0p+lby9avWFhN+uE7SuRQN9YdU2NbFNMzBpCRN4JGPxTb
+   DS9xqQjT6U/3Eyze9hx003+5ywDvxiAGPTis216KUeypUpA8PcJHXQdrJ
+   nxIPR1a204Arj1FzwwQwscMPpPW6IhVmdT/AssHJaa5S63A8c08Xzsxai
+   0gkgvsBailO0b3/Bab3pc+fMXKs3dOa4pQb72AQCLwqfIoNJfIJfwH/Mv
+   5DGzQiovCnMrjDBQL6pdJMZFJvo4YYKnMiJV6wEWPEOKkXDh+VX2brUrx
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10982"; a="1944980"
 X-IronPort-AV: E=Sophos;i="6.06,155,1705392000"; 
-   d="scan'208";a="13173245"
+   d="scan'208";a="1944980"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2024 15:15:51 -0800
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2024 19:21:51 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.06,155,1705392000"; 
-   d="scan'208";a="7350882"
+   d="scan'208";a="7402632"
 Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 12 Feb 2024 15:15:48 -0800
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 12 Feb 2024 19:21:49 -0800
 Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
 To: dave.hansen@linux.intel.com, tj@kernel.org, mkoutny@suse.com,
  linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
@@ -48,12 +48,12 @@ To: dave.hansen@linux.intel.com, tj@kernel.org, mkoutny@suse.com,
 Cc: zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
  zhanb@microsoft.com, anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
  yangjie@microsoft.com, chrisyan@microsoft.com
-Subject: Re: [PATCH v9 10/15] x86/sgx: Add EPC reclamation in cgroup
- try_charge()
+Subject: Re: [PATCH v9 09/15] x86/sgx: Charge mem_cgroup for per-cgroup
+ reclamation
 References: <20240205210638.157741-1-haitao.huang@linux.intel.com>
- <20240205210638.157741-11-haitao.huang@linux.intel.com>
- <CZ3D53XFVXAW.25EK0ZBFH3HV2@kernel.org>
-Date: Mon, 12 Feb 2024 17:15:42 -0600
+ <20240205210638.157741-10-haitao.huang@linux.intel.com>
+ <CZ3CXPOLZEI8.C6AJ9W0W07A9@kernel.org>
+Date: Mon, 12 Feb 2024 21:21:47 -0600
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -63,122 +63,85 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 From: "Haitao Huang" <haitao.huang@linux.intel.com>
 Organization: Intel
-Message-ID: <op.2i1xkgedwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <CZ3D53XFVXAW.25EK0ZBFH3HV2@kernel.org>
+Message-ID: <op.2i18ylk5wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <CZ3CXPOLZEI8.C6AJ9W0W07A9@kernel.org>
 User-Agent: Opera Mail/1.0 (Win32)
 
-Hi Jarkko
-
-On Mon, 12 Feb 2024 13:55:46 -0600, Jarkko Sakkinen <jarkko@kernel.org>  
+On Mon, 12 Feb 2024 13:46:06 -0600, Jarkko Sakkinen <jarkko@kernel.org>  
 wrote:
 
 > On Mon Feb 5, 2024 at 11:06 PM EET, Haitao Huang wrote:
->> From: Kristen Carlson Accardi <kristen@linux.intel.com>
->>
->> When the EPC usage of a cgroup is near its limit, the cgroup needs to
->> reclaim pages used in the same cgroup to make room for new allocations.
->> This is analogous to the behavior that the global reclaimer is triggered
->> when the global usage is close to total available EPC.
->>
->> Add a Boolean parameter for sgx_epc_cgroup_try_charge() to indicate
->> whether synchronous reclaim is allowed or not. And trigger the
->> synchronous/asynchronous reclamation flow accordingly.
->>
->> Note at this point, all reclaimable EPC pages are still tracked in the
->> global LRU and per-cgroup LRUs are empty. So no per-cgroup reclamation
->> is activated yet.
->>
->> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
->> Co-developed-by: Haitao Huang <haitao.huang@linux.intel.com>
->> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
->> ---
->> V7:
->> - Split this out from the big patch, #10 in V6. (Dave, Kai)
->> ---
->>  arch/x86/kernel/cpu/sgx/epc_cgroup.c | 26 ++++++++++++++++++++++++--
->>  arch/x86/kernel/cpu/sgx/epc_cgroup.h |  4 ++--
->>  arch/x86/kernel/cpu/sgx/main.c       |  2 +-
->>  3 files changed, 27 insertions(+), 5 deletions(-)
->>
->> diff --git a/arch/x86/kernel/cpu/sgx/epc_cgroup.c  
->> b/arch/x86/kernel/cpu/sgx/epc_cgroup.c
->> index d399fda2b55e..abf74fdb12b4 100644
->> --- a/arch/x86/kernel/cpu/sgx/epc_cgroup.c
->> +++ b/arch/x86/kernel/cpu/sgx/epc_cgroup.c
->> @@ -184,13 +184,35 @@ static void  
->> sgx_epc_cgroup_reclaim_work_func(struct work_struct *work)
->>  /**
->>   * sgx_epc_cgroup_try_charge() - try to charge cgroup for a single EPC  
->> page
->>   * @epc_cg:	The EPC cgroup to be charged for the page.
->> + * @reclaim:	Whether or not synchronous reclaim is allowed
->>   * Return:
->>   * * %0 - If successfully charged.
->>   * * -errno - for failures.
->>   */
->> -int sgx_epc_cgroup_try_charge(struct sgx_epc_cgroup *epc_cg)
->> +int sgx_epc_cgroup_try_charge(struct sgx_epc_cgroup *epc_cg, bool  
->> reclaim)
+>> Enclave Page Cache(EPC) memory can be swapped out to regular system
+>
+> "Enclave Page Cache (EPC)"
+>                    ~
+>
+Will fix.
+
+[...]
+>>  int sgx_encl_alloc_backing(struct sgx_encl *encl, unsigned long  
+>> page_index,
+>> -			   struct sgx_backing *backing)
+>> +			   struct sgx_backing *backing, bool indirect)
+>
+> Boolean parameters should be avoided when possible because they confuse
+> in the call sites.
+>
 >>  {
->> -	return misc_cg_try_charge(MISC_CG_RES_SGX_EPC, epc_cg->cg, PAGE_SIZE);
->> +	for (;;) {
->> +		if (!misc_cg_try_charge(MISC_CG_RES_SGX_EPC, epc_cg->cg,
->> +					PAGE_SIZE))
->> +			break;
->> +
->> +		if (sgx_epc_cgroup_lru_empty(epc_cg->cg))
->> +			return -ENOMEM;
->> + +		if (signal_pending(current))
->> +			return -ERESTARTSYS;
->> +
->> +		if (!reclaim) {
->> +			queue_work(sgx_epc_cg_wq, &epc_cg->reclaim_work);
->> +			return -EBUSY;
->> +		}
->> +
->> +		if (!sgx_epc_cgroup_reclaim_pages(epc_cg->cg, false))
->> +			/* All pages were too young to reclaim, try again a little later */
->> +			schedule();
+>> -	struct mem_cgroup *encl_memcg = sgx_encl_get_mem_cgroup(encl);
+>> -	struct mem_cgroup *memcg = set_active_memcg(encl_memcg);
+>> +	struct mem_cgroup *encl_memcg;
+>> +	struct mem_cgroup *memcg;
+>>  	int ret;
+>>
+>> -	ret = __sgx_encl_get_backing(encl, page_index, backing);
+>> +	if (!indirect)
+>> +		return  __sgx_encl_get_backing(encl, page_index, backing);
 >
-> This will be total pain to backtrack after a while when something
-> needs to be changed so there definitely should be inline comments
-> addressing each branch condition.
+> If a call is either in heead or tail of the code block, then
+> obviously better option is to make __sgx_encl_get_backing()
+> as non-static sgx_encl_get_backing() and call it in those
+> call sites that would call this with "false".
 >
-> I'd rethink this as:
+> I.e. you need a new patch where this preparation is done.
 >
-> 1. Create static __sgx_epc_cgroup_try_charge() for addressing single
->    iteration with the new "reclaim" parameter.
-> 2. Add a new sgx_epc_group_try_charge_reclaim() function.
->
-> There's a bit of redundancy with sgx_epc_cgroup_try_charge() and
-> sgx_epc_cgroup_try_charge_reclaim() because both have almost the
-> same loop calling internal __sgx_epc_cgroup_try_charge() with
-> different parameters. That is totally acceptable.
->
-> Please also add my suggested-by.
->
-> BR, Jarkko
->
-> BR, Jarkko
->
-For #2:
-The only caller of this function, sgx_alloc_epc_page(), has the same  
-boolean which is passed into this this function.
 
-If we separate it into sgx_epc_cgroup_try_charge() and  
-sgx_epc_cgroup_try_charge_reclaim(), then the caller has to have the  
-if/else branches. So separation here seems not help?
+This would actually require more intrusive changes to the call stack for  
+global and cgroup reclaim:
 
+{sgx_epc_cgroup_reclaim_pages(),sgx_reclaim_pages_global()}->sgx_reclaim_pages()[->sgx_reclaimer_write()]->sgx_encl_alloc_backing()
 
-For #1:
-If we don't do #2, It seems overkill at the moment for such a short  
-function.
+We need make two versions of each of those functions.
+It'd be especially complicated in refactoring sgx_reclaim_pages() for two  
+versions.
 
-How about we add inline comments for each branch for now, and if later  
-there are more branches and the function become too long we add  
-__sgx_epc_cgroup_try_charge() as you suggested?
+I now double checked the history of current_is_ksgxd()[1], it seemed the  
+intent was to replace "current->mm == NULL" criteria so it is more obvious  
+we are running in ksgxd.
 
-Thanks
+@Dave, @Kristen,
+
+Can we restore the original criteria like below so it works for the cgroup  
+work-queues?
+
+bool current_is_ksgxd(void)
+{
+	return current == ksgxd_tsk;
+}
+
+--->
+
+bool current_is_kthread(void)
+{
+	return current->mm == NULL;	
+}
+
+I'm not experienced in this area and not sure how reliable it is to use  
+current->mm == NULL for kthread and work-queues. But it would eliminate  
+the need for the boolean parameter.
+
+Would appreciate the input.
+
 Haitao
+
+[1]https://lore.kernel.org/linux-sgx/9c269c70-35fe-a1a4-34c9-b1e62ab3bb3b@intel.com/
