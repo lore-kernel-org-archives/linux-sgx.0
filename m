@@ -1,132 +1,222 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311BA12E1F0;
-	Mon, 26 Feb 2024 18:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2115C1E878;
+	Mon, 26 Feb 2024 21:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708971968; cv=none; b=aOn+Ck7Sc0p8zD4/fsYy797dOodf9/IAgbtxNLIYcdwgppl7pf70zi3nCxPCLikFsQATgVblEMc42PHaD7M/EPV/YLYc20hEI6WiYwF1Az1EUxiGkQ8qPl37iiQhwDX/jZih+UbYfn+J5lwLKZ4fiCAEA4mn2KmlyLnupy5jw64=
+	t=1708982289; cv=none; b=Bi93avPT+R5UW4ZGb+6b5XrKJkaK64iBhxBfkmWFnCOS/wmTKkA06dtKSrsHrMDXpdIDXX68y1YI1y+duVF8oWardQAC7+BmbEgJOawmkQcIOdgjrQVNz3wqIEjskotLwT1oRI12gyWCHn0nEcbb3Fu4RI1kIqj1YTP9muj7O3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708971968; c=relaxed/simple;
-	bh=VtTNzlrs59laxBrReK1p7Gu/2+icjRsBAWJsbkQfoCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6Q/y1ld4AojA3f2P5A1ZRP53CB/1zIWyKjMM7nkrDysjW8szHXQVadzd1jF7FRHDW9EUqUSmt794T6VrrVCztuWhlPg/q9DlK4NO2x0ok30oHJ8kRxIlARQ4Bl9ewHI1ft8mn/2rTFbx1qsDS1a2yamXJI3wk4xdv50VD9e+uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=gPR38tQC; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WZwMp4/M; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1708982289; c=relaxed/simple;
+	bh=85ZvPu5LN35tUePxSjmceVl5Io330kFPQ92Yn7hXFOA=;
+	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
+	 Message-ID:In-Reply-To; b=J7g7zePZNOHsLZNwHdapEoOOY63Jh1q3zsPBDCJHBDZ+WrtRflVrfLKumA9vcwsa9UdNpK77bqxQQDbhlRQjrJyO9Q+8vIPgsMxVDaeE70iCGNlDTWpBqlcI//6zgMfW3PCjMqpzrBowsxGJXAlMnVBqwsbLa4gkeG4EsdVK9MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cn8WqXrc; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="gPR38tQC";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WZwMp4/M"
-Received: from blackpad (unknown [10.100.12.75])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9E6D722266;
-	Mon, 26 Feb 2024 18:25:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1708971960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4UyhI4+JQGYKohUyOLoFySmI6ZvFW1Av1C82+dFjLlg=;
-	b=gPR38tQCbarzjcOA5Hlp+X9Lj4hIFsTOT0Qzt244SJY8KvyRvC7FRqXo1QYGH5ZkUEbLtm
-	OSeYXKBZqDL9mnOZG9ta+A2lXAVa/XE38OD1mmlPdT+v4/JCWsDRH10tICpyI8vTYXIQBT
-	Ur2UmafVx03bGnmQ8hWnB6nYAJxw4Fk=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1708971959; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4UyhI4+JQGYKohUyOLoFySmI6ZvFW1Av1C82+dFjLlg=;
-	b=WZwMp4/MHfh9IWOZhqIC0M/eopgmi3FfTMusCSrLzb8cpayG37bX5tKA0dVs1SiPGjL7rT
-	oAM6VT+2C0wETj3VZVgHoyZ5/jqbXoBLsB3vXHTmZFS3zEPFDaoJFwbj0NLO1zlKt9TtkQ
-	MlxSfClbuT9cWz/T/2pcg1xTdfNDgJ4=
-Date: Mon, 26 Feb 2024 19:25:58 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Haitao Huang <haitao.huang@linux.intel.com>
-Cc: jarkko@kernel.org, dave.hansen@linux.intel.com, tj@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org, 
-	cgroups@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	hpa@zytor.com, sohil.mehta@intel.com, tim.c.chen@linux.intel.com, 
-	zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com, zhanb@microsoft.com, 
-	anakrish@microsoft.com, mikko.ylinen@linux.intel.com, yangjie@microsoft.com, 
-	chrisyan@microsoft.com
-Subject: Re: [PATCH v9 04/15] x86/sgx: Implement basic EPC misc cgroup
- functionality
-Message-ID: <7u3intene6yvlkuks5bix3tx27wog3da6ki5w2l5flaod5mjrq@flgmfdd4fbei>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cn8WqXrc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1708982288; x=1740518288;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=85ZvPu5LN35tUePxSjmceVl5Io330kFPQ92Yn7hXFOA=;
+  b=cn8WqXrcijy9bz/bc1jT1h3B5yZmsyNkQ3TjwR2OMcR2YJMfumKEb8hR
+   84kauToiaYqro47kVRTg+6bqi5T4qldij2scPd0PvYaEVauPn+oz68vJo
+   OI+/XlFE5gIlkDRGrhehDlmmwMbHF0AQ1AfbMZObayrMddKuZEDAXI9Bf
+   NZufLDGjPvhg0LVbRL87uvZI67E9MANpWL1PLSNtQL9XCl/vTvQpWE98l
+   4UypeaQlsVlKkGwQQpKAJwaxoBOYvdIt7yvwNJK+RjnXkK8+RJTUowsV5
+   CxPSVF1h7y5IBNkZEPnVdhv+D/CYgTpLqcdzqSULcbw2Qm/Ucaj3L10NP
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10996"; a="7124469"
+X-IronPort-AV: E=Sophos;i="6.06,186,1705392000"; 
+   d="scan'208";a="7124469"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2024 13:18:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,186,1705392000"; 
+   d="scan'208";a="11396702"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 26 Feb 2024 13:18:04 -0800
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To: "tj@kernel.org" <tj@kernel.org>, "jarkko@kernel.org" <jarkko@kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>, "dave.hansen@linux.intel.com"
+ <dave.hansen@linux.intel.com>, "cgroups@vger.kernel.org"
+ <cgroups@vger.kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com"
+ <mingo@redhat.com>, "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+ "mkoutny@suse.com" <mkoutny@suse.com>, "Mehta, Sohil" <sohil.mehta@intel.com>,
+ "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "bp@alien8.de" <bp@alien8.de>,
+ "Huang, Kai" <kai.huang@intel.com>
+Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+ "seanjc@google.com" <seanjc@google.com>, "anakrish@microsoft.com"
+ <anakrish@microsoft.com>, "Zhang, Bo" <zhanb@microsoft.com>,
+ "kristen@linux.intel.com" <kristen@linux.intel.com>, "yangjie@microsoft.com"
+ <yangjie@microsoft.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+ "chrisyan@microsoft.com" <chrisyan@microsoft.com>
+Subject: Re: [PATCH v9 10/15] x86/sgx: Add EPC reclamation in cgroup
+ try_charge()
 References: <20240205210638.157741-1-haitao.huang@linux.intel.com>
- <20240205210638.157741-5-haitao.huang@linux.intel.com>
+ <20240205210638.157741-11-haitao.huang@linux.intel.com>
+ <c5d03171473821ebc9cb79e3dad4d1bf0074e674.camel@intel.com>
+ <op.2jjzaqdwwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <4db8493b-35a2-474f-997c-5e6ac1b8bd11@intel.com>
+ <op.2jkfeezjwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <c913193c0560c4372d2fdb31e9edb28bcb419f50.camel@intel.com>
+ <op.2jlti6g9wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <7b53e155-2622-4acb-b7c9-d22e623e4cb3@intel.com>
+ <op.2jqdjjd8wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <48faaea8b24f032baa6a858a2909a5b4ace769c6.camel@intel.com>
+Date: Mon, 26 Feb 2024 15:18:02 -0600
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mk6rhzbt6pcubuwj"
-Content-Disposition: inline
-In-Reply-To: <20240205210638.157741-5-haitao.huang@linux.intel.com>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.26
-X-Spamd-Result: default: False [-3.26 / 50.00];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	 DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	 NEURAL_HAM_SHORT(-0.20)[-0.997];
-	 RCPT_COUNT_TWELVE(0.00)[22];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email];
-	 SIGNED_PGP(-2.00)[];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 RCVD_COUNT_ZERO(0.00)[0];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+,1:+,2:~];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 BAYES_HAM(-0.36)[76.82%]
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 7bit
+From: "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.2jrpgcufwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <48faaea8b24f032baa6a858a2909a5b4ace769c6.camel@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
+
+On Mon, 26 Feb 2024 05:36:02 -0600, Huang, Kai <kai.huang@intel.com> wrote:
+
+> On Sun, 2024-02-25 at 22:03 -0600, Haitao Huang wrote:
+>> On Sun, 25 Feb 2024 19:38:26 -0600, Huang, Kai <kai.huang@intel.com>  
+>> wrote:
+>>
+>> >
+>> >
+>> > On 24/02/2024 6:00 am, Haitao Huang wrote:
+>> > > On Fri, 23 Feb 2024 04:18:18 -0600, Huang, Kai <kai.huang@intel.com>
+>> > > wrote:
+>> > >
+>> > > > > >
+>> > > > > Right. When code reaches to here, we already passed reclaim per
+>> > > > > cgroup.
+>> > > >
+>> > > > Yes if try_charge() failed we must do pre-cgroup reclaim.
+>> > > >
+>> > > > > The cgroup may not at or reach limit but system has run out of
+>> > > > > physical
+>> > > > > EPC.
+>> > > > >
+>> > > >
+>> > > > But after try_charge() we can still choose to reclaim from the  
+>> current
+>> > > > group,
+>> > > > but not necessarily have to be global, right?  I am not sure  
+>> whether I
+>> > > > am
+>> > > > missing something, but could you elaborate why we should choose to
+>> > > > reclaim from
+>> > > > the global?
+>> > > >
+>> > >  Once try_charge is done and returns zero that means the cgroup  
+>> usage
+>> > > is charged and it's not over usage limit. So you really can't  
+>> reclaim
+>> > > from that cgroup if allocation failed. The only  thing you can do  
+>> is to
+>> > > reclaim globally.
+>> >
+>> > Sorry I still cannot establish the logic here.
+>> >
+>> > Let's say the sum of all cgroups are greater than the physical EPC,  
+>> and
+>> > elclave(s) in each cgroup could potentially fault w/o reaching  
+>> cgroup's
+>> > limit.
+>> >
+>> > In this case, when enclave(s) in one cgroup faults, why we cannot
+>> > reclaim from the current cgroup, but have to reclaim from global?
+>> >
+>> > Is there any real downside of the former, or you just want to follow  
+>> the
+>> > reclaim logic w/o cgroup at all?
+>> >
+>> > IIUC, there's at least one advantage of reclaim from the current  
+>> group,
+>> > that faults of enclave(s) in one group won't impact other enclaves in
+>> > other cgroups.  E.g., in this way other enclaves in other groups may
+>> > never need to trigger faults.
+>> >
+>> > Or perhaps I am missing anything?
+>> >
+>> The use case here is that user knows it's OK for group A to borrow some
+>> pages from group B for some time without impact much performance, vice
+>> versa. That's why the user is overcomitting so system can run more
+>> enclave/groups. Otherwise, if she is concerned about impact of A on B,  
+>> she
+>> could lower limit for A so it never interfere or interfere less with B
+>> (assume the lower limit is still high enough to run all enclaves in A),
+>> and sacrifice some of A's performance. Or if she does not want any
+>> interference between groups, just don't over-comit. So we don't really
+>> lose anything here.
+>
+> But if we reclaim from the same group, seems we could enable a user case  
+> that
+> allows the admin to ensure certain group won't be impacted at all, while
+> allowing other groups to over-commit?
+>
+> E.g., let's say we have 100M physical EPC.  And let's say the admin  
+> wants to run
+> some performance-critical enclave(s) which costs 50M EPC w/o being  
+> impacted.
+> The admin also wants to run other enclaves which could cost 100M EPC in  
+> total
+> but EPC swapping among them is acceptable.
+>
+> If we choose to reclaim from the current EPC cgroup, then seems to that  
+> the
+> admin can achieve the above by setting up 2 groups with group1 having  
+> 50M limit
+> and group2 having 100M limit, and then run performance-critical  
+> enclave(s) in
+> group1 and others in group2?  Or am I missing anything?
+>
+
+The more important groups should have limits higher than or equal to peak  
+usage to ensure no impact.
+The less important groups should have lower limits than its peak usage to  
+avoid impacting higher priority groups.
+The limit is the maximum usage allowed.
+
+By setting group2 limit to 100M, you are allowing it to use 100M. So as  
+soon as it gets up and consume 100M, group1 can not even load any enclave  
+if we only reclaim per-cgroup and do not do global reclaim.
+
+> If we choose to do global reclaim, then we cannot achieve that.
 
 
---mk6rhzbt6pcubuwj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+You can achieve this by setting group 2 limit to 50M. No need to  
+overcommiting to the system.
+Group 2 will swap as soon as it hits 50M, which is the maximum it can  
+consume so no impact to group 1.
 
-On Mon, Feb 05, 2024 at 01:06:27PM -0800, Haitao Huang <haitao.huang@linux.intel.com> wrote:
-> +static int sgx_epc_cgroup_alloc(struct misc_cg *cg);
-> +
-> +const struct misc_res_ops sgx_epc_cgroup_ops = {
-> +	.alloc = sgx_epc_cgroup_alloc,
-> +	.free = sgx_epc_cgroup_free,
-> +};
-> +
-> +static void sgx_epc_misc_init(struct misc_cg *cg, struct sgx_epc_cgroup *epc_cg)
-> +{
-> +	cg->res[MISC_CG_RES_SGX_EPC].priv = epc_cg;
-> +	epc_cg->cg = cg;
-> +}
+>
+>>
+>> In case of overcomitting, even if we always reclaim from the same cgroup
+>> for each fault, one group may still interfere the other: e.g., consider  
+>> an
+>> extreme case in that group A used up almost all EPC at the time group B
+>> has a fault, B has to fail allocation and kill enclaves.
+>
+> If the admin allows group A to use almost all EPC, to me it's fair to  
+> say he/she
+> doesn't want to run anything inside B at all and it is acceptable  
+> enclaves in B
+> to be killed.
+>
+>
+I don't think so. The user just knows group A + B peak usages higher than  
+system capacity. And she is OK for them to share some of the pages  
+dynamically. So kernel should allow one borrow from the other at a  
+particular instance when one group has higher demand. And later doing the  
+opposite. IOW, the favor goes both ways.
 
-This is a possibly a nit pick but I share it here for consideration.
-
-Would it be more prudent to have the signature like
-  alloc(struct misc_res *res, struct misc_cg *cg)
-so that implementations are free of the assumption of how cg and res are
-stored?
-
-
-Thanks,
-Michal
-
---mk6rhzbt6pcubuwj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZdzXtAAKCRAGvrMr/1gc
-jpdtAP9DWI9U4DslLhCagwW21vXmXhw9bODS8LhGRCej42QUoQEApnC+8dZ4bSk3
-Lmoa7gR+DzY5iQz88kGW8UD4FM1+6QI=
-=yenn
------END PGP SIGNATURE-----
-
---mk6rhzbt6pcubuwj--
+Haitao
