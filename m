@@ -1,113 +1,69 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D637F128823;
-	Tue, 26 Mar 2024 03:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7FE6E61D;
+	Tue, 26 Mar 2024 11:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711423974; cv=none; b=PLrxTrwdjILWshfjMuC5XDmwSW/IMqKlj9FqLkUyO1KIt8GRkUfPuJbIhkC2JX61fkpqwbNF7ITxMW6Pm0CM4KQUiEEp0WpAiMv1qfuxAnVNCJsoryeaiFb6jR3cKkwpJzVkQuXOiw+OsIK5HqIfpwotPjH3VEKPl9caz3gU67g=
+	t=1711454264; cv=none; b=USrDyUDbxrTHXCsaC/FoL9kxSgpT+B+QK8wqLMxPXTJNOd+h0gAs0CCGBNlpD3T0eICy0mB1n825GvHvXus7IqSRGm9eK9sn3M+RhjlKa2FNpAaunKdje7B1D0pPTBlWujsm+YOWld3VjRAklwNuvoWfvkhogTFUXn9b3tnvWy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711423974; c=relaxed/simple;
-	bh=f5P7jXuaPxF8gxKTJOiUPKZMuLKQpBGNZmyCMdfpQew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W8AGvVYmbVUe2apVdz2PsqbPJLgZQSM/KTAOfUD01iaYVo2ZMihkLuX9HAWNCoMwYKUsWAoNAQKu8LyM3KyBqleOwEy0bpgzUuPxFU//s0GFX3sbIuqmt9ji0GzmL1Uffn5h8/1Mg/sa7QspryVqnCUKldOdm70XjBWKMZOhlbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQ/yKgv4; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1711454264; c=relaxed/simple;
+	bh=EKJhulSFxLWQLaF7yaxSDnu58jC9IeQn/dXAU0JKliQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=QoPZOEwAk0Yt6nEs/hzNVqxnig8kslz/wTvcTI/TW57XOoaVHHnZzsngqormlyVJfCCu+L+CNjtq9lGn6RcoQwcCmOf405Y9daau7UXgq/mE3zda2M5HjZE67E+o1QZhNHGm4UOdeZl2x3HzdUXJ73us5PAoYPZmZ3Gjm9j5F+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hMw4D1PQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQ/yKgv4"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41488d6752eso10821765e9.2;
-        Mon, 25 Mar 2024 20:32:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711423971; x=1712028771; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lA5o6h754u6ODWqcXZI/yfZmhgXKlz5ceCEo4tpQucE=;
-        b=GQ/yKgv46sqFnSCBelHnAnN508cFDTH28rJLuZ6V2bjpScVQ3HKjJalz+ylvKz2hmB
-         DBF3ShSXyxxp6u0Kh1ZhSdVJ8hxor/zl5vsZPXMp20oXODQvp5897+fIEUkKcf93x8mL
-         KBbtYe3H2NGGyMYstb37YLWepFJmicNDM/0G0InWzIDnL7gjDG5InDxMlTPBz/nxPNab
-         7cPgbPTjscyAqu5npqXXomA8HAwVfxqTr3TXc4svWbzx41gzXXtezxDS1rc1mJ69ESi3
-         E5ybo69ULxBgoZgrSVqtEtktM/wdkmCLjC9ch73wt+VrBL4JzbIiZoZ9S87j9hApctwr
-         aEmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711423971; x=1712028771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lA5o6h754u6ODWqcXZI/yfZmhgXKlz5ceCEo4tpQucE=;
-        b=N0klvxvfSE8JxEsdNayWaepFKiRxCYeXN4J1qGYyqy6Tl5G1NkaUHbJsrZWINdG+gh
-         imcVFh7GREh5T9bAALkEHRZG0U88I4Strc90PB2zUd1lQqfYuOM12FlnzDT8VfsegaDY
-         bSSiQlase5SvGmWJcXcvrfqOIlOFmUJNl7sScAloJNZu86gu8pB9tyX6bdiMtdIUaYcB
-         ZUPFY/dbvyO+hOCl8v9mdHxijLUi+yB/tL7Y7/u0C+CoNDx3KFMO+zyDzyFw4DkO+HOB
-         z/SaDAkpcO7WAVKgomKrb6t+D8OUqETOKztnEpoozB088OsswWeZuQFnQy+LytRdcWpP
-         fyjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXt9vUv1hboSJIa2Wk0CGjD1afSVZLRfkz3WSs2uB+fCN65VGYGcmrmRcOfoG4Xs4iKa8chh2WPpcHwo05wQLJltymwj2gQ1X8OJxtW4tq7vtGeV1EstlKt9JT+ekJWHrLEeX+Yg8cRddUlA23iz7n+lW0jjQb96hOWwJhQOgcriKDZAEVBKUoLG0T9E6OpuprnBS2pBKUH15e2XVku5Ifj1qiJFwq3MB4XCEwqIN67kdpvlH0aoDHYJc17pqJ1E5aBxcBNSVhKjATrKvk3NIBb6MgWtcXcbfybFCQwwlBlXgSjJ/OwEDAeTNYxT5JmB/r2qQlCN+3Uma/G+KUoFfNRkT+BBWg8dEc=
-X-Gm-Message-State: AOJu0Yx2L+Ugcmv/iPcXz+KA1Brw1i6kPdtRDEdgyN7EpNBACsVJs0tc
-	NXCkdqwe6fTxnLigincKMPvAT7kV0WCeCuq0mxzZijtq3AI4i0vtMjhznrefb+Iv7GQA/uroAZ9
-	LDyiTZLKcC2GOHr9ryTmt3djgMus=
-X-Google-Smtp-Source: AGHT+IFQ9mbx3pz3lWDfK2p6wsj2aDG+6I6RjpqCge2Sd5poBB31E3vi/9DrtwhPj4IF4gJiiqaho8oQ5gTSaHJ4YJE=
-X-Received: by 2002:a05:6000:120d:b0:33e:a5e1:eccc with SMTP id
- e13-20020a056000120d00b0033ea5e1ecccmr5218777wrx.68.1711423971122; Mon, 25
- Mar 2024 20:32:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hMw4D1PQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E9C1C433F1;
+	Tue, 26 Mar 2024 11:57:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711454264;
+	bh=EKJhulSFxLWQLaF7yaxSDnu58jC9IeQn/dXAU0JKliQ=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=hMw4D1PQCahqfw8MtYxsjzHrzUNPiIFh/by6PO26L5JBoud0NXvOoP+pWDolP6A7W
+	 MHWxMfRihenzXqisqycL3g12C+CTWoltIvH4CNPUdz+72PbKPN+WRf81R/oXG8bDpf
+	 T1dkgCTQSYki+AzT7VZB67H8zKEuIGM/3R4nByOKzGAkwCto7GnC2k4qJLIzF7Eq/D
+	 /5kSEGrmMOO3Stz0ZnDtyv2/s9EdzPUq06xhiB22b5Veavz/fy0YY//StezneyCMcw
+	 b0BhOnWShhQodg0X1OfcREnyS8OlaUMwqW9UypBtbcnB46bzRA+9vjV1wmjQjZJ4Bo
+	 J5FymRUa+DgSQ==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240326021656.202649-1-rick.p.edgecombe@intel.com> <20240326021656.202649-3-rick.p.edgecombe@intel.com>
-In-Reply-To: <20240326021656.202649-3-rick.p.edgecombe@intel.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 25 Mar 2024 20:32:40 -0700
-Message-ID: <CAADnVQKHtRX2WS9c2qcMUJTmNNda+attkXoiNurFyMKvHNfa=A@mail.gmail.com>
-Subject: Re: [PATCH v4 02/14] mm: Switch mm->get_unmapped_area() to a flag
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Liam.Howlett@oracle.com, Andrew Morton <akpm@linux-foundation.org>, 
-	Borislav Petkov <bp@alien8.de>, Mark Brown <broonie@kernel.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	debug@rivosinc.com, "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-mm <linux-mm@kvack.org>, linux-s390 <linux-s390@vger.kernel.org>, 
-	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	io-uring@vger.kernel.org, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 26 Mar 2024 13:57:37 +0200
+Message-Id: <D03NWFQM9XP2.1AWMB9VW98Z98@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-s390@vger.kernel.org>, <sparclinux@vger.kernel.org>,
+ <linux-sgx@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+ <linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <io-uring@vger.kernel.org>, <bpf@vger.kernel.org>
+Subject: Re: [PATCH v4 02/14] mm: Switch mm->get_unmapped_area() to a flag
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Rick Edgecombe" <rick.p.edgecombe@intel.com>,
+ <Liam.Howlett@oracle.com>, <akpm@linux-foundation.org>, <bp@alien8.de>,
+ <broonie@kernel.org>, <christophe.leroy@csgroup.eu>,
+ <dave.hansen@linux.intel.com>, <debug@rivosinc.com>, <hpa@zytor.com>,
+ <keescook@chromium.org>, <kirill.shutemov@linux.intel.com>,
+ <luto@kernel.org>, <mingo@redhat.com>, <peterz@infradead.org>,
+ <tglx@linutronix.de>, <x86@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240326021656.202649-1-rick.p.edgecombe@intel.com>
+ <20240326021656.202649-3-rick.p.edgecombe@intel.com>
+In-Reply-To: <20240326021656.202649-3-rick.p.edgecombe@intel.com>
 
-On Mon, Mar 25, 2024 at 7:17=E2=80=AFPM Rick Edgecombe
-<rick.p.edgecombe@intel.com> wrote:
->
->
-> diff --git a/mm/util.c b/mm/util.c
-> index 669397235787..8619d353a1aa 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -469,17 +469,17 @@ void arch_pick_mmap_layout(struct mm_struct *mm, st=
-ruct rlimit *rlim_stack)
->
->         if (mmap_is_legacy(rlim_stack)) {
->                 mm->mmap_base =3D TASK_UNMAPPED_BASE + random_factor;
-> -               mm->get_unmapped_area =3D arch_get_unmapped_area;
-> +               clear_bit(MMF_TOPDOWN, &mm->flags);
->         } else {
->                 mm->mmap_base =3D mmap_base(random_factor, rlim_stack);
-> -               mm->get_unmapped_area =3D arch_get_unmapped_area_topdown;
-> +               set_bit(MMF_TOPDOWN, &mm->flags);
->         }
->  }
->  #elif defined(CONFIG_MMU) && !defined(HAVE_ARCH_PICK_MMAP_LAYOUT)
->  void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_sta=
-ck)
->  {
->         mm->mmap_base =3D TASK_UNMAPPED_BASE;
-> -       mm->get_unmapped_area =3D arch_get_unmapped_area;
-> +       clear_bit(MMF_TOPDOWN, &mm->flags);
->  }
->  #endif
+On Tue Mar 26, 2024 at 4:16 AM EET, Rick Edgecombe wrote:
+> The mm_struct contains a function pointer *get_unmapped_area(), which
+> is set to either arch_get_unmapped_area() or
+> arch_get_unmapped_area_topdown() during the initialization of the mm.
 
-Makes sense to me.
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-for the idea and for bpf bits.
+In which conditions which path is used during the initialization of mm
+and why is this the case? It is an open claim in the current form.
+
+That would be nice to have documented for the sake of being complete
+description. I have zero doubts of the claim being untrue.
+
+BR, Jarkko
