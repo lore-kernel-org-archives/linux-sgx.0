@@ -1,105 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B6310A03;
-	Mon,  1 Apr 2024 14:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BDA33982;
+	Mon,  1 Apr 2024 22:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711981814; cv=none; b=qXFf1lIrlRdV3CEKGYLAJPdsfGKmXOn/TarOfsoFrVpDzHGStA2nN2oItES/q5VYDiAmUBH+KlZJ2MFBkQILbjWR8zaqqGF43CxlmgaADES2jVlMK/ZBc87WZWee3cb1I+jaRrbw61zyJs8HM2yBYw6hnAYHutWBE4X+rlSYvkY=
+	t=1712012110; cv=none; b=leP6AQYPq/TPbDgmGaiJL1Aaiya+hK0xDTGsoMUJ62SYlFT/gEvEv4w/2pDAANQAcbFk2Xgmf8CEz5kyMgCmORMH2CRjbaGxrk4Tr79nFFnAJ4er81iVz7k/E/v7c9WQf25BmnJA79dWz8LhHcXT9W0eHlQ/viFoESDCaq5PCvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711981814; c=relaxed/simple;
-	bh=rUtbKhJd42W49mcH+PWZ7Hn3kLbojDapBlOE3UUUjqg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=c8FdvD4aOm0EPTNCAJyef2CRqoZHkWcBnojy8ey1ZPwXd3hn7aNEUCpTVwHke4rdYWK8SAWMBNhNjMmiBg4D2tKbUvfT1qO4zYnL7kD6vSoSxaLFsnyWt3Ec3qEOSzkxjhZ2pky+k6UTsrgo37Ct8bKaFPsDOg6x7BnGFZoT9D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSAsAvvr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712012110; c=relaxed/simple;
+	bh=30gWJyaHRF80+3efAwmOoPWr9DWWUI7WAK4YaLcCZOc=;
+	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
+	 Message-ID:In-Reply-To; b=X1uhAzzBpZXNqFMZ9oCTJFNFJF6dujSNMWCEc1fuC4uwvXZMKCxQy0+xgAGKaJKsH4a2pjt+wUKSEgzoRQ5M9+6GgN6GoruYF/k0Y+QCHAKDcr8MleYVPTGl5O1m8WJIxFyg/4QLapbSHWOt+B/mXYqw3dv1Z0JpJJpt7j99OOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A34oIFey; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSAsAvvr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68741C433F1;
-	Mon,  1 Apr 2024 14:30:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711981814;
-	bh=rUtbKhJd42W49mcH+PWZ7Hn3kLbojDapBlOE3UUUjqg=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=nSAsAvvrPavW1PfN4Fkbep2/goAmTke8164aFwdRKMyR3xw6D6s3Gwq390kOGo+PP
-	 EHhifHhLUn7xfjwnbBUEtxQl/gEd7nELO+z/xZyFcQh9KgNwQdWkML3quMpEEP7Qju
-	 46QgINKC8vwrM1ZYL/uJ7AeykQ2qn2KjdBC9r7RF9NCKIvdkb1r9l4ly8l1u2JvlIC
-	 MzgaNHG2FjN8zxZj5lZcZW88Gb5qGCbpbKwJQrSvFE5EowVoROxCgr7429wmjaWkyy
-	 HDTBo/ZnG/5PtJz7sqfKO7fBNvABvuXIFcn4mPph/KQfkVCVJyxjGjc8+Kdc0zP6UA
-	 4rN7b0QvM50WA==
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A34oIFey"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1712012109; x=1743548109;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=30gWJyaHRF80+3efAwmOoPWr9DWWUI7WAK4YaLcCZOc=;
+  b=A34oIFeyZyz1OurneqWBAsyCjROWBzwO+9F7mhd+8F1U0Gu5wuQwLixV
+   uxbcdxUZ1+vN3oiLIXBz8si5gK0fKhpu/NUPGzZnUogTl7ub0Tns6liEw
+   hZCx5Dw7HvEY75f77VZ9sKynBwYJrGXjdVABCVlfC6Zako6JBCs/bRD/F
+   Jaf+GI65ofsf0CGLY/+TeZgBUq/xl0CtA0Xt06KX8+hBRBreFMVwwAEvz
+   Bp28JuUGiZpX5+7equuiID4LcxRpK6fhP0VKB2tOlo/AtD33KHccZeXHd
+   Gv+CXIqHiWm6VCXrFfDRx+aMjW6WEhgH7IUMB8V/n3XtavyGBxJ9TJZDn
+   w==;
+X-CSE-ConnectionGUID: JEayBrwWQjavic3XzCdT8g==
+X-CSE-MsgGUID: letfgcqiT0aLQUntDZf+QQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11031"; a="7058405"
+X-IronPort-AV: E=Sophos;i="6.07,173,1708416000"; 
+   d="scan'208";a="7058405"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2024 15:55:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,173,1708416000"; 
+   d="scan'208";a="18321991"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-SHA; 01 Apr 2024 15:55:06 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To: "Jarkko Sakkinen" <jarkko@kernel.org>
+Cc: anakrish@microsoft.com, bp@alien8.de, cgroups@vger.kernel.org,
+ chrisyan@microsoft.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+ kai.huang@intel.com, kristen@linux.intel.com, linux-kernel@vger.kernel.org,
+ linux-sgx@vger.kernel.org, mikko.ylinen@linux.intel.com, mingo@redhat.com,
+ mkoutny@suse.com, seanjc@google.com, sohil.mehta@intel.com,
+ tglx@linutronix.de, tim.c.chen@linux.intel.com, tj@kernel.org, x86@kernel.org,
+ yangjie@microsoft.com, zhanb@microsoft.com, zhiquan1.li@intel.com
+Subject: Re: [PATCH] selftests/sgx: Improve cgroup test scripts
+References: <D071SWVSOJLN.2C9H7NTS4PHGI@kernel.org>
+ <20240331174442.51019-1-haitao.huang@linux.intel.com>
+ <D08UQJ2XQY6L.1XEOEJ6HIUJ8Y@kernel.org>
+Date: Mon, 01 Apr 2024 17:55:02 -0500
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 01 Apr 2024 17:30:07 +0300
-Message-Id: <D08UWGYDKS6D.2J34TCDQ836RF@kernel.org>
-Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
- "seanjc@google.com" <seanjc@google.com>, "anakrish@microsoft.com"
- <anakrish@microsoft.com>, "Zhang, Bo" <zhanb@microsoft.com>,
- "kristen@linux.intel.com" <kristen@linux.intel.com>,
- "yangjie@microsoft.com" <yangjie@microsoft.com>, "Li, Zhiquan1"
- <zhiquan1.li@intel.com>, "chrisyan@microsoft.com" <chrisyan@microsoft.com>
-Subject: Re: [PATCH v10 05/14] x86/sgx: Implement basic EPC misc cgroup
- functionality
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Huang, Kai" <kai.huang@intel.com>, "mingo@redhat.com"
- <mingo@redhat.com>, "x86@kernel.org" <x86@kernel.org>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "hpa@zytor.com"
- <hpa@zytor.com>, "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "mkoutny@suse.com" <mkoutny@suse.com>, "haitao.huang@linux.intel.com"
- <haitao.huang@linux.intel.com>, "cgroups@vger.kernel.org"
- <cgroups@vger.kernel.org>, "tj@kernel.org" <tj@kernel.org>, "Mehta, Sohil"
- <sohil.mehta@intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
- "bp@alien8.de" <bp@alien8.de>
-X-Mailer: aerc 0.17.0
-References: <20240328002229.30264-1-haitao.huang@linux.intel.com>
- <20240328002229.30264-6-haitao.huang@linux.intel.com>
- <89b4e053db21c31859cf2572428fd9d4ab4475ab.camel@intel.com>
- <D071JQZYBH2W.399N43JS6GY6Z@kernel.org>
- <5a5dee86713a2852fc2c1ebef28ae08927d2c95f.camel@intel.com>
-In-Reply-To: <5a5dee86713a2852fc2c1ebef28ae08927d2c95f.camel@intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+From: "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.2lkm90y3wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <D08UQJ2XQY6L.1XEOEJ6HIUJ8Y@kernel.org>
+User-Agent: Opera Mail/1.0 (Win32)
 
-On Mon Apr 1, 2024 at 12:29 PM EEST, Huang, Kai wrote:
-> On Sat, 2024-03-30 at 13:17 +0200, Jarkko Sakkinen wrote:
-> > On Thu Mar 28, 2024 at 2:53 PM EET, Huang, Kai wrote:
-> > >=20
-> > > > --- /dev/null
-> > > > +++ b/arch/x86/kernel/cpu/sgx/epc_cgroup.c
-> > > > @@ -0,0 +1,74 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +// Copyright(c) 2022 Intel Corporation.
-> > >=20
-> > > It's 2024 now.
-> > >=20
-> > > And looks you need to use C style comment for /* Copyright ... */, af=
-ter looking
-> > > at some other C files.
-> >=20
-> > To be fair, this happens *all the time* to everyone :-)
-> >=20
-> > I've proposed this few times in SGX context and going to say it now.
-> > Given the nature of Git copyrights would anyway need to be sorted by
-> > the Git log not possibly incorrect copyright platters in the header
-> > and source files.
-> >=20
+On Mon, 01 Apr 2024 09:22:21 -0500, Jarkko Sakkinen <jarkko@kernel.org>  
+wrote:
+
+> On Sun Mar 31, 2024 at 8:44 PM EEST, Haitao Huang wrote:
+>> Make cgroup test scripts ash compatible.
+>> Remove cg-tools dependency.
+>> Add documentation for functions.
+>>
+>> Tested with busybox on Ubuntu.
+>>
+>> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
 >
-> Sure fine to me either way.  Thanks for pointing out.
+> I'll run this next week on good old NUC7. Thank you.
 >
-> I have some vague memory that we should update the year but I guess I was=
- wrong.
+> I really wish that either (hopefully both) Intel or AMD would bring up
+> for developers home use meant platform to develop on TDX and SNP. It is
+> a shame that the latest and greatest is from 2018.
+>
+> BR, Jarkko
+>
 
-I think updating year makes sense!
+Argh, missed a few changes for v2 cgroup:
 
-I'd be fine not having copyright platter at all since the commit is from
-Intel domain anyway but if it is kept then the year needs to be
-corrected.
+--- a/tools/testing/selftests/sgx/run_epc_cg_selftests.sh
++++ b/tools/testing/selftests/sgx/run_epc_cg_selftests.sh
+@@ -15,6 +15,8 @@ CG_MEM_ROOT=/sys/fs/cgroup
+  CG_V1=0
+  if [ ! -d "/sys/fs/cgroup/misc" ]; then
+      echo "# cgroup V2 is in use."
++    echo "+misc" >  $CG_MISC_ROOT/cgroup.subtree_control
++    echo "+memory" > $CG_MEM_ROOT/cgroup.subtree_control
+  else
+      echo "# cgroup V1 is in use."
+      CG_MISC_ROOT=/sys/fs/cgroup/misc
+@@ -26,6 +28,11 @@ mkdir -p $CG_MISC_ROOT/$TEST_CG_SUB2
+  mkdir -p $CG_MISC_ROOT/$TEST_CG_SUB3
+  mkdir -p $CG_MISC_ROOT/$TEST_CG_SUB4
 
-I mean Git commit stores all the data, including exact date.
-
-BR, Jarkko
-
++if [ $CG_V1 -eq 0 ]; then
++echo "+misc" >  $CG_MISC_ROOT/$TEST_ROOT_CG/cgroup.subtree_control
++echo "+misc" >  $CG_MISC_ROOT/$TEST_CG_SUB1/cgroup.subtree_control
++fi
