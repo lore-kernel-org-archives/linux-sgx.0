@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A47714A092;
-	Wed,  3 Apr 2024 15:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813DC1E520;
+	Wed,  3 Apr 2024 16:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712158471; cv=none; b=kMrh93Vc7cb0Y5RKfVFnpT5lylzA1CBb7TsPpWp6vNTdzM+O0zcE9WX0UM+SklGjDkt7InU29Odium/aAuq6wOyCo4zVVYkS0JxE2ywTiiKh99DcKrOIo8ARhJiQkqXqD3kqfvVSl7kqLQIdQvhycu7Hyidc7E1yQ5+E0O2048s=
+	t=1712162783; cv=none; b=nTvu22szWk0GasX4wUpfWcSnlR4b4o1IJ5l3nFKFmSkKKw1tSPuGgkPX9vYBRrvHMtBxA4AwipLk1u9K/0qoWrrY2xI3f3vXnT0Wwyt1YkgBA3kNL9DomRtsYie2UYTbN/nK+SGQiasEzXQeuvw+8IF3odNOQoylyLH5UPYjkns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712158471; c=relaxed/simple;
-	bh=Mxc+CC8sC/scrgK6foejLgrA2eOYbMZE4L+NN/kTniA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=u+QVpBHHLSwJ8IKetn+JaZlzKOFaWeChtWEYOUjOBpz5CaD7egs6evsqlVTystP4oJ+3NkraoFH1zb34d40l83VER07JeUpo7FeJwvPy56BxvE65NE9HQfDfEejr7qv+eLTDxvRHRyLdwREA63pCgbJyl+j53fhN/qqqL8wEAlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7ZFqz7M; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712162783; c=relaxed/simple;
+	bh=B/9drZEy5S7WaOtGfUFnN3ljHMB28vjUwWZEPvQmAzs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=pxjf9gjmBTR+EV1PEeoSaZiH8xNn9xcTUA23q5ITvk2rF32JuLySrPMtPOSqANRoKJOTiLkmE1nihc5OWfHUI8OG8P1cTM3/ye1k7c5o7hCSZqPhrV+Mkz7vlHLMEoJc9MHmQcGgTarytZLi8nS6H4lVJwYG4k/IrRKtMmk5fUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4SwTRHj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7ZFqz7M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A80CEC433F1;
-	Wed,  3 Apr 2024 15:34:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4SwTRHj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D15C433C7;
+	Wed,  3 Apr 2024 16:46:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712158471;
-	bh=Mxc+CC8sC/scrgK6foejLgrA2eOYbMZE4L+NN/kTniA=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=E7ZFqz7MZg+3CPEomG/D2lcumlgIERtDKcjeo603ozf4CuxA8Ko6KDuBfNfsRukNz
-	 iU2nxtDWub9HYPkJtDmGCCZOOoRJR/ydGBKcrp6NnYlBRYUvhEfymlUlTqpAnUTVAB
-	 2weWAnkzLdog+IEW+Rp769dAtV+mKoc2j4RpoIQBV2XicEk17tFzhK9cGf9YYMLjUB
-	 +h5gU6Qd054+0Rf0BpQSjCeqfbo57b4gGycTh++/hVa9Sji6MojEY21x2Q4mmB8/GO
-	 VdCrC4ADZFBuVbDwm7OXooLH2NencpaZLdVwuQ/xEZj/AWdcA/0Qolkj/LBe81KXr6
-	 nTrc6IR0Quhvg==
+	s=k20201202; t=1712162783;
+	bh=B/9drZEy5S7WaOtGfUFnN3ljHMB28vjUwWZEPvQmAzs=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=L4SwTRHjmdR1/Qm+gnsbFIb+8kkfUzw6rTiDJKE7UPZPxH4gNNm+3sU0kcBkpsx5Z
+	 EQNr5evYNvWZ8XDpgCLbsHVpyM07Gwems6ZXP1on/v99RFs7Ra0FLnbo0nTkCohCJc
+	 Mi4mIzn7YOoQpadDZ4PCRjHpXpU/0Ar9tFzGm6hQfW9s58dC94hPzojlL3flT6GwAb
+	 RIrbkgq9EAVotXFnjJQyInDO+7tggRGZF0erEspN+E1D2wTjRspk7XLF4PKbOUsvzh
+	 SX4xMOPMJIS53qRuSqsOwcOOCeN4JvC2PSP9A0BQXHQwsYjc05Fp1eXhE6mmIitsFR
+	 4IDS8uXbgnTQA==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -34,111 +34,65 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Apr 2024 18:34:24 +0300
-Message-Id: <D0ALIS78E2UP.O2C1LEQ5NNER@kernel.org>
-To: "Haitao Huang" <haitao.huang@linux.intel.com>
-Cc: <anakrish@microsoft.com>, <bp@alien8.de>, <cgroups@vger.kernel.org>,
- <chrisyan@microsoft.com>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
- <kai.huang@intel.com>, <kristen@linux.intel.com>,
+Date: Wed, 03 Apr 2024 19:46:16 +0300
+Message-Id: <D0AN1T7IQCB6.3L1IV1UFGMBV1@kernel.org>
+Cc: <dave.hansen@linux.intel.com>, <tj@kernel.org>,
  <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
- <mikko.ylinen@linux.intel.com>, <mingo@redhat.com>, <mkoutny@suse.com>,
- <seanjc@google.com>, <sohil.mehta@intel.com>, <tglx@linutronix.de>,
- <tim.c.chen@linux.intel.com>, <tj@kernel.org>, <x86@kernel.org>,
- <yangjie@microsoft.com>, <zhanb@microsoft.com>, <zhiquan1.li@intel.com>
-Subject: Re: [PATCH v2] selftests/sgx: Improve cgroup test scripts
+ <x86@kernel.org>, <cgroups@vger.kernel.org>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>,
+ <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
+ <zhanb@microsoft.com>, <anakrish@microsoft.com>,
+ <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
+ <chrisyan@microsoft.com>
+Subject: Re: [PATCH v9 15/15] selftests/sgx: Add scripts for EPC cgroup
+ testing
 From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, "Haitao Huang"
+ <haitao.huang@linux.intel.com>
 X-Mailer: aerc 0.17.0
-References: <D08UQJ2XQY6L.1XEOEJ6HIUJ8Y@kernel.org>
- <20240402014254.27717-1-haitao.huang@linux.intel.com>
- <D09GVMLN1O4Z.2RXQUH4ZY5IVF@kernel.org>
- <op.2ll2yyfgwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <op.2ll2yyfgwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+References: <20240205210638.157741-1-haitao.huang@linux.intel.com>
+ <20240205210638.157741-16-haitao.huang@linux.intel.com>
+ <4be7b291010973c203ed8c7bcd25b626c1290231.camel@kernel.org>
+ <D04OVW6I8MUA.1OAIHFQ8943SM@kernel.org>
+ <op.2lbjl0oawjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <D071OAFZ80O6.XEDXJ8AF4PK9@kernel.org>
+ <D071QIHLW7MP.UM9R3VYETIOK@kernel.org>
+ <htiz5jgsby5v262saphhomcsxtixb2u7ot6jcghpfhvgz65ht6@qlz3gpdwapaa>
+ <D09MB26IPFFW.3UBD7M0S17SG6@kernel.org>
+ <op.2llzn7wgwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <yjremy4leipriqfd547wvjd6jt3r6t4tgz36eazy3slfuew4mc@v4iye7sm7yqn>
+In-Reply-To: <yjremy4leipriqfd547wvjd6jt3r6t4tgz36eazy3slfuew4mc@v4iye7sm7yqn>
 
-On Tue Apr 2, 2024 at 8:31 PM EEST, Haitao Huang wrote:
-> On Tue, 02 Apr 2024 02:43:25 -0500, Jarkko Sakkinen <jarkko@kernel.org> =
-=20
-> wrote:
+On Tue Apr 2, 2024 at 8:40 PM EEST, Michal Koutn=C3=BD wrote:
+> On Tue, Apr 02, 2024 at 11:20:21AM -0500, Haitao Huang <haitao.huang@linu=
+x.intel.com> wrote:
+> > Do we really want to have it implemented in c?
 >
-> > On Tue Apr 2, 2024 at 4:42 AM EEST, Haitao Huang wrote:
-> >> Make cgroup test scripts ash compatible.
-> >> Remove cg-tools dependency.
-> >> Add documentation for functions.
-> >>
-> >> Tested with busybox on Ubuntu.
-> >>
-> >> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
-> >> ---
-> >> v2:
-> >> - Fixes for v2 cgroup
-> >> - Turn off swapping before memcontrol tests and back on after
-> >> - Add comments and reformat
-> >> ---
-> >>  tools/testing/selftests/sgx/ash_cgexec.sh     |  57 ++++++
-> >>  .../selftests/sgx/run_epc_cg_selftests.sh     | 187 +++++++++++------=
--
-> >>  .../selftests/sgx/watch_misc_for_tests.sh     |  13 +-
-> >>  3 files changed, 179 insertions(+), 78 deletions(-)
-> >>  create mode 100755 tools/testing/selftests/sgx/ash_cgexec.sh
-> >>
-> >> diff --git a/tools/testing/selftests/sgx/ash_cgexec.sh =20
-> >> b/tools/testing/selftests/sgx/ash_cgexec.sh
-> >> new file mode 100755
-> >> index 000000000000..9607784378df
-> >> --- /dev/null
-> >> +++ b/tools/testing/selftests/sgx/ash_cgexec.sh
-> >> @@ -0,0 +1,57 @@
-> >> +#!/usr/bin/env sh
-> >> +# SPDX-License-Identifier: GPL-2.0
-> >> +# Copyright(c) 2024 Intel Corporation.
-> >> +
-> >> +# Move the current shell process to the specified cgroup
-> >> +# Arguments:
-> >> +# 	$1 - The cgroup controller name, e.g., misc, memory.
-> >> +#	$2 - The path of the cgroup,
-> >> +#		relative to /sys/fs/cgroup for cgroup v2,
-> >> +#		relative to /sys/fs/cgroup/$1 for v1.
-> >> +move_to_cgroup() {
-> >> +    controllers=3D"$1"
-> >> +    path=3D"$2"
-> >> +
-> >> +    # Check if cgroup v2 is in use
-> >> +    if [ ! -d "/sys/fs/cgroup/misc" ]; then
-> >> +        # Cgroup v2 logic
-> >> +        cgroup_full_path=3D"/sys/fs/cgroup/${path}"
-> >> +        echo $$ > "${cgroup_full_path}/cgroup.procs"
-> >> +    else
-> >> +        # Cgroup v1 logic
-> >> +        OLD_IFS=3D"$IFS"
-> >> +        IFS=3D','
-> >> +        for controller in $controllers; do
-> >> +            cgroup_full_path=3D"/sys/fs/cgroup/${controller}/${path}"
-> >> +            echo $$ > "${cgroup_full_path}/tasks"
-> >> +        done
-> >> +        IFS=3D"$OLD_IFS"
-> >> +    fi
-> >
-> > I think that if you could point me to git v10 and all this I could
-> > then quite easily create test image and see what I get from that.
-> >
-> > I will code review the whole thing but this is definitely good
-> > enough to start testing this series properly! Thanks for the
-> > effort with this. The payback from this comes after the feature
-> > is mainline. We have now sort of reference of the usage patterns
-> > and less layers when we need to debug any possible (likely) bugs
-> > in the future.
-> >
-> > This is definitely to the right direction. I'm just wondering do
-> > we want to support v1 cgroups or would it make sense support only
-> > v2?
-> > BR, Jarkko
-> >
-> I can drop v1. I think most distro now support v2.
-> Created this branch to host these changes so far: =20
-> https://github.com/haitaohuang/linux/tree/sgx_cg_upstream_v10_plus
+> I only pointed to the available C boilerplate.
+>
+> > There are much fewer lines of
+> > code in shell scripts. Note we are not really testing basic cgroup stuf=
+f.
+> > All we needed were creating/deleting cgroups and set limits which I thi=
+nk
+> > have been demonstrated feasible in the ash scripts now.
+>
+> I assume you refer to
+> Message-Id: <20240331174442.51019-1-haitao.huang@linux.intel.com>
+> right?
+>
+> Could it be even simpler if you didn't stick to cgtools APIs and v1
+> compatibility?
+>
+> Reducing ash_cgexec.sh to something like
+> 	echo 0 >$R/$1/cgroup.procs
+> 	shift
+> 	exec "$@"
+> (with some small builerplate for $R and previous mkdirs)
 
-Thanks!=20
-
-I'll point my build to that, make a test image and report the
-results.
+I already asked about necessity of v1 in some response, and fully
+support this idea. Then cgexec can simply be a function wrapping
+along the lines what you proposed.
 
 BR, Jarkko
