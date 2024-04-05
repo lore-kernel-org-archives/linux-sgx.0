@@ -1,466 +1,191 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688377484;
-	Fri,  5 Apr 2024 01:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712280250; cv=none; b=HzJLi26Wm3FYExf0logFNP9YfAUMkI3J80h9bYa1mB4jEx5b+YFPokSYwt8XpliMvU+zgqSyiSoPjDi9Im+BDdG2axaftX9xj/wVV/sxI9nIAQgBHlu0YtxE6CTS/Ug9UbWT37AP0IWpXmhIE0ltDFnP1bO9Tx2AF04txFAaRGY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712280250; c=relaxed/simple;
-	bh=YPKRHv6WFnAfzv/nKxhMpe/XbVnWjOcVceGiSzSnzE0=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=ItBKDK22sKNsBj/zN2f82gXmOQdwe4LWgF30BdXkDoEuBcp7chnFemxeK67HUkGe34PRN9PiOx/Npoi10bSmzIoqZTiXS/Vw94UEy06wj68Pbz5Wld+lsIJQEnOXPFHtRj4uq61kcAB1aNGE1S4BBryZYrjA+LHqt46TSU5eDo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HZoun0fb; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F7C200DB;
+	Fri,  5 Apr 2024 02:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712285723; cv=fail; b=oNTkRkf4GcDfvAP5pnF2WLXjhyx2GJYRgd+hgEKNXGxkhDT389GXY24iZD6bqjAZN8CAVpnbLNQ1e7/wB1oAX7I4Oi3Wa74PBCz6/1ezxdJlHI7On56cQKnw6A9u+EIz+zDSdSwiL+QcsaLjTUVeLOyaqVENBhtcwlfq/+Ei6z0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712285723; c=relaxed/simple;
+	bh=WLnW3raYt3WNtu4p5zxT8WmkSyk5Y+POzfAokLucM0s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PpmYil5CXK5WhLUCAGrFlsixQCm/P7jycL4z8qJafvVemUn2Obj45iCCd55Asgkck5ciQF5nsZ/zCTonkMs6Dxw+NZoJTm9bvj5QqRtw2CIgH6OQFEAcJv2L5qPmagE9uvpSBE5VSdsXPDqufogxtZgFmBex75TlhDPY+cVQqU4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MQG8BCmC; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HZoun0fb"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MQG8BCmC"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712280248; x=1743816248;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=YPKRHv6WFnAfzv/nKxhMpe/XbVnWjOcVceGiSzSnzE0=;
-  b=HZoun0fby8ankw/6XPWx0MybN/Ubg4LFPkhZWVZYrsddCSaJKwZRXeVk
-   QX9BZdrWAmPJ5+5RbZPXlK0JAGtHerbR3ak3a+o+kHOq9Keq0muylKKkf
-   lONEhpGqip0N92l5uXKSIoCTg3JJI/EHHJT+0YPWMtbZxRgaBD1Ads15V
-   2rSfgjcIsfhiltc+Fw3xaGfHzmKBlniZh7t5y1Jv0I5V42yBRbUKy3pRE
-   nbETb2+yUzwNz1Co+Ckb/88MPM3nSPJuupcEzgoqLVuDNm/juj9YZeQ9s
-   RyKDO0PFH6DvUta7B4x7lk3s8UVfMnDre1p6MoEtHhRQzdLMcme0iZ58D
-   A==;
-X-CSE-ConnectionGUID: sl88ShJ2Qka4iE77FH9CUg==
-X-CSE-MsgGUID: wGjXPDU3T5iwTBAx3XJCVQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11034"; a="11375075"
+  t=1712285723; x=1743821723;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=WLnW3raYt3WNtu4p5zxT8WmkSyk5Y+POzfAokLucM0s=;
+  b=MQG8BCmClm4rRvrnvIc7mCCJDey/ks9Qp5iDE44T5p3NcIpNhsVJUNzB
+   fuQ/cSOg1SXqNJvVqNWzErABf/o9jTqhsTv07x3Ve5QgeTorvbrinD8cW
+   VGAQ+aQtc/qrldkiwXHxLGQGKKQYxAl+KsRoZ3hYrgl1gES18TSmF2sEW
+   3AGO/RYN71zqpzrd4GaKD1bK/wuddgBcDkDxrzuUEJbymTbi46GRO+4GF
+   OBrIA0zGKndmIA/XgyfDKvuAVg6xwE1vGxNPYInOD5DLDgXlEKzZB3Gt+
+   ZYns+NRD2fQDvEK3nV2cGoWkGM+gF1SMTZKCVGOp9Y6yN2so/BI83CQY8
+   Q==;
+X-CSE-ConnectionGUID: HjQkGCI5T+Sw6E/BgUF3zA==
+X-CSE-MsgGUID: xCmkoeDkTWKS+iy8yZJtxg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11034"; a="18745220"
 X-IronPort-AV: E=Sophos;i="6.07,180,1708416000"; 
-   d="scan'208";a="11375075"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2024 18:24:07 -0700
-X-CSE-ConnectionGUID: MiigtBY5QreKPX0qKPq2PQ==
-X-CSE-MsgGUID: /fQN0YYRRzCf1PIV6CE0Jg==
+   d="scan'208";a="18745220"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2024 19:55:19 -0700
+X-CSE-ConnectionGUID: WF+x126RQD+myDasKv39MA==
+X-CSE-MsgGUID: iwwCRAe5SlekVomqk1MB8Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.07,180,1708416000"; 
-   d="scan'208";a="42163949"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/AES256-SHA; 04 Apr 2024 18:24:05 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: "hpa@zytor.com" <hpa@zytor.com>, "tim.c.chen@linux.intel.com"
- <tim.c.chen@linux.intel.com>, "linux-sgx@vger.kernel.org"
- <linux-sgx@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "jarkko@kernel.org" <jarkko@kernel.org>, "cgroups@vger.kernel.org"
- <cgroups@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "Mehta, Sohil"
- <sohil.mehta@intel.com>, "tj@kernel.org" <tj@kernel.org>, "mingo@redhat.com"
- <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, "Huang, Kai"
- <kai.huang@intel.com>
-Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
- "seanjc@google.com" <seanjc@google.com>, "anakrish@microsoft.com"
- <anakrish@microsoft.com>, "Zhang, Bo" <zhanb@microsoft.com>,
- "kristen@linux.intel.com" <kristen@linux.intel.com>, "yangjie@microsoft.com"
- <yangjie@microsoft.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
- "chrisyan@microsoft.com" <chrisyan@microsoft.com>
+   d="scan'208";a="19583969"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Apr 2024 19:55:19 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 4 Apr 2024 19:55:17 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 4 Apr 2024 19:55:17 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Thu, 4 Apr 2024 19:55:17 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.41) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 4 Apr 2024 19:55:17 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SK3/xfsGQEOkWqfu3a4eWnqEeMTCS/4wWZAgJxWQ1memio1wsNyLYqXPwEP7hD1QJHFj7t6hHQdEiOEZVp0QAaBTLIwLF6BOk0u/2mlXrl0VYfx7v9SZzzCqtZebwPCF8gBRd61QpGnUTc/SN38btJBozM/hP43Dm/BNwi3K6R7RPgWJrQ9AvmnlYbxcsegpOtzCxYOgpf2Jab9zkCCCUlyCY08j2ttdr43eGk05oxPUTt7cPljjVZF/i4i6XO4xyE9oeG6Mk6MRJi8onT3AcBNKRNdLL86mfumeLE7Fcr7aFfesGT17x3eOFjIWpcBUJo5zGm7x3Vx1jx9MX71v8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WLnW3raYt3WNtu4p5zxT8WmkSyk5Y+POzfAokLucM0s=;
+ b=k4DI9eevadU+T5rZR7SbalBLZC/EL3HStDx3OGA7iL+PFM/67lyrHaIE577yBtvRBztQ0uvh3RaUUulXjIudIfrf1gm1ndSXuyOvXKGMP17RgWfWLgduv3nEmTQ83YqVJozq3uyvOnpcHwh7ILso8r1sJxCzfOlfRxHMWbPYeb72NmMFbQYyWJvGrSxFhXNL+QDIz3Jykx/xyDCL4JhFoZ+MRVNbxr7ZBqvGaHLEmrgQJQL85CunE5QozBxL4O9A8a2jnq72HnDgPySqjcqWeiGio/6TmfMeYBLAdIabjT8pcU0EqOojycttMm77Kd8ypkKAvlOk95G1/iGe7/FjMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by LV3PR11MB8508.namprd11.prod.outlook.com (2603:10b6:408:1b4::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.27; Fri, 5 Apr
+ 2024 02:55:09 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::ef2c:d500:3461:9b92]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::ef2c:d500:3461:9b92%4]) with mapi id 15.20.7452.019; Fri, 5 Apr 2024
+ 02:55:09 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "Mehta, Sohil" <sohil.mehta@intel.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "jarkko@kernel.org" <jarkko@kernel.org>, "x86@kernel.org"
+	<x86@kernel.org>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "cgroups@vger.kernel.org"
+	<cgroups@vger.kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "mkoutny@suse.com"
+	<mkoutny@suse.com>, "haitao.huang@linux.intel.com"
+	<haitao.huang@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"tj@kernel.org" <tj@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>
+CC: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+	"seanjc@google.com" <seanjc@google.com>, "anakrish@microsoft.com"
+	<anakrish@microsoft.com>, "Zhang, Bo" <zhanb@microsoft.com>,
+	"kristen@linux.intel.com" <kristen@linux.intel.com>, "yangjie@microsoft.com"
+	<yangjie@microsoft.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+	"chrisyan@microsoft.com" <chrisyan@microsoft.com>
 Subject: Re: [PATCH v10 05/14] x86/sgx: Implement basic EPC misc cgroup
  functionality
+Thread-Topic: [PATCH v10 05/14] x86/sgx: Implement basic EPC misc cgroup
+ functionality
+Thread-Index: AQHagKYLsFT4s142u0e+3dOpqX6L9LFNHJ0AgAvR+wCAABlwgA==
+Date: Fri, 5 Apr 2024 02:55:09 +0000
+Message-ID: <ee00aaa815b91ecb24165ad3d4ef2481a4120d05.camel@intel.com>
 References: <20240328002229.30264-1-haitao.huang@linux.intel.com>
- <20240328002229.30264-6-haitao.huang@linux.intel.com>
- <89b4e053db21c31859cf2572428fd9d4ab4475ab.camel@intel.com>
-Date: Thu, 04 Apr 2024 20:24:04 -0500
+	 <20240328002229.30264-6-haitao.huang@linux.intel.com>
+	 <89b4e053db21c31859cf2572428fd9d4ab4475ab.camel@intel.com>
+	 <op.2lqd6eavwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <op.2lqd6eavwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.50.3 (3.50.3-1.fc39) 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|LV3PR11MB8508:EE_
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: SXjsLkEAXPwBSlIi/+CT9qu1T0gC1RTfzMdECWQs2UNfLduLiHWTv8stpTik6CGcqpMjA65bSL/keu30LIopvAw3iZIbc25j0PX2M4lDkHaQrNZnuXXfwZqlGidABIFW+Ho5i5mGzsgYyJjk2kL1xFd671Wq+gHt6/jCgu77yjOiBxcBR/6O78aJrAGxSnCvyjakAD4gjth4rT/Fe8IHgbEPM585x/0X7rG8HhdakFF2vesrN9NSjZe7Ri8GwMML8wUyWagXLVuovyjVC4k2ni0KATeX1cfPMgYRgeoWVJSQxTgTq1EsUD4idQuwukjiuWv+G/RtSI9hha9wRslZ52VY3isq85NzGz6HFl/yvgpjMy6ZH8ceivfVNWm6WZSUYJbC3fvPwvFy+pLg6LS77/LwtWUq7rfgosqf0cZm2vYf+6TtXeTKEGO9mw93yEb4lWNJvxlipI/rF44R9knaZJ6fbk/wfZbvfOWabVfkhMowokF9MSxMdgshFIUFbS+H+G0wfblYlefhaZqXlUnvVdoE/O/+NUieQNVz3zxgvY+GVzPxK0SQvypX7raBvCOQ+iG9FqPjGdtmKu85ioi5+FPUEgQXx1KAkCrNjkQCmUwcuxTmRvp7uRLzsAzR6o7LldoubJrLZGz4TXS2fapBPnxg1i+WfHvqavBk0piczxU++k+Y48JsDSLhuR7n2PTbHav3ahEjccOralKeTGlD6w==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(366007)(921011);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?bElFNmxsMnVjRHhXSU9qRzVLcGVpTHRvTEQvU2tJT2hseE9BUXNuUUZVeGZZ?=
+ =?utf-8?B?dkJ4akVkekFsRW5ub0RKQnp4NFhKZXJCbzJ6eFlScGxWZHBtb3R5MmlIeDkv?=
+ =?utf-8?B?RlpTZ1VOMHF3dVoxV1l5RURMbUpQUGRkalhIbnU4MDVEUzdINFNHVXREK1lk?=
+ =?utf-8?B?N3FVaTNtR3JCR3oxeitRKzVnMzhqWDNJSGJJcXBvUU9zVkoxU3JoM0RQM1Fq?=
+ =?utf-8?B?ZDJxaXNFQklESGNodlREcUtudXlKREhFSk83V1VIVzRVSkJOaEhNMXpudnZx?=
+ =?utf-8?B?MWppTlNiTWFMMHRKYkxBM0Fab3d2d0ZhQk1EcHAxODFPVFIrK2lSdmJSZVlj?=
+ =?utf-8?B?QkF0SENtU0NNZ0ZoYXNHREM0WUEweDJpRTdJdXlnNEI3WmdtRDZLVktHbE5t?=
+ =?utf-8?B?VkRnMTN5TXVULzFESlJYTjljSlVxcTRjVlRFQlVjbmpPeFdHamI1UExuRWNB?=
+ =?utf-8?B?THhLWE5OL3h1WU5kQ2prMkJWRG01Ukx0SnA1OElCbVloZVdZL0FocUJSTGxo?=
+ =?utf-8?B?UmhIV3hXeGhPTzVJWUlQNFB6TDlmeDF6MlR6QVpZektaamVNc2thZWJhZEVB?=
+ =?utf-8?B?WXZuM2VsNVIzaklRZjVpTXBkZmg3OUt4TjArYWVGNU5nVTFrSnh2VGU3a2I0?=
+ =?utf-8?B?ZEVzYTIwK1dXQXgyYjRiMmJlZ2xTVk10Y0pyV3pPek9ONW9RbXBuL2ZGa1Ew?=
+ =?utf-8?B?M090VTl1VDBGeElqMXphcmtYck5WVC9NN29FZlRmMHA1QUwwU2crTTNCL3FX?=
+ =?utf-8?B?dG9odVNGeWlTRGV2WHNPdVBzUTZtZEFxQmRoYk1lemU2eFBiZHBNUE5jdVhX?=
+ =?utf-8?B?dkpZczVFY08wajVzQTBkTFlMQllYYmdYc3gvck9OTGFteGRheEVEK3NxRE5H?=
+ =?utf-8?B?Mmgzbjc3Y0hka3NEbEpWcUdCRlZpRGF4Nks0bG93WU5aN0dVb2trZkN1YW8y?=
+ =?utf-8?B?Z1BmV2ZyLzNXbVA1M2srMHN6Y0dlN3NZaXNHUG8zaXlBemprQ3NsbjlNNDA4?=
+ =?utf-8?B?dWlFR0h3cWM2VmVSaS9Cck85Z3d2bDZnT2V2USs2bFpkQURraWV6VzJYTThG?=
+ =?utf-8?B?YlFuelJTWWtBOXhJY0NpNU91QVRCdDZ6aGJZbmVwY1g2SXloUU1xTmtkYmVI?=
+ =?utf-8?B?UXdGRW16L0JUd1RHZ0ZUNlZqYUc4QTFBWXlUY0h5SElLSW5OVThaVTlJTlJH?=
+ =?utf-8?B?NWdkQ1dHVzhmZW16ZFl6VGFlQVZGQnNBenZ2MjJKWC9xc3ZEZXhjRmgvd2dy?=
+ =?utf-8?B?OFhvOUdlY2thWTAxenk2WTRFZkUwS1hBeUZLY3QwTHNmYlFjSll1NjlUTzBL?=
+ =?utf-8?B?aVo2aERZVUZORGxreW5lOFJZbTVHaWpENWxDY3ZnbkVXamdac3NIRWFBNEpq?=
+ =?utf-8?B?TzNRSi96TnN2dFd3WUtFU0tGTmVTRkdsSEJGaDZxWnFHeE1kMi9VemZ1cndQ?=
+ =?utf-8?B?M0s2QkpwZVJidXVDUlZENTB2bXFjWlNyeGgvVkZpWS9jbkxwRkVkNG1HUmxW?=
+ =?utf-8?B?YWl4bGFLOW9kYWRteGg3ZlFseWVOazk0K0Erb3hZVVZROVN1cWRnN2ZuZ2I2?=
+ =?utf-8?B?WTVJZUd2bVVoV2hia3J2b2Rld1lpczYwRk9tL0pTdlNXK3VyMEhmN3RrMVRX?=
+ =?utf-8?B?SmxPbDFhZGFSbkIrT2FTbmVIczRXMTlkOFFvNHVLVS9aN2N4Vk1VV01ROGgy?=
+ =?utf-8?B?dWV0UUdtUXVRWXJ5cWpGNURPeXFiOWR0clF4Umw0VHBSdGFqODFjK0F4K0dG?=
+ =?utf-8?B?TW83UitkekdyYW9JNFlhRHhzcnpHd2RtWGQ2NU0zRUJMcHBjbExzekhTTkkv?=
+ =?utf-8?B?ODA3YVpWcVRPaU0rQmY4R1A5M3NkUVpUNmxTOWZlZ1E1YTY0aVNwKzZmdkU1?=
+ =?utf-8?B?N2ozVkhsOVlVemQ1ZzYybGFwNi9lVUxmK2NhQTVHb2lpUW5XYkV0TVk4NElx?=
+ =?utf-8?B?UGZod0RVSkJFT3hXMWlydkpoSS8yQU9WYk5hdkthakpRQ0dKQXFFQ1l1bWdV?=
+ =?utf-8?B?b213aG51bjIzSnMxNC84YWxDUFZyRklsb3ZiZXRVRERTNmRuOFhIdlY1SHUw?=
+ =?utf-8?B?Q2MwbGJaUi82K08yeDhvTXY1dnliejNWNk1hR0Z2ZGltZVRIZlZIKzRJNmlt?=
+ =?utf-8?B?dW1POC94M05DSXRGWlJxRlhpOXZjQjk5M3QycnM5aEh2ampwVS9iRTBtckR5?=
+ =?utf-8?B?NXc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <95F2C9B6770D034EBB44065D7588F2CB@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2lqd6eavwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <89b4e053db21c31859cf2572428fd9d4ab4475ab.camel@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9efeb9ae-90cd-4e46-f81f-08dc551bce7d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Apr 2024 02:55:09.6375
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: P4lrt6YU3Pf5s8LPEa1fEAikcMV+5mLXJddLLmJvYm/nYTSojXtYVpqCqHa9BSkHWqhrPpHc9gt84JXOPPLpZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8508
+X-OriginatorOrg: intel.com
 
-On Thu, 28 Mar 2024 07:53:45 -0500, Huang, Kai <kai.huang@intel.com> wrote:
-
->
->> --- /dev/null
->> +++ b/arch/x86/kernel/cpu/sgx/epc_cgroup.c
->> @@ -0,0 +1,74 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// Copyright(c) 2022 Intel Corporation.
->
-> It's 2024 now.
->
-> And looks you need to use C style comment for /* Copyright ... */, after  
-> looking
-> at some other C files.
->
-Ok, will update years and use C style.
-
->> +
->> +#include <linux/atomic.h>
->> +#include <linux/kernel.h>
->> +#include "epc_cgroup.h"
->> +
->> +/* The root SGX EPC cgroup */
->> +static struct sgx_cgroup sgx_cg_root;
->> +
->> +/**
->> + * sgx_cgroup_try_charge() - try to charge cgroup for a single EPC page
->> + *
->> + * @sgx_cg:	The EPC cgroup to be charged for the page.
->> + * Return:
->> + * * %0 - If successfully charged.
->> + * * -errno - for failures.
->> + */
->> +int sgx_cgroup_try_charge(struct sgx_cgroup *sgx_cg)
->> +{
->> +	return misc_cg_try_charge(MISC_CG_RES_SGX_EPC, sgx_cg->cg, PAGE_SIZE);
->> +}
->> +
->> +/**
->> + * sgx_cgroup_uncharge() - uncharge a cgroup for an EPC page
->> + * @sgx_cg:	The charged sgx cgroup
->> + */
->> +void sgx_cgroup_uncharge(struct sgx_cgroup *sgx_cg)
->> +{
->> +	misc_cg_uncharge(MISC_CG_RES_SGX_EPC, sgx_cg->cg, PAGE_SIZE);
->> +}
->> +
->> +static void sgx_cgroup_free(struct misc_cg *cg)
->> +{
->> +	struct sgx_cgroup *sgx_cg;
->> +
->> +	sgx_cg = sgx_cgroup_from_misc_cg(cg);
->> +	if (!sgx_cg)
->> +		return;
->> +
->> +	kfree(sgx_cg);
->> +}
->> +
->> +static int sgx_cgroup_alloc(struct misc_cg *cg);
->
-> Again, this declaration can be removed if you move the below structure  
-> ...
->
->> +
->> +const struct misc_res_ops sgx_cgroup_ops = {
->> +	.alloc = sgx_cgroup_alloc,
->> +	.free = sgx_cgroup_free,
->> +};
->> +
->> +static void sgx_cgroup_misc_init(struct misc_cg *cg, struct sgx_cgroup  
->> *sgx_cg)
->> +{
->> +	cg->res[MISC_CG_RES_SGX_EPC].priv = sgx_cg;
->> +	sgx_cg->cg = cg;
->> +}
->> +
->> +static int sgx_cgroup_alloc(struct misc_cg *cg)
->> +{
->> +	struct sgx_cgroup *sgx_cg;
->> +
->> +	sgx_cg = kzalloc(sizeof(*sgx_cg), GFP_KERNEL);
->> +	if (!sgx_cg)
->> +		return -ENOMEM;
->> +
->> +	sgx_cgroup_misc_init(cg, sgx_cg);
->> +
->> +	return 0;
->> +}
->
-> ... here.
->
-
-yes, thanks
-
->> +
->> +void sgx_cgroup_init(void)
->> +{
->> +	misc_cg_set_ops(MISC_CG_RES_SGX_EPC, &sgx_cgroup_ops);
->> +	sgx_cgroup_misc_init(misc_cg_root(), &sgx_cg_root);
->> +}
->> diff --git a/arch/x86/kernel/cpu/sgx/epc_cgroup.h  
->> b/arch/x86/kernel/cpu/sgx/epc_cgroup.h
->> new file mode 100644
->> index 000000000000..8f794e23fad6
->> --- /dev/null
->> +++ b/arch/x86/kernel/cpu/sgx/epc_cgroup.h
->> @@ -0,0 +1,70 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/* Copyright(c) 2022 Intel Corporation. */
->> +#ifndef _SGX_EPC_CGROUP_H_
->> +#define _SGX_EPC_CGROUP_H_
->> +
->> +#include <asm/sgx.h>
->> +#include <linux/cgroup.h>
->> +#include <linux/misc_cgroup.h>
->> +
->> +#include "sgx.h"
->> +
->> +#ifndef CONFIG_CGROUP_SGX_EPC
->
-> Nit: add an empty line to make text more breathable.
->
-
-ok
-
->> +#define MISC_CG_RES_SGX_EPC MISC_CG_RES_TYPES
->> +struct sgx_cgroup;
->> +
->> +static inline struct sgx_cgroup *sgx_get_current_cg(void)
->> +{
->> +	return NULL;
->> +}
->> +
->> +static inline void sgx_put_cg(struct sgx_cgroup *sgx_cg) { }
->> +
->> +static inline int sgx_cgroup_try_charge(struct sgx_cgroup *sgx_cg)
->> +{
->> +	return 0;
->> +}
->> +
->> +static inline void sgx_cgroup_uncharge(struct sgx_cgroup *sgx_cg) { }
->> +
->> +static inline void sgx_cgroup_init(void) { }
->> +#else
->
-> Nit: I prefer two empty lines before and after the 'else'.
->
-
-ok
-
->> +struct sgx_cgroup {
->> +	struct misc_cg *cg;
->> +};
->> +
->> +static inline struct sgx_cgroup *sgx_cgroup_from_misc_cg(struct  
->> misc_cg *cg)
->> +{
->> +	return (struct sgx_cgroup *)(cg->res[MISC_CG_RES_SGX_EPC].priv);
->> +}
->> +
->> +/**
->> + * sgx_get_current_cg() - get the EPC cgroup of current process.
->> + *
->> + * Returned cgroup has its ref count increased by 1. Caller must call
->> + * sgx_put_cg() to return the reference.
->> + *
->> + * Return: EPC cgroup to which the current task belongs to.
->> + */
->> +static inline struct sgx_cgroup *sgx_get_current_cg(void)
->> +{
->> +	return sgx_cgroup_from_misc_cg(get_current_misc_cg());
->> +}
->
-> Again, I _think_ you need to check whether get_current_misc_cg() returns  
-> NULL?
->
-> Misc cgroup can be disabled by command line even it is on in the Kconfig.
->
-> I am not expert on cgroup, so could you check on this?
->
-
-Good catch. Will add NULL check in sgx_cgroup_from_misc_cg()
-
->> +
->> +/**
->> + * sgx_put_sgx_cg() - Put the EPC cgroup and reduce its ref count.
->> + * @sgx_cg - EPC cgroup to put.
->> + */
->> +static inline void sgx_put_cg(struct sgx_cgroup *sgx_cg)
->> +{
->> +	if (sgx_cg)
->> +		put_misc_cg(sgx_cg->cg);
->> +}
->> +
->> +int sgx_cgroup_try_charge(struct sgx_cgroup *sgx_cg);
->> +void sgx_cgroup_uncharge(struct sgx_cgroup *sgx_cg);
->> +void sgx_cgroup_init(void);
->> +
->> +#endif
->> +
->> +#endif /* _SGX_EPC_CGROUP_H_ */
->> diff --git a/arch/x86/kernel/cpu/sgx/main.c  
->> b/arch/x86/kernel/cpu/sgx/main.c
->> index d219f14365d4..023af54c1beb 100644
->> --- a/arch/x86/kernel/cpu/sgx/main.c
->> +++ b/arch/x86/kernel/cpu/sgx/main.c
->> @@ -6,6 +6,7 @@
->>  #include <linux/highmem.h>
->>  #include <linux/kthread.h>
->>  #include <linux/miscdevice.h>
->> +#include <linux/misc_cgroup.h>
->>  #include <linux/node.h>
->>  #include <linux/pagemap.h>
->>  #include <linux/ratelimit.h>
->> @@ -17,6 +18,7 @@
->>  #include "driver.h"
->>  #include "encl.h"
->>  #include "encls.h"
->> +#include "epc_cgroup.h"
->>
->>  struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
->>  static int sgx_nr_epc_sections;
->> @@ -558,7 +560,16 @@ int sgx_unmark_page_reclaimable(struct  
->> sgx_epc_page *page)
->>   */
->>  struct sgx_epc_page *sgx_alloc_epc_page(void *owner, enum sgx_reclaim  
->> reclaim)
->>  {
->> +	struct sgx_cgroup *sgx_cg;
->>  	struct sgx_epc_page *page;
->> +	int ret;
->> +
->> +	sgx_cg = sgx_get_current_cg();
->> +	ret = sgx_cgroup_try_charge(sgx_cg);
->> +	if (ret) {
->> +		sgx_put_cg(sgx_cg);
->> +		return ERR_PTR(ret);
->> +	}
->>
->>  	for ( ; ; ) {
->>  		page = __sgx_alloc_epc_page();
->> @@ -567,8 +578,10 @@ struct sgx_epc_page *sgx_alloc_epc_page(void  
->> *owner, enum sgx_reclaim reclaim)
->>  			break;
->>  		}
->>
->> -		if (list_empty(&sgx_active_page_list))
->> -			return ERR_PTR(-ENOMEM);
->> +		if (list_empty(&sgx_active_page_list)) {
->> +			page = ERR_PTR(-ENOMEM);
->> +			break;
->> +		}
->>
->>  		if (reclaim == SGX_NO_RECLAIM) {
->>  			page = ERR_PTR(-EBUSY);
->> @@ -580,10 +593,24 @@ struct sgx_epc_page *sgx_alloc_epc_page(void  
->> *owner, enum sgx_reclaim reclaim)
->>  			break;
->>  		}
->>
->> +		/*
->> +		 * Need to do a global reclamation if cgroup was not full but free
->> +		 * physical pages run out, causing __sgx_alloc_epc_page() to fail.
->> +		 */
->
-> Again, to me this comment shouldn't be here, because it doesn't add any  
-> more
-> information.
->
-> If you can reach here, you have passed the charge().  In fact, I believe  
-> this
-> doesn't matter:
-> When you fail to allocate, you just need to reclaim.
->
-> Now you only have the global reclamation, thus you need to reclaim from  
-> it.
->
-> Perhaps it is useful when you have per-cgroup LRU list.  In that case  
-> you can
-> put this comment there.
->
-
-Ok
-
->>  		sgx_reclaim_pages();
->>  		cond_resched();
->>  	}
->>
->> +#ifdef CONFIG_CGROUP_SGX_EPC
->> +	if (!IS_ERR(page)) {
->> +		WARN_ON_ONCE(page->sgx_cg);
->> +		/* sgx_put_cg() in sgx_free_epc_page() */
->> +		page->sgx_cg = sgx_cg;
->> +	} else {
->> +		sgx_cgroup_uncharge(sgx_cg);
->> +		sgx_put_cg(sgx_cg);
->> +	}
->> +#endif
->
-> Again, IMHO having CONFIG_CGROUP_SGX_EPC here is ugly, because it  
-> doesn't even
-> match the try_charge() above, which doesn't have the  
-> CONFIG_CGROUP_SGX_EPC.
->
-> If you add a wrapper in "epc_cgroup.h"
->
-Agree. but in sgx.h so sgx_epc_page struct is not exposed in epc_cgroup.h.
-
-> static inline void sgx_epc_page_set_cgroup(struct epc_page *epc_page, 
-> 					   struct sgx_cgroup *sgx_cg)
-> {
-> #ifdef CONFIG_CGROUP_SGX_EPC
-> 	epc_page->sgx_cg = sgx_cg;
-> #endif		
-> }
->
-> Then I believe the above can be simplified to:
->
-> 	if (!IS_ERR(page)) {
-> 		sgx_epc_page_set_cgroup(page, sgx_cg);
-> 	} else {
-> 		sgx_cgroup_uncharge(sgx_cg);
-> 		sgx_put_cg(sgx_cg);
-> 	}
->
->>  	if (sgx_should_reclaim(SGX_NR_LOW_PAGES))
->>  		wake_up(&ksgxd_waitq);
->>
->> @@ -604,6 +631,14 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
->>  	struct sgx_epc_section *section = &sgx_epc_sections[page->section];
->>  	struct sgx_numa_node *node = section->node;
->>
->> +#ifdef CONFIG_CGROUP_SGX_EPC
->> +	if (page->sgx_cg) {
->> +		sgx_cgroup_uncharge(page->sgx_cg);
->> +		sgx_put_cg(page->sgx_cg);
->> +		page->sgx_cg = NULL;
->> +	}
->> +#endif
->> +
->
-> Similarly, how about adding a wrapper in "epc_cgroup.h"
->
-> struct sgx_cgroup *sgx_epc_page_get_cgroup(struct sgx_epc_page *page)
-> {
-> #ifdef CONFIG_CGROUP_SGX_EPC
-> 	return page->sgx_cg;
-> #else
-> 	return NULL;
-> #endif
-> }
->
-> Then this can be:
->
-> 	sgx_cg = sgx_epc_page_get_cgroup(page);
-> 	sgx_cgroup_uncharge(sgx_cg);
-> 	sgx_put_cg(sgx_cg);
-> 	sgx_epc_page_set_cgroup(page, NULL);
->
-
-sure.
->>  	spin_lock(&node->lock);
->>
->>  	page->owner = NULL;
->> @@ -643,6 +678,11 @@ static bool __init sgx_setup_epc_section(u64  
->> phys_addr, u64 size,
->>  		section->pages[i].flags = 0;
->>  		section->pages[i].owner = NULL;
->>  		section->pages[i].poison = 0;
->> +
->> +#ifdef CONFIG_CGROUP_SGX_EPC
->> +		section->pages[i].sgx_cg = NULL;
->> +#endif
->
-> Can use the wrapper too.
->
-yes.
-> [...]
->
-> (Btw, I'll be away for couple of days due to public holiday and will  
-> review the
-> rest starting from late next week).
-Thanks
-Haitao
+T24gVGh1LCAyMDI0LTA0LTA0IGF0IDIwOjI0IC0wNTAwLCBIYWl0YW8gSHVhbmcgd3JvdGU6DQo+
+ID4gQWdhaW4sIElNSE8gaGF2aW5nIENPTkZJR19DR1JPVVBfU0dYX0VQQyBoZXJlIGlzIHVnbHks
+IGJlY2F1c2UgaXTCoCANCj4gPiBkb2Vzbid0IGV2ZW4NCj4gPiBtYXRjaCB0aGUgdHJ5X2NoYXJn
+ZSgpIGFib3ZlLCB3aGljaCBkb2Vzbid0IGhhdmUgdGhlwqAgDQo+ID4gQ09ORklHX0NHUk9VUF9T
+R1hfRVBDLg0KPiA+IA0KPiA+IElmIHlvdSBhZGQgYSB3cmFwcGVyIGluICJlcGNfY2dyb3VwLmgi
+DQo+ID4gDQo+IEFncmVlLiBidXQgaW4gc2d4Lmggc28gc2d4X2VwY19wYWdlIHN0cnVjdCBpcyBu
+b3QgZXhwb3NlZCBpbiBlcGNfY2dyb3VwLmguDQoNCkkgYW0gZmluZSB3aXRoIGFueSBwbGFjZSB0
+aGF0IHN1aXRzLg0K
