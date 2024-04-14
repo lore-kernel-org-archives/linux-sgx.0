@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EC3537F6;
-	Sat, 13 Apr 2024 21:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD13134420;
+	Sun, 14 Apr 2024 15:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713044064; cv=none; b=SZIxWTc0cVGvmCe4GRy7Y8zNHG6ClMLsXVj8ohapTZuGA21vp60oPXqGYsC0CiqBsDGva42Mrg8MXvpd0RuxJx7Wx0peX1nCZ1bImG4c6ZceuRXTpgyO71q7/kMixx8cbohDHnX838rru8IGLcGULj3urYoOo9nHC2TaX5RWzCE=
+	t=1713106871; cv=none; b=LA7TcrTf38Qbt1YMeAviWs03tZ7/o5FQktM8PESAfHhPqDOd3BruUqcRcaVEUy/KbXrDiB/Gx1DwRgJEgsPF+uv78NUeQZ1v4moHOLHfBfFqY13UTM0BpWVxtme1/Tmm0+SLXpOAvxwDOQN59m2IblWNvf0enp8GNPxbSXg2cRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713044064; c=relaxed/simple;
-	bh=gHEXvCSnZpnw6hTckg2tGstdsatBgKWirSYGD99cXY4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=asNHhK+54YUW3Gz8+YY2MoGvxB3Uf2PfTVrrgjOhofQU56qLpZ9q9EMSsNRSYd1zXR38A+Yr9JgYOTyJCxe7OB3LCMg80BsexiRUkziwhA/xoHpdFJQkZQqdHLaQduSf02wVXOOxKmFiIf8MD9HVx+MxDJMG8+v3BLxDtVhCIJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJ8lmKQO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713106871; c=relaxed/simple;
+	bh=bA7Ywe6paF9M3lGFApv54LRIrS7x6OORuroIQr81OIs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=RTa2RitDumUikZvjXUp3vnS7Tcvw9fXY48zw6KdkRVMNknlUYj8Lko3kF29iPDh+yRGCqwjVHL1rwEv16F439sPvOWtQuY/ftGi9NrE+pcyr+0ngYHD7NYJ/1fE2Vypf8aW0HDzVqH/hfHMyfb712MmHYwsVk4E/L9C9OxBLFUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grSDZdgp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJ8lmKQO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB099C113CD;
-	Sat, 13 Apr 2024 21:34:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grSDZdgp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C1DCC072AA;
+	Sun, 14 Apr 2024 15:01:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713044063;
-	bh=gHEXvCSnZpnw6hTckg2tGstdsatBgKWirSYGD99cXY4=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=hJ8lmKQOlDpjdp+cmrA9NDRwEBLVmjJ6jDHcYxzK7ougM6cXDrU1Ho/VOQNliQqcb
-	 kQf+9inJIL1oJPQDIiDcKWR32VDwnnqlqLEiDIanEaWgjsyuFK/2ZhooKcLgemIcLQ
-	 eCo52rE1NyJNDsBsN/ymVMfVGMFzPT+PVTu/bzUoVZ8gj5rOl54TXtY17bCXD1PIui
-	 mBSrFJHJf6URZByXJooxa4iNAIPW36mt5BNIWQ221FJMw+xSH9//8Qu9UMAascNzke
-	 7LhAgCWIiLn1eisHNssjJOoODOrXBISYpZ+2UToggdNnyR1hpmYnzGzMAJSD7TnKJL
-	 tXH+QgJVEsN1Q==
+	s=k20201202; t=1713106870;
+	bh=bA7Ywe6paF9M3lGFApv54LRIrS7x6OORuroIQr81OIs=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=grSDZdgp6M36AOj99zCdtGvvM56NaxeJN6T0jZvS3x48CSq/1KAvNKffMA1hwQuCA
+	 pGs6eeIySXnjBaW4K9cyaJQI63uTU3MBmbHsHO8Rtqy0yh2xQSVTwN99Gw+lXi95cp
+	 9JH0wINTqWbuRQHxWNaq/IbZPtCv9gO02KOfHrLPLsYStudaseVOKc6Oa3Z8cMY/2U
+	 4DSuMW3g6KdhI5G8JswRIVivAAjlBk2gCB5mDNxg/78dOoJuTHCA4/QzZnYEbD+JpK
+	 FmltL7zP+ZJzPb3TJkCNJ8LCnNNDNJrCwe1veHSWr/CbuoJEfKn3mthN4KJf5DyPWx
+	 w7u4EKMbMBvRQ==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -34,8 +34,12 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Sun, 14 Apr 2024 00:34:17 +0300
-Message-Id: <D0JBFRTGWZV9.3TRHOTV0SCGV@kernel.org>
+Date: Sun, 14 Apr 2024 18:01:03 +0300
+Message-Id: <D0JXP8HZLEQZ.3PHVXZI140VIH@kernel.org>
+Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
+ <zhanb@microsoft.com>, <anakrish@microsoft.com>,
+ <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
+ <chrisyan@microsoft.com>
 Subject: Re: [PATCH v11 14/14] selftests/sgx: Add scripts for EPC cgroup
  testing
 From: "Jarkko Sakkinen" <jarkko@kernel.org>
@@ -45,10 +49,6 @@ To: "Haitao Huang" <haitao.huang@linux.intel.com>,
  <linux-sgx@vger.kernel.org>, <x86@kernel.org>, <cgroups@vger.kernel.org>,
  <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
  <sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>
-Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
- <zhanb@microsoft.com>, <anakrish@microsoft.com>,
- <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
- <chrisyan@microsoft.com>
 X-Mailer: aerc 0.17.0
 References: <20240410182558.41467-1-haitao.huang@linux.intel.com>
  <20240410182558.41467-15-haitao.huang@linux.intel.com>
@@ -461,9 +461,103 @@ nts'"
 > +watch -n 1 'find /sys/fs/cgroup -wholename "*/test*/misc.'$1'" -exec \
 > +    sh -c '\''echo "$1:"; cat "$1"'\'' _ {} \;'
 
-I'll compile the kernel with this and see what happens!
+So this is what happens now:
 
-Have you tried to run the test suite from top-level? This is just a
-sanity check. I've few times forgot to do this so thus asking :-)
+jarkko@mustatorvisieni:~/linux-tpmdd> make -C tools/testing/selftests/sgx r=
+un_tests
+make: Entering directory '/home/jarkko/linux-tpmdd/tools/testing/selftests/=
+sgx'
+TAP version 13
+1..1
+# timeout set to 45
+# selftests: sgx: test_sgx
+# TAP version 13
+# 1..16
+# # Starting 16 tests from 1 test cases.
+# #  RUN           enclave.unclobbered_vdso ...
+# #            OK  enclave.unclobbered_vdso
+# ok 1 enclave.unclobbered_vdso
+# #  RUN           enclave.unclobbered_vdso_oversubscribed ...
+# #            OK  enclave.unclobbered_vdso_oversubscribed
+# ok 2 enclave.unclobbered_vdso_oversubscribed
+# #  RUN           enclave.unclobbered_vdso_oversubscribed_remove ...
+# # main.c:402:unclobbered_vdso_oversubscribed_remove:Creating an enclave w=
+ith 98566144 bytes heap may take a while ...
+# # main.c:457:unclobbered_vdso_oversubscribed_remove:Changing type of 9856=
+6144 bytes to trimmed may take a while ...
+# # main.c:473:unclobbered_vdso_oversubscribed_remove:Entering enclave to r=
+un EACCEPT for each page of 98566144 bytes may take a while ...
+# # main.c:494:unclobbered_vdso_oversubscribed_remove:Removing 98566144 byt=
+es from enclave may take a while ...
+# #            OK  enclave.unclobbered_vdso_oversubscribed_remove
+# ok 3 enclave.unclobbered_vdso_oversubscribed_remove
+# #  RUN           enclave.clobbered_vdso ...
+# #            OK  enclave.clobbered_vdso
+# ok 4 enclave.clobbered_vdso
+# #  RUN           enclave.clobbered_vdso_and_user_function ...
+# #            OK  enclave.clobbered_vdso_and_user_function
+# ok 5 enclave.clobbered_vdso_and_user_function
+# #  RUN           enclave.tcs_entry ...
+# #            OK  enclave.tcs_entry
+# ok 6 enclave.tcs_entry
+# #  RUN           enclave.pte_permissions ...
+# #            OK  enclave.pte_permissions
+# ok 7 enclave.pte_permissions
+# #  RUN           enclave.tcs_permissions ...
+# #            OK  enclave.tcs_permissions
+# ok 8 enclave.tcs_permissions
+# #  RUN           enclave.epcm_permissions ...
+# #            OK  enclave.epcm_permissions
+# ok 9 enclave.epcm_permissions
+# #  RUN           enclave.augment ...
+# #            OK  enclave.augment
+# ok 10 enclave.augment
+# #  RUN           enclave.augment_via_eaccept ...
+# #            OK  enclave.augment_via_eaccept
+# ok 11 enclave.augment_via_eaccept
+# #  RUN           enclave.tcs_create ...
+# #            OK  enclave.tcs_create
+# ok 12 enclave.tcs_create
+# #  RUN           enclave.remove_added_page_no_eaccept ...
+# #            OK  enclave.remove_added_page_no_eaccept
+# ok 13 enclave.remove_added_page_no_eaccept
+# #  RUN           enclave.remove_added_page_invalid_access ...
+# #            OK  enclave.remove_added_page_invalid_access
+# ok 14 enclave.remove_added_page_invalid_access
+# #  RUN           enclave.remove_added_page_invalid_access_after_eaccept .=
+..
+# #            OK  enclave.remove_added_page_invalid_access_after_eaccept
+# ok 15 enclave.remove_added_page_invalid_access_after_eaccept
+# #  RUN           enclave.remove_untouched_page ...
+# #            OK  enclave.remove_untouched_page
+# ok 16 enclave.remove_untouched_page
+# # PASSED: 16 / 16 tests passed.
+# # Totals: pass:16 fail:0 xfail:0 xpass:0 skip:0 error:0
+ok 1 selftests: sgx: test_sgx
+
+Also cgroups tests are expected to run when invoking "run_tests".
+
+I also wonder do we really want this:
+
+diff --git a/config/x86_64/default b/config/x86_64/default
+index 246b1f3df46..6c3d20af7b4 100644
+--- a/config/x86_64/default
++++ b/config/x86_64/default
+@@ -502,6 +502,7 @@ CONFIG_X86_INTEL_TSX_MODE_OFF=3Dy
+ # CONFIG_X86_INTEL_TSX_MODE_ON is not set
+ # CONFIG_X86_INTEL_TSX_MODE_AUTO is not set
+ CONFIG_X86_SGX=3Dy
++CONFIG_CGROUP_SGX_EPC=3Dy
+ # CONFIG_X86_USER_SHADOW_STACK is not set
+ CONFIG_EFI=3Dy
+ CONFIG_EFI_STUB=3Dy
+
+It is a small change but affects all of downstream, not just OpenSUSE.
+
+I hard time projecting a situation where you wanted SGX but without
+cgroups support so perhaps it would be a better idea to enable cgroups
+unconditionally when SGX and cgroups are part of the kernel config?
+
+Then downstream can just pick the patches and call it a day...
 
 BR, Jarkko
