@@ -1,653 +1,318 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD3CB656;
-	Mon, 15 Apr 2024 19:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFD617984;
+	Tue, 16 Apr 2024 03:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713209305; cv=none; b=iXrn2mAPVL0CGqCkRE5KznfPRZIxIinKKNGcvuaFszq5uhJzZVtd9zyj5KVcw7dZSnDDwKevUlBH16P5WmeRI7RD6ij+g/UyP3xICFVk+8BakGdlk4WUYAj4DzF2PqCGTSOYoIallLnyhI2tDvbArDggOdLPPpWlfoVEA149apQ=
+	t=1713237614; cv=none; b=mjBuy+pqv/taRWOD0gPDtR1h9FNkDODxRg5dXRHaRniNwkXvdEfZIKpNV1+oZ+gYt+ttUsD3XLTK7Qye1RrAaTQWzAq3dPI/L0yZtjwnVJ8U0tzUM/8bwCRWLtiXkrk6iaiOyEU6wg+HpaZYfen6oAx+snymeygL8gR3peFA2HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713209305; c=relaxed/simple;
-	bh=QQ2teeXacovDt3WqzQ2XWPoxzQtb2WZdpbcJQyZajng=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=UnsSWLbaCwJCo3G+xnr3f1eOrd9AZZLKgmCm9C9PLnHXZVMr5eatF4M2aCdXWYO9HOTbN1sgmHOgAeFiBUbrpetuHqHNA8gIvyWzvz48zUpDwM6a+mL3cJebFdo/wSsEUdTqfUtI5oRKHB9dFM3kSnlQkDdBM1z/2yVdhaadGcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fYHxrxlc; arc=none smtp.client-ip=198.175.65.14
+	s=arc-20240116; t=1713237614; c=relaxed/simple;
+	bh=H0QdOUFnlIEfmKJIYiHN3eszdxO8OLE39FMob0NKQ0w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QN6oVQpuGAaVZZxKkzUvR5WqS4xKo1ngUbrpBrtqUn/8wDXZjaa5sn+qML17QyENhgmImZG39AIYhBgSV7bPsskYQu1h8e6/KZcT+K18wprXKAhNISbWiCDxxVKqQ+GffvkdttwTHosQN4xcqq3PTWPh3Mr4i0c+NWIoREzXGtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kyuX8Fg0; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fYHxrxlc"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kyuX8Fg0"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713209303; x=1744745303;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=QQ2teeXacovDt3WqzQ2XWPoxzQtb2WZdpbcJQyZajng=;
-  b=fYHxrxlcgEloEgYOJflmhE+KzS6/7lUifW52yFuvkKrsAKBaz7LbS0g0
-   SjcG6IRHO4t/TTbPP/7B/QAj146WZHqHauAnQtPBg4NiK4YQfURfvmaBz
-   vB0lsDSuviaJmlRH5PIKNc4EfYyJ/78lJZ1o+mp8cMvfIwxdhFt0CMvIp
-   97nAUlPovdfAiuOucS3pe9cFUgvvP7YdoWb/02kH2Ppk5qzoe2TrQ3yFd
-   0dfrp0RtlRqps2EjGfEQhjqLs1Z9RjIHec2PJA1tp5cEiW3Bocp8XsxOJ
-   +K8Z8QK6urE/FgxSrHsozvUNEMy4dmlxZ4YeuAswIe1YveZrrERJci10w
-   w==;
-X-CSE-ConnectionGUID: bC6I0VjaS+G0912EZ41Blg==
-X-CSE-MsgGUID: 3lNla7CTR4Gc5XsSbvFvrg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11045"; a="12466060"
-X-IronPort-AV: E=Sophos;i="6.07,203,1708416000"; 
-   d="scan'208";a="12466060"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2024 12:28:20 -0700
-X-CSE-ConnectionGUID: vUUIiobjRB2n8r/TENNTSw==
-X-CSE-MsgGUID: NQd5iZD3S4iKrD+X1GlIug==
+  t=1713237613; x=1744773613;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=H0QdOUFnlIEfmKJIYiHN3eszdxO8OLE39FMob0NKQ0w=;
+  b=kyuX8Fg0QuIq0kOKeyfsPqj6QOB5Z2DWdcc+qL0f9v9+5MfGe6KyMZv8
+   Q1EBDuOGMnYgoHhOfHC8c5jrfIvJsqo0XgbfMe5oLRS5v5+acRgoUUdHX
+   pjzOE+tQxvue01y+tlt3No37GZzosWWqqm6hcnXQw/btM4LPZaJB5nw+Z
+   4xsl7jJktTtfChTYyIA/nqtZTF7HncKm2ZQiWuEzhbRQQlGl8dfhDMjKI
+   u2Xj9U88nYmSF6cjhcpsH88I44waaCWPex+G5OcoC9kWwJORjpwJAPhxY
+   31ZmRJ8ozQ4uAqi+3GjtT15UCrP7Xt0dHtojWtqgOYf3SZxfS6IpNZUGJ
+   A==;
+X-CSE-ConnectionGUID: EMOiBIWAQGmo0uqI/jYokQ==
+X-CSE-MsgGUID: 8rGkzOeGSr2CjViGLkB1FA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11045"; a="34043308"
+X-IronPort-AV: E=Sophos;i="6.07,204,1708416000"; 
+   d="scan'208";a="34043308"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2024 20:20:12 -0700
+X-CSE-ConnectionGUID: FNzohZeKRrSD+E0Zrd939w==
+X-CSE-MsgGUID: LmZSAYjdRM6e5+PW4m2L7Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,203,1708416000"; 
-   d="scan'208";a="22004213"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 15 Apr 2024 12:28:13 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: dave.hansen@linux.intel.com, kai.huang@intel.com, tj@kernel.org,
- mkoutny@suse.com, linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
- x86@kernel.org, cgroups@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, hpa@zytor.com, sohil.mehta@intel.com,
- tim.c.chen@linux.intel.com, "Jarkko Sakkinen" <jarkko@kernel.org>
-Cc: zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
- zhanb@microsoft.com, anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
- yangjie@microsoft.com, chrisyan@microsoft.com
-Subject: Re: [PATCH v11 14/14] selftests/sgx: Add scripts for EPC cgroup
- testing
-References: <20240410182558.41467-1-haitao.huang@linux.intel.com>
- <20240410182558.41467-15-haitao.huang@linux.intel.com>
- <D0JXP8HZLEQZ.3PHVXZI140VIH@kernel.org>
- <op.2l81wdjdwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <D0KXLFE83H9V.3GNOZNN4II125@kernel.org>
-Date: Mon, 15 Apr 2024 14:28:10 -0500
+X-IronPort-AV: E=Sophos;i="6.07,204,1708416000"; 
+   d="scan'208";a="22193525"
+Received: from b4969161e530.jf.intel.com ([10.165.56.46])
+  by fmviesa008.fm.intel.com with ESMTP; 15 Apr 2024 20:20:11 -0700
+From: Haitao Huang <haitao.huang@linux.intel.com>
+To: jarkko@kernel.org,
+	dave.hansen@linux.intel.com,
+	kai.huang@intel.com,
+	tj@kernel.org,
+	mkoutny@suse.com,
+	linux-kernel@vger.kernel.org,
+	linux-sgx@vger.kernel.org,
+	x86@kernel.org,
+	cgroups@vger.kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	hpa@zytor.com,
+	sohil.mehta@intel.com,
+	tim.c.chen@linux.intel.com
+Cc: zhiquan1.li@intel.com,
+	kristen@linux.intel.com,
+	seanjc@google.com,
+	zhanb@microsoft.com,
+	anakrish@microsoft.com,
+	mikko.ylinen@linux.intel.com,
+	yangjie@microsoft.com,
+	chrisyan@microsoft.com
+Subject: [PATCH v12 00/14] Add Cgroup support for SGX EPC memory
+Date: Mon, 15 Apr 2024 20:19:57 -0700
+Message-Id: <20240416032011.58578-1-haitao.huang@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2maa08nfwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <D0KXLFE83H9V.3GNOZNN4II125@kernel.org>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Transfer-Encoding: 8bit
 
-On Mon, 15 Apr 2024 14:08:44 -0500, Jarkko Sakkinen <jarkko@kernel.org>  
-wrote:
+SGX Enclave Page Cache (EPC) memory allocations are separate from normal
+RAM allocations, and are managed solely by the SGX subsystem. The existing
+cgroup memory controller cannot be used to limit or account for SGX EPC
+memory, which is a desirable feature in some environments, e.g., support
+for pod level control in a Kubernates cluster on a VM or bare-metal host
+[1,2].
+ 
+This patchset implements the support for sgx_epc memory within the misc
+cgroup controller. A user can use the misc cgroup controller to set and
+enforce a max limit on total EPC usage per cgroup. The implementation
+reports current usage and events of reaching the limit per cgroup as well
+as the total system capacity.
+ 
+Much like normal system memory, EPC memory can be overcommitted via virtual
+memory techniques and pages can be swapped out of the EPC to their backing
+store, which are normal system memory allocated via shmem and accounted by
+the memory controller. Similar to per-cgroup reclamation done by the memory
+controller, the EPC misc controller needs to implement a per-cgroup EPC
+reclaiming process: when the EPC usage of a cgroup reaches its hard limit
+('sgx_epc' entry in the 'misc.max' file), the cgroup starts swapping out
+some EPC pages within the same cgroup to make room for new allocations.
+ 
+For that, this implementation tracks reclaimable EPC pages in a separate
+LRU list in each cgroup, and below are more details and justification of
+this design. 
+ 
+Track EPC pages in per-cgroup LRUs (from Dave)
+----------------------------------------------
+ 
+tl;dr: A cgroup hitting its limit should be as similar as possible to the
+system running out of EPC memory. The only two choices to implement that
+are nasty changes the existing LRU scanning algorithm, or to add new LRUs.
+The result: Add a new LRU for each cgroup and scans those instead. Replace
+the existing global cgroup with the root cgroup's LRU (only when this new
+support is compiled in, obviously).
+ 
+The existing EPC memory management aims to be a miniature version of the
+core VM where EPC memory can be overcommitted and reclaimed. EPC
+allocations can wait for reclaim. The alternative to waiting would have
+been to send a signal and let the enclave die.
+ 
+This series attempts to implement that same logic for cgroups, for the same
+reasons: it's preferable to wait for memory to become available and let
+reclaim happen than to do things that are fatal to enclaves.
+ 
+There is currently a global reclaimable page SGX LRU list. That list (and
+the existing scanning algorithm) is essentially useless for doing reclaim
+when a cgroup hits its limit because the cgroup's pages are scattered
+around that LRU. It is unspeakably inefficient to scan a linked list with
+millions of entries for what could be dozens of pages from a cgroup that
+needs reclaim.
+ 
+Even if unspeakably slow reclaim was accepted, the existing scanning
+algorithm only picks a few pages off the head of the global LRU. It would
+either need to hold the list locks for unreasonable amounts of time, or be
+taught to scan the list in pieces, which has its own challenges.
+ 
+Unreclaimable Enclave Pages
+---------------------------
+ 
+There are a variety of page types for enclaves, each serving different
+purposes [5]. Although the SGX architecture supports swapping for all
+types, some special pages, e.g., Version Array(VA) and Secure Enclave
+Control Structure (SECS)[5], holds meta data of reclaimed pages and
+enclaves. That makes reclamation of such pages more intricate to manage.
+The SGX driver global reclaimer currently does not swap out VA pages. It
+only swaps the SECS page of an enclave when all other associated pages have
+been swapped out. The cgroup reclaimer follows the same approach and does
+not track those in per-cgroup LRUs and considers them as unreclaimable
+pages. The allocation of these pages is counted towards the usage of a
+specific cgroup and is subject to the cgroup's set EPC limits.
+ 
+Earlier versions of this series implemented forced enclave-killing to
+reclaim VA and SECS pages. That was designed to enforce the 'max' limit,
+particularly in scenarios where a user or administrator reduces this limit
+post-launch of enclaves. However, subsequent discussions [3, 4] indicated
+that such preemptive enforcement is not necessary for the misc-controllers.
+Therefore, reclaiming SECS/VA pages by force-killing enclaves were removed,
+and the limit is only enforced at the time of new EPC allocation request.
+When a cgroup hits its limit but nothing left in the LRUs of the subtree,
+i.e., nothing to reclaim in the cgroup, any new attempt to allocate EPC
+within that cgroup will result in an 'ENOMEM'.
+ 
+Unreclaimable Guest VM EPC Pages
+--------------------------------
+ 
+The EPC pages allocated for guest VMs by the virtual EPC driver are not
+reclaimable by the host kernel [6]. Therefore an EPC cgroup also treats
+those as unreclaimable and returns ENOMEM when its limit is hit and nothing
+reclaimable left within the cgroup. The virtual EPC driver translates the
+ENOMEM error resulted from an EPC allocation request into a SIGBUS to the
+user process exactly the same way handling host running out of physical
+EPC.
+ 
+This work was originally authored by Sean Christopherson a few years ago,
+and previously modified by Kristen C. Accardi to utilize the misc cgroup
+controller rather than a custom controller. I have been updating the
+patches based on review comments since V2 [7-16], simplified the
+implementation/design, added selftest scripts, fixed some stability issues
+found from testing.
+ 
+Thanks to all for the review/test/tags/feedback provided on the previous
+versions. 
+ 
+I appreciate your further reviewing/testing and providing tags if
+appropriate.
+ 
+---
+V12:
+- Integrate test scripts to kselftests "run_tests" target. (Jarkko)
+- Remove CGROUP_SGX_EPC kconfig, conditionally compile with CGROUP_MISC enabled. (Jarkko)
+- Explain why taking 'struct misc_cg *cg' as parameter, but not 'struct misc_res *res' in the
+  changelog for patch #2. (Kai)
+- Remove "unlikely" in patch #2 (Kai)
+  
+V11:
+- Update copyright years and use c style (Kai)
+- Improve and simplify test scripts: remove cgroup-tools and bash dependency, drop cgroup v1.
+  (Jarkko, Michal)
+- Add more stub/wrapper functions to minimize #ifdefs in c file. (Kai)
+- Revise commit message for patch #8 to clarify design rational (Kai)
+- Print error instead of WARN for init failure. (Kai)
+- Add check for need to queue an async reclamation before returning from
+  sgx_cgroup_try_charge(), do so if needed.
 
-> On Mon Apr 15, 2024 at 6:13 AM EEST, Haitao Huang wrote:
->> On Sun, 14 Apr 2024 10:01:03 -0500, Jarkko Sakkinen <jarkko@kernel.org>
->> wrote:
->>
->> > On Wed Apr 10, 2024 at 9:25 PM EEST, Haitao Huang wrote:
->> >> To run selftests for EPC cgroup:
->> >>
->> >> sudo ./run_epc_cg_selftests.sh
->> >>
->> >> To watch misc cgroup 'current' changes during testing, run this in a
->> >> separate terminal:
->> >>
->> >> ./watch_misc_for_tests.sh current
->> >>
->> >> With different cgroups, the script starts one or multiple concurrent  
->> SGX
->> >> selftests (test_sgx), each to run the unclobbered_vdso_oversubscribed
->> >> test case, which loads an enclave of EPC size equal to the EPC  
->> capacity
->> >> available on the platform. The script checks results against the
->> >> expectation set for each cgroup and reports success or failure.
->> >>
->> >> The script creates 3 different cgroups at the beginning with  
->> following
->> >> expectations:
->> >>
->> >> 1) SMALL - intentionally small enough to fail the test loading an
->> >> enclave of size equal to the capacity.
->> >> 2) LARGE - large enough to run up to 4 concurrent tests but fail  
->> some if
->> >> more than 4 concurrent tests are run. The script starts 4 expecting  
->> at
->> >> least one test to pass, and then starts 5 expecting at least one test
->> >> to fail.
->> >> 3) LARGER - limit is the same as the capacity, large enough to run  
->> lots
->> >> of
->> >> concurrent tests. The script starts 8 of them and expects all pass.
->> >> Then it reruns the same test with one process randomly killed and
->> >> usage checked to be zero after all processes exit.
->> >>
->> >> The script also includes a test with low mem_cg limit and LARGE  
->> sgx_epc
->> >> limit to verify that the RAM used for per-cgroup reclamation is  
->> charged
->> >> to a proper mem_cg. For this test, it turns off swapping before  
->> start,
->> >> and turns swapping back on afterwards.
->> >>
->> >> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
->> >> ---
->> >> V11:
->> >> - Remove cgroups-tools dependency and make scripts ash compatible.
->> >> (Jarkko)
->> >> - Drop support for cgroup v1 and simplify. (Michal, Jarkko)
->> >> - Add documentation for functions. (Jarkko)
->> >> - Turn off swapping before memcontrol tests and back on after
->> >> - Format and style fixes, name for hard coded values
->> >>
->> >> V7:
->> >> - Added memcontrol test.
->> >>
->> >> V5:
->> >> - Added script with automatic results checking, remove the  
->> interactive
->> >> script.
->> >> - The script can run independent from the series below.
->> >> ---
->> >>  tools/testing/selftests/sgx/ash_cgexec.sh     |  16 +
->> >>  .../selftests/sgx/run_epc_cg_selftests.sh     | 275  
->> ++++++++++++++++++
->> >>  .../selftests/sgx/watch_misc_for_tests.sh     |  11 +
->> >>  3 files changed, 302 insertions(+)
->> >>  create mode 100755 tools/testing/selftests/sgx/ash_cgexec.sh
->> >>  create mode 100755  
->> tools/testing/selftests/sgx/run_epc_cg_selftests.sh
->> >>  create mode 100755  
->> tools/testing/selftests/sgx/watch_misc_for_tests.sh
->> >>
->> >> diff --git a/tools/testing/selftests/sgx/ash_cgexec.sh
->> >> b/tools/testing/selftests/sgx/ash_cgexec.sh
->> >> new file mode 100755
->> >> index 000000000000..cfa5d2b0e795
->> >> --- /dev/null
->> >> +++ b/tools/testing/selftests/sgx/ash_cgexec.sh
->> >> @@ -0,0 +1,16 @@
->> >> +#!/usr/bin/env sh
->> >> +# SPDX-License-Identifier: GPL-2.0
->> >> +# Copyright(c) 2024 Intel Corporation.
->> >> +
->> >> +# Start a program in a given cgroup.
->> >> +# Supports V2 cgroup paths, relative to /sys/fs/cgroup
->> >> +if [ "$#" -lt 2 ]; then
->> >> +    echo "Usage: $0 <v2 cgroup path> <command> [args...]"
->> >> +    exit 1
->> >> +fi
->> >> +# Move this shell to the cgroup.
->> >> +echo 0 >/sys/fs/cgroup/$1/cgroup.procs
->> >> +shift
->> >> +# Execute the command within the cgroup
->> >> +exec "$@"
->> >> +
->> >> diff --git a/tools/testing/selftests/sgx/run_epc_cg_selftests.sh
->> >> b/tools/testing/selftests/sgx/run_epc_cg_selftests.sh
->> >> new file mode 100755
->> >> index 000000000000..dd56273056fc
->> >> --- /dev/null
->> >> +++ b/tools/testing/selftests/sgx/run_epc_cg_selftests.sh
->> >> @@ -0,0 +1,275 @@
->> >> +#!/usr/bin/env sh
->> >> +# SPDX-License-Identifier: GPL-2.0
->> >> +# Copyright(c) 2023, 2024 Intel Corporation.
->> >> +
->> >> +TEST_ROOT_CG=selftest
->> >> +TEST_CG_SUB1=$TEST_ROOT_CG/test1
->> >> +TEST_CG_SUB2=$TEST_ROOT_CG/test2
->> >> +# We will only set limit in test1 and run tests in test3
->> >> +TEST_CG_SUB3=$TEST_ROOT_CG/test1/test3
->> >> +TEST_CG_SUB4=$TEST_ROOT_CG/test4
->> >> +
->> >> +# Cgroup v2 only
->> >> +CG_ROOT=/sys/fs/cgroup
->> >> +mkdir -p $CG_ROOT/$TEST_CG_SUB1
->> >> +mkdir -p $CG_ROOT/$TEST_CG_SUB2
->> >> +mkdir -p $CG_ROOT/$TEST_CG_SUB3
->> >> +mkdir -p $CG_ROOT/$TEST_CG_SUB4
->> >> +
->> >> +# Turn on misc and memory controller in non-leaf nodes
->> >> +echo "+misc" >  $CG_ROOT/cgroup.subtree_control && \
->> >> +echo "+memory" > $CG_ROOT/cgroup.subtree_control && \
->> >> +echo "+misc" >  $CG_ROOT/$TEST_ROOT_CG/cgroup.subtree_control && \
->> >> +echo "+memory" > $CG_ROOT/$TEST_ROOT_CG/cgroup.subtree_control && \
->> >> +echo "+misc" >  $CG_ROOT/$TEST_CG_SUB1/cgroup.subtree_control
->> >> +if [ $? -ne 0 ]; then
->> >> +    echo "# Failed setting up cgroups, make sure misc and memory
->> >> cgroups are enabled."
->> >> +    exit 1
->> >> +fi
->> >> +
->> >> +CAPACITY=$(grep "sgx_epc" "$CG_ROOT/misc.capacity" | awk '{print  
->> $2}')
->> >> +# This is below number of VA pages needed for enclave of capacity
->> >> size. So
->> >> +# should fail oversubscribed cases
->> >> +SMALL=$(( CAPACITY / 512 ))
->> >> +
->> >> +# At least load one enclave of capacity size successfully, maybe up  
->> to
->> >> 4.
->> >> +# But some may fail if we run more than 4 concurrent enclaves of
->> >> capacity size.
->> >> +LARGE=$(( SMALL * 4 ))
->> >> +
->> >> +# Load lots of enclaves
->> >> +LARGER=$CAPACITY
->> >> +echo "# Setting up limits."
->> >> +echo "sgx_epc $SMALL" > $CG_ROOT/$TEST_CG_SUB1/misc.max && \
->> >> +echo "sgx_epc $LARGE" >  $CG_ROOT/$TEST_CG_SUB2/misc.max && \
->> >> +echo "sgx_epc $LARGER" > $CG_ROOT/$TEST_CG_SUB4/misc.max
->> >> +if [ $? -ne 0 ]; then
->> >> +    echo "# Failed setting up misc limits."
->> >> +    exit 1
->> >> +fi
->> >> +
->> >> +clean_up()
->> >> +{
->> >> +    sleep 2
->> >> +    rmdir $CG_ROOT/$TEST_CG_SUB2
->> >> +    rmdir $CG_ROOT/$TEST_CG_SUB3
->> >> +    rmdir $CG_ROOT/$TEST_CG_SUB4
->> >> +    rmdir $CG_ROOT/$TEST_CG_SUB1
->> >> +    rmdir $CG_ROOT/$TEST_ROOT_CG
->> >> +}
->> >> +
->> >> +timestamp=$(date +%Y%m%d_%H%M%S)
->> >> +
->> >> +test_cmd="./test_sgx -t unclobbered_vdso_oversubscribed"
->> >> +
->> >> +PROCESS_SUCCESS=1
->> >> +PROCESS_FAILURE=0
->> >> +
->> >> +# Wait for a process and check for expected exit status.
->> >> +#
->> >> +# Arguments:
->> >> +#	$1 - the pid of the process to wait and check.
->> >> +#	$2 - 1 if expecting success, 0 for failure.
->> >> +#
->> >> +# Return:
->> >> +#	0 if the exit status of the process matches the expectation.
->> >> +#	1 otherwise.
->> >> +wait_check_process_status() {
->> >> +    pid=$1
->> >> +    check_for_success=$2
->> >> +
->> >> +    wait "$pid"
->> >> +    status=$?
->> >> +
->> >> +    if [ $check_for_success -eq $PROCESS_SUCCESS ] && [ $status -eq  
->> 0
->> >> ]; then
->> >> +        echo "# Process $pid succeeded."
->> >> +        return 0
->> >> +    elif [ $check_for_success -eq $PROCESS_FAILURE ] && [ $status  
->> -ne
->> >> 0 ]; then
->> >> +        echo "# Process $pid returned failure."
->> >> +        return 0
->> >> +    fi
->> >> +    return 1
->> >> +}
->> >> +
->> >> +# Wait for a set of processes and check for expected exit status
->> >> +#
->> >> +# Arguments:
->> >> +#	$1 - 1 if expecting success, 0 for failure.
->> >> +#	remaining args - The pids of the processes
->> >> +#
->> >> +# Return:
->> >> +#	0 if exit status of any process matches the expectation.
->> >> +#	1 otherwise.
->> >> +wait_and_detect_for_any() {
->> >> +    check_for_success=$1
->> >> +
->> >> +    shift
->> >> +    detected=1 # 0 for success detection
->> >> +
->> >> +    for pid in $@; do
->> >> +        if wait_check_process_status "$pid" "$check_for_success";  
->> then
->> >> +            detected=0
->> >> +            # Wait for other processes to exit
->> >> +        fi
->> >> +    done
->> >> +
->> >> +    return $detected
->> >> +}
->> >> +
->> >> +echo "# Start unclobbered_vdso_oversubscribed with SMALL limit,
->> >> expecting failure..."
->> >> +# Always use leaf node of misc cgroups
->> >> +# these may fail on OOM
->> >> +./ash_cgexec.sh $TEST_CG_SUB3 $test_cmd >cgtest_small_$timestamp.log
->> >> 2>&1
->> >> +if [ $? -eq 0 ]; then
->> >> +    echo "# Fail on SMALL limit, not expecting any test passes."
->> >> +    clean_up
->> >> +    exit 1
->> >> +else
->> >> +    echo "# Test failed as expected."
->> >> +fi
->> >> +
->> >> +echo "# PASSED SMALL limit."
->> >> +
->> >> +echo "# Start 4 concurrent unclobbered_vdso_oversubscribed tests  
->> with
->> >> LARGE limit,
->> >> +        expecting at least one success...."
->> >> +
->> >> +pids=""
->> >> +for i in 1 2 3 4; do
->> >> +    (
->> >> +        ./ash_cgexec.sh $TEST_CG_SUB2 $test_cmd
->> >> >cgtest_large_positive_$timestamp.$i.log 2>&1
->> >> +    ) &
->> >> +    pids="$pids $!"
->> >> +done
->> >> +
->> >> +
->> >> +if wait_and_detect_for_any $PROCESS_SUCCESS "$pids"; then
->> >> +    echo "# PASSED LARGE limit positive testing."
->> >> +else
->> >> +    echo "# Failed on LARGE limit positive testing, no test passes."
->> >> +    clean_up
->> >> +    exit 1
->> >> +fi
->> >> +
->> >> +echo "# Start 5 concurrent unclobbered_vdso_oversubscribed tests  
->> with
->> >> LARGE limit,
->> >> +        expecting at least one failure...."
->> >> +pids=""
->> >> +for i in 1 2 3 4 5; do
->> >> +    (
->> >> +        ./ash_cgexec.sh $TEST_CG_SUB2 $test_cmd
->> >> >cgtest_large_negative_$timestamp.$i.log 2>&1
->> >> +    ) &
->> >> +    pids="$pids $!"
->> >> +done
->> >> +
->> >> +if wait_and_detect_for_any $PROCESS_FAILURE "$pids"; then
->> >> +    echo "# PASSED LARGE limit negative testing."
->> >> +else
->> >> +    echo "# Failed on LARGE limit negative testing, no test fails."
->> >> +    clean_up
->> >> +    exit 1
->> >> +fi
->> >> +
->> >> +echo "# Start 8 concurrent unclobbered_vdso_oversubscribed tests  
->> with
->> >> LARGER limit,
->> >> +        expecting no failure...."
->> >> +pids=""
->> >> +for i in 1 2 3 4 5 6 7 8; do
->> >> +    (
->> >> +        ./ash_cgexec.sh $TEST_CG_SUB4 $test_cmd
->> >> >cgtest_larger_$timestamp.$i.log 2>&1
->> >> +    ) &
->> >> +    pids="$pids $!"
->> >> +done
->> >> +
->> >> +if wait_and_detect_for_any $PROCESS_FAILURE "$pids"; then
->> >> +    echo "# Failed on LARGER limit, at least one test fails."
->> >> +    clean_up
->> >> +    exit 1
->> >> +else
->> >> +    echo "# PASSED LARGER limit tests."
->> >> +fi
->> >> +
->> >> +echo "# Start 8 concurrent unclobbered_vdso_oversubscribed tests  
->> with
->> >> LARGER limit,
->> >> +      randomly kill one, expecting no failure...."
->> >> +pids=""
->> >> +for i in 1 2 3 4 5 6 7 8; do
->> >> +    (
->> >> +        ./ash_cgexec.sh $TEST_CG_SUB4 $test_cmd
->> >> >cgtest_larger_kill_$timestamp.$i.log 2>&1
->> >> +    ) &
->> >> +    pids="$pids $!"
->> >> +done
->> >> +random_number=$(awk 'BEGIN{srand();print int(rand()*5)}')
->> >> +sleep $((random_number + 1))
->> >> +
->> >> +# Randomly select a process to kill
->> >> +# Make sure usage counter not leaked at the end.
->> >> +RANDOM_INDEX=$(awk 'BEGIN{srand();print int(rand()*8)}')
->> >> +counter=0
->> >> +for pid in $pids; do
->> >> +    if [ "$counter" -eq "$RANDOM_INDEX" ]; then
->> >> +        PID_TO_KILL=$pid
->> >> +        break
->> >> +    fi
->> >> +    counter=$((counter + 1))
->> >> +done
->> >> +
->> >> +kill $PID_TO_KILL
->> >> +echo "# Killed process with PID: $PID_TO_KILL"
->> >> +
->> >> +any_failure=0
->> >> +for pid in $pids; do
->> >> +    wait "$pid"
->> >> +    status=$?
->> >> +    if [ "$pid" != "$PID_TO_KILL" ]; then
->> >> +        if [ $status -ne 0 ]; then
->> >> +	    echo "# Process $pid returned failure."
->> >> +            any_failure=1
->> >> +        fi
->> >> +    fi
->> >> +done
->> >> +
->> >> +if [ $any_failure -ne 0 ]; then
->> >> +    echo "# Failed on random killing, at least one test fails."
->> >> +    clean_up
->> >> +    exit 1
->> >> +fi
->> >> +echo "# PASSED LARGER limit test with a process randomly killed."
->> >> +
->> >> +MEM_LIMIT_TOO_SMALL=$((CAPACITY - 2 * LARGE))
->> >> +
->> >> +echo "$MEM_LIMIT_TOO_SMALL" > $CG_ROOT/$TEST_CG_SUB2/memory.max
->> >> +if [ $? -ne 0 ]; then
->> >> +    echo "# Failed creating memory controller."
->> >> +    clean_up
->> >> +    exit 1
->> >> +fi
->> >> +
->> >> +echo "# Start 4 concurrent unclobbered_vdso_oversubscribed tests  
->> with
->> >> LARGE EPC limit,
->> >> +        and too small RAM limit, expecting all failures...."
->> >> +# Ensure swapping off so the OOM killer is activated when mem_cgroup
->> >> limit is hit.
->> >> +swapoff -a
->> >> +pids=""
->> >> +for i in 1 2 3 4; do
->> >> +    (
->> >> +        ./ash_cgexec.sh $TEST_CG_SUB2 $test_cmd
->> >> >cgtest_large_oom_$timestamp.$i.log 2>&1
->> >> +    ) &
->> >> +    pids="$pids $!"
->> >> +done
->> >> +
->> >> +if wait_and_detect_for_any $PROCESS_SUCCESS "$pids"; then
->> >> +    echo "# Failed on tests with memcontrol, some tests did not  
->> fail."
->> >> +    clean_up
->> >> +    swapon -a
->> >> +    exit 1
->> >> +else
->> >> +    swapon -a
->> >> +    echo "# PASSED LARGE limit tests with memcontrol."
->> >> +fi
->> >> +
->> >> +sleep 2
->> >> +
->> >> +USAGE=$(grep '^sgx_epc' "$CG_ROOT/$TEST_ROOT_CG/misc.current" | awk
->> >> '{print $2}')
->> >> +if [ "$USAGE" -ne 0 ]; then
->> >> +    echo "# Failed: Final usage is $USAGE, not 0."
->> >> +else
->> >> +    echo "# PASSED leakage check."
->> >> +    echo "# PASSED ALL cgroup limit tests, cleanup cgroups..."
->> >> +fi
->> >> +clean_up
->> >> +echo "# done."
->> >> diff --git a/tools/testing/selftests/sgx/watch_misc_for_tests.sh
->> >> b/tools/testing/selftests/sgx/watch_misc_for_tests.sh
->> >> new file mode 100755
->> >> index 000000000000..1c9985726ace
->> >> --- /dev/null
->> >> +++ b/tools/testing/selftests/sgx/watch_misc_for_tests.sh
->> >> @@ -0,0 +1,11 @@
->> >> +#!/usr/bin/env sh
->> >> +# SPDX-License-Identifier: GPL-2.0
->> >> +# Copyright(c) 2023, 2024 Intel Corporation.
->> >> +
->> >> +if [ -z "$1" ]; then
->> >> +    echo "No argument supplied, please provide 'max', 'current', or
->> >> 'events'"
->> >> +    exit 1
->> >> +fi
->> >> +
->> >> +watch -n 1 'find /sys/fs/cgroup -wholename "*/test*/misc.'$1'"  
->> -exec \
->> >> +    sh -c '\''echo "$1:"; cat "$1"'\'' _ {} \;'
->> >
->> > So this is what happens now:
->> >
->> > jarkko@mustatorvisieni:~/linux-tpmdd> make -C
->> > tools/testing/selftests/sgx run_tests
->> > make: Entering directory
->> > '/home/jarkko/linux-tpmdd/tools/testing/selftests/sgx'
->> > TAP version 13
->> > 1..1
->> > # timeout set to 45
->> > # selftests: sgx: test_sgx
->> > # TAP version 13
->> > # 1..16
->> > # # Starting 16 tests from 1 test cases.
->> > # #  RUN           enclave.unclobbered_vdso ...
->> > # #            OK  enclave.unclobbered_vdso
->> > # ok 1 enclave.unclobbered_vdso
->> > # #  RUN           enclave.unclobbered_vdso_oversubscribed ...
->> > # #            OK  enclave.unclobbered_vdso_oversubscribed
->> > # ok 2 enclave.unclobbered_vdso_oversubscribed
->> > # #  RUN           enclave.unclobbered_vdso_oversubscribed_remove ...
->> > # # main.c:402:unclobbered_vdso_oversubscribed_remove:Creating an
->> > enclave with 98566144 bytes heap may take a while ...
->> > # # main.c:457:unclobbered_vdso_oversubscribed_remove:Changing type of
->> > 98566144 bytes to trimmed may take a while ...
->> > # # main.c:473:unclobbered_vdso_oversubscribed_remove:Entering enclave
->> > to run EACCEPT for each page of 98566144 bytes may take a while ...
->> > # # main.c:494:unclobbered_vdso_oversubscribed_remove:Removing  
->> 98566144
->> > bytes from enclave may take a while ...
->> > # #            OK  enclave.unclobbered_vdso_oversubscribed_remove
->> > # ok 3 enclave.unclobbered_vdso_oversubscribed_remove
->> > # #  RUN           enclave.clobbered_vdso ...
->> > # #            OK  enclave.clobbered_vdso
->> > # ok 4 enclave.clobbered_vdso
->> > # #  RUN           enclave.clobbered_vdso_and_user_function ...
->> > # #            OK  enclave.clobbered_vdso_and_user_function
->> > # ok 5 enclave.clobbered_vdso_and_user_function
->> > # #  RUN           enclave.tcs_entry ...
->> > # #            OK  enclave.tcs_entry
->> > # ok 6 enclave.tcs_entry
->> > # #  RUN           enclave.pte_permissions ...
->> > # #            OK  enclave.pte_permissions
->> > # ok 7 enclave.pte_permissions
->> > # #  RUN           enclave.tcs_permissions ...
->> > # #            OK  enclave.tcs_permissions
->> > # ok 8 enclave.tcs_permissions
->> > # #  RUN           enclave.epcm_permissions ...
->> > # #            OK  enclave.epcm_permissions
->> > # ok 9 enclave.epcm_permissions
->> > # #  RUN           enclave.augment ...
->> > # #            OK  enclave.augment
->> > # ok 10 enclave.augment
->> > # #  RUN           enclave.augment_via_eaccept ...
->> > # #            OK  enclave.augment_via_eaccept
->> > # ok 11 enclave.augment_via_eaccept
->> > # #  RUN           enclave.tcs_create ...
->> > # #            OK  enclave.tcs_create
->> > # ok 12 enclave.tcs_create
->> > # #  RUN           enclave.remove_added_page_no_eaccept ...
->> > # #            OK  enclave.remove_added_page_no_eaccept
->> > # ok 13 enclave.remove_added_page_no_eaccept
->> > # #  RUN           enclave.remove_added_page_invalid_access ...
->> > # #            OK  enclave.remove_added_page_invalid_access
->> > # ok 14 enclave.remove_added_page_invalid_access
->> > # #  RUN
->> > enclave.remove_added_page_invalid_access_after_eaccept ...
->> > # #            OK   
->> enclave.remove_added_page_invalid_access_after_eaccept
->> > # ok 15 enclave.remove_added_page_invalid_access_after_eaccept
->> > # #  RUN           enclave.remove_untouched_page ...
->> > # #            OK  enclave.remove_untouched_page
->> > # ok 16 enclave.remove_untouched_page
->> > # # PASSED: 16 / 16 tests passed.
->> > # # Totals: pass:16 fail:0 xfail:0 xpass:0 skip:0 error:0
->> > ok 1 selftests: sgx: test_sgx
->> >
->> > Also cgroups tests are expected to run when invoking "run_tests".
->> >
->> I can add the SGX cgroup tests to the "run_tests" target. But it will  
->> need
->> more than the 45secs given by the default timeout especially on  
->> platforms
->> with larger EPC. You will need run with --override-timeout
->> (current SGX selftests also timeout for default 45 sec on a server with  
->> 4G
->> EPC).
->>
->>
->> > I also wonder do we really want this:
->> >
->> > diff --git a/config/x86_64/default b/config/x86_64/default
->> > index 246b1f3df46..6c3d20af7b4 100644
->> > --- a/config/x86_64/default
->> > +++ b/config/x86_64/default
->> > @@ -502,6 +502,7 @@ CONFIG_X86_INTEL_TSX_MODE_OFF=y
->> >  # CONFIG_X86_INTEL_TSX_MODE_ON is not set
->> >  # CONFIG_X86_INTEL_TSX_MODE_AUTO is not set
->> >  CONFIG_X86_SGX=y
->> > +CONFIG_CGROUP_SGX_EPC=y
->> >  # CONFIG_X86_USER_SHADOW_STACK is not set
->> >  CONFIG_EFI=y
->> >  CONFIG_EFI_STUB=y
->> >
->> > It is a small change but affects all of downstream, not just OpenSUSE.
->> >
->> > I hard time projecting a situation where you wanted SGX but without
->> > cgroups support so perhaps it would be a better idea to enable cgroups
->> > unconditionally when SGX and cgroups are part of the kernel config?
->> >
->> > Then downstream can just pick the patches and call it a day...
->> >
->> > BR, Jarkko
->> >
->>
->> I don't have issue to remove this config and conditionally compile in  
->> SGX
->> cgroup implementation when MISC is configured.
->
-> I did run the basic test by manually creating the cgroup so you could
-> add tested-by from my side to the other kernel patches expect this one
-> :-)
+V10:
+- Use enum instead of boolean for the 'reclaim' parameters in
+  sgx_alloc_epc_page(). (Dave, Jarkko)
+- Pass mm struct instead of a boolean 'indirect'. (Dave, Jarkko)
+- Add comments/macros to clarify the cgroup async reclaimer design. (Kai)
+- Simplify sgx_reclaim_pages() signature, removing a pointer passed in.
+  (Kai)
+- Clarify design of sgx_cgroup_reclaim_pages(). (Kai)
+	- Does not return a value for callers to check.
+	- Its usage pattern is similar to that of sgx_reclaim_pages() now
+- Add cond_resched() in the loop in the cgroup reclaimer to improve
+  liveliness.
+- Add logic for cgroup level reclamation in sgx_reclaim_direct()
+- Restructure V9 patches 7-10 to make them flow better. (Kai)
+- Disable cgroup if workqueue allocation failed during init. (Kai)
+- Shorten names for EPC cgroup functions, structures and variables.
+  (Jarkko)
+- Separate out a helper for for addressing single iteration of the loop in
+  sgx_cgroup_try_charge(). (Jarkko)
+- More cleanup/clarifying/comments/style fixes. (Kai, Jarkko)  
+ 
+V9:
+- Add comments for static variables outside functions. (Jarkko)
+- Remove unnecessary ifs. (Tim)
+- Add more Reviewed-By: tags from Jarkko and TJ.
+ 
+V8:
+- Style fixes. (Jarkko)
+- Abstract _misc_res_free/alloc() (Jarkko)
+- Remove unneeded NULL checks. (Jarkko)
+ 
+V7:
+- Split the large patch for the final EPC implementation, #10 in V6, into
+  smaller ones. (Dave, Kai)
+- Scan and reclaim one cgroup at a time, don't split sgx_reclaim_pages()
+  into two functions (Kai)
+- Removed patches to introduce the EPC page states, list for storing
+  candidate pages for reclamation. (not needed due to above changes)
+- Make ops one per resource type and store them in array (Michal)
+- Rename the ops struct to misc_res_ops, and enforce the constraints of
+  required callback functions (Jarkko)
+- Initialize epc cgroup in sgx driver init function. (Kai)
+- Moved addition of priv field to patch 4 where it was used first. (Jarkko)
+- Split sgx_get_current_epc_cg() out of sgx_epc_cg_try_charge() (Kai)
+- Use a static for root cgroup (Kai)
+ 
+[1]https://lore.kernel.org/all/DM6PR21MB11772A6ED915825854B419D6C4989@DM6PR21MB1177.namprd21.prod.outlook.com/
+[2]https://lore.kernel.org/all/ZD7Iutppjj+muH4p@himmelriiki/
+[3]https://lore.kernel.org/lkml/7a1a5125-9da2-47b6-ba0f-cf24d84df16b@intel.com/
+[4]https://lore.kernel.org/lkml/yz44wukoic3syy6s4fcrngagurkjhe2hzka6kvxbajdtro3fwu@zd2ilht7wcw3/
+[5]Documentation/arch/x86/sgx.rst, Section"Enclave Page Types"
+[6]Documentation/arch/x86/sgx.rst, Section "Virtual EPC"
+[7]v2: https://lore.kernel.org/all/20221202183655.3767674-1-kristen@linux.intel.com/
+[8]v3: https://lore.kernel.org/linux-sgx/20230712230202.47929-1-haitao.huang@linux.intel.com/
+[9]v4: https://lore.kernel.org/all/20230913040635.28815-1-haitao.huang@linux.intel.com/
+[10]v5: https://lore.kernel.org/all/20230923030657.16148-1-haitao.huang@linux.intel.com/
+[11]v6: https://lore.kernel.org/linux-sgx/20231030182013.40086-1-haitao.huang@linux.intel.com/
+[12]v7: https://lore.kernel.org/linux-sgx/20240122172048.11953-1-haitao.huang@linux.intel.com/T/#t
+[13]v8: https://lore.kernel.org/linux-sgx/20240130020938.10025-1-haitao.huang@linux.intel.com/T/#t
+[14]v9: https://lore.kernel.org/lkml/20240205210638.157741-1-haitao.huang@linux.intel.com/T/
+[15]v10: https://lore.kernel.org/linux-sgx/20240328002229.30264-1-haitao.huang@linux.intel.com/T/#t
+[16]v11: https://lore.kernel.org/lkml/20240410182558.41467-1-haitao.huang@linux.intel.com/
 
-Thanks
->
-> I've reviewed it enough rounds and given various code suggestions etc.
-> For me it is "good enough" or has been for a while. I just want this
-> test to work so that people doing kernel QA will automatically get it
-> to their testing cycle. That is why proper integration to kselftest
-> framework is a must.
->
-> BR, Jarkko
->
-Sounds good. I have added integration now on tip of the staging/plus  
-branch: https://github.com/haitaohuang/linux/tree/sgx_cg_upstream_v11_plus
-Will send v12 with those and with the change to remove CGROUP_SGX_EPC  
-config.
+Haitao Huang (3):
+  x86/sgx: Replace boolean parameters with enums
+  x86/sgx: Charge mem_cgroup for per-cgroup reclamation
+  selftests/sgx: Add scripts for EPC cgroup testing
 
-Thanks
-Haitao
+Kristen Carlson Accardi (9):
+  cgroup/misc: Add per resource callbacks for CSS events
+  cgroup/misc: Export APIs for SGX driver
+  cgroup/misc: Add SGX EPC resource type
+  x86/sgx: Implement basic EPC misc cgroup functionality
+  x86/sgx: Abstract tracking reclaimable pages in LRU
+  x86/sgx: Add basic EPC reclamation flow for cgroup
+  x86/sgx: Implement async reclamation for cgroup
+  x86/sgx: Abstract check for global reclaimable pages
+  x86/sgx: Turn on per-cgroup EPC reclamation
+
+Sean Christopherson (2):
+  x86/sgx: Add sgx_epc_lru_list to encapsulate LRU list
+  Docs/x86/sgx: Add description for cgroup support
+
+ Documentation/arch/x86/sgx.rst                |  83 +++++
+ arch/x86/kernel/cpu/sgx/Makefile              |   1 +
+ arch/x86/kernel/cpu/sgx/encl.c                |  41 +--
+ arch/x86/kernel/cpu/sgx/encl.h                |   7 +-
+ arch/x86/kernel/cpu/sgx/epc_cgroup.c          | 312 ++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/epc_cgroup.h          | 101 ++++++
+ arch/x86/kernel/cpu/sgx/ioctl.c               |  10 +-
+ arch/x86/kernel/cpu/sgx/main.c                | 205 +++++++++---
+ arch/x86/kernel/cpu/sgx/sgx.h                 |  50 ++-
+ arch/x86/kernel/cpu/sgx/virt.c                |   2 +-
+ include/linux/misc_cgroup.h                   |  41 +++
+ kernel/cgroup/misc.c                          | 107 ++++--
+ tools/testing/selftests/sgx/Makefile          |   3 +-
+ tools/testing/selftests/sgx/README            | 116 +++++++
+ tools/testing/selftests/sgx/ash_cgexec.sh     |  16 +
+ .../selftests/sgx/run_epc_cg_selftests.sh     | 283 ++++++++++++++++
+ .../selftests/sgx/watch_misc_for_tests.sh     |  11 +
+ 17 files changed, 1284 insertions(+), 105 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/epc_cgroup.h
+ create mode 100644 tools/testing/selftests/sgx/README
+ create mode 100755 tools/testing/selftests/sgx/ash_cgexec.sh
+ create mode 100755 tools/testing/selftests/sgx/run_epc_cg_selftests.sh
+ create mode 100755 tools/testing/selftests/sgx/watch_misc_for_tests.sh
+
+
+base-commit: 0bbac3facb5d6cc0171c45c9873a2dc96bea9680
+-- 
+2.25.1
+
