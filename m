@@ -1,72 +1,68 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F92313A3E8;
-	Tue, 16 Apr 2024 22:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67980BA34;
+	Wed, 17 Apr 2024 03:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713307728; cv=none; b=by6Hj23pucjEctQoKSNm0jo36Z5p7ZVlAE1POzqMu3W0vS/OUa/Gn/MlWtn6otFrZY3d9xF5ZeQI1cd1q1fqVT8i4+PojJTPZW86CIb+8h7NBt7grwTcNlcsu7vod5v2RpLppNH0rBVAbY0CUfi3/MifNhY0OGVWmRmMPtWkdFI=
+	t=1713323112; cv=none; b=NGpqLbH6u2jJI0rTQ+6f3TRErtCrkEZfGRzmD/a8QmTQbfwPZSc+hpa5earPTc5x8lEtm9V6SMhRcFTtQZrDmjvL9JJ/AEc965EEYV2BiJ9HYo3vPp5oOSZzp6KqEVqwy6KoVC9nexqTVagDNCClwR74rV1HpG6E29IA86YkdYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713307728; c=relaxed/simple;
-	bh=Vp1j4MGmUcagkQYsn9tWw5+GZ2D1D6UXf7Y83LOqr+A=;
+	s=arc-20240116; t=1713323112; c=relaxed/simple;
+	bh=yNo/sEA9+IPA4jpZcFTeBPhClg9Mb+1/htRUayTG1QQ=;
 	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=F9+hvJ10XVw9d79zzF09g4XWvPGFLC1Qgu3w7+vb4Nc+PN4mZWYVm+OmnYRnvPEFw+gxgTwMCkKtHfYdpIFMo30tRjfkr6kmQr9otEblVcxPuQ9d9Sm9LUdS0q8CozLjPdlKRbulBaBp1b1Pmxhm6/O2GOesPdOMXFhmZB1y2Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aFtoFe/N; arc=none smtp.client-ip=198.175.65.11
+	 Message-ID:In-Reply-To; b=Vhv83EirYcShXmqTmQhcHsDSnXuDylqgj4fRwMfrSEWx5Uzh2GfifGax07YdTcDmXCxkZsbf63ysvxUHtJVaAtBuahWb8wR1QtdU1UzwxFtCez9K0YpxKMMq2sAu8HGQxA2PSl8KCdkJ9XPBoFKB8Vf3VSu95puqTqcsKJrHSCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lpDJc3M/; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aFtoFe/N"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lpDJc3M/"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713307726; x=1744843726;
+  t=1713323111; x=1744859111;
   h=to:cc:subject:references:date:mime-version:
    content-transfer-encoding:from:message-id:in-reply-to;
-  bh=Vp1j4MGmUcagkQYsn9tWw5+GZ2D1D6UXf7Y83LOqr+A=;
-  b=aFtoFe/N0UUn/Uw841LVQUsAhOGNckpcxAlcTbTWwWoaw9Kl9KH9yOKG
-   1BiC2qjqFRZ8bncaI7IU4ZTx04ZdAYVtvvZk0Eeyln4JgSb8PtAz6SsWJ
-   ZZoggxXIMORRyveDKcjwGCRIBmM5ZOBteNlxxCLJHFyDebWu//sIpmLwg
-   MO8VW2tkT0TkCfXSOTHstXV6GsGil1Udj15OKKX/aLAJfEOhGxkTtDsOz
-   pzPJqlYJGajA/uw7gR2MFcGsn/vo90g3SQUofutXUnjvBbcOgv1V2ym7b
-   6L2TquDO/NrCT51EM8mrIyqMBJ8UEPBA2VAoDh+n+3poU1rcMmQ500RMU
-   g==;
-X-CSE-ConnectionGUID: Ni75NYzhRh+KT5Zdk+XBYw==
-X-CSE-MsgGUID: c0EIKclwQca5nrKEiJ1PTA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11046"; a="19336704"
-X-IronPort-AV: E=Sophos;i="6.07,207,1708416000"; 
-   d="scan'208";a="19336704"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2024 15:48:46 -0700
-X-CSE-ConnectionGUID: N0PoXSc6RoKbelsFxJEn3A==
-X-CSE-MsgGUID: jNW5Aq0JTYqyypRWex69ZQ==
+  bh=yNo/sEA9+IPA4jpZcFTeBPhClg9Mb+1/htRUayTG1QQ=;
+  b=lpDJc3M/1WThnoa8d1F46HGUhNkQL8H57ynYg4773oRWAtngeRyWDP0m
+   sQihAk2T5oEZjBfbRXbgyG+N/Yg17zZx88VRkry0PMEzw1h2VG/SP8fI8
+   iYjzbSXxbMw7aiLZbSs1F3sXXUpmSoi394YKtkZWzJ7c/Oc+xBxnJ+9cX
+   nuzTmqaNNg/ZDtNlApbnKp3ro/Wkz+NHPIdmfeFhpPU6EDmncDVuwLStJ
+   egFh0QntfoJ0c+KdBMNGQ8v4XkGXpl1XGU5KJpWvMuUYw3myCXPOC1tVh
+   xGbvq9cWH9NTY3f41YwyGAW4jOSOCH0HG9l5Q6f76ZxdDNM9ZV+l5Y15O
+   Q==;
+X-CSE-ConnectionGUID: s4AfbYZlRiacGbgzr883DQ==
+X-CSE-MsgGUID: n1bq0bIfQayY7yqHaANYzQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11046"; a="8720968"
+X-IronPort-AV: E=Sophos;i="6.07,208,1708416000"; 
+   d="scan'208";a="8720968"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2024 20:05:10 -0700
+X-CSE-ConnectionGUID: zBmECAoyTxiWV7ddm8dO6g==
+X-CSE-MsgGUID: 3qvoq9GzREubbuuFXyWiTg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,207,1708416000"; 
-   d="scan'208";a="22411950"
+X-IronPort-AV: E=Sophos;i="6.07,208,1708416000"; 
+   d="scan'208";a="22549765"
 Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 16 Apr 2024 15:48:35 -0700
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/AES256-SHA; 16 Apr 2024 20:05:07 -0700
 Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: "hpa@zytor.com" <hpa@zytor.com>, "tim.c.chen@linux.intel.com"
- <tim.c.chen@linux.intel.com>, "linux-sgx@vger.kernel.org"
- <linux-sgx@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "jarkko@kernel.org" <jarkko@kernel.org>, "cgroups@vger.kernel.org"
- <cgroups@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "Mehta, Sohil"
- <sohil.mehta@intel.com>, "tj@kernel.org" <tj@kernel.org>, "mingo@redhat.com"
- <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, "Huang, Kai"
- <kai.huang@intel.com>
-Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
- "seanjc@google.com" <seanjc@google.com>, "anakrish@microsoft.com"
- <anakrish@microsoft.com>, "Zhang, Bo" <zhanb@microsoft.com>,
- "kristen@linux.intel.com" <kristen@linux.intel.com>, "yangjie@microsoft.com"
- <yangjie@microsoft.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
- "chrisyan@microsoft.com" <chrisyan@microsoft.com>
-Subject: Re: [PATCH v12 07/14] x86/sgx: Abstract tracking reclaimable pages in
- LRU
+To: dave.hansen@linux.intel.com, kai.huang@intel.com, tj@kernel.org,
+ mkoutny@suse.com, linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+ x86@kernel.org, cgroups@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, hpa@zytor.com, sohil.mehta@intel.com,
+ tim.c.chen@linux.intel.com, "Jarkko Sakkinen" <jarkko@kernel.org>, "Haitao
+ Huang" <haitao.huang@linux.intel.com>
+Cc: zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
+ zhanb@microsoft.com, anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
+ yangjie@microsoft.com, chrisyan@microsoft.com
+Subject: Re: [PATCH v12 14/14] selftests/sgx: Add scripts for EPC cgroup
+ testing
 References: <20240416032011.58578-1-haitao.huang@linux.intel.com>
- <20240416032011.58578-8-haitao.huang@linux.intel.com>
- <e218d2aab5d793a3b4c64f90f7bad997c745ba91.camel@intel.com>
-Date: Tue, 16 Apr 2024 17:48:29 -0500
+ <20240416032011.58578-15-haitao.huang@linux.intel.com>
+ <D0LLS28WEXYA.G15BAG7WOJGR@kernel.org> <D0LLVE07V8O0.S8XF3CY2DQ9A@kernel.org>
+ <op.2mbs1m05wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <D0LODQCRSTRA.2KSPCDB0FLK0X@kernel.org>
+ <op.2mccxje2wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <op.2mcdpygvwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+Date: Tue, 16 Apr 2024 22:05:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -76,84 +72,71 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 From: "Haitao Huang" <haitao.huang@linux.intel.com>
 Organization: Intel
-Message-ID: <op.2mcey3spwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <e218d2aab5d793a3b4c64f90f7bad997c745ba91.camel@intel.com>
+Message-ID: <op.2mcqursuwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <op.2mcdpygvwjvjmi@hhuan26-mobl.amr.corp.intel.com>
 User-Agent: Opera Mail/1.0 (Win32)
 
-On Tue, 16 Apr 2024 09:07:33 -0500, Huang, Kai <kai.huang@intel.com> wrote:
+On Tue, 16 Apr 2024 17:21:24 -0500, Haitao Huang  
+<haitao.huang@linux.intel.com> wrote:
 
-> On Mon, 2024-04-15 at 20:20 -0700, Haitao Huang wrote:
->> From: Kristen Carlson Accardi <kristen@linux.intel.com>
+> On Tue, 16 Apr 2024 17:04:21 -0500, Haitao Huang  
+> <haitao.huang@linux.intel.com> wrote:
+>
+>> On Tue, 16 Apr 2024 11:08:11 -0500, Jarkko Sakkinen <jarkko@kernel.org>  
+>> wrote:
 >>
->> The functions, sgx_{mark,unmark}_page_reclaimable(), manage the tracking
->> of reclaimable EPC pages: sgx_mark_page_reclaimable() adds a newly
->> allocated page into the global LRU list while
->> sgx_unmark_page_reclaimable() does the opposite. Abstract the hard coded
->> global LRU references in these functions to make them reusable when
->> pages are tracked in per-cgroup LRUs.
+>>> On Tue Apr 16, 2024 at 5:54 PM EEST, Haitao Huang wrote:
+>>>> I did declare the configs in the config file but I missed it in my  
+>>>> patch
+>>>> as stated earlier. IIUC, that would not cause this error though.
+>>>>
+>>>> Maybe I should exit with the skip code if no CGROUP_MISC (no more
+>>>> CGROUP_SGX_EPC) is configured?
+>>>
+>>> OK, so I wanted to do a distro kernel test here, and used the default
+>>> OpenSUSE kernel config. I need to check if it has CGROUP_MISC set.
+>>>
+>>>> tools/testing/selftests$ find . -name README
+>>>> ./futex/README
+>>>> ./tc-testing/README
+>>>> ./net/forwarding/README
+>>>> ./powerpc/nx-gzip/README
+>>>> ./ftrace/README
+>>>> ./arm64/signal/README
+>>>> ./arm64/fp/README
+>>>> ./arm64/README
+>>>> ./zram/README
+>>>> ./livepatch/README
+>>>> ./resctrl/README
+>>>
+>>> So is there a README because of override timeout parameter? Maybe it
+>>> should be just set to a high enough value?
+>>>
+>>> BR, Jarkko
+>>>
 >>
->> Create a helper, sgx_lru_list(), that returns the LRU that tracks a  
->> given
->> EPC page. It simply returns the global LRU now, and will later return
->> the LRU of the cgroup within which the EPC page was allocated. Replace
->> the hard coded global LRU with a call to this helper.
 >>
->> Next patches will first get the cgroup reclamation flow ready while
->> keeping pages tracked in the global LRU and reclaimed by ksgxd before we
->> make the switch in the end for sgx_lru_list() to return per-cgroup
->> LRU.
+>>  From the docs, I think we are supposed to use override.
+>> See:  
+>> https://docs.kernel.org/dev-tools/kselftest.html#timeout-for-selftests
+>>
+>> Thanks
+>> Haitao
+>>
 >
-> I found the first paragraph hard to read.  Provide my version below for
-> your reference:
+> Maybe you are suggesting we add settings file? I can do that.
+> README also explains what the tests do though. Do you still think they  
+> should not exist?
+> I was mostly following resctrl as example.
 >
-> "
-> The SGX driver tracks reclaimable EPC pages via
-> sgx_mark_page_reclaimable(), which adds the newly allocated page into the
-> global LRU list.  sgx_unmark_page_reclaimable() does the opposite.
->
-> To support SGX EPC cgroup, the SGX driver will need to maintain an LRU
-> list for each cgroup, and the new allocated EPC page will need to be  
-> added
-> to the LRU of associated cgroup, but not always the global LRU list.
->
-> When sgx_mark_page_reclaimable() is called, the cgroup that the new
-> allocated EPC page belongs to is already known, i.e., it has been set to
-> the 'struct sgx_epc_page'.
->
-> Add a helper, sgx_lru_list(), to return the LRU that the EPC page should
-> be/is added to for the given EPC page.  Currently it just returns the
-> global LRU.  Change sgx_{mark|unmark}_page_reclaimable() to use the  
-> helper
-> function to get the LRU from the EPC page instead of referring to the
-> global LRU directly.
->
-> This allows EPC page being able to be tracked in "per-cgroup" LRU when
-> that becomes ready.
-> "
->
-Thanks. Will use
-
-> Nit:
->
-> That being said, is sgx_epc_page_lru() better than sgx_lru_list()?
+> Thanks
+> Haitao
 >
 
-Sure
-
->>
->> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
->> Co-developed-by: Haitao Huang <haitao.huang@linux.intel.com>
->> Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
->> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
->> Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
->> ---
->>
->
-> Feel free to add:
->
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
+With the settings I shortened the README quite bit. Now I also lean  
+towards removing it. Let me know your preference. You can check the latest  
+at my branch for reference:
+https://github.com/haitaohuang/linux/tree/sgx_cg_upstream_v12_plus
 
 Thanks
 Haitao
