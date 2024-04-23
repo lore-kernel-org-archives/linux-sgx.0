@@ -1,253 +1,189 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBC013E058;
-	Tue, 23 Apr 2024 17:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713892125; cv=fail; b=Fux8V+CDngOMoAgHfpv/vrgD1/uh6NJSxo0GIv8h9uTYXvsyQCPENFFx5CUbU0CeX9oLWSIFCbsl3NkjHI++lopARl0gU4mHBUnZXcGtFmLuH1Zfn9swcs0sFFVVKfdMFHOkcTECE09oeTEE0hAW7qKW3dy592udnUELImKCO7k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713892125; c=relaxed/simple;
-	bh=72pkg3qaHqc1YLKkNHOtOELRYZY5agMjwsbZLi+Cepc=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XrLU1Xq1CnaDUHu8le8FsjDTgpW18m6XraPMgblswUU4eZXYLQN+0wlYnxvAoPkA2hLuYQ49kgYL5qUc4AxizslUAXXX8gbqGFfmkQj8cBX8ucLJ0uFA6tF4hGW+5a9YJJRPYxkF8CQzkXX22aBLNsKPhdmbpz12h/sbphAbdxI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aI+t+WDX; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A02B142E97;
+	Tue, 23 Apr 2024 21:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713906624; cv=none; b=fUY2WkkdTekeJJu12rZwcl0qmMgQ3kABuutXVDNVdmezZrUfEI1eyd7YcG6NXjmFi9JUm5GiaPjIlyLBazTlqG+exsP7HeU4fUOo0iylKPiPEotQlh1Rz8S3KLp+2wSqZWXC7rkbthRgIbSU4Wfd0WAGknRACOPRPei9Umw/rhA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713906624; c=relaxed/simple;
+	bh=T11rMPRRX9jt/RLdz1BLU5iOZ7SOs/dVFi4khlAQ6Cg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=CFZCYTANmM1Zy1GtEXaCq3wrXvbxNpZEL8DPUkMIOo2FEgMB/lCmChCsl1H0uYsK9++SQOUuZRQqOR0G/pyPkxMw2fejizA+Z5j6NCqY1/bTsrD6vuOE6NpE9bNDEwQIR3lXbtbmhAb+ZgGaBt4YdpykvBynRLZ/puXWTMfAW34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JySSdKg6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aI+t+WDX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713892124; x=1745428124;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=72pkg3qaHqc1YLKkNHOtOELRYZY5agMjwsbZLi+Cepc=;
-  b=aI+t+WDXp76vj9+Lum9A4O3Dixc+Nn8F+W1d2vKAS098e8eMSD7um0/S
-   e1ezGrVn++4txluoSccwwQIGJKDr6FGcapNii7hgpyo/Ulg3vMc9D4tr1
-   YtR7sJygnmgHIVrosK91HlYNuCSnASdw9wFgA1+33nUgYIFZuyqWQlAkf
-   tmkUNDdXnHNr0Cu+KmVrLShllzC9flPPZjSXyZnKnu9rsZbuZjHmeBsdf
-   cVhXUMRXSXD5ZvGfLv0aLs3TzyNqfKS3ASVqaaLiK5xqkzsVlpuMnZJ6T
-   QI6Tot0h9L3t3AB3qzatjyVlFO/HJbl7BKpfa4+aeprccmQv31hcVLoS6
-   Q==;
-X-CSE-ConnectionGUID: 2YQbtM8JTGq8e1u7FTOonQ==
-X-CSE-MsgGUID: 1bCt7xX7SHWuUijd25CDVQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11053"; a="34892815"
-X-IronPort-AV: E=Sophos;i="6.07,222,1708416000"; 
-   d="scan'208";a="34892815"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2024 10:08:43 -0700
-X-CSE-ConnectionGUID: /HeHcZYcRceNfx5Iv09/aw==
-X-CSE-MsgGUID: W9loVppPRFCAfFkST9OHQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,222,1708416000"; 
-   d="scan'208";a="24468804"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Apr 2024 10:08:43 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 23 Apr 2024 10:08:42 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 23 Apr 2024 10:08:42 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Tue, 23 Apr 2024 10:08:42 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.172)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 23 Apr 2024 10:08:42 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=THad8lRGJNyTMBYL+NWS4BbHIzYnQg8usWQAZAB3cy657EJK0qfOi2LanbmzZC5rF8Y5ZK/DVUOPujZNgwGTFihA4/OSf8VZpqTY1z4RlWkidJXwO90HrJ8HpKKeEKetrJX9rbtMCpnjugvCguQyj3PeiH1CrbOgKFeHlZbK3nIbmgcG6hL+HVt9kVttp6gh8w5I6qmSBebuYbOEi/zxaawQfOk5t70rvGELO10gxZ/ScPGYxU248S6pHoiEykjgI0H5g8p26u6AHfnJMjkmHJJO41HwO2864HzHQYu7QZg6tFrIEHRFIGhl8zaaKzpAXXwjYhbS+6909RCXdohjgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F0aHAYw6sbgFQo14e9hUEeZQ2ysrzrGAT7O4hip/LVQ=;
- b=hVSEiClqLETdDm5Tk6fiPlxbkaLU5YcQ0BntrDDYBrj2njoZP5cduP7AXOsGBD/LgvU+G29qBEa/xgFD12RdblqRZvK5ysKcoqyUw+gnUHxtf6/KvtHsSui5odpWY0v/XJP32XwvnyN26k17XGD+luDlY/ykn1tNkRZZSWoPrl95F4bS2+vJnuooeqeKLun6WkTEqENVBdohiKjY0nyw5oFFggjddKIP4oX8N6QM0WbbTsu4EZsJJrxGu2S6RFQT3Pe/4hi0BsSMUQLdRwxKFKxSlHcyyA+4YnTH4GpSPkWv2yWNn7znDeA44vy16oaCNByWUY2VeOB6XJN4cOUZRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by PH0PR11MB5063.namprd11.prod.outlook.com (2603:10b6:510:3d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7519.22; Tue, 23 Apr
- 2024 17:08:39 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::d610:9c43:6085:9e68]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::d610:9c43:6085:9e68%7]) with mapi id 15.20.7519.020; Tue, 23 Apr 2024
- 17:08:39 +0000
-Message-ID: <bfdb5787-65db-4c64-bce1-d39f37ad09fa@intel.com>
-Date: Tue, 23 Apr 2024 10:08:36 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/1] x86/sgx: Explicitly give up the CPU in EDMM's
- ioctl() to avoid softlockup
-To: "Huang, Kai" <kai.huang@intel.com>, "linux-sgx@vger.kernel.org"
-	<linux-sgx@vger.kernel.org>, "zhubojun.zbj@antgroup.com"
-	<zhubojun.zbj@antgroup.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "jarkko@kernel.org" <jarkko@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-CC: "Liu, Shuang" <ls123674@antgroup.com>
-References: <20240423092550.59297-1-zhubojun.zbj@antgroup.com>
- <20240423092550.59297-2-zhubojun.zbj@antgroup.com>
- <02fe00c3b10e4476d500ad7a34024b7eae5e3c97.camel@intel.com>
-Content-Language: en-US
-From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <02fe00c3b10e4476d500ad7a34024b7eae5e3c97.camel@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR03CA0207.namprd03.prod.outlook.com
- (2603:10b6:303:b8::32) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JySSdKg6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02DDC3277B;
+	Tue, 23 Apr 2024 21:10:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713906624;
+	bh=T11rMPRRX9jt/RLdz1BLU5iOZ7SOs/dVFi4khlAQ6Cg=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=JySSdKg6QZhIFMe4Ai5nIMK7eulsBOQIo0oj2UvSQGy/usq0emhdy462FDoXKEJJQ
+	 JAe47BTQTU0+REhK75C9pRReod0exkHzw7FSIf2OMaT7vmFSV6H3ZedUxzZpAHdevO
+	 nR34NsUAvEYH5tqkiAIacFxSdy93q2tVpW1oQbRooayKnhGcLRSlo4LvHcRiwz/pB7
+	 QUzc6kQbcNOfo2EdoLgLqdqy667ii9qijWFBVRLS/q117lE8DLSSuOZlzNXTUSGmXK
+	 z1bNdOl2ww9lr++JtzafWvGUb7/acCl9OxFh9GvwpaA0EoNk9KejgbgMvQUUJ+KHem
+	 EIbNsLt13EFUA==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH0PR11MB5063:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67b6f7dc-9d3a-48ab-8c81-08dc63b8051d
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MnFnZ0owaXJ6MCtORjJMWWlRSkpqcGZoN1ZhSVBBWmtkeHkzMmFNMWtHTiti?=
- =?utf-8?B?TEp2aVRuZnlpd3VVTTJRMW80Y3pCUGlNUnFzQlNRdXNxcnE4QkpCbkxvaE9X?=
- =?utf-8?B?TFNMdEd6UjMvUGl1d2I3RkplRXR4N1dhYzJDeCtsSy85NjVNZzZZby9BVGtv?=
- =?utf-8?B?S0pGanY1L3V4aVZEeDFib0xKNlNSemo3a2dBcVplbTk4ODVQSWFPZjhqOUZR?=
- =?utf-8?B?MlBOODQyczFoYzIzTEZ5WEdjVmVOUWVPRUZHQXEyZXF4a3JCWFJCeTlwQmpH?=
- =?utf-8?B?dW84aWFUdFdDMmtMM2UwcC9GcVRxK09sOUEwYW5aWUh5bWlubHdXY240VGV3?=
- =?utf-8?B?SVcwakdaM2Y4UFBQdGdUVUd4QkwrOC84UkFYNWthd2pMK0hkRlZxTlI4RFJp?=
- =?utf-8?B?b1ZFa3ltOWo3OXl6dXprL2VUQ3c4M0VJTDR3OGJUazZwSzF4YnpFTk85ZVl2?=
- =?utf-8?B?TEtTdmVHMmtVYStpRi84eHJDVE13MTVMU3ZJaTY0TjJyT0FKUVRRT2FCV0NT?=
- =?utf-8?B?MERKa3JRVEpVNzVCMHF4SG5JS1B4MXdldmlySWw2QUdDTGxLdExGTTBId3Vt?=
- =?utf-8?B?NjFNZWhpWFZKYkxiMlU5Yi9YNjdaOVN4UDJnbjhEbGw2MEpZNXIvSlEvL0VO?=
- =?utf-8?B?WitzVlJCZW94d1YxNlJwY1hzWlJGcXU3TDQ4cHAvbHRzNGRBa0lSUEJyQnRr?=
- =?utf-8?B?aFdia1lwWFBpbzBlRnBRWTZxQ2VDUDFRUWs5aGQxcU9nNTNBZVlGSWlTUmtQ?=
- =?utf-8?B?T0FKMys2SWhtRVBPVW5UVUIrYjY1d1FLZWlneldIK2JhU1EyTkxSbVZYTUR5?=
- =?utf-8?B?VVRBNzh6OTYrNVJtakxIdjJUQW1uL0dXZkwzUU4vR1RVSjAvTDZrSnc3Q3A2?=
- =?utf-8?B?dXUzdHE0Mkt5NW4yZGVKVE1DT0FER1lZNVltTGhxNmZuRmM5MDNjTVlMQXFG?=
- =?utf-8?B?RUFYK3ErZE5PVm1uUUNGejE1WU5XaVRTRmFtZ0RxSGpsaGJCeXpLbUx5Vk1R?=
- =?utf-8?B?alk5M0VmZkpxZFJVMmZWTmRBd09ETjhHa0RXb1NnU3U3T0hzQjQyeFRWK2hR?=
- =?utf-8?B?OGFrdVlmbDZUQmdSZFV5cFpkQkVYTFNETzIyTklFVng5eTBUbnlQQVFwaThU?=
- =?utf-8?B?bWF5YW9TcGduaFBPNkhUd1Z2TmxmUTJwOHU2akdYeUE3U1BHTUJWSTg1MXlC?=
- =?utf-8?B?anVFZkNxSXlxeE41cFltZFYxaFFDU2lxNVBncVRZUHEyMU8yaVgrUU5MV2di?=
- =?utf-8?B?M1hndTFOMnA3ZU9sNHkvT0NwRnNsUG1uY0tqcFJ5bGN1R3BlNFpmU01zT3or?=
- =?utf-8?B?YWlrcWNUMW15Z0Nab09hMHA4djlnSU9uZ3lnU2JVTVdEK01tV2FraU4vVjhs?=
- =?utf-8?B?WVJLYkg5ZHBTTmRLWldUZkFrYWk5cTZuaTR0cFBMcTRQTlZLT1BJNWxDQjNt?=
- =?utf-8?B?MWtQWmVXb0dYTS9zT3JFbE9QTE1kRGZxaE5seVZUWmdJRXpZMXYvYStDbHp3?=
- =?utf-8?B?Mm5vMEhPTWt2WVpBVklQTGtnaHc4ai9rcTduWkUvZnl0WWNxRjFraE13NzBG?=
- =?utf-8?B?YTJwQXdSaEFaRnpUcnAzSVl0V2toemxuMEJFV2NyTzhQazVvYVl2MnVEbWZF?=
- =?utf-8?B?UFpUNGxtTWVSVVhtRWZsSDdHTDFLbTdnQ0FydHZUYnY2ekhtYUVkWkx2VTYw?=
- =?utf-8?B?MEhkUzRTdnpheTBEWk9OaXc2aGtaUEVPdmtrNFdRMWZ3cVVKYVBPQk1BPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y0JaMGl5dStIZ0Foa0FmZUl4ZFh0Ykd5WG8zc2JjckkxMnRiNkg1KzVnU3Zr?=
- =?utf-8?B?cmxydDlKSjYyRmVjbk5RMlpUTzJCRjdqUDVVYWljSFFTdWpvMjZkakduTXdp?=
- =?utf-8?B?cld2QXRkOGVIM3lkWXVDWEJ0dThQeVVXQjF5aFQxU2dYNVpSQ28wKzhLckpQ?=
- =?utf-8?B?WldXUUhQZE12UE9FSXJXS1dxb2oxMHpKcjRPcHQrWC95ZXozUVJQV2tMUXg1?=
- =?utf-8?B?Y2JKOGtFQWNZTmsyclRHRVFzK3FReXZuSVZPRnJmSGI3QXVsK3NTWG5vZGF4?=
- =?utf-8?B?REZoeEsvdFdmOXR1ZXJsYkk1dWk0TXk5a1k3MExuMnU1NVZUcmJyakNUTFRt?=
- =?utf-8?B?M3ZBOGJ1eXFsSFhqMm16Z2dxM1p4U0QwYk5GTDJuRlBwVFdLRDBqSG5nWXYr?=
- =?utf-8?B?YzY3ZFJzaXRFRXZnK0RnTXZ1U2kyODZlUWJmc29yeVZEVk9tSVBOSXVuVGFM?=
- =?utf-8?B?Qm8wOWJjckRPbnFZL1AvU040N0tvMjF0dlFDM1hWK3NvM0wwS3JrUFpOQXhP?=
- =?utf-8?B?U01pNjREZHN4WDFJNkVFZ1Z4d3FPQmlpbnFCdHdzQUtuazI0b1U4NjlOSHZ4?=
- =?utf-8?B?WlQzUG9nRjJZdlVmN0grSTRIbDhkbDlhRzgvRHFLTHJBSG5XY1N1WHQ2NXBN?=
- =?utf-8?B?VVowOVorSWpVSmZzQXdobzJBTytzdEVHTDl2SEQwUHBoSHhrOVhVUllVQ0Rp?=
- =?utf-8?B?TTBzMVhteVJiK1JYNEwvM1VIeFkwTU9ieUJVQnc3MVgzZFZsR21uWmRocW0v?=
- =?utf-8?B?Y0RvZGZ5L09pWHl6Q3RZVjBLdGt0ajJyYzgwckJweUM0dWVFVnI3QkZIdk5V?=
- =?utf-8?B?eDhoZTdwL1FnUXFSK1RNajNsb1hTZ0xOZ25FTVZHakhXbHdLMlZUcndnUVd1?=
- =?utf-8?B?a3gzenJVMWIzWXFUQ1QyU0dNRmJlemV0ZW8vS3I5ZjJrdm12ak1CZlJTZmRl?=
- =?utf-8?B?MEVxVzBuUit0bWdLcG9FdHJKaURubFBGNjF4Y1d2YkxmWVcxQzdFYWJWN3Jx?=
- =?utf-8?B?b3oyZXdVMWV5WXVaS2ZyYkFsTDZMYm5lS3pBcUIyU01IK3lSV0p0R2lKOTU4?=
- =?utf-8?B?QnFWSUl1Tk5wNUpYSDlCdjZDUE80b251OEhqZGtLOWxwNGpyR0gvVGVVRjcx?=
- =?utf-8?B?QnhsOHhJa2Jnc1lTbFNWbEVtZ29LVllyK0s0T3VHd2IxdHFXdWRpdDYyd1la?=
- =?utf-8?B?aGVGTCtKNzBqanFDS0ZXRlV5QStpN1ltUmJDcDRGSUsraUFTTlgzWTdBNFdW?=
- =?utf-8?B?allSQjVwRFNtdmZGMVQvcTBrOWhDZEhsNzNlZUZIS2xsajdNbnV1Um9PeXlB?=
- =?utf-8?B?WFhYV1U3UDBrWjkyN21yV0ZtcnMxUVJTd3lpWjRCRXl4cEpTay9CK3JQRHhB?=
- =?utf-8?B?WWxVL3RuK1pLSkQyc3lPamo2R05HVkZhTUJTVjhxbDN3RmJZYVZqTktKN3R2?=
- =?utf-8?B?V2gzYmd0YzdhbG9FdXczekRJRWFSbktlUmEwV0FYOTkraERNdkpmVUlPVDBQ?=
- =?utf-8?B?N0ZadGhvRWJQYlppNlBISithSDdGTEMxYUxJaDl6cXJFSm1OUnVHY2czRWdD?=
- =?utf-8?B?RU1rT0o1bVF3Y0pzbWxodEt6RURwN1pmRE9iajhzVEhVZUJRS3Rydzh3UTJh?=
- =?utf-8?B?MmVpelBEaUE4aHd3ZWtJODZBSjV2MDMvN2xlWmo4VUlTU3dETVVUWVR3YldH?=
- =?utf-8?B?MkVLbVpJeGdPU29JckFySEhmYlM4OTNiUXNzY1l4U2c5blFPS0ZkK1RENlRB?=
- =?utf-8?B?c1hJaTh3eFRZUWMwSnNyQ1huMXN2SGpqd2ZSbDJ4VFBLVVVKQzdKV3kya0ti?=
- =?utf-8?B?UXpYWnRtMjFzSUJiTXpFa0d2US9FQ3AyK3dVUVpSREM3MStMZ3c2YUpIWjVD?=
- =?utf-8?B?N213OVMwblFxMG5hVWZOZndHYjFCc1B0TUtQWERmT0paWXhQMXRaUmJGRXIr?=
- =?utf-8?B?dVJNbjJyK2ljWVBJYWFvcm8wL2Uwd3doVGF1Umd5ZjA5blFvcStBVWpNd04x?=
- =?utf-8?B?eVFHSHJ6b0ludFd0eldvRHZBN29HUkZobnZEdHFQSTdHSXNCY2VjZDcvUTNB?=
- =?utf-8?B?ZDRVNm1vNStBUkh4dlFNaElmRDRodXZqMmNGVk9VakJaRXBhRmFna0JJL09X?=
- =?utf-8?B?RGRPU0FQOE8rSmYrYmFaOXZ2VThMMGhmQ1JYRmhLTGxkVUh6K3E2akZDMndk?=
- =?utf-8?B?YkE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67b6f7dc-9d3a-48ab-8c81-08dc63b8051d
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2024 17:08:39.2216
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 54toL8EbY+v+CTIaZ+zBkV242qQ7lUyVS26s50wIKxwLxbaDCRE0ZHvXn4BjlqVG9tv0x9luPvfYQY5G3qn0jtlGr3gRFwRZLGshOw742Ms=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5063
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 24 Apr 2024 00:10:21 +0300
+Message-Id: <D0RT6W3IGBRL.34KQMBWUO1Z23@kernel.org>
+To: =?utf-8?b?5pyx5Lyv5ZCbKOadsOmTrSk=?= <zhubojun.zbj@antgroup.com>,
+ <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+ <dave.hansen@linux.intel.com>
+Cc: <reinette.chatre@intel.com>, =?utf-8?b?5YiY5Y+MKOi9qeWxuSk=?=
+ <ls123674@antgroup.com>
+Subject: Re: [RFC PATCH 1/1] x86/sgx: Explicitly give up the CPU in EDMM's
+ ioctl() to avoid softlockup
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240423092550.59297-1-zhubojun.zbj@antgroup.com>
+ <20240423092550.59297-2-zhubojun.zbj@antgroup.com>
+In-Reply-To: <20240423092550.59297-2-zhubojun.zbj@antgroup.com>
 
-Hi Kai,
+On Tue Apr 23, 2024 at 12:25 PM EEST, =3D?UTF-8?B?5pyx5Lyv5ZCbKOadsOmTrSk=
+=3D?=3D wrote:
+> EDMM's ioctl()s support batch operations, which may be
+> time-consuming. Try to explicitly give up the CPU at
+> the every end of "for loop" in
+> sgx_enclave_{ modify_types | restrict_permissions | remove_pages}
+> to give other tasks a chance to run, and avoid softlockup warning.
+>
+> The following has been observed on Linux v6.9-rc5 with kernel
+> preemptions disabled(by configuring "PREEMPT_NONE=3Dy"), when kernel
+> is requested to restrict page permissions of a large number of EPC pages.
+>
+>     ------------[ cut here ]------------
+>     watchdog: BUG: soft lockup - CPU#45 stuck for 22s! [occlum-run:3905]
+>     ...
+>     CPU: 45 PID: 3905 Comm: occlum-run Not tainted 6.9.0-rc5 #7
+>     ...
+>     RIP: 0010:sgx_enclave_restrict_permissions+0xba/0x1f0
+>     Code: 48 c1 e6 05 48 89 d1 48 8d 5c 24 40 b8 0e 00 00 00 48 2b 8e 70 =
+8e f5 93 48 c1 e9 05 48 c1 e1 0c 48 03 8e 68 8e f5 93 0f 01 cf <a9> 00 00 0=
+0 40 0f 85 b2 00 00 00 85 c0 0f 85 db 00 00 00 4c 89 ef
+>     RSP: 0018:ffffb55a6591fa80 EFLAGS: 00000202
+>     RAX: 0000000000000000 RBX: ffffb55a6591fac0 RCX: ffffb581e7384000
+>     RDX: ffffb59a9e4e8080 RSI: 0000000000000020 RDI: ffff91d69e8cc000
+>     RBP: ffffb55a6591fb70 R08: 0000000000000002 R09: ffff91d646e12be0
+>     R10: 000000000000006e R11: 0000000000000002 R12: 000000072052d000
+>     R13: ffff91d69e8cc000 R14: ffffb55a6591fbd8 R15: ffff91d69e8cc020
+>     FS:  00007fe10dbda740(0000) GS:ffff92163e480000(0000) knlGS:000000000=
+0000000
+>     CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>     CR2: 00007fc041811000 CR3: 00000040d95c8005 CR4: 0000000000770ef0
+>     DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>     DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
+>     PKRU: 55555554
+>     Call Trace:
+>      <IRQ>
+>      ? show_regs+0x67/0x70
+>      ? watchdog_timer_fn+0x1f3/0x280
+>      ? __pfx_watchdog_timer_fn+0x10/0x10
+>      ? __hrtimer_run_queues+0xc8/0x220
+>      ? hrtimer_interrupt+0x10c/0x250
+>      ? __sysvec_apic_timer_interrupt+0x53/0x130
+>      ? sysvec_apic_timer_interrupt+0x7b/0x90
+>      </IRQ>
+>      <TASK>
+>      ? asm_sysvec_apic_timer_interrupt+0x1b/0x20
+>      ? sgx_enclave_restrict_permissions+0xba/0x1f0
+>      ? __pte_offset_map_lock+0x94/0x110
+>      ? sgx_encl_test_and_clear_young_cb+0x40/0x60
+>      sgx_ioctl+0x1ab/0x900
+>      ? do_syscall_64+0x79/0x110
+>      ? apply_to_page_range+0x14/0x20
+>      ? sgx_encl_test_and_clear_young+0x6c/0x80
+>      ? sgx_vma_fault+0x132/0x4f0
+>      __x64_sys_ioctl+0x95/0xd0
+>      x64_sys_call+0x1209/0x20c0
+>      do_syscall_64+0x6d/0x110
+>      ? do_syscall_64+0x79/0x110
+>      ? do_pte_missing+0x2e8/0xcc0
+>      ? __pte_offset_map+0x1c/0x190
+>      ? __handle_mm_fault+0x7b9/0xe60
+>      ? __count_memcg_events+0x70/0x100
+>      ? handle_mm_fault+0x256/0x360
+>      ? do_user_addr_fault+0x3c1/0x860
+>      ? irqentry_exit_to_user_mode+0x67/0x190
+>      ? irqentry_exit+0x3b/0x50
+>      ? exc_page_fault+0x89/0x180
+>      entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>     RIP: 0033:0x7fe10e2ee5cb
+>     Code: 0f 1e fa 48 8b 05 c5 78 0d 00 64 c7 00 26 00 00 00 48 c7 c0 ff =
+ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa b8 10 00 00 00 0f 05 <48> 3d 01 f=
+0 ff ff 73 01 c3 48 8b 0d 95 78 0d 00 f7 d8 64 89 01 48
+>     RSP: 002b:00007fffb2c75518 EFLAGS: 00000246 ORIG_RAX: 000000000000001=
+0
+>     RAX: ffffffffffffffda RBX: 0000000780000000 RCX: 00007fe10e2ee5cb
+>     RDX: 00007fffb2c75520 RSI: 00000000c028a405 RDI: 0000000000000005
+>     RBP: 0000000000000005 R08: 0000000000000000 R09: 00007fffb2c75594
+>     R10: 00007fffb2c755c8 R11: 0000000000000246 R12: 00000000c028a405
+>     R13: 00007fffb2c75520 R14: 0000000780000000 R15: 00007fe10e1a7980
+>      </TASK>
+>      ------------[ end trace ]------------
+>
+> Signed-off-by: Bojun Zhu <zhubojun.zbj@antgroup.com>
 
-On 4/23/2024 4:50 AM, Huang, Kai wrote:
->> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
->> index b65ab214bdf5..2340a82fa796 100644
->> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
->> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
->> @@ -806,6 +806,9 @@ sgx_enclave_restrict_permissions(struct sgx_encl *encl,
->>  		}
->>  
->>  		mutex_unlock(&encl->lock);
->> +
->> +		if (need_resched())
->> +			cond_resched();
->>  	}
->>  
->>  	ret = 0;
->> @@ -1010,6 +1013,9 @@ static long sgx_enclave_modify_types(struct sgx_encl *encl,
->>  		entry->type = page_type;
->>  
->>  		mutex_unlock(&encl->lock);
->> +
->> +		if (need_resched())
->> +			cond_resched();
->>  	}
->>  
->>  	ret = 0;
->> @@ -1156,6 +1162,9 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
->>  		kfree(entry);
->>  
->>  		mutex_unlock(&encl->lock);
->> +
->> +		if (need_resched())
->> +			cond_resched();
->>  	}
->>
-> 
-> You can remove the need_reshced() in all 3 places above but just call
-> cond_resched() directly.
-> 
+Can you also fixup this as your "firstname lastname" in your emails
+from field? This matters so that author field in git log matches your
+sob.
 
-This change will call cond_resched() after dealing with each page in a
-potentially large page range (cover mentions 30GB but we have also had to
-make optimizations for enclaves larger than this). Adding a cond_resched()
-here will surely placate the soft lockup detector, but we need to take care
-how changes like this impact the performance of the system and having actions
-on these page ranges take much longer than necessary.
-For reference, please see 7b72c823ddf8 ("x86/sgx: Reduce delay and interference
-of enclave release") that turned frequent cond_resched() into batches
-to address performance issues.
+> ---
+>  arch/x86/kernel/cpu/sgx/ioctl.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/io=
+ctl.c
+> index b65ab214bdf5..2340a82fa796 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -806,6 +806,9 @@ sgx_enclave_restrict_permissions(struct sgx_encl *enc=
+l,
+>  		}
+> =20
+>  		mutex_unlock(&encl->lock);
+> +
+> +		if (need_resched())
+> +			cond_resched();
+>  	}
+> =20
+>  	ret =3D 0;
+> @@ -1010,6 +1013,9 @@ static long sgx_enclave_modify_types(struct sgx_enc=
+l *encl,
+>  		entry->type =3D page_type;
+> =20
+>  		mutex_unlock(&encl->lock);
+> +
+> +		if (need_resched())
+> +			cond_resched();
+>  	}
+> =20
+>  	ret =3D 0;
+> @@ -1156,6 +1162,9 @@ static long sgx_encl_remove_pages(struct sgx_encl *=
+encl,
+>  		kfree(entry);
+> =20
+>  		mutex_unlock(&encl->lock);
+> +
+> +		if (need_resched())
+> +			cond_resched();
+>  	}
+> =20
+>  	ret =3D 0;
 
-It looks to me like the need_resched() may be a quick check that can be used
-to improve performance? I am not familiar with all use cases that need to be
-considered to determine if a batching solution may be needed.
+Makes sense to me but maybe this should be a prefix op instead of
+postfix op given how things are laid out in sgx_ioc_enclave_add_pages()
 
-Reinette
+https://elixir.bootlin.com/linux/latest/source/arch/x86/kernel/cpu/sgx/ioct=
+l.c#L443
+
+BR, Jarkko
