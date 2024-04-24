@@ -1,73 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out0-217.mail.aliyun.com (out0-217.mail.aliyun.com [140.205.0.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800CB1428F9;
-	Wed, 24 Apr 2024 10:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C40015A4A1;
+	Wed, 24 Apr 2024 11:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713955352; cv=none; b=jrqUZ4UoJPUJFsLCjYuvslpzEc0kZGMrM97PUHfp1/FjtlwMnWo6OfkYZRWJNlgSrapks6KC5fpEYRpY+rkyr8i/g7o21sltanWKXdJbk918RB2pHFKr3WsmdbBOEaTHaog2LfTZXRb8VtVRUHJJq1G00Yh3pIxI2t4VyuP41II=
+	t=1713959474; cv=none; b=i3vtW9Vr2VeP2TfQZTuCEiH43/K9Nke72wa1+YbIq7hREJxILOHU4Je+cDENDbDTFQIBQici9EmpbaHZVfHvUTHIJyqvSF09chxT9TailzC7RmkcvUtEfeGJeCzgvLvGyvgqgiPBKW0jbqYh2YpWDEqgjOBWqNidhicuxL1UwBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713955352; c=relaxed/simple;
-	bh=KDBVxFl2yr98XTL883s9LytCD+NjLU2a39+qhbVZIr0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=lEf4dI9QXTg6+3yaeI8wOnJOHffX+aLalDq/UcKgHY1FXmzy1SH/cXQXsIf2+EYVdDPDwHiwO5yZGI8dmJdIgzb2kgaAURjzIv4HKzSPR63TPN/dMWdlLgObLib5SVBGP3H7852KzKAzkNVLrpsQe9kmggVi8jo/gMdAfJ4iuJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uiuXsG9x; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713959474; c=relaxed/simple;
+	bh=0ASRLrYLM+eWKri3S7N5mLSo2FArHC34RbVnFY+i0/E=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=GxAAQZvNhxvc9pMC0jxxtzgV1R/vkg0N1tgK0/sYTQ4kf7701Kij9x7OkeExPuVjbfj7y41JCFQfOc5ZOhUOpimGJhByRiAnmD6K9/mQ95w2bY6VKOw86VuS+oMs7BA/WaqZQxlcnDy2u+9lNJ2rmQOz2qRsSqzO+dAGc82AlYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=p+8hKg66; arc=none smtp.client-ip=140.205.0.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiuXsG9x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD4BC113CE;
-	Wed, 24 Apr 2024 10:42:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713955352;
-	bh=KDBVxFl2yr98XTL883s9LytCD+NjLU2a39+qhbVZIr0=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=uiuXsG9x1xajMFF4vw6ql7I9b9i+GHjvUk8CFnfopl24XaQ9bLtEppV3FqVCpOWRc
-	 xnDa9tz0jImkSb7hpUnOebMP7CLfdDX591VSutpzuczSGn8O1Al3dQB1bFeRlWW6Bq
-	 n6Vf/Rdb5+lf/YeahOW0ak8ssuV6Zx2Y9hZRexqUVWoLwtrYCN/oztKJbMTlOjhx2a
-	 +EQNT5qiTgpvAUoeNfed7nXmpRA2H8cbktrwVU2G2UT6ONZb7H2BL6vnDfyLum5MdT
-	 YvQO6AeT6ezQc46SePWJIFUl4nWSOf11lJGmO5Ml/A0BKuoBLyNynsg//QcDc9UW3b
-	 QAdIy6V1R0G3Q==
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="p+8hKg66"
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1713959461; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
+	bh=ozLjALREGz/5ADpN3UYpLtAQzZ6fw/RdnvorAJ09Wvs=;
+	b=p+8hKg662XSAiXfqhEmzDCY2U7PhfXxYzfW60nkIBPk8RBXQa8T2/lqT83A4nGF/hUUB4cSumO5Xim0YCFUTh8fIRKaTeSda7pr+Aer8kJJy9f4xpIghsO1Lh/27C2VYvkOahrM9tkcr86qaR7hvMS3DctJZR1W3Vcy8GpGV0WU=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047211;MF=zhubojun.zbj@antgroup.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---.XKLmvlB_1713959460;
+Received: from smtpclient.apple(mailfrom:zhubojun.zbj@antgroup.com fp:SMTPD_---.XKLmvlB_1713959460)
+          by smtp.aliyun-inc.com;
+          Wed, 24 Apr 2024 19:51:00 +0800
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 24 Apr 2024 13:42:28 +0300
-Message-Id: <D0SAGP6DPKXF.2EHTXI9UH0HQ9@kernel.org>
-Cc: =?utf-8?b?5YiY5Y+MKOi9qeWxuSk=?= <ls123674@antgroup.com>, "Chatre,
- Reinette" <reinette.chatre@intel.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.100.2.1.4\))
 Subject: Re: [RFC PATCH 1/1] x86/sgx: Explicitly give up the CPU in EDMM's
  ioctl() to avoid softlockup
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Bojun Zhu"
- <zhubojun.zbj@antgroup.com>, "Huang, Kai" <kai.huang@intel.com>,
- "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-X-Mailer: aerc 0.17.0
+From: "Bojun Zhu" <zhubojun.zbj@antgroup.com>
+In-Reply-To: <D0SAGP6DPKXF.2EHTXI9UH0HQ9@kernel.org>
+Date: Wed, 24 Apr 2024 19:50:49 +0800
+Cc: "=?UTF-8?B?SHVhbmcsIEthaQ==?=" <kai.huang@intel.com>,
+  "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+  "=?UTF-8?B?5YiY5Y+MKOi9qeWxuSk=?=" <ls123674@antgroup.com>,
+  "=?UTF-8?B?Q2hhdHJlLCBSZWluZXR0ZQ==?=" <reinette.chatre@intel.com>,
+  "Bojun Zhu" <zhubojun.zbj@antgroup.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D428BE51-20DA-42C5-A2B0-B264D7564700@antgroup.com>
 References: <20240423092550.59297-1-zhubojun.zbj@antgroup.com>
  <20240423092550.59297-2-zhubojun.zbj@antgroup.com>
  <02fe00c3b10e4476d500ad7a34024b7eae5e3c97.camel@intel.com>
  <85dfbebc-a2d5-4828-b3b9-f929cd6e30cf@antgroup.com>
  <D0S5S2NL1N5P.3Q0SM01VIZBJX@kernel.org>
-In-Reply-To: <D0S5S2NL1N5P.3Q0SM01VIZBJX@kernel.org>
+ <D0SAGP6DPKXF.2EHTXI9UH0HQ9@kernel.org>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+X-Mailer: Apple Mail (2.3774.100.2.1.4)
 
-On Wed Apr 24, 2024 at 10:02 AM EEST, Jarkko Sakkinen wrote:
-> On Wed Apr 24, 2024 at 9:46 AM EEST, Bojun Zhu wrote:
-> > Based on the the discussion among you, Jarkko and Reinette,
-> > I will keep the need_resched() and wrap the logic in using sgx_resched(=
-),
-> > as suggested by Jarkko.
->
-> Sounds like a plan :-)
+Hi Jarkko,
 
-In sgx_ioc_enclave_add_pages() "if (!c)" check might cause possibly
-some  confusion.
+> On Apr 24, 2024, at 18:42, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+>=20
+> On Wed Apr 24, 2024 at 10:02 AM EEST, Jarkko Sakkinen wrote:
+>> On Wed Apr 24, 2024 at 9:46 AM EEST, Bojun Zhu wrote:
+>>> Based on the the discussion among you, Jarkko and Reinette,
+>>> I will keep the need_resched() and wrap the logic in using =
+sgx_resched(),
+>>> as suggested by Jarkko.
+>>=20
+>> Sounds like a plan :-)
+>=20
+> In sgx_ioc_enclave_add_pages() "if (!c)" check might cause possibly
+> some  confusion.
+>=20
+> Reason for it is that in "transaction sense" the operation can
+> be only meaningfully restarted when no pages have not been added
+> as MRENCLAVE checksum cannot be reset.
+>=20
+> BR, Jarkko
+>=20
 
-Reason for it is that in "transaction sense" the operation can
-be only meaningfully restarted when no pages have not been added
-as MRENCLAVE checksum cannot be reset.
 
-BR, Jarkko
+Thanks for your reminder.
+
+According to the SGX hardware specification, similar to "ADD PAGES=E2=80=9D=
+,
+the operations in  "MODT PAGEs=E2=80=9D and  "REMOVE PAGEs(at =
+runtime)=E2=80=9D =20
+can be only meaningfully restarted when no page has been handled.
+
+For the following code in sgx_ioc_enclave_add_pages():
+
+```c
+if (signal_pending(current)) {
+	if (!c)
+		ret =3D -ERESTARTSYS;
+
+	break;
+}
+```
+I still have some questions:
+
+It seems that the variable "ret" is set to 0 if there is **some** EPC =
+pages have been=20
+added when interrupted by signal(Supposed that sgx_encl_add_page()=20
+always returns successfully).
+
+Shall we set the return value as "-EINTR" if the context is interrupted =
+by=20
+signal when some EPC pages have been added?
+(BTW, return values contain -EINTR as shown in
+=
+https://elixir.bootlin.com/linux/latest/source/arch/x86/kernel/cpu/sgx/ioc=
+tl.c#L402)
+
+Please correct me if misunderstood it.
+
+Regards,
+Bojun=
