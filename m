@@ -1,103 +1,100 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CD81386AA;
-	Wed, 24 Apr 2024 19:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255D718E02;
+	Thu, 25 Apr 2024 04:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713987729; cv=none; b=D81YQWmn1BaUWr3wqI1Co/gqvhv6YeJC31ayWyI5ialtwdVDPKcX/tNr+9fWqL2LysIi37dAPEFLkHB4BKt0/pWDRf7jwgMLe7VSDuRCVyznSPuY7+W1cf5tqKybkcQwTTrE3ZmpAPYJJ3YlKiBxUZnLNRNKDy9dYX8NtZ4/5Pg=
+	t=1714020723; cv=none; b=Fm6jIMncQO86JNsr1IpJaGEauh3HGgtts5V3+hR3MJivkUqgZaIrdBll1S65dEDRYwfKrnqdxy0mOMdi+dqfR/IsFuCVbA8hz4n3PWZq5BXiOoyJ6idTl3tGkTvXpCWuSY0qUI9SN4rRfWrrhLyad6UxOfPedz9b5RiceDFHCEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713987729; c=relaxed/simple;
-	bh=SmGdTOXSTu0eJ97+MElF8nFJnR06zsOp19Qt7IFFhSw=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=rPdKbvbpfwKwOg3Vq7G5wp6tUlZmxBN4OsSl3r48f30FHqew44kW7rI6rhjPT1Vh3IPg4Q9ZpHApLsHx5fOqqU6hIP8xgd2hoh5d/WFEUoS9il/LViIvbBJTtLa7USDVLovbe/5FRzLgdjmTZsQ7ZHbEM/NE5Bvpen1kQA5MhUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mmvq6rPf; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1714020723; c=relaxed/simple;
+	bh=p7hjWUgR2R06dl3ei0tERDhkngFe7TKEuv52mjeiL5k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=YPyInGZu3qzDUzSgbsuyKcKTd3WOmXlTCo0DHQ2TJoATXpwN0BgPQxQqclq+0knqqOsHSPY4nzqinuvrm3o6zIPRwHbJ56XxkIUqUADAVbqrcsq0QkjQPAaPekxS6D375iQaA0+Jbz/s4zE1RfQ51ZnzYHQQfU0xlVfciuQ7r3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KiaxAdkq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mmvq6rPf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713987728; x=1745523728;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=SmGdTOXSTu0eJ97+MElF8nFJnR06zsOp19Qt7IFFhSw=;
-  b=mmvq6rPf4rQsAhjI720M4L3OOtUPWMJ4yMWSXRgAH8WJxQiUQ+FhRsXg
-   maDjrVmU4zaxexqUr9CDsEmr3W6UKyy8nrYAKwBvTPwRheQn1tAHDBSIL
-   NUZWTuS75Yr6Jn72cqWyyPtsPJnG8XFkHLqEjD+Rwmw07tzy1zekVUvCX
-   lh/8T/WRkrPj5IyepRBYGTLOA7NNo9eGSDKwpJasaH4mQhQJc65pUAKI4
-   2bbQMcmDG6Ftyz8juq2rOcPx9JJfEJ23q2EoFDTaGrZLIygWKhlsGk1K9
-   f/wSaPjFKPUxi3j+zfRdr7V3MIdemCvlBO2HuvmVTUF10Nt/Jql22IbGi
-   A==;
-X-CSE-ConnectionGUID: 5sUE9eslQW602PrRHY32YA==
-X-CSE-MsgGUID: AWYy+J5YS9qz+Ih+ACHIHA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11054"; a="9570992"
-X-IronPort-AV: E=Sophos;i="6.07,227,1708416000"; 
-   d="scan'208";a="9570992"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2024 12:42:07 -0700
-X-CSE-ConnectionGUID: +5AZYzF3QfuZAYOPi9tPMg==
-X-CSE-MsgGUID: 8T+28TDfTn2FXwjxuzXVPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,227,1708416000"; 
-   d="scan'208";a="29619025"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.125.85.20])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 24 Apr 2024 12:42:04 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: dave.hansen@linux.intel.com, kai.huang@intel.com, tj@kernel.org,
- mkoutny@suse.com, linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
- x86@kernel.org, cgroups@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, hpa@zytor.com, sohil.mehta@intel.com,
- tim.c.chen@linux.intel.com, "Jarkko Sakkinen" <jarkko@kernel.org>
-Cc: zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
- zhanb@microsoft.com, anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
- yangjie@microsoft.com, chrisyan@microsoft.com
-Subject: Re: [PATCH v12 14/14] selftests/sgx: Add scripts for EPC cgroup
- testing
-References: <20240416032011.58578-1-haitao.huang@linux.intel.com>
- <20240416032011.58578-15-haitao.huang@linux.intel.com>
- <D0LLS28WEXYA.G15BAG7WOJGR@kernel.org> <D0LLVE07V8O0.S8XF3CY2DQ9A@kernel.org>
- <op.2mbs1m05wjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <D0LODQCRSTRA.2KSPCDB0FLK0X@kernel.org>
-Date: Wed, 24 Apr 2024 14:42:03 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KiaxAdkq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30FEEC113CC;
+	Thu, 25 Apr 2024 04:51:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714020722;
+	bh=p7hjWUgR2R06dl3ei0tERDhkngFe7TKEuv52mjeiL5k=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=KiaxAdkqqt8DPt6Nx4tssIeQoaNyqm4bSg1T6g8X3IVz3zUBEtkmlWuLfozSxqh4I
+	 F2ToYlUTcWMLnVGmHmqBFOxA+K+/9Bv+gzvLDRcAt9Jj6pABjdGp6AsLqpYZ3Hw3dc
+	 t8VjDL6yYzo/6vmbZtbGx2HCxOHkYtwMxiMR7S07OIk0Z6/p/9vbLYq6ec+S4rA4Dc
+	 vK8+PPe1Hv6CGTBAekkqBJH1kR2PonEWVoNwFdgHH+glGj9cn4xN7B/SL0TzrfflZF
+	 s1w0WYN1lhEguuFjXWHSTFhOFl1KSgesFYSt0jAyE3UtZ9oGSrgVYYcqeLd8AdpbqX
+	 PZW+8UIIOt+Wg==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2mqzodbxwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <D0LODQCRSTRA.2KSPCDB0FLK0X@kernel.org>
-User-Agent: Opera Mail/1.0 (Win32)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 25 Apr 2024 07:51:56 +0300
+Message-Id: <D0SXMUQP947S.3KBGA0PH06PDX@kernel.org>
+Cc: <zhiquan1.li@intel.com>, <kristen@linux.intel.com>, <seanjc@google.com>,
+ <zhanb@microsoft.com>, <anakrish@microsoft.com>,
+ <mikko.ylinen@linux.intel.com>, <yangjie@microsoft.com>,
+ <chrisyan@microsoft.com>
+Subject: Re: [PATCH v12 14/14] selftests/sgx: Add scripts for EPC cgroup
+ testing
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Haitao Huang" <haitao.huang@linux.intel.com>,
+ <dave.hansen@linux.intel.com>, <kai.huang@intel.com>, <tj@kernel.org>,
+ <mkoutny@suse.com>, <linux-kernel@vger.kernel.org>,
+ <linux-sgx@vger.kernel.org>, <x86@kernel.org>, <cgroups@vger.kernel.org>,
+ <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <sohil.mehta@intel.com>, <tim.c.chen@linux.intel.com>
+X-Mailer: aerc 0.17.0
+References: <20240416032011.58578-1-haitao.huang@linux.intel.com>
+ <20240416032011.58578-15-haitao.huang@linux.intel.com>
+ <D0LLS28WEXYA.G15BAG7WOJGR@kernel.org>
+ <D0LLVE07V8O0.S8XF3CY2DQ9A@kernel.org>
+ <op.2mbs1m05wjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <D0LODQCRSTRA.2KSPCDB0FLK0X@kernel.org>
+ <op.2mqzodbxwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <op.2mqzodbxwjvjmi@hhuan26-mobl.amr.corp.intel.com>
 
-Hi Jarkko
-On Tue, 16 Apr 2024 11:08:11 -0500, Jarkko Sakkinen <jarkko@kernel.org>  
-wrote:
+On Wed Apr 24, 2024 at 10:42 PM EEST, Haitao Huang wrote:
+> Hi Jarkko
+> On Tue, 16 Apr 2024 11:08:11 -0500, Jarkko Sakkinen <jarkko@kernel.org> =
+=20
+> wrote:
+>
+> > On Tue Apr 16, 2024 at 5:54 PM EEST, Haitao Huang wrote:
+> >> I did declare the configs in the config file but I missed it in my pat=
+ch
+> >> as stated earlier. IIUC, that would not cause this error though.
+> >>
+> >> Maybe I should exit with the skip code if no CGROUP_MISC (no more
+> >> CGROUP_SGX_EPC) is configured?
+> > OK, so I wanted to do a distro kernel test here, and used the default
+> > OpenSUSE kernel config. I need to check if it has CGROUP_MISC set.
+>
+> I couldn't figure out why this failure you have encountered. I think =20
+> OpenSUSE kernel most likely config CGROUP_MISC.
+>
+> Also if CGROUP_MISC not set, then there should be error happen earlier on=
+ =20
+> echoing "+misc" to cgroup.subtree_control at line 20. But your log =20
+> indicates only error on echoing "sgx_epc ..." to =20
+> /sys/fs/cgroup/...//misc.max.
+>
+> I can only speculate that can could happen (if sgx epc cgroup was compile=
+d =20
+> in) when the cgroup-fs subdirectories in question already have populated =
+=20
+> config that is conflicting with the scripts.
+>
+> Could you double check or start from a clean environment?
+> Thanks
+> Haitao
 
-> On Tue Apr 16, 2024 at 5:54 PM EEST, Haitao Huang wrote:
->> I did declare the configs in the config file but I missed it in my patch
->> as stated earlier. IIUC, that would not cause this error though.
->>
->> Maybe I should exit with the skip code if no CGROUP_MISC (no more
->> CGROUP_SGX_EPC) is configured?
-> OK, so I wanted to do a distro kernel test here, and used the default
-> OpenSUSE kernel config. I need to check if it has CGROUP_MISC set.
+I can re-check next week once I'm back from Estonia. I'm travelling now
+to https://lu.ma/uncloud.
 
-I couldn't figure out why this failure you have encountered. I think  
-OpenSUSE kernel most likely config CGROUP_MISC.
-
-Also if CGROUP_MISC not set, then there should be error happen earlier on  
-echoing "+misc" to cgroup.subtree_control at line 20. But your log  
-indicates only error on echoing "sgx_epc ..." to  
-/sys/fs/cgroup/...//misc.max.
-
-I can only speculate that can could happen (if sgx epc cgroup was compiled  
-in) when the cgroup-fs subdirectories in question already have populated  
-config that is conflicting with the scripts.
-
-Could you double check or start from a clean environment?
-Thanks
-Haitao
+BR, Jarkko
