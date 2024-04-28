@@ -1,144 +1,92 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A5615B57B;
-	Fri, 26 Apr 2024 17:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47382F44;
+	Sun, 28 Apr 2024 22:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714151220; cv=none; b=cdXzDBdzW5XHOPIoMzMm3sGovdVHSH2CdeR5ET+c/hN9/YUHFLjE8CEOJVVgbtVg8UBxXwRmAjxbuF3hcyTUxFDQlWQNTBDHeDvULphVgwDyUphHhWeveWNXKdj6n+G0E3rbo1udN5GveCGzL2NfVi2n6ze9seni/q6RHj6fRDM=
+	t=1714341804; cv=none; b=mOgH11Hy98lYFCdd0H6JGYdaynn7ve67C+7oWqo4/pqxK8+oW43YD/k8uMkqq4Pgt7Pa5LSK2E0MOP2ks0gFQ1BzFvjs3K8EW2XWES+gyr3Kfpj8bxgs+zbqIy4QHY8YxqorVklWFtU2TNvc66A/TBMbspVxbBJ52Bq5SdNfzKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714151220; c=relaxed/simple;
-	bh=FZ+j+p6hRx9M1MSAAujq4y2aF4Gs0UKvJ2UzLkCl2GY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X6G3jeYO345omiDOsJMe421/4XMGYgRDQtDPQnH28tTrRBy8JrCZBhatym4pHtsUqaGnwh5XP8cUoDoaiPWsg4Ivpt9mJ3UgKXfz99ikDHjs8v8uPM/FE3q5s8nN6ncJZDL0pu+CrISdb82gdfCVPaviNM1meN33mKs5ZPvadbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lHRm1Gg1; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1714341804; c=relaxed/simple;
+	bh=ambIjCt0dHWovx83ZJuXThRMYcTMq0iDPC2InteFJrs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=qR5gond3HlVzxst0bvvSI2y3TW2k83kRQmkC4wJx9Dd2aOXiM4bvk7ogH1DDYhSN/nuacEloABNyjpfZvlxo4HMrh3GV3AbtWGHFrXBuNiw6+i8AaCC/HwEd7qaO+Vxkhxc0XypfCZoXr+QmXFzTZbX2wqhfFLLhk+IuSaqWr5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=if2Ye99H; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lHRm1Gg1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714151218; x=1745687218;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=FZ+j+p6hRx9M1MSAAujq4y2aF4Gs0UKvJ2UzLkCl2GY=;
-  b=lHRm1Gg1MbArX8zey/fKLH2KSxlSPy6cqNxicULdjFIk8rLqXj5ZYLVm
-   XLbA0+uFfl5Ic2eANmTvSf227ti+QMMaCFdJ+bIlzRL0KtBSLD7aKsIrW
-   KQ1JIIXknD8K1nPUDJ9JXf+Ecp6uXMnzlmQ7vAzBqwmswdedc9XM0P4AH
-   s9p8VQdvAXXDlxrSNajvFlheiQWmz2tqNa2ECaHVJzqsJDWgwgmh950Se
-   NHkPpSJncI6N0pQWFTtvcpShHuDdaWxr+IcBNh6bS+bF5RJlzNjtDbf4K
-   kitRQjCUHA6y9km9AX/8FwglnA58s/B9PexSt7DL0I6QCHq41MZqCG2XX
-   g==;
-X-CSE-ConnectionGUID: MeMhENLaSG6vKb6DLETqzw==
-X-CSE-MsgGUID: wBj23quGS+iYkE1TZhOz6g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11056"; a="21043099"
-X-IronPort-AV: E=Sophos;i="6.07,233,1708416000"; 
-   d="scan'208";a="21043099"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2024 10:06:58 -0700
-X-CSE-ConnectionGUID: HQwBPN+eQa+NLVSMFQy0Gw==
-X-CSE-MsgGUID: kgAjj70BTACdtQ+LdSlSoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,233,1708416000"; 
-   d="scan'208";a="25355194"
-Received: from bbaran1x-mobl.amr.corp.intel.com (HELO [10.209.80.70]) ([10.209.80.70])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2024 10:06:58 -0700
-Message-ID: <30415ed3-a05a-454d-9077-c8674617f291@intel.com>
-Date: Fri, 26 Apr 2024 10:06:56 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="if2Ye99H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2774C113CC;
+	Sun, 28 Apr 2024 22:03:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714341804;
+	bh=ambIjCt0dHWovx83ZJuXThRMYcTMq0iDPC2InteFJrs=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=if2Ye99HCceTNazUjBYkPYPLG8oueQ3JmHMVnP9RVf1jT7RJD+P3g9P5KRuzPby33
+	 VDs2OSeINZvSZhpxr+TjQAY6DgcHVG/gln1XRFYuxMR7V1OYR0rMkQt6Kh6AuHgsjk
+	 UTPJGuAQHo1g2K/eS/Ifg4VHjeyNOfKRjVZGoTOv3NgkBuqPakQ81cBUomiwz/yMcX
+	 zUkVI2CqO+N6bNAlO6HkpBGNX03sefg6gkpvVi+jZgogonvwaoXVO9RUsCw4p7RuTE
+	 sB2tTw0p1oJavBslNCgT6W3i3UhDMogqwwq6iAocPNaqH2FQz9nwlQngoFxZm5YNxy
+	 lU5zuk4XqVqnA==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 1/1] x86/sgx: Explicitly give up the CPU in EDMM's
- ioctl() to avoid softlockup
-To: Bojun Zhu <zhubojun.zbj@antgroup.com>, linux-kernel@vger.kernel.org,
- linux-sgx@vger.kernel.org, jarkko@kernel.org, dave.hansen@linux.intel.com
-Cc: reinette.chatre@intel.com, =?UTF-8?B?5YiY5Y+MKOi9qeWxuSk=?=
- <ls123674@antgroup.com>
-References: <20240426141823.112366-1-zhubojun.zbj@antgroup.com>
- <20240426141823.112366-2-zhubojun.zbj@antgroup.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240426141823.112366-2-zhubojun.zbj@antgroup.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Mon, 29 Apr 2024 01:03:17 +0300
+Message-Id: <D0W3G5GVNMMW.3OCGUH8AYNORY@kernel.org>
+Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+ "seanjc@google.com" <seanjc@google.com>, "anakrish@microsoft.com"
+ <anakrish@microsoft.com>, "Zhang, Bo" <zhanb@microsoft.com>,
+ "kristen@linux.intel.com" <kristen@linux.intel.com>,
+ "yangjie@microsoft.com" <yangjie@microsoft.com>, "Li, Zhiquan1"
+ <zhiquan1.li@intel.com>, "chrisyan@microsoft.com" <chrisyan@microsoft.com>
+Subject: Re: [PATCH v12 14/14] selftests/sgx: Add scripts for EPC cgroup
+ testing
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Dave Hansen" <dave.hansen@intel.com>, "Huang, Kai"
+ <kai.huang@intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
+ "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+ "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "x86@kernel.org"
+ <x86@kernel.org>, "dave.hansen@linux.intel.com"
+ <dave.hansen@linux.intel.com>, "cgroups@vger.kernel.org"
+ <cgroups@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "haitao.huang@linux.intel.com"
+ <haitao.huang@linux.intel.com>, "Mehta, Sohil" <sohil.mehta@intel.com>,
+ "tj@kernel.org" <tj@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>
+X-Mailer: aerc 0.17.0
+References: <20240416032011.58578-1-haitao.huang@linux.intel.com>
+ <20240416032011.58578-15-haitao.huang@linux.intel.com>
+ <op.2ma195shwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+ <6b056faa6de2ba3a15c2e5dd576e96e3f85375ba.camel@intel.com>
+ <D0LLZTSVG3BC.8WIRM39WC7UU@kernel.org>
+ <f62c29ec-f893-4320-8097-f6b3a372267a@intel.com>
+In-Reply-To: <f62c29ec-f893-4320-8097-f6b3a372267a@intel.com>
 
-On 4/26/24 07:18, Bojun Zhu wrote:
->  	for (c = 0 ; c < modp->length; c += PAGE_SIZE) {
-> +		if (sgx_check_signal_and_resched()) {
-> +			if (!c)
-> +				ret = -ERESTARTSYS;
-> +
-> +			goto out;
-> +		}
+On Fri Apr 26, 2024 at 5:28 PM EEST, Dave Hansen wrote:
+> On 4/16/24 07:15, Jarkko Sakkinen wrote:
+> > On Tue Apr 16, 2024 at 8:42 AM EEST, Huang, Kai wrote:
+> > Yes, exactly. I'd take one week break and cycle the kselftest part
+> > internally a bit as I said my previous response. I'm sure that there
+> > is experise inside Intel how to implement it properly. I.e. take some
+> > time to find the right person, and wait as long as that person has a
+> > bit of bandwidth to go through the test and suggest modifications.
+>
+> Folks, I worry that this series is getting bogged down in the selftests.
+>  Yes, selftests are important.  But getting _some_ tests in the kernel
+> is substantially more important than getting perfect tests.
+>
+> I don't think Haitao needs to "cycle" this back inside Intel.
 
-This construct is rather fugly.  Let's not perpetuate it, please.  Why
-not do:
+The problem with the tests was that they are hard to run anything else
+than Ubuntu (and perhaps Debian). It is hopefully now taken care of.
+Selftests do not have to be perfect but at minimum they need to be
+runnable.
 
-	int ret = -ERESTARTSYS;
+I need ret-test the latest series because it is possible that I did not
+have right flags (I was travelling few days thus have not done it yet).
 
-	...
-	for (c = 0 ; c < modp->length; c += PAGE_SIZE) {
-		if (sgx_check_signal_and_resched())
-			goto out;
-
-Then, voila, when c==0 on the first run through the loop, you'll get a
-ret=-ERESTARTSYS.
-
-But honestly, it seems kinda silly to annotate all these loops with
-explicit cond_resched()s.  I'd much rather do this once and, for
-instance, just wrap the enclave locks:
-
--	  mutex_lock(&encl->lock);
-+	  sgx_lock_enclave(encl);
-
-and then have the lock function do the rescheds.  I assume that
-mutex_lock() isn't doing this generically for performance reasons.  But
-we don't care in SGX land and can just resched to our heart's content.
-
+BR, Jarkko
