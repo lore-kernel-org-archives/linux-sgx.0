@@ -1,144 +1,126 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8816A3BBFE;
-	Mon, 29 Apr 2024 10:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8CF56B67;
+	Mon, 29 Apr 2024 13:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714387916; cv=none; b=iRrGoCjBruUy7EKJQ9mckGxc1OcZ/A4OS+L8XZQwD57C+cYNw40GOyk6EoKbC03K+I2SxZtK7puqkvUfON6l3AcJxtb/6C/eHr4Szp4Y/bUBFCoiX+oiEjSURqziHw5oVA9qCKOE298GcnEQtMKig6cdxZmaCO9EVhvuLgaHq5g=
+	t=1714395869; cv=none; b=isIhaus5YHC/+a26aZDI5YBWo8ljdNFfRXMDprCu84L6x2NduAnHWV6blkBo7LKmOm62/W8JwqnZt1B4v4mxRHTFFvQQUz//oStosc9UBo0R9AXjUjRco++Itug9U+K4m1MFE4yIjFCfVgWLHVsrmneEWNfBnbHkUccZl9hy228=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714387916; c=relaxed/simple;
-	bh=g81innlEewrLFposHO2uObGU0GQGyQGxN7UIEasnQRw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Xb7RHP04h2/0dwYAIJLLhwG2lhVPhYhTmu6Y3RQi4BNg4fzACTyA24xwpTYUE1koJw4HYbIlwENJ8VOWF0FQz0JL/2TPXMTS8ExUN7wOl1OCek9Q4M7ByF387lSdUvpX2VajzJ79PLUMws/q9DmshqoNrzyQr3PwMtZylY6tmks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MlPSGjih; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1714395869; c=relaxed/simple;
+	bh=c3fItunN+3aoIUR27+cFPV/Tb+UIdZgpLt7R+jz4LQc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=n1etK9XxR8ARLf85oN6t4m/5jdAW3ONTBJ5eZxP5lXZtVZgyRu4sR5BSV74sI0fLiG6k7UJuwfW2nM2zdk+NBwvU3oxQKmKcAmJThLJJyVwr7AoDNTkSPJ6Th5crUtVymdiClOSNFqA1ONSMhUnj2TgHk2rMqwnwTpEURQrHeeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGFGarQH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MlPSGjih"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714387915; x=1745923915;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=g81innlEewrLFposHO2uObGU0GQGyQGxN7UIEasnQRw=;
-  b=MlPSGjihbac1a2A/7vw08QHkhTkjqJ47uVn/6Z4n8Ptm0qiNz/3NNmhp
-   mBZCRSNAuDI1yWCKqSWZz4lLNGf5fZsQoXGI+H9eYLBclQdp89jE5TRvB
-   ClCWIwQ9fh1qJ1m1ygENqP10ivYKEmE8cjBGuj4A1UaE8F77lvXnRBF0r
-   4yBswBgXZnPvtKvFit94YRE0RmALh2GVf5LaJM9dxnp65WvGDKq4Ulhlv
-   naZy0YnI9LxZ6yNkevNz+syyYO/0tZOrRT7kvL7RYl+hBcPAVN9wNZbSQ
-   xRkTa5urLQa+KPmH9Z7ALJn89T3sXaBG8TvAIcnfli6Igf3Xg6BRG+Q1t
-   A==;
-X-CSE-ConnectionGUID: H5W5ZiVcQkGzXOeDUQCZSQ==
-X-CSE-MsgGUID: 7oK2eF9ySESQluag8xXCMg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11057"; a="10202101"
-X-IronPort-AV: E=Sophos;i="6.07,239,1708416000"; 
-   d="scan'208";a="10202101"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2024 03:51:52 -0700
-X-CSE-ConnectionGUID: c5Kmju7cSBmnBJr3bLpt4Q==
-X-CSE-MsgGUID: 3RReAbxdQNqOxX/diGdDmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,239,1708416000"; 
-   d="scan'208";a="26590749"
-Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2024 03:51:52 -0700
-From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
-To: dave.hansen@linux.intel.com,
-	jarkko@kernel.org,
-	kai.huang@intel.com,
-	haitao.huang@linux.intel.com,
-	reinette.chatre@intel.com,
-	linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: mona.vij@intel.com,
-	kailun.qin@intel.com,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] x86/sgx: Resolve EREMOVE page vs EAUG page data race
-Date: Mon, 29 Apr 2024 03:43:30 -0700
-Message-Id: <20240429104330.3636113-3-dmitrii.kuvaiskii@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240429104330.3636113-1-dmitrii.kuvaiskii@intel.com>
-References: <20240429104330.3636113-1-dmitrii.kuvaiskii@intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGFGarQH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5968C113CD;
+	Mon, 29 Apr 2024 13:04:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714395868;
+	bh=c3fItunN+3aoIUR27+cFPV/Tb+UIdZgpLt7R+jz4LQc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=nGFGarQHE06bJM5HUluRj30QKjfMHY5CU8aJSq7mseFjgcJJA5sqsufS+pZPif+Q6
+	 V6Cz46udjj3aQcg1N2u2pP1GIpzE7rHz3mfLoC9JzCUnIIsr+cQmoLyLoI20RafjqJ
+	 SGBwFbxhalG9RTgPC8/KknAn51uoIPc177tZ56TVorHRLikl17dKB8TUFdO5667/oL
+	 oIyDsGAVlD3P8EgQ2NXbGkc/Lt0k4372TadpKdNdLsjmCjN0iZmF8wO+S/vOellXht
+	 +zV+SLRiHsUNJNfLIbAWMMt0GbzxWjFTq9lqRGvv9nyrA+fEc3byeGFsUs+mP03wHc
+	 XllrdtaYXPGFA==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 29 Apr 2024 16:04:24 +0300
+Message-Id: <D0WMM3MYQODE.3A89L7D6OVG3E@kernel.org>
+Cc: <mona.vij@intel.com>, <kailun.qin@intel.com>, <stable@vger.kernel.org>,
+ =?utf-8?q?Marcelina_Ko=C5=9Bcielnicka?= <mwk@invisiblethingslab.com>
+Subject: Re: [PATCH 1/2] x86/sgx: Resolve EAUG race where losing thread
+ returns SIGBUS
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Dmitrii Kuvaiskii" <dmitrii.kuvaiskii@intel.com>,
+ <dave.hansen@linux.intel.com>, <kai.huang@intel.com>,
+ <haitao.huang@linux.intel.com>, <reinette.chatre@intel.com>,
+ <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240429104330.3636113-1-dmitrii.kuvaiskii@intel.com>
+ <20240429104330.3636113-2-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240429104330.3636113-2-dmitrii.kuvaiskii@intel.com>
 
-Two enclave threads may try to add and remove the same enclave page
-simultaneously (e.g., if the SGX runtime supports both lazy allocation
-and `MADV_DONTNEED` semantics). Consider this race:
+On Mon Apr 29, 2024 at 1:43 PM EEST, Dmitrii Kuvaiskii wrote:
+> Two enclave threads may try to access the same non-present enclave page
+> simultaneously (e.g., if the SGX runtime supports lazy allocation). The
+> threads will end up in sgx_encl_eaug_page(), racing to acquire the
+> enclave lock. The winning thread will perform EAUG, set up the page
+> table entry, and insert the page into encl->page_array. The losing
+> thread will then get -EBUSY on xa_insert(&encl->page_array) and proceed
+> to error handling path.
 
-1. T1 performs page removal in sgx_encl_remove_pages() and stops right
-   after removing the page table entry and right before re-acquiring the
-   enclave lock to EREMOVE and xa_erase(&encl->page_array) the page.
-2. T2 tries to access the page, and #PF[not_present] is raised. The
-   condition to EAUG in sgx_vma_fault() is not satisfied because the
-   page is still present in encl->page_array, thus the SGX driver
-   assumes that the fault happened because the page was swapped out. The
-   driver continues on a code path that installs a page table entry
-   *without* performing EAUG.
-3. The enclave page metadata is in inconsistent state: the PTE is
-   installed but there was no EAUG. Thus, T2 in userspace infinitely
-   receives SIGSEGV on this page (and EACCEPT always fails).
+And that path removes page. Not sure I got gist of this tbh.
 
-Fix this by making sure that T1 (the page-removing thread) always wins
-this data race. In particular, the page-being-removed is marked as such,
-and T2 retries until the page is fully removed.
+> This error handling path contains two bugs: (1) SIGBUS is sent to
+> userspace even though the enclave page is correctly installed by another
+> thread, and (2) sgx_encl_free_epc_page() is called that performs EREMOVE
+> even though the enclave page was never intended to be removed. The first
+> bug is less severe because it impacts only the user space; the second
+> bug is more severe because it also impacts the OS state by ripping the
+> page (added by the winning thread) from the enclave.
+>
+> Fix these two bugs (1) by returning VM_FAULT_NOPAGE to the generic Linux
+> fault handler so that no signal is sent to userspace, and (2) by
+> replacing sgx_encl_free_epc_page() with sgx_free_epc_page() so that no
+> EREMOVE is performed.
 
-Fixes: 9849bb27152c ("x86/sgx: Support complete page removal")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
----
- arch/x86/kernel/cpu/sgx/encl.c  | 3 ++-
- arch/x86/kernel/cpu/sgx/encl.h  | 3 +++
- arch/x86/kernel/cpu/sgx/ioctl.c | 1 +
- 3 files changed, 6 insertions(+), 1 deletion(-)
+What is the collateral damage caused by ENCLS[EREMOVE]?
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 41f14b1a3025..7ccd8b2fce5f 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -257,7 +257,8 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
- 
- 	/* Entry successfully located. */
- 	if (entry->epc_page) {
--		if (entry->desc & SGX_ENCL_PAGE_BEING_RECLAIMED)
-+		if (entry->desc & (SGX_ENCL_PAGE_BEING_RECLAIMED |
-+				   SGX_ENCL_PAGE_BEING_REMOVED))
- 			return ERR_PTR(-EBUSY);
- 
- 		return entry;
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index f94ff14c9486..fff5f2293ae7 100644
---- a/arch/x86/kernel/cpu/sgx/encl.h
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -25,6 +25,9 @@
- /* 'desc' bit marking that the page is being reclaimed. */
- #define SGX_ENCL_PAGE_BEING_RECLAIMED	BIT(3)
- 
-+/* 'desc' bit marking that the page is being removed. */
-+#define SGX_ENCL_PAGE_BEING_REMOVED	BIT(2)
-+
- struct sgx_encl_page {
- 	unsigned long desc;
- 	unsigned long vm_max_prot_bits:8;
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index b65ab214bdf5..c542d4dd3e64 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -1142,6 +1142,7 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
- 		 * Do not keep encl->lock because of dependency on
- 		 * mmap_lock acquired in sgx_zap_enclave_ptes().
- 		 */
-+		entry->desc |= SGX_ENCL_PAGE_BEING_REMOVED;
- 		mutex_unlock(&encl->lock);
- 
- 		sgx_zap_enclave_ptes(encl, addr);
--- 
-2.34.1
+>
+> Fixes: 5a90d2c3f5ef ("x86/sgx: Support adding of pages to an initialized =
+enclave")
+> Cc: stable@vger.kernel.org
+> Reported-by: Marcelina Ko=C5=9Bcielnicka <mwk@invisiblethingslab.com>
+> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
+> Signed-off-by: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/encl.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/enc=
+l.c
+> index 279148e72459..41f14b1a3025 100644
+> --- a/arch/x86/kernel/cpu/sgx/encl.c
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -382,8 +382,11 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_=
+struct *vma,
+>  	 * If ret =3D=3D -EBUSY then page was created in another flow while
+>  	 * running without encl->lock
+>  	 */
+> -	if (ret)
+> +	if (ret) {
+> +		if (ret =3D=3D -EBUSY)
+> +			vmret =3D VM_FAULT_NOPAGE;
+>  		goto err_out_shrink;
+> +	}
+> =20
+>  	pginfo.secs =3D (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_pag=
+e);
+>  	pginfo.addr =3D encl_page->desc & PAGE_MASK;
+> @@ -419,7 +422,7 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_s=
+truct *vma,
+>  err_out_shrink:
+>  	sgx_encl_shrink(encl, va_page);
+>  err_out_epc:
+> -	sgx_encl_free_epc_page(epc_page);
+> +	sgx_free_epc_page(epc_page);
 
+This ignores check for the page being reclaimer tracked, i.e. it does
+changes that have been ignored in the commit message.
+
+>  err_out_unlock:
+>  	mutex_unlock(&encl->lock);
+>  	kfree(encl_page);
+
+
+BR, Jarkko
