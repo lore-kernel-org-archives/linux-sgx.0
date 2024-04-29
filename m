@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8CF56B67;
-	Mon, 29 Apr 2024 13:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B22C157;
+	Mon, 29 Apr 2024 13:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714395869; cv=none; b=isIhaus5YHC/+a26aZDI5YBWo8ljdNFfRXMDprCu84L6x2NduAnHWV6blkBo7LKmOm62/W8JwqnZt1B4v4mxRHTFFvQQUz//oStosc9UBo0R9AXjUjRco++Itug9U+K4m1MFE4yIjFCfVgWLHVsrmneEWNfBnbHkUccZl9hy228=
+	t=1714396003; cv=none; b=Eo1uWLoOpjC4mgscsazFb5IY2OHYXemWdi6FnaiYuds9cCrY9ci99y8PBcRv7K1PC67aOWLSSZ8e8B+lLkNYZVXwfJxdJv9AH9FtkF1I7opAZXxAzn9m5m0QW0jBt6AGS04aiQMZ9o3jJ+jJhGY5Xil3rPoNZn4Fl8u7iwP2/8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714395869; c=relaxed/simple;
-	bh=c3fItunN+3aoIUR27+cFPV/Tb+UIdZgpLt7R+jz4LQc=;
+	s=arc-20240116; t=1714396003; c=relaxed/simple;
+	bh=rZ8Z2pUcpPP3Q2H18yeuPh2A8Fkeenaxddz/S6gwAFM=;
 	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=n1etK9XxR8ARLf85oN6t4m/5jdAW3ONTBJ5eZxP5lXZtVZgyRu4sR5BSV74sI0fLiG6k7UJuwfW2nM2zdk+NBwvU3oxQKmKcAmJThLJJyVwr7AoDNTkSPJ6Th5crUtVymdiClOSNFqA1ONSMhUnj2TgHk2rMqwnwTpEURQrHeeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGFGarQH; arc=none smtp.client-ip=10.30.226.201
+	 References:In-Reply-To; b=sh2DaDxGWl1JtgKAtA5R2w0zvbUL8H40cXj+5VJyVOGMvsYhGyU/MjfX5+cAk7fRp7LqqkoMaH8eYdv7K+tQll8+sfbXlfXNIGtZzj1QYTlab+QhMGYuXWOYdE29AYop9bK5fWmmOMie1LvztWYt9ot/8t6NIrm8qmJtqHM9vE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZiH1TfTw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGFGarQH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5968C113CD;
-	Mon, 29 Apr 2024 13:04:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiH1TfTw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CF56C113CD;
+	Mon, 29 Apr 2024 13:06:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714395868;
-	bh=c3fItunN+3aoIUR27+cFPV/Tb+UIdZgpLt7R+jz4LQc=;
+	s=k20201202; t=1714396003;
+	bh=rZ8Z2pUcpPP3Q2H18yeuPh2A8Fkeenaxddz/S6gwAFM=;
 	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=nGFGarQHE06bJM5HUluRj30QKjfMHY5CU8aJSq7mseFjgcJJA5sqsufS+pZPif+Q6
-	 V6Cz46udjj3aQcg1N2u2pP1GIpzE7rHz3mfLoC9JzCUnIIsr+cQmoLyLoI20RafjqJ
-	 SGBwFbxhalG9RTgPC8/KknAn51uoIPc177tZ56TVorHRLikl17dKB8TUFdO5667/oL
-	 oIyDsGAVlD3P8EgQ2NXbGkc/Lt0k4372TadpKdNdLsjmCjN0iZmF8wO+S/vOellXht
-	 +zV+SLRiHsUNJNfLIbAWMMt0GbzxWjFTq9lqRGvv9nyrA+fEc3byeGFsUs+mP03wHc
-	 XllrdtaYXPGFA==
+	b=ZiH1TfTwjL1ui8iuu+JRSBlEsR7ExhktYPKOFOwNrqB4LuN7L3rYAYwm897fOmZXV
+	 hWjbBVN+GM9oyyv9Ohf9UjM1JAVtYdp7X392I3p9NkOh5haxxUx08ASdYOgxKc0/8k
+	 YAjFJAls6nOMnmn58JtTLDXBJcnBotEkI3TqYgG5OHYRxIryK8iohfn0TiammN7x6J
+	 Fp5MDJLbxlkp1Yr5SjoJoIDTYKn2DYRgXR49FulNasegGJ8YnTvGs+8ibxU/dGvCw6
+	 B7EGz2llTZ0dnkzFXJrY8QGKizSV6C4JO0TGKlyF38BNOkf5G+zjieZmQ98ljvIlC8
+	 +f3G5wa34tXfg==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -34,12 +34,10 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 29 Apr 2024 16:04:24 +0300
-Message-Id: <D0WMM3MYQODE.3A89L7D6OVG3E@kernel.org>
-Cc: <mona.vij@intel.com>, <kailun.qin@intel.com>, <stable@vger.kernel.org>,
- =?utf-8?q?Marcelina_Ko=C5=9Bcielnicka?= <mwk@invisiblethingslab.com>
-Subject: Re: [PATCH 1/2] x86/sgx: Resolve EAUG race where losing thread
- returns SIGBUS
+Date: Mon, 29 Apr 2024 16:06:39 +0300
+Message-Id: <D0WMNTCRUN00.TQHC8O6X6WI2@kernel.org>
+Cc: <mona.vij@intel.com>, <kailun.qin@intel.com>
+Subject: Re: [PATCH 0/2] x86/sgx: Fix two data races in EAUG/EREMOVE flows
 From: "Jarkko Sakkinen" <jarkko@kernel.org>
 To: "Dmitrii Kuvaiskii" <dmitrii.kuvaiskii@intel.com>,
  <dave.hansen@linux.intel.com>, <kai.huang@intel.com>,
@@ -47,80 +45,75 @@ To: "Dmitrii Kuvaiskii" <dmitrii.kuvaiskii@intel.com>,
  <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 X-Mailer: aerc 0.17.0
 References: <20240429104330.3636113-1-dmitrii.kuvaiskii@intel.com>
- <20240429104330.3636113-2-dmitrii.kuvaiskii@intel.com>
-In-Reply-To: <20240429104330.3636113-2-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240429104330.3636113-1-dmitrii.kuvaiskii@intel.com>
 
 On Mon Apr 29, 2024 at 1:43 PM EEST, Dmitrii Kuvaiskii wrote:
-> Two enclave threads may try to access the same non-present enclave page
-> simultaneously (e.g., if the SGX runtime supports lazy allocation). The
-> threads will end up in sgx_encl_eaug_page(), racing to acquire the
-> enclave lock. The winning thread will perform EAUG, set up the page
-> table entry, and insert the page into encl->page_array. The losing
-> thread will then get -EBUSY on xa_insert(&encl->page_array) and proceed
-> to error handling path.
-
-And that path removes page. Not sure I got gist of this tbh.
-
-> This error handling path contains two bugs: (1) SIGBUS is sent to
-> userspace even though the enclave page is correctly installed by another
-> thread, and (2) sgx_encl_free_epc_page() is called that performs EREMOVE
-> even though the enclave page was never intended to be removed. The first
-> bug is less severe because it impacts only the user space; the second
-> bug is more severe because it also impacts the OS state by ripping the
-> page (added by the winning thread) from the enclave.
+> SGX runtimes such as Gramine may implement EDMM-based lazy allocation of
+> enclave pages and may support MADV_DONTNEED semantics [1]. The former
+> implies #PF-based page allocation, and the latter implies the usage of
+> SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl.
 >
-> Fix these two bugs (1) by returning VM_FAULT_NOPAGE to the generic Linux
-> fault handler so that no signal is sent to userspace, and (2) by
-> replacing sgx_encl_free_epc_page() with sgx_free_epc_page() so that no
-> EREMOVE is performed.
+> A trivial program like below (run under Gramine and with EDMM enabled)
+> stresses these two flows in the SGX driver and hangs:
+>
+> /* repeatedly touch different enclave pages at random and mix with
+>  * `madvise(MADV_DONTNEED)` to stress EAUG/EREMOVE flows */
+> static void* thread_func(void* arg) {
+>     size_t num_pages =3D 0xA000 / page_size;
+>     for (int i =3D 0; i < 5000; i++) {
+>         size_t page =3D get_random_ulong() % num_pages;
+>         char data =3D READ_ONCE(((char*)arg)[page * page_size]);
+>
+>         page =3D get_random_ulong() % num_pages;
+>         madvise(arg + page * page_size, page_size, MADV_DONTNEED);
+>     }
+> }
+>
+> addr =3D mmap(NULL, 0xA000, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, -1, 0)=
+;
+> pthread_t threads[16];
+> for (int i =3D 0; i < 16; i++)
+>     pthread_create(&threads[i], NULL, thread_func, addr);
 
-What is the collateral damage caused by ENCLS[EREMOVE]?
+I'm not convinced that kernel is the problem here but it could be also
+how Gramine is implemented.
+
+So maybe you could make a better case of that. The example looks a bit
+artificial to me.
 
 >
-> Fixes: 5a90d2c3f5ef ("x86/sgx: Support adding of pages to an initialized =
-enclave")
-> Cc: stable@vger.kernel.org
-> Reported-by: Marcelina Ko=C5=9Bcielnicka <mwk@invisiblethingslab.com>
-> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
-> Signed-off-by: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/encl.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> This program uncovers two data races in the SGX driver. The remaining
+> patches describe and fix these races.
 >
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/enc=
-l.c
-> index 279148e72459..41f14b1a3025 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.c
-> +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -382,8 +382,11 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_=
-struct *vma,
->  	 * If ret =3D=3D -EBUSY then page was created in another flow while
->  	 * running without encl->lock
->  	 */
-> -	if (ret)
-> +	if (ret) {
-> +		if (ret =3D=3D -EBUSY)
-> +			vmret =3D VM_FAULT_NOPAGE;
->  		goto err_out_shrink;
-> +	}
-> =20
->  	pginfo.secs =3D (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_pag=
-e);
->  	pginfo.addr =3D encl_page->desc & PAGE_MASK;
-> @@ -419,7 +422,7 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_s=
-truct *vma,
->  err_out_shrink:
->  	sgx_encl_shrink(encl, va_page);
->  err_out_epc:
-> -	sgx_encl_free_epc_page(epc_page);
-> +	sgx_free_epc_page(epc_page);
-
-This ignores check for the page being reclaimer tracked, i.e. it does
-changes that have been ignored in the commit message.
-
->  err_out_unlock:
->  	mutex_unlock(&encl->lock);
->  	kfree(encl_page);
-
+> I performed several stress tests to verify that there are no other data
+> races (at least with the test program above):
+>
+> - On Icelake server with 128GB of PRMRR (EPC), without madvise(). This
+>   stresses the first data race. A Gramine SGX test suite running in the
+>   background for additional stressing. Result: 1,000 runs without hangs
+>   (result without the first bug fix: hangs every time).
+> - On Icelake server with 128GB of PRMRR (EPC), with madvise(). This
+>   stresses the second data race. A Gramine SGX test suite running in the
+>   background for additional stressing. Result: 1,000 runs without hangs
+>   (result with the first bug fix but without the second bug fix: hangs
+>   approx. once in 50 runs).
+> - On Icelake server with 4GB of PRMRR (EPC), with madvise(). This
+>   additionally stresses the enclave page swapping flows. Two Gramine SGX
+>   test suites running in the background for additional stressing of
+>   swapping (I observe 100% CPU utilization from ksgxd which confirms that
+>   swapping happens). Result: 1,000 runs without hangs.
+>
+> (Sorry for the previous copy of this email, accidentally sent to
+> stable@vger.kernel.org. Failed to use `--suppress-cc` during a test send.=
+)
+>
+> Dmitrii Kuvaiskii (2):
+>   x86/sgx: Resolve EAUG race where losing thread returns SIGBUS
+>   x86/sgx: Resolve EREMOVE page vs EAUG page data race
+>
+>  arch/x86/kernel/cpu/sgx/encl.c  | 10 +++++++---
+>  arch/x86/kernel/cpu/sgx/encl.h  |  3 +++
+>  arch/x86/kernel/cpu/sgx/ioctl.c |  1 +
+>  3 files changed, 11 insertions(+), 3 deletions(-)
 
 BR, Jarkko
