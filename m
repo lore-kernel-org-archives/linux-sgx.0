@@ -1,55 +1,55 @@
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA8920FAB7
-	for <linux-sgx@vger.kernel.org>; Tue, 30 Apr 2024 23:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D5D21C163
+	for <linux-sgx@vger.kernel.org>; Tue, 30 Apr 2024 23:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714521116; cv=none; b=CFNfKRkRXcrvJ2/VwU58+0QV7C3KPJKB+bR5EAaAgCJbHrWajaNKq17EhZHabn2gx+sp02pu9QcdLB4rY/zZXu5IbEHWXoHbBoD5UYeysTps7hVx8CzROVfGvAt6uWlsb9GNc8B/xWIsLn2BCGnxHvmmxnfLB85MLGJU18AWZDg=
+	t=1714521123; cv=none; b=PmZC46jbDpgtOKA9aS7Pm3p7cTHqhlbMrx2FWF6Sk9evFWItBnE2Jy72Cp32t9VFHtRW6pEUIRJIK8v8cfh635CF0XO/MUGxKVDAmg3Oa9W2DMLob6CP+7p+0nU4iup/0hblldy5ab2l0eB7ZitK31qzG5MuOqhZufMs/h9gWbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714521116; c=relaxed/simple;
-	bh=q4hPe+xh62Uhmba9PSnhrp62is8QeTzw3cIQCnwAJEs=;
+	s=arc-20240116; t=1714521123; c=relaxed/simple;
+	bh=2QdI2TgmxQKTHiSdbJTZcZLPJCgb3K62uskVNaaDbcM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EZRqaod8Dw4J6xtZ0MPluEm98PR3qqQ5czuDbHNXW7A2GJqhefdm8m8oww3zqsbi0X4yC7PbYXGlo+XCQpwAzIH+OMx6vrBnFfpKmoUzq8rhezFE86U+VpquEk7vmz4ehvg8jSbUxywzaU88ygqoiU4JJTUq5oZ2oFQG6Byuv5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fWHplws+; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=d5mpbI11UYTR3pC4nwMIJgwwUvA4nURKLbMBcwkwAxVjvYmsmuLITxp15SATJ9D0TLWtExNJJb7KxiSxhGQfV7mS4lJ7SXQ7I7WkpAmwhC2C3IVKNoDGX7bDwfC+mpBd41CbLr81X+BZ4YDVRsiq98/P6XYynxquIVrzEDLVKqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=keeEguSY; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fWHplws+"
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-6f3efd63657so4023872b3a.2
-        for <linux-sgx@vger.kernel.org>; Tue, 30 Apr 2024 16:51:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="keeEguSY"
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de604ccb373so3710656276.2
+        for <linux-sgx@vger.kernel.org>; Tue, 30 Apr 2024 16:52:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1714521114; x=1715125914; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1714521119; x=1715125919; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q4hPe+xh62Uhmba9PSnhrp62is8QeTzw3cIQCnwAJEs=;
-        b=fWHplws+HuPMbth/LpVBuYyCKV3VezSbPCuMynJ43py3TiLLFXs0XF6Zy7+UAKBkcL
-         L6xvJNDKll/sKysPKHifQgWCRNbdG2S9fAFMBoQ1RiM8q7kEGKLo9/g9VfwA4up+ccU+
-         JPI1GPoNCpiP/Q/NNHke0c/iScOO1zickkY5GCKqyuioIv48OVzJICbW3OPGqolkl9CL
-         GPvycfDVQMuGRh3q3I3/O8leXrGeMdvQSwX4ovya18su1I8vgWwUfXcZivIXRuV7jXlP
-         GQKv+NkS/BPF/K6sfmc4mFoF3TkE3N5k48KyKFCzUpLDTrmxRIbBuTcwBA62o49TM2oF
-         lVKQ==
+        bh=2QdI2TgmxQKTHiSdbJTZcZLPJCgb3K62uskVNaaDbcM=;
+        b=keeEguSYKiYQkwXHyB2MrirM7L4y/Sp1KZdZTe1Eb1jtwQtnCsDWIpXRReCNmzLntV
+         LaN1vRGXt8Ee/+WveDn79hkXqdatNUKk7+0m0ApxnwA8jk6DQGuWU5HiRiaL6ymJyGyO
+         Yt0PhkFkEGuLIC0ibsKHgbJN1rI4ul6Y52GkoerHsIkVg62N96JuJrvtFG+j6kgZdV0O
+         81+cIaFsJxjWfMEVeJs2y9JYP7Iwp0gOmXtZCf1DO8OjYA9PRLcQ1pnT3fkcWLCI4g2a
+         Us1YG8JSmxTJ2OQb9puJS6qNWWaBllS5bnXGdD7qVSx55UTthCEPpOmyKbbveYBZJqEZ
+         f5hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714521114; x=1715125914;
+        d=1e100.net; s=20230601; t=1714521119; x=1715125919;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q4hPe+xh62Uhmba9PSnhrp62is8QeTzw3cIQCnwAJEs=;
-        b=Sw6zE/re4/YDPdKf23EPhru10kBIDUa7ko7SjHEzhujoW6jN2XARCMnuIp6vYTPQHe
-         5ZJA3QFRKzj2TzpkOB6w1wIWW8kSaSlQ14kJeVjlxRykwDuL/OfkW+jqQzNfjAp2tKLY
-         vvWcNwvSQyk4rWN2MMj24yMwYAhxfxOhkWc5BU8SIgKMBsFMErZZaTgNszImbPoRbpH+
-         bh6Uo0bwgykMXSghpnMtd0t/DaqVEC87wPnJ8BNun08j+gc88YF7Zs3EdC4yQc6Tu+ZB
-         lgor5yg7IPBXtWDBScseWvoe7hyZ5dI5tE4AHyZpG27sJJYAdMe+vTtymD0UfpjxBm85
-         6/pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDmWHFSmmodcq8+1AClsZ3wbavOHQ/MkgkIrfaQbyCd4YJZnPmvDiXAlLa6XOuHWH3MBRh/piw0Jq5DDL7aQ6/M86vdxmpQEmP
-X-Gm-Message-State: AOJu0YwN5MhvznPsAuJSu+EGKo6kIbmp3gY+hPwJkHWOJa0dUzxhkAbY
-	szZVKb6YFRphvrGa2c2eQGexbn11m0s5FRKOM6YepuoVWSnrDOEdtaYa2X2VHJyJv+6CR4ke9wZ
-	J+A==
-X-Google-Smtp-Source: AGHT+IHPv5XeMbDkvtBTnEts/QdkOCkwWDd40+iQpyVBsIIp17OfrlSk+SNOnAl1YwhsfOoviBzkyHBxHOU=
+        bh=2QdI2TgmxQKTHiSdbJTZcZLPJCgb3K62uskVNaaDbcM=;
+        b=Fw8tyPGo2fN8ihWiB6mRKim6n51VSMxKuINVvcGraeX4aeYK58CNmmjab4p7A9JSR1
+         OrjcTumsZSA0WftL6yqlJlrT+bKkKdzrrZwjt6eRlESytvH5UNMUJk5fDKw5ZP5BtMSo
+         +rpHUOigxvNp+YKq1Yco43CYRPQnbx+NxV9aJSMpsbBzIbIUpbvKtOhazPIgc0HtA70j
+         KnFutmvxjUEP9LZV8kfz/XUp4XbLMcnIhs33hOvOU8Gs4leG3kM92NzaJTWgWafYewIN
+         MvbPm4/af9beIbTIRJpwTUGT1KXp5PNnAJvtPq94uDqE4AqOwm8UGQdXAKHX7455bpD7
+         hg9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVwqICTp/w3Hf2wORkdW2JqfdvQTg8YqVKofiX6wQAL9+csTQupL8Nwyq+K/jPSm6d1aMw5Mg8b96eeCSIfJhCK36E6ld8iypc3
+X-Gm-Message-State: AOJu0YzCo3Qvj12f4Z0UEZNgKNl2D62SvRxUQrVx0gxQ8RqRLhlLU0rP
+	zQ+hNpZijsVxirSpBTqlU62gZhuBYn8002ob1jTJDCaLjw2RAbGJoNvTdGrsYsl4NsI7e9xb0ZQ
+	Dag==
+X-Google-Smtp-Source: AGHT+IGe0w5VioNgUdFLQOVwPulyr7LeCwc9ZxlwAi+xzV7TnsXxdL7cdDTZYaAKG9NQO48kQtKteAJhBhA=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a05:6a00:13a3:b0:6f3:854c:de57 with SMTP id
- t35-20020a056a0013a300b006f3854cde57mr83407pfg.3.1714521114135; Tue, 30 Apr
- 2024 16:51:54 -0700 (PDT)
-Date: Tue, 30 Apr 2024 23:50:17 +0000
+ (user=edliaw job=sendgmr) by 2002:a05:6902:2b83:b0:de5:1e69:642c with SMTP id
+ fj3-20020a0569022b8300b00de51e69642cmr175231ybb.5.1714521119181; Tue, 30 Apr
+ 2024 16:51:59 -0700 (PDT)
+Date: Tue, 30 Apr 2024 23:50:18 +0000
 In-Reply-To: <20240430235057.1351993-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240430235057.1351993-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.0.rc0.197.gbae5840b3b-goog
-Message-ID: <20240430235057.1351993-9-edliaw@google.com>
-Subject: [PATCH v1 08/10] selftests/rtc: Compile with -D_GNU_SOURCE
+Message-ID: <20240430235057.1351993-10-edliaw@google.com>
+Subject: [PATCH v1 09/10] selftests/tdx: Compile with -D_GNU_SOURCE
 From: Edward Liaw <edliaw@google.com>
 To: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
 	Takashi Iwai <tiwai@suse.com>, Jiri Kosina <jikos@kernel.org>, 
@@ -86,20 +86,21 @@ _GNU_SOURCE to either be defined prior to including headers or with the
 Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- tools/testing/selftests/rtc/Makefile | 2 +-
+ tools/testing/selftests/tdx/Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
-index 55198ecc04db..4ef7ee969003 100644
---- a/tools/testing/selftests/rtc/Makefile
-+++ b/tools/testing/selftests/rtc/Makefile
-@@ -1,5 +1,5 @@
+diff --git a/tools/testing/selftests/tdx/Makefile b/tools/testing/selftests/tdx/Makefile
+index 306e9c4d5ef7..5a084a792a21 100644
+--- a/tools/testing/selftests/tdx/Makefile
++++ b/tools/testing/selftests/tdx/Makefile
+@@ -1,6 +1,6 @@
  # SPDX-License-Identifier: GPL-2.0
--CFLAGS += -O3 -Wl,-no-as-needed -Wall
-+CFLAGS += -O3 -Wl,-no-as-needed -Wall -D_GNU_SOURCE
- LDLIBS += -lrt -lpthread -lm
 
- TEST_GEN_PROGS = rtctest
+-CFLAGS += -O3 -Wl,-no-as-needed -Wall $(KHDR_INCLUDES) -static
++CFLAGS += -O3 -Wl,-no-as-needed -Wall -D_GNU_SOURCE $(KHDR_INCLUDES) -static
+
+ TEST_GEN_PROGS := tdx_guest_test
+
 --
 2.45.0.rc0.197.gbae5840b3b-goog
 
