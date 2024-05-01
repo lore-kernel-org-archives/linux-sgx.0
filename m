@@ -1,95 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7113B522A;
-	Wed,  1 May 2024 01:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93DD210EE;
+	Wed,  1 May 2024 05:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714528798; cv=none; b=PsTygwCUPNkuZUsXTt6hl80ClWKe3G+xq9sJxrda0Vpqoi6xG8KvWV4OC8tVblbRKHRDuB8GbgOULY5olkMwLrThfmLGtg10RXqR1OGh9gwu7BNL1BteXzbC4VmYuUgcAR8Uoy4IxFVzAf32I8XA+aR0gSKG4phukQp1uaSS1oI=
+	t=1714542089; cv=none; b=f6PfGum+fNGWGvlvarjEOMD9OYq34iIHXb7n64jYgsIlfdx8VUiwGTxoud9VTRU81aXy0rQGv9/vEDR1PWJwNNmTgh2lcgM4hW/N+InRHAg0/JnD6tohlFifGklk1Mh/hA/YiSQ/JawmsflerL2Zf1KSh4saPoPDZhUGHqcedBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714528798; c=relaxed/simple;
-	bh=o0JLE4w7Txl02smd17IqwLJ/xQdd2b9AlvJ/m9S7MxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1dir4Axffx4QiCRR85CBlxv04UYRwDKTSupu1rObf0V+kTig4vQXxxtS/ZQCcI2wT9xXeR5qLbhHqZuaiUMHbuXXB/ppxGKn5/SsoMZUvlLRJEdChkHsfKcGkQJZKKQFAAYWRHzdvZEd/UmkYdH3b2Wowft5i3+HJysYk4tRmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSM5jhhD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714542089; c=relaxed/simple;
+	bh=HZgy8IynNapACv9oqb7dNMwXQ5pxb+tDS7GOLDQaU8o=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=IpE9ejLQ7AYdidPWsqf0eah61pg0tMCXTRaAwDKd149QBBgHSndCN5ZRhn7Wir7348+wapKIvv07Hc9WSId78pFVGFbRlJ/r8V2skK+5J+C3MecSm1ssmVncEnQGNUdYk3S8vZjOdxYIiJ1K/dnsO9tQvzczSukHY2FGvYOBnck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VoxZFK9q; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSM5jhhD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 522D3C2BBFC;
-	Wed,  1 May 2024 01:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714528797;
-	bh=o0JLE4w7Txl02smd17IqwLJ/xQdd2b9AlvJ/m9S7MxQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DSM5jhhDyVrsK4rI+tirVbxUm2SGjSCdGiW5yFeyy87vScGUmRYq8PoxARTsWGi75
-	 ZN1EWeOQh2/eZFMmiGFHj+woNykMssK7js3ZiiSdJhlK8P+CPJQeD7PHLwKfChDKys
-	 Vn6WznDzNt57OAzPcOny8cUE3vc+MoS9R/LGRw0r+eCYBudJMkIWBgooqLvpmCn1I5
-	 Dzttpfjh1y7CeXOQvVbhFTH3YMCL8d6ZCnhcpiYB+v31+ar86AKn1pAfB4zKu6l/8b
-	 JEmpQTGj5IdNtO+TWT7WkjmqVga3a1ZRHG7SWmeQ1BAc91x3VUyNPErEMaEHGoYkJm
-	 tJZXubj0xGIxA==
-Date: Wed, 1 May 2024 10:59:54 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Edward Liaw <edliaw@google.com>
-Cc: shuah@kernel.org, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Bongsu Jeon <bongsu.jeon@samsung.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kernel-team@android.com, linux-sound@vger.kernel.org,
-	linux-input@vger.kernel.org, kvm@vger.kernel.org,
-	netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-sgx@vger.kernel.org
-Subject: Re: [PATCH v1 00/10] Define _GNU_SOURCE for sources using
-Message-ID: <ZjGiGq-_kUVht63m@finisterre.sirena.org.uk>
-References: <20240430235057.1351993-1-edliaw@google.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VoxZFK9q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1714542085;
+	bh=HZgy8IynNapACv9oqb7dNMwXQ5pxb+tDS7GOLDQaU8o=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=VoxZFK9qLekCXwHSd1rQlfp3fMPjFnhg+jfer/8H6urzJOMThKTlcnbS6GVIqPlgZ
+	 QENMzmko43a4exh06hZBx6x/acdAvj0Qr9aPvpcG46Yn2/ZWwGGSzs3OfJRfgGE6r1
+	 v47+WFKIf/UE+2dF4efYNFmGTOT/qvbq/JmWtAKuZNzYzFuRqJ5UHc2M4zPH5bJyxp
+	 qKKMzTGDKM5uCi0IiE5HouQpb33naR85FmbG9tHF61PAEmgd6EPDLQXnNkN0thVsrb
+	 7tnS5k0et7b+Qh0kTui1r5K3doVyMP6o1pjBp5PvJTV12azppWlUpD0zfl2bLlSZkI
+	 SizxKDIue6jvw==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5A4D437814A4;
+	Wed,  1 May 2024 05:40:14 +0000 (UTC)
+Message-ID: <be921714-b684-401e-a89a-8256df5fcb86@collabora.com>
+Date: Wed, 1 May 2024 10:40:47 +0500
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="u+4ZZ4jbS0aM3c2U"
-Content-Disposition: inline
-In-Reply-To: <20240430235057.1351993-1-edliaw@google.com>
-X-Cookie: lisp, v.:
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, shuah@kernel.org,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Bongsu Jeon <bongsu.jeon@samsung.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kernel-team@android.com,
+ linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
+ kvm@vger.kernel.org, netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-sgx@vger.kernel.org
+Subject: Re: [PATCH v1 00/10] Define _GNU_SOURCE for sources using
+To: Mark Brown <broonie@kernel.org>, Edward Liaw <edliaw@google.com>
+References: <20240430235057.1351993-1-edliaw@google.com>
+ <ZjGiGq-_kUVht63m@finisterre.sirena.org.uk>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <ZjGiGq-_kUVht63m@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Thanks for the fixes.
+
+On 5/1/24 6:59 AM, Mark Brown wrote:
+> On Tue, Apr 30, 2024 at 11:50:09PM +0000, Edward Liaw wrote:
+>> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+>> asprintf into kselftest_harness.h, which is a GNU extension and needs
+>> _GNU_SOURCE to either be defined prior to including headers or with the
+>> -D_GNU_SOURCE flag passed to the compiler.
+> 
+> This seems like something that should be handled centrally rather than
+> having to go round and audit the users every time some update is made.
+The easiest way I could think of is to add -D_GNU_SOURCE to KHDR_HEADERS
+definition in tools/testing/selftests/Makefile. It wouldn't be obvious from
+KHDR_HEADERS name that there could be other flags in it as well though.
 
 
---u+4ZZ4jbS0aM3c2U
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Apr 30, 2024 at 11:50:09PM +0000, Edward Liaw wrote:
-> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
-> asprintf into kselftest_harness.h, which is a GNU extension and needs
-> _GNU_SOURCE to either be defined prior to including headers or with the
-> -D_GNU_SOURCE flag passed to the compiler.
-
-This seems like something that should be handled centrally rather than
-having to go round and audit the users every time some update is made.
-
---u+4ZZ4jbS0aM3c2U
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmYxohoACgkQJNaLcl1U
-h9Dv4wf+Oy51jhJTtX+KR/9MxUx3xHW+ifosvcxRaNBSM47ULNjdnTpPKnkuarpt
-mWWj3hbt5RKWrCwD4BXewKlkUTeOwip+tNfAif1eE1keTt7royrAsdrRNbQnej4Q
-fZD3C9esrkUiJUPsBHZw74ycUnXOvo+2znUMLfLGh9cMI8AahfyBz7vNeXQanaSJ
-1SxF/MZUXwhZ0wmeUHmqIMtppKUiqWzLBTdkhRwVRGaGhzSNWD3qeHMNYmRLN++g
-35CtZCDC98DyWxcybLkR/DFkf/9yiC0leVqktKDouqBUiVMZxSicfl9kL8bfgmq8
-dSdfvdLQR1VKa6bPvR3uEa4WSOIlVA==
-=krSA
------END PGP SIGNATURE-----
-
---u+4ZZ4jbS0aM3c2U--
+-- 
+BR,
+Muhammad Usama Anjum
