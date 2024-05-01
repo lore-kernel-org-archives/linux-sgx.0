@@ -1,88 +1,107 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93DD210EE;
-	Wed,  1 May 2024 05:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2B412DDB1
+	for <linux-sgx@vger.kernel.org>; Wed,  1 May 2024 13:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714542089; cv=none; b=f6PfGum+fNGWGvlvarjEOMD9OYq34iIHXb7n64jYgsIlfdx8VUiwGTxoud9VTRU81aXy0rQGv9/vEDR1PWJwNNmTgh2lcgM4hW/N+InRHAg0/JnD6tohlFifGklk1Mh/hA/YiSQ/JawmsflerL2Zf1KSh4saPoPDZhUGHqcedBM=
+	t=1714569880; cv=none; b=YuZ7kbb5xCMy6N3zjpuoFdacO1ZmNQUuLjJm5pniYHFh0lLHERghYx2Rvuun8eaKYZoQWEALWAZvdCzvwGw4N+uY7hO0YBimNcy9uUTo/dOUAKB5tAfhL2MaCxbNFoGmPOSWvfJhwHGd9M4OHdMUJZSR/bJTTJXUVJim0LPWYLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714542089; c=relaxed/simple;
-	bh=HZgy8IynNapACv9oqb7dNMwXQ5pxb+tDS7GOLDQaU8o=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IpE9ejLQ7AYdidPWsqf0eah61pg0tMCXTRaAwDKd149QBBgHSndCN5ZRhn7Wir7348+wapKIvv07Hc9WSId78pFVGFbRlJ/r8V2skK+5J+C3MecSm1ssmVncEnQGNUdYk3S8vZjOdxYIiJ1K/dnsO9tQvzczSukHY2FGvYOBnck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VoxZFK9q; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1714569880; c=relaxed/simple;
+	bh=krrfckqjbeQlFLb67v3IVek4EQvt8apnoVfcRYoUsg8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=FdaJrMpq6NmKkHaxP2OKJwo+WSx6uThUoxQuBlmnvqOBxwYMgDEZOuJnzeul9LJ9xf3XkEPXUL78OyYSSc7Ra+5R/YGyG4harsSdblhrpeLhFgpr9xZZMaLvBTO9ivaMR1fTDCRfmhLHDg5630nNGUur59aeJbuymhzomFBbhNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z4PSvnZZ; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VoxZFK9q"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1714542085;
-	bh=HZgy8IynNapACv9oqb7dNMwXQ5pxb+tDS7GOLDQaU8o=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=VoxZFK9qLekCXwHSd1rQlfp3fMPjFnhg+jfer/8H6urzJOMThKTlcnbS6GVIqPlgZ
-	 QENMzmko43a4exh06hZBx6x/acdAvj0Qr9aPvpcG46Yn2/ZWwGGSzs3OfJRfgGE6r1
-	 v47+WFKIf/UE+2dF4efYNFmGTOT/qvbq/JmWtAKuZNzYzFuRqJ5UHc2M4zPH5bJyxp
-	 qKKMzTGDKM5uCi0IiE5HouQpb33naR85FmbG9tHF61PAEmgd6EPDLQXnNkN0thVsrb
-	 7tnS5k0et7b+Qh0kTui1r5K3doVyMP6o1pjBp5PvJTV12azppWlUpD0zfl2bLlSZkI
-	 SizxKDIue6jvw==
-Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5A4D437814A4;
-	Wed,  1 May 2024 05:40:14 +0000 (UTC)
-Message-ID: <be921714-b684-401e-a89a-8256df5fcb86@collabora.com>
-Date: Wed, 1 May 2024 10:40:47 +0500
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z4PSvnZZ"
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2b33cce8cfaso446176a91.3
+        for <linux-sgx@vger.kernel.org>; Wed, 01 May 2024 06:24:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1714569878; x=1715174678; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4j6TmQ6ZgTGCAdIqQxwPqCx/nTzh+QyhXiuMiXZrc1A=;
+        b=z4PSvnZZow+6cwPT+0ewrIkZ1zd7BDzLa+B4BwRbWfQeul8nzOsi19rm0gzFJB29a5
+         X1qrmI4UmTxNrE8laFdrt5n0s1LOcdAQUyN8KlFjksLa19gdfLjN9rdxS7rkHH6wHmSx
+         Dt6vno8vuOBbKIVaNd/ZSN209Qkb/aM/VBPR0OgIPrRnR7/vkHGp68RZbNptbw41mTFa
+         3d043BKnXcNsJkhd/u6ytclKWj9RxAZpUPm0bNkT0+lSbw6W9UH6MMOoIsVtz9Jxpx/l
+         0NrMuyLM5KyCds8FWf26I6GWndEOa1VsaXVD1/lqiTKKSTp/prHyQE9HYEcdSmd7GLiI
+         2DfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714569878; x=1715174678;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4j6TmQ6ZgTGCAdIqQxwPqCx/nTzh+QyhXiuMiXZrc1A=;
+        b=WcBKsH2e0pRWgPgRKwix5VzqGmUaZvFDQZy9XIgdi8w+xnj4uUtIDDR5p+h0NOEWW9
+         EB8W8FCM7kLZ6hk8hfiWmu0sc6vvIT4QeZY3gSsdmq952o8kxF29fEF07m0UJ1bxFfF6
+         RhpR51GYfPCKcUmFs39n9xS9sPAW/EviGll53oyR5j+5eJsAEDMiMezYObjKAhoHjBeh
+         1Zw3Te9xiHdJTD5UwZbHTNEEkuU0I/fEd9785nHsuBtX/U1Elz6CVUrtQZvZqPC28yp7
+         T3DVkcfxBzulmDiJ/z/OtKC18d0Gw1JDZ3MI/Mwj2JfP2MSBrRHKYZBA5uCPp8TeT7QQ
+         sWjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6m+PRH8GaMJJ6hsO1uSxu2ZGUAktclcZUhUZmDIvNwn5dDhZgw7+Wsml7dZPvrFo7AZHagzdD33Y0y/vIYGlj6YF/4+UhznXn
+X-Gm-Message-State: AOJu0YwYGJUArGbCLmAeHltIYkPTS6zHXIOhfTEbJlPhrnHFxn7PSycR
+	3MUC9r/WmskgXU6kZNxyKgALpgy788or3jpBqUms604TBSdVr3gynPLX97FqmtYYThXzCk1k3C7
+	RVA==
+X-Google-Smtp-Source: AGHT+IF3937EXGaxRuC2iwKEsqWkwYndGF2ruoyJWYYFvQeb8jNS6z1A7kQ93TL3uURuwu8bhUtDSRxNorw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90b:b0f:b0:2b0:14bf:3f45 with SMTP id
+ bf15-20020a17090b0b0f00b002b014bf3f45mr7454pjb.0.1714569878155; Wed, 01 May
+ 2024 06:24:38 -0700 (PDT)
+Date: Wed, 1 May 2024 06:24:36 -0700
+In-Reply-To: <ZjGiGq-_kUVht63m@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, shuah@kernel.org,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Bongsu Jeon <bongsu.jeon@samsung.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-team@android.com,
- linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
- kvm@vger.kernel.org, netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-sgx@vger.kernel.org
+Mime-Version: 1.0
+References: <20240430235057.1351993-1-edliaw@google.com> <ZjGiGq-_kUVht63m@finisterre.sirena.org.uk>
+Message-ID: <ZjJClMYEIyGEo37e@google.com>
 Subject: Re: [PATCH v1 00/10] Define _GNU_SOURCE for sources using
-To: Mark Brown <broonie@kernel.org>, Edward Liaw <edliaw@google.com>
-References: <20240430235057.1351993-1-edliaw@google.com>
- <ZjGiGq-_kUVht63m@finisterre.sirena.org.uk>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <ZjGiGq-_kUVht63m@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Sean Christopherson <seanjc@google.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Edward Liaw <edliaw@google.com>, shuah@kernel.org, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Bongsu Jeon <bongsu.jeon@samsung.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
+	linux-sound@vger.kernel.org, linux-input@vger.kernel.org, kvm@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Thanks for the fixes.
-
-On 5/1/24 6:59 AM, Mark Brown wrote:
+On Wed, May 01, 2024, Mark Brown wrote:
 > On Tue, Apr 30, 2024 at 11:50:09PM +0000, Edward Liaw wrote:
->> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
->> asprintf into kselftest_harness.h, which is a GNU extension and needs
->> _GNU_SOURCE to either be defined prior to including headers or with the
->> -D_GNU_SOURCE flag passed to the compiler.
+> > 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> > asprintf into kselftest_harness.h, which is a GNU extension and needs
+> > _GNU_SOURCE to either be defined prior to including headers or with the
+> > -D_GNU_SOURCE flag passed to the compiler.
 > 
 > This seems like something that should be handled centrally rather than
 > having to go round and audit the users every time some update is made.
-The easiest way I could think of is to add -D_GNU_SOURCE to KHDR_HEADERS
-definition in tools/testing/selftests/Makefile. It wouldn't be obvious from
-KHDR_HEADERS name that there could be other flags in it as well though.
 
++1.
 
--- 
-BR,
-Muhammad Usama Anjum
+And if for some reason unilaterally defining _GNU_SOURCE in
+tools/testing/selftests/lib.mk isn't an option, we should at least have
+kselftest_harness.h assert instead of making a futile attempt to provide its own
+definition, e.g.
+
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index 4fd735e48ee7..6741b4f20f25 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -51,7 +51,7 @@
+ #define __KSELFTEST_HARNESS_H
+ 
+ #ifndef _GNU_SOURCE
+-#define _GNU_SOURCE
++static_assert(0, "Using the kselftests harness requires building with _GNU_SOURCE");
+ #endif
+ #include <asm/types.h>
+ #include <ctype.h>
