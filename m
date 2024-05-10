@@ -1,71 +1,71 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE5F18EA1;
-	Fri, 10 May 2024 23:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9D018EA1;
+	Fri, 10 May 2024 23:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715384852; cv=fail; b=a9bVKrZ/4a/BU2G/sf6IqBTpbIUVZcpdsDxPBI8DoQjJYQwkGIvllWEPSM22t8QZTV891/F9WsKui15vCgf4fi3CthdBdtzd2YiPjNt9iVcEU6p+AycPeEKN/jwg2XAjxZF4BRaBU9yPGgSYbh401mFqJ69kBPHsvMkB+0Fb3FI=
+	t=1715384878; cv=fail; b=kMauAz9WId/kwzG2Nt9lBKlLrHaQ3yxEtSae0avVn0SIB+0dE/zyBFMeEWaHAddChpgG8dbhJ33VW2zz0s3Fk8bdIjkbaDql5hVCP/fX9ZBRFjZFXmqGXwU8BcfMczgEJJ2u4EUFpem9TYWAIEersdtVLTzL8+ekZL10Um0gP7E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715384852; c=relaxed/simple;
-	bh=+EWGptg/Pv24XwgkejEBv7tMR6RjRtWRqWzennZBptM=;
+	s=arc-20240116; t=1715384878; c=relaxed/simple;
+	bh=bM925SuFiUxv3FYYb8WU63Ax/Nh2gxhsPXeI6Vatfmw=;
 	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=omuZOss6ggXGyboe8AUjfw/0siEq+FWcQRq3lFzzPHRq6GpJL7qvDvnICkUbH9H5v1qzwgJSLVDq6623hVTtaT4C2uHFKKxcjHN8WGTtm03n7HNKOmIFSsxpixo/T03JZCv0mLl8oZzsRaoknECw6wURUljbqEfkcu5hWgWmc5E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZsPlB/bK; arc=fail smtp.client-ip=192.198.163.18
+	 Content-Type:MIME-Version; b=QHqGGX39HYbXHIT3acOxzBVHFTS1UVr3Uw6gV5Nk5qTVhFUhokIIWsGjn1NegckO6j9X24PcRgvwWTSvupvgwawgSvuMlC7SNRnk9jn2LYTAX8QrR07tcRjxKGKuRCdQFdW1BmoCt0VWUu+QpaPOUwyH7KfpU+cJpcPLEyjvSAM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HTO/pG7+; arc=fail smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZsPlB/bK"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HTO/pG7+"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715384850; x=1746920850;
+  t=1715384877; x=1746920877;
   h=message-id:date:subject:to:cc:references:from:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=+EWGptg/Pv24XwgkejEBv7tMR6RjRtWRqWzennZBptM=;
-  b=ZsPlB/bKznrRgh6/cp114sVKKrD0oO/rmqqC+syPrhsFczCsQQg9IFys
-   bRwH02piYn6c+cbSk6i1CCoxuHoyb5UY9QXKkQV1pzIfAp7vMlZCeUtqM
-   rx0YECfxKmkkFEaZvSGjkPvchBggc/dDga/BBA6QXFpID/x6CRA0vLeUY
-   6pE/H0MAe7WKkLs+MLrRz16Ph1oXg4rpdvtHYv1pa2zKFuRGBPfeba++X
-   W5bX5jCpfUaZ2tq2JVNTRdELbQiSxzZj4xDihriezV2KxmEoBEfe2Q/BK
-   7x1wWQWid6HIc2en5rbl0tJRmKYsmKjQlgghQAQ1Df1/S6FrZJfIaOh4I
-   A==;
-X-CSE-ConnectionGUID: Am7DreIsQOeTwtZCgJK2mw==
-X-CSE-MsgGUID: 3ogjc+z3SvOCPgyzlNFM1A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="11214787"
+  bh=bM925SuFiUxv3FYYb8WU63Ax/Nh2gxhsPXeI6Vatfmw=;
+  b=HTO/pG7+bV3BzzHyOkonNENHd3U6LE2Sruft+UPmiWIDIV5n1oQlYBlG
+   W12maOA4u2aKNfQGCakwZyk5Fh/kcQw7awYemV0fqH9LeXdqS3RENwGjh
+   /yTStCEcQ35c+rvUjrBs50YlOxpj8Dx1WSEI06ST3y0KzgFi/v4Plgeiu
+   W4IgnvPFwn4N4tPdEU0Re4VwvaydeDjR5Y2A08TBBB4SiHbhrUUKA1DR+
+   EffvTvOANW46SPZgcqW9QUGVCQl/by/GItAwmWUOt/UzFlbi6ocZctqJN
+   CwOCKpsCegXB3Byexq6UpuGFxWuWxutIFn0t3kSHHjMB5MdwmonVrETTZ
+   w==;
+X-CSE-ConnectionGUID: 5uSI8oI+SWuYTh52Qaz7Iw==
+X-CSE-MsgGUID: T3JpDVe9Tbu9fPLLq7KB1A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="11252816"
 X-IronPort-AV: E=Sophos;i="6.08,152,1712646000"; 
-   d="scan'208";a="11214787"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 16:47:29 -0700
-X-CSE-ConnectionGUID: jBrGTsHMR9iTZmT47/O6JQ==
-X-CSE-MsgGUID: prkaZ8trTz+i4s/PnvhN/w==
+   d="scan'208";a="11252816"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 16:47:56 -0700
+X-CSE-ConnectionGUID: p/oVwvIXSD+mur6gDxV7kw==
+X-CSE-MsgGUID: ySLgozQnR3ylloaVaUB4KA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,152,1712646000"; 
-   d="scan'208";a="34637044"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 May 2024 16:47:29 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+   d="scan'208";a="34312262"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 May 2024 16:47:56 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 10 May 2024 16:47:28 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ 15.1.2507.35; Fri, 10 May 2024 16:47:55 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 10 May 2024 16:47:28 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.1.2507.35; Fri, 10 May 2024 16:47:55 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Fri, 10 May 2024 16:47:28 -0700
+ 15.1.2507.35 via Frontend Transport; Fri, 10 May 2024 16:47:55 -0700
 Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 10 May 2024 16:47:28 -0700
+ 15.1.2507.35; Fri, 10 May 2024 16:47:54 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PvsjTmzbPlOCqteQP1TlQVWGXMwEgtEJXKPCJf6Szp9q7lswL4iTQ58q7G8DEQ103BV2agmzScxv8iSlTMnnZldrAjNo4ZAbX6bFIZCmr+EHsQtazD8waDB1Mu3J7apkKe62zmDeTA7Wyg0XiZMtMyPahXhtI/kbQs5ZQO8ueNBqltYYoGnx2HOFt8BBtX5hdQynpRaBIZQUVzbVJ5yxO8eydoLpBnMWlsy0Sdee5vlrXunn+tqqoc1y4E8PF4Y8js8s0CtrQo4P5lDllikp0b51e2uUoaS52S3y/3FpyNDebZsq4ZralFW2u7+i0U9FbZc2qTHmxcR73iMQA4iA2A==
+ b=d4WQUJba9vyH9kCszKLP6qriEQP51ZwaFyTpiuX1vO0vKodutnxr1V1+S0OMbZVtL8IAxprFzNkuZIoFStVTJ+UmXVS7guetLcTMdGqh0yoFI89IFBs+Yx7gGEDFRs2u3igigSxQCKEJRy2OzZKDRYEyeZNvcoBQggtk4msuNMRpjFNDO14MLdI1FThmL6NlUO6AlpnZReitWPAhhLeF4ipsGLApJZO0jD1Ep6Vpi+OEuFIDgGf+H/TaB0Ub9UVnPyFML5EspVTiGzxSc0+EbJOHwE1hLrDJeyCXpq9DUyvoVizzMmo/ZNPuG4HBXJBvuW5JZXomKWYlEVcbvREpfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GG/8zKjLRg4/NgOQXllqZUcuAy9w6JttBCgqrGYxRaY=;
- b=C++LhHdjpXcDvvD6yFDHwWBaEQxHaGKwNDyBho6OM+3XTQLwNcEX1262iQTueLziHUs/TmNn76tiK2ztWEAq8TuXmU+yXXFl8b/XnJRIMFEgbd4+gdN5K1jvm7cIgFq5w6SDSbC6cdjViGrkUGSvUEuyU2AAOGBRkaQrT/bAE/eha60Lq2O+IhobZAycKq/Y9oAZIVn2WIu+DLkIlmk2+l3ylUl3YvxKI2CB4YvlUcsKqMiD3uCKzcvwCw0gEkb4g/CWEdQwoJM2tEI5xfey1OjjPwB7EHM+6bloEYQ+h3qAkOs1KaH2U4A/g1FEy/GTn9y3gNzi5d2ZiPbjgYIrJA==
+ bh=MSFFjQIhL9MlJyDDgmOBeUcJqJLpea2UsE3uGUfREmA=;
+ b=ConAUoxkysPqWC2Xaaq2h1qULIftI9O3VitX5Mp87V9pmbVRLuG27QGWWDJ/F6mAZcRLxi48gPYYMWpGD9C/Mxl8+SLCqg01AzXKFY7+saQgVnAd51c0EsoUMlSKtRx/cKvyjZ70NqCqeL1lSAG7Y1KH7BqMWiJPwm2qM7vKSCm3szNaehCThjxD1SI4kFOwRCycZo55mBdzaKHvOqWkDqQdVJwV24qRlnFm5PlpDJBZPIL6AjNYaHJW7p4odnC8zVsT6dGSGvw9BO4yQ4CPNn/3p21OBgNrN+g0g6DNnQis/8aG7DuwTwyiAws8xeuH+smxwuN6K8SdsN7koymuiw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -75,30 +75,29 @@ Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
  by CO1PR11MB4881.namprd11.prod.outlook.com (2603:10b6:303:91::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Fri, 10 May
- 2024 23:47:26 +0000
+ 2024 23:47:52 +0000
 Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::b394:287f:b57e:2519]) by SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::b394:287f:b57e:2519%4]) with mapi id 15.20.7544.046; Fri, 10 May 2024
- 23:47:26 +0000
-Message-ID: <4422e302-5802-451b-9daf-09d7668099e3@intel.com>
-Date: Fri, 10 May 2024 16:47:23 -0700
+ 23:47:52 +0000
+Message-ID: <22eaec04-a950-413e-b9a0-885a077475e8@intel.com>
+Date: Fri, 10 May 2024 16:47:50 -0700
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/sgx: Resolve EAUG race where losing thread
- returns SIGBUS
+Subject: Re: [PATCH 2/2] x86/sgx: Resolve EREMOVE page vs EAUG page data race
 To: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>, <jarkko@kernel.org>
 CC: <dave.hansen@linux.intel.com>, <haitao.huang@linux.intel.com>,
 	<kai.huang@intel.com>, <kailun.qin@intel.com>,
 	<linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
-	<mona.vij@intel.com>, <mwk@invisiblethingslab.com>, <stable@vger.kernel.org>
-References: <D0WMM3MYQODE.3A89L7D6OVG3E@kernel.org>
- <20240430143701.902597-1-dmitrii.kuvaiskii@intel.com>
+	<mona.vij@intel.com>, <stable@vger.kernel.org>
+References: <D0WMR6UESTUC.IMBRWMJ80RHQ@kernel.org>
+ <20240430143816.913292-1-dmitrii.kuvaiskii@intel.com>
 Content-Language: en-US
 From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <20240430143701.902597-1-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240430143816.913292-1-dmitrii.kuvaiskii@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4P221CA0030.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:303:8b::35) To SJ2PR11MB7573.namprd11.prod.outlook.com
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4P221CA0013.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:303:8b::18) To SJ2PR11MB7573.namprd11.prod.outlook.com
  (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -108,342 +107,289 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CO1PR11MB4881:EE_
-X-MS-Office365-Filtering-Correlation-Id: a5436d15-02c9-4f7b-81b5-08dc714b8bb8
+X-MS-Office365-Filtering-Correlation-Id: 1e8c3ab2-b838-4e22-f38b-08dc714b9b80
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?amdWaGlXeCtsYldUdENkYmcwdmU2YVJJVWg5MzQ3Y3JBb2RjYS9rSVVMdFBQ?=
- =?utf-8?B?ZUZ0Y3dHMTFSTUxJN2xiMGo2YnN3bE9YWEN2b0c2WnM2OXJlMEVlUjFOT0dP?=
- =?utf-8?B?aVZCU2VReE1CeEE0WDJGQmJlTGI0WFhuaFVrUyt6VWU0amFXMnV3bnliSGcz?=
- =?utf-8?B?WmpFQ0tyVUd1LzJqdWw0WjBwa0JtOVBST3l6SXFkMzQvSUJMbmFGYlNOTTVE?=
- =?utf-8?B?aHlzWHhQaU14SFY1VXRpQU9vSVRlemVZRlpoSUk5cWJBcFAydDJraG0zMWtx?=
- =?utf-8?B?RDZaWVdtUjVFemxXTHphRTFTQ1JsYzJGOGQzWEZPQW1xT2FxM3V0VmZxWjRs?=
- =?utf-8?B?Zmk2VTFUc21pMDdSVEpEMzQvZTVhSmdtbFIyRkowbkpOWmQ5MHhXRzh1R29X?=
- =?utf-8?B?WHFGMlNBSkJYOVZFSXJMYVlnbnZHSXB2a2Ftb282L2dWakhad0RVbWJFcXNx?=
- =?utf-8?B?TGdvbGRFL2dCZFk2T3o3MWJPZmxTYjNMc2xjcVBMbXEydTMyMlE4T09tWXN0?=
- =?utf-8?B?NTlVZEI2UUtsOGtTK3lxa2srL2ZFc09LeXhlMENHL2w2NUNaWHNMUlZkM2Ja?=
- =?utf-8?B?K1BaL1dkRk5kQlRIc0Npak9QaDV2UHV1STdBUEJpT3l0T1JjMjB4V2JUNzh4?=
- =?utf-8?B?UlhGLzZVTDhYNmU1Y0hHQnNlTE5tZ2w5U0t4LzVQMWt1Yi9hUDdrOEt1ejNy?=
- =?utf-8?B?aWtERGtCNjdXOW1nQ2loRElaRHRNUnhUaHFoclR1Z3Z2UEpVN0N2RDdYYkNk?=
- =?utf-8?B?c0J4UmNYUDd5V3Q4K1JJUjdyOEU2QUxSK09HT2RSYTIxUCtHa1B1VWFXUCtq?=
- =?utf-8?B?OWFsSjhuby8yZVpncUhsYUVtcE1GTnR3ZzQ2eVE0Q2VVN09LcWU2YXRTdHQ5?=
- =?utf-8?B?TTNyMGpOVjg5S2JDcnVXbnl6Vy90T3BqellTbHF4ZnJGT21FN1VGWHpmaVgw?=
- =?utf-8?B?bmVGbU9iM2tYNS9RQldBZDhsb09GTjJHK2tnNWpRMzNBR3BUcWk2Q1JTREpO?=
- =?utf-8?B?NnArT1lrR1ppTXp2dkhHcnovR3JyWXFXK0gxTEdlaExwdkZvZEJsdk0xcGFS?=
- =?utf-8?B?TEhHR1ZhVFUraFBIS2hnbWR5UzV0WkdPcVduY0FkRzNMcTBHL1JKYVgwc0Na?=
- =?utf-8?B?U0RxUWEzeVVXRCtLTlZaT2I4TGtpZGNVV09jbEF5N2V2YVNOcCtOR2l2bFdy?=
- =?utf-8?B?VXNTUVJTRVNrcUhicWhlYWJNcjdyYkpyNTR6K0J3YktPRnFJSEV5QkI2Z1hp?=
- =?utf-8?B?RFdjeVNwdmJCbEM1Z0FtSkpEay9waVFkSW4wbkoyeTVDb01CNUpJSDZ1WXBS?=
- =?utf-8?B?TjU0ajZCaDlQSmNTVzRpOVlWbGY5ZTFFRmpUVlBENkQ3Q2ZhVVNlSHNTMjNj?=
- =?utf-8?B?dXNOOS8vdTBmNFZuaGlDUFVxTjErYjVvZEQzeUFXaEUzSkdHWDFxVlBkbVFN?=
- =?utf-8?B?UHhqMytpVU85M2JmTk1DSjF1K0k5ZGNtWXZPZnVXYTZxUE5IMDR3aCtFdWM5?=
- =?utf-8?B?N1AyK2xZV3U1MWJuTzluY1pHTDc4SHB1dVluRzFaeEpQdTZQaG5WZ0l3THJF?=
- =?utf-8?B?cDZicWhSR2ZwcUdtNHpsTnVaRG9iREY1ODhYVDA3eTNKZDBjUkxzQk81Z0pp?=
- =?utf-8?B?dXB3eGRZbVMwNkxwSTYyK0lKb0cvbldqOTRPaE1xQmdDbnVaYU9tTEV6dk1P?=
- =?utf-8?B?R0pjZDJYK29yclRQdDZvNmhFdEkwbW14eVU2WEc5NzRsd2tzaGlYK0FRPT0=?=
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?TzJnTGdFV1prL2dIR1h1V244SEJJNkZac0dTNWlIaUdwUVd5a0RXMVdRSHg5?=
+ =?utf-8?B?dC9jR2pPWUV3b1lXRWFQWEdzMzk1aHlqSWx2Q25HZHBCTUFTSzg3Q1B6UVoy?=
+ =?utf-8?B?bjBrUEtGM2xiRUZ0eVEvQ1BIb0w3OW5raUFGUktoemR6OHR3ejByWUdCZzJk?=
+ =?utf-8?B?cnZyenRwajNjaG5CcTVUWm1uYVBOakc1QlV3ZFNBdkI0WUhtOUxlTWZjOE12?=
+ =?utf-8?B?NDFKWGVLbnk2TzdGaFlFc1JyUFdNL2hjelFBZXpXUmRGN0l4MXZWY2VBa0RB?=
+ =?utf-8?B?MzVLODRRektiOFBOcHo4eXU4alViNDZubDBPK2IzbXBCUWFpY2kxNmgybFdF?=
+ =?utf-8?B?aW9ZcVd6UCtBdDBrYU1FVFFLWnlFWnRaYU43cjY3QS9KRXVMWVpSOGxHOTVm?=
+ =?utf-8?B?bVYrOTJHc0QvNTdWZnIyY3UrTEJzZ1ZvRW9VRDE4V2V5Ym5SdnR1MlNCNklU?=
+ =?utf-8?B?SFZ4MFgvbDVzekluVFRydi8yZk8zVmlKUG1BYVliM1hUMTJqL05uam1CUXl6?=
+ =?utf-8?B?UzJ5R01UdlpxTmFwZWxnclBFQVU0bjFRNkJlUGlCTTFxTVRyb0NtV2dzTEt2?=
+ =?utf-8?B?a3FXTlFpZ1phenBEYkw1T3J1bWRnTTFZRUlUZUMvRllkRFVrSE9Mb0U2dXl3?=
+ =?utf-8?B?dWdZVkhwNTFsMkJ1RnRQOTBTN240dVhWOHM3T05SR1hqeCszZU9JR0dnYlcx?=
+ =?utf-8?B?WUw1RUkvekp4MmI4aXJqOFZEL3VqbU1jMGNqQXl4UHZSYTREZlVpQnR3VWRz?=
+ =?utf-8?B?YTBwcUoxV3pBWmZod3liaGFxMG1kdW5Fa05hQUp4NFpzaC9wVGhjZGc1VE1R?=
+ =?utf-8?B?RWcrbm1nZHNIZ2VMUms1YnR1TDFKSmpxcHAxaWxxVk9KV1JidnpYWlRiNEtU?=
+ =?utf-8?B?YXVMQW9KWWVKa3BaRlZKZzl3OUZjY2MwSkNucmhyL1VxVXBtUllHdDlXdklV?=
+ =?utf-8?B?TVZTSXE5S1ZPeWh1WFF3LytCMTZsRmxKL0FJcm1YanZ5dGd1UlVVVzNScHp2?=
+ =?utf-8?B?TDVLMTY0bnJBUEkyb2Y3anladWhsTkw1QVkwNnc5THBQdms4VEg4QTdTazlT?=
+ =?utf-8?B?amkrc0xlSUJVQmlBNnNFT0N3TEcyUm82cXVFeVJzSzFUSFF6RmRHM2JhRmtt?=
+ =?utf-8?B?RS95YXp5V1I2M0hWc1NzUjJhMUFLTG9Oa3NjUmpneUdKc1JuMVM5YXpLWWtq?=
+ =?utf-8?B?L0EwTklLMHYzeFJ2bzUvcW9HaFBuMWMreC9jRUZHVUtSV2xQb0JQSkg3clBP?=
+ =?utf-8?B?OTJqNUM0bUk4YTJVK1ZZOEZkMkFkMXdpM1hiNGRRWHV1Vm5HVmhkK0JMOThv?=
+ =?utf-8?B?L3Rqd1V4dU9VTFlvaG9lR3QxRC9MSXdDemVralVkNXZwMEpCc0ROKzdUTFBN?=
+ =?utf-8?B?anpHdzZQOEt2T3krYUVtbUk5RUZmblh4cE5NM1BkcGs1UmJXNU1WR1cyMEpB?=
+ =?utf-8?B?d1RUbVFBWTJGWktXTXhMaXlyY3FvTUwzSjBjSDE3RUZ3ZDVpNElLUlhGTTRa?=
+ =?utf-8?B?QkdTcmFxYzZyZEVSVC9wR2VTYTFULzdTdUgxd0dDYmFwL1ZrbEIrcWxKVk1r?=
+ =?utf-8?B?QVgrTFNvRTVXL2NQa3NVZUVaVlU1Mks4Ly85cCtBQmtmNFdVTDhGMkprdHZE?=
+ =?utf-8?B?dmhCdmhKMUZ6b3lsb0UxWlloN25PVXc9PQ==?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?R0IzVWdMWkR5cHUwVUJtbzFNNXFDUHFpYmttOHlQK1V0Smd4cEJmOUlIQnpo?=
- =?utf-8?B?Y0JqM3hUWDRKUFR4eUpXRDk5eml3M2VRVFIzVFVENi8xQWFvQ0NBdFREeG15?=
- =?utf-8?B?MmhXeEhhUEtVTHpJSmY5K2FKNzhtSzYwcERxcjFTZWErWHVPMUVoN3RKM0NX?=
- =?utf-8?B?YmVjU0ZMWHlFVmdNT2p6U2wvQmpzQmwwaC9NVmdaZEtSMW5MbjdZV0tqM0Zl?=
- =?utf-8?B?S1c0THJJZnlkY3dkdmxmOGkwMkxZM21kNC8vcHZ6SWdxYmN3QkpHSk5GbTV1?=
- =?utf-8?B?N1FZL21GTEQyR1ovOFUyWWV6VVRjbGxFY2NGR3NLby9JcjhBRXFOWjE1Y2xO?=
- =?utf-8?B?Yk5mUHVjYjhVUHN3ZTY4d2ZTMlZYd2U5SVZPeXFlT1BSZllaZ2FIOUpDcHdx?=
- =?utf-8?B?eWNoMUFNVFZPQWx1bHpKTk9YUk13S2xRVXhZdy9QSStjU3RrQ0lJN1duV05x?=
- =?utf-8?B?Q0VlZUdaaHl0SmZWOXFsblI0MXh6d3hYK09ML2hhL2hWRVJibnJHMlNDN3o0?=
- =?utf-8?B?OWxRRHhLNGxXMjJvSDlkZ0NFMldhMCsxVUllN09RNHBPQ2VteWtFZ3FxS1Zt?=
- =?utf-8?B?S1N0Q3drbHVhajVSY3p2M3JIbVJMRmtxeWgrSW9Ibmg0V0o4SGFiaFUwTURj?=
- =?utf-8?B?d0RQWUcxMWJheHdFYnJ3K0drS0RKQVRvYk9rTUVIUTNXZzI5YlVFaWxXSTNX?=
- =?utf-8?B?WHZ3T3VnSEJLVEsxdVBQeGdleDlZZzRsQkR6SElGRFpibENKZlRXUjJxK2ZY?=
- =?utf-8?B?M1I5L2F1TURnNDR5TDU2VTVTRi8xeHQyWWc2Y1pNdlJMMzNLVXR5RitweFQ2?=
- =?utf-8?B?aDIyRFhTbUc5dENpM2FVamQ0SUZuU0hFb3pLUXhSZVR0Z1pacXI4Nzc4ckpa?=
- =?utf-8?B?YmFQbHlVU0wxVG11Wk9FMEgwK2pTdFlmK2pacUxwWFk0TURub0hvQTI4NFNl?=
- =?utf-8?B?TVRrVjJZMld4TWlKZWZUL1dmRWpISkNBNEQ4dHdwNWdzdTlCNHhiRUlrQ0Yr?=
- =?utf-8?B?T0E4TThFZVR4NFNxblpxVmQxMkVxOXVYa0Q2YkhMa2VMMDF1N1NYT0YxU1NC?=
- =?utf-8?B?QXc2djVXWldUL2NkVkZjcnl6c3pPendDcmIycjhnYmVvdTRwN2xxRjZycGFj?=
- =?utf-8?B?V3d1aXFBNFByZmpUUlRXM3hmK2gzaUhoeW80c2ZlMHBzVWtkR1dXL0ZoOWhx?=
- =?utf-8?B?Yk5ZRjJqR050Nk5QTlo3YzlvdmR6dXhzQjVwdTFaWEowWks1bVFiV0RzR2dt?=
- =?utf-8?B?M3l5QTRlYzU0NGhYU3ltS09aOXpWNy9za0ZBK0pIZ2h3UE83VGdFcitrYnJV?=
- =?utf-8?B?bTJiaU1hN0dBbmtGYUtZMEozMUFwak1UV25oQVJNQ3F4ZW5OOU1zM3BKNHAz?=
- =?utf-8?B?Kzk2c1B3ZVVvSXh5SDRLZFY4K2dBRnk2VmIrbU9MYmxHdUlkN3hDL2U3c2NZ?=
- =?utf-8?B?UnlmTjNxM0xYNXNQcWVtY0pwRmFCQUprNXlXOW5sbTcrVmZYaVk3cDRKcmlB?=
- =?utf-8?B?Y0QzSlRMd3EwNkdNTUU1L09yUEl2YlBYWmRCODE1YmVSSkhTRDdRYlRsdmFP?=
- =?utf-8?B?c2ZaYitRYWhCeG0rT25WenlNMTdVUS82MUE5UnJYRWpCUG5FN2xkcDYwZXJF?=
- =?utf-8?B?TDZhSURuUUFrRHAzMlJIMU0rV1MyZDQrNjFJQ0FvSmRIMXR6OGpHTVU5WU1I?=
- =?utf-8?B?Um9GemY0ckpEaS9qRytLYVI3cC9JNUhFRWtscytJZ1FKdGZQWFdHWFFKSWgy?=
- =?utf-8?B?Y0dhUmlMRmRMYlV5elM2dFU0cG5STGFIV3dmOEMyQ1RzblNrd05DYzZ2Z0dX?=
- =?utf-8?B?YTBtZzBtWGx4L0pqQys4L3NGQXUyU25kTFlFZmtXdXRBbnJQRFc2YnphdjhX?=
- =?utf-8?B?ZTAzL2tFWkk4cTVYSHhkYTh6ZG9WUDA2ZHdDYXcrY2xsaUlzdEFRc0JzM3la?=
- =?utf-8?B?dGdzUWE4TTI2V3I0c3RlL28zejgyNTc0Vnc3bVlOWTJQNVVXQ0EwYXJ0SElu?=
- =?utf-8?B?UWF2NTY4SVBQVXRYSEtKeTZJRXJ3V2lDY1B2UllSVE9Uck9wb01EN1J4Mk9z?=
- =?utf-8?B?MFlteGh3bEhMVUlPS3pjQ0Y3d1ZmZ215WThNdy9vK0hVOFpIUHdoWU9NWXFR?=
- =?utf-8?B?REc2NjZsV0NVUHNXQkx1bzMyT29hYS9sZDlRV2ZRSlBFMVlyTW9LcllpRktC?=
- =?utf-8?B?b2c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5436d15-02c9-4f7b-81b5-08dc714b8bb8
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SzJvK09CZ2pWVCtNQUNiZjg5ZlJic1RBNyt4Q2lIMksvczJWTFBscGNJb3FH?=
+ =?utf-8?B?TXJ5NVd5cHA3alVTUFpIMkQ3VGYyb1FMUFhSVW8zT2pIWk5VZzlGdWprL2Js?=
+ =?utf-8?B?aWd6ZERRRi9za2VQTFlwYTlYMkc4UW1NUktoK21uR21uQzFyYkNFR0JaNWVL?=
+ =?utf-8?B?QlBTdzFiRXFRT1A1Slg4eXdscWYyS3ppYUtxQk5vSVZxUnBuZ1o4dTNNU3lH?=
+ =?utf-8?B?bWljV29jM0VGRXJXYzk3V2Myb0JxS3FLVHBKQzZSaTE5Wmp5Z2NsVkNtSnY2?=
+ =?utf-8?B?YTlEblJMbW1iclJVY1h4aVdWc0xBeE5vaitoUlRldjhRMWFFdGZ1VTREaVRs?=
+ =?utf-8?B?ekN0MUVoTlNKRFdYVTIybjVrOEYvWFZmQnFoT0pvZ3NSQ0JXSXVxTitNZFE2?=
+ =?utf-8?B?cDc1akMvWFM3YytuNlhsQWVHRk1EUFFGb0xJL1JaNnE1UGEwTmxVMEQ5NWE5?=
+ =?utf-8?B?S2lwbXlqbkxpc01BMVQ3YlEvQUoyM0VyT1IvN2hQZy9JVFRCdHEyMllaYk5W?=
+ =?utf-8?B?aTZUNkN6WTBmdE1DSXRJNTlFbktkU25vZ2IrOVdPUWdZL3Btc2srZVpjb0pr?=
+ =?utf-8?B?cGw4WHBub0ZKa09QNWZOUThockdhNjFXdm5IODg3TlgzbmZYaFZHQlQ1WmVy?=
+ =?utf-8?B?eGFFRTJiOVh6YXczQlpLVjVlellsTGowaTA2SXpXMHo5dVpXaHByTms1U0tU?=
+ =?utf-8?B?WjFUWWtPcjMyMDF2NFBkNEQ3T2VEWnVleHl0TTA2dzBOeDkxclZQdWZKUzY0?=
+ =?utf-8?B?QUZ4bzhzV3ZsMVBGNTJNa3MzVFE1dHhlekNxdnFYNW1GNXAwbk5LSkZ4SjVR?=
+ =?utf-8?B?N3cvd21nQmFSZ0hta2RFZEhVWmNNbVJ5ZGFDc3VrU1JTc3FYYzhwSmt4Z0Fq?=
+ =?utf-8?B?NytKRExob0ZONEZlSTdxZmN0NzBCdnY3blZOK292VDBrbW02MlNDa202WFlx?=
+ =?utf-8?B?MVRCbWZQWGtiaHF2WTZnQmhnOW1vcUlJenU5SUZ5QktxYTBnZjdmUXhQeUVq?=
+ =?utf-8?B?UVA4K2ZjdnUyZkRPMG82dDlsTzdwTHpQa1JkNHBLWDNRWHlrVTRLVm9PVzlM?=
+ =?utf-8?B?d2V0SHNiSGhvTVNSWE5zcUV4aElxK3NXTUVhUHR2YTN4SUtOV0tGQ29RYTZC?=
+ =?utf-8?B?TnRqREgzSnRsc2lqMXhRZElUcHVMZnNEM0RYNWdOUG9yMDBoa2JETkpmM0Mz?=
+ =?utf-8?B?Q0dRV2FnU1dTOHVLZ2JJK2VpdkVwVmlkVVczeU4vaTFmYUxSRnBvMENMekQr?=
+ =?utf-8?B?YTA3YUFwYjQ0S2tIMkh1TEVVRktISnNmQUgvWmozNUtXTzhkdHJBU2ptMjVP?=
+ =?utf-8?B?d2VFVWdMWXZ5ZnVRTkF2eXFTeVluWXAzZ1dVdDVwYUpkaWZ1K1hJc3N0NCtI?=
+ =?utf-8?B?N2IzcHUxcW5xZzdTWE54dnNwend4QXJFSy9INjliNVhrYnc3aDVnb3VPa1Jq?=
+ =?utf-8?B?UHVDTFhNMVJmbHlOaWh4R3I0VnF6RVAySk0wU0ExY3hwUFcrTTZVdTdESkd0?=
+ =?utf-8?B?anI0RjBvMmR6bitsMmtlMUxTZzhyN2k0R2xTOXRXMjhEOEEvaWlIdFYzZ2ZP?=
+ =?utf-8?B?TWxVaUdpSVJxbDBYemhhT3FzYTNsUk1DV0JRN2NIQVhmUGdXMi9QUmZmR1Nv?=
+ =?utf-8?B?Q0NKWGdDUWhXVkVReVdzQ3o2M1B0d1AwR2svWXJRMUFtYXVhbGRqWUExT2M1?=
+ =?utf-8?B?VzAyMGRnZ3g0S01EcTVUV1lHUHlRN3o4eFgwd2NONVUwV2hyNllVQ0xFWlU0?=
+ =?utf-8?B?eU9aOTNNNkRnNjBLTTdtS21TSzZzTWhuNzRtbVpkVW9rZGEwcWwrMkxYaW5K?=
+ =?utf-8?B?VkQvQXBMMHhlQ3BpT3NQa1p4cW1nVlBiSFdDTUdOOUUweE5uV0I5c1psOVFK?=
+ =?utf-8?B?NHNXTVdFUEZlekJlcG12U2M0bGhvSkIyUUdUM2grcjY5RS81R2VMZWZ2djZi?=
+ =?utf-8?B?OXJ5N04reFU0b3IyWXU0dnBIc1NaZTdOWWdxTDk2NlN0Mk9CcUs0dWtSWXVz?=
+ =?utf-8?B?aE02OVI0WHA5UmFoTXB6NEdhRjFrNHc5YVBOZEhqSUVod09NVVlYV3JOQVlI?=
+ =?utf-8?B?R1orRWd0TDkwVHM4T2M5cEdWSSs2YlZGNVR0Q3Vka3pVc2F1eXBmMW5WL1V5?=
+ =?utf-8?B?L3JnMjk2VUlrN1FUU2VZWG1DNERueWM0MlVvYmJManp5Z1U1bStmcmpwSVFN?=
+ =?utf-8?B?ekE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e8c3ab2-b838-4e22-f38b-08dc714b9b80
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 23:47:26.2085
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 23:47:52.6133
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cK+4U5HtEukMafK7/7y9OWEAGsOxmfV1C8cwlIwehKgZCs4YpNF+wO9eBvk5ibkEKSDo8SS0oR5eLWpg9FtsohNjF0QRy7KMko/m+7wyWNY=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5PCqfWDBuH6vb/whW1N0gb5p0idCoWOIypNhft/idNmDGokA9f7vk2dsYqofKRzG4FavUSqQaO5hHeRI9CZoz/VSuEt433RxYCzE01GyHE0=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4881
 X-OriginatorOrg: intel.com
 
 Hi Dmitrii,
 
-Thank you so much for finding as well as fixing this issue.
+Thank you very much for uncovering and fixing this issue.
 
-On 4/30/2024 7:37 AM, Dmitrii Kuvaiskii wrote:
-> On Mon, Apr 29, 2024 at 04:04:24PM +0300, Jarkko Sakkinen wrote:
+On 4/30/2024 7:38 AM, Dmitrii Kuvaiskii wrote:
+> On Mon, Apr 29, 2024 at 04:11:03PM +0300, Jarkko Sakkinen wrote:
 >> On Mon Apr 29, 2024 at 1:43 PM EEST, Dmitrii Kuvaiskii wrote:
->>> Two enclave threads may try to access the same non-present enclave page
->>> simultaneously (e.g., if the SGX runtime supports lazy allocation). The
->>> threads will end up in sgx_encl_eaug_page(), racing to acquire the
->>> enclave lock. The winning thread will perform EAUG, set up the page
->>> table entry, and insert the page into encl->page_array. The losing
->>> thread will then get -EBUSY on xa_insert(&encl->page_array) and proceed
->>> to error handling path.
->>
->> And that path removes page. Not sure I got gist of this tbh.
-> 
-> Well, this is not about a redundant EREMOVE performed. This is about the
-> enclave page becoming inaccessible due to a bug triggered with a data race.
-> 
-> Consider some enclave page not yet added to the enclave. The enclave
-> performs a memory access to it at the same time on CPU1 and CPU2. Since the
-> page does not yet have a corresponding PTE, the #PF handler on both CPUs
-> calls sgx_vma_fault(). Scenario proceeds as follows:
-> 
-> /*
->  * Fault on CPU1
->  */
-> sgx_vma_fault() {
-> 
->   xa_load(&encl->page_array) == NULL ->
-> 
->   sgx_encl_eaug_page() {
-> 
->     ...                            /*
->                                     * Fault on CPU2
->                                     */
->                                    sgx_vma_fault() {
-> 
->                                      xa_load(&encl->page_array) == NULL ->
-> 
->                                      sgx_encl_eaug_page() {
-> 
->                                        ...
-> 
-
-Up to here it may be helpful to have the CPU1 and CPU2 code run concurrently
-to highlight the race. First one to get the mutex "wins".
-
->                                        mutex_lock(&encl->lock);
->                                        /*
->                                         * alloc encl_page
->                                         */
-
-Please note that encl_page is allocated before mutex is obtained.
-
->                                        /*
->                                         * alloc EPC page
->                                         */
->                                        epc_page = sgx_alloc_epc_page(...);
->                                        /*
->                                         * add page_to enclave's xarray
-
-"page_to" -> "page to" ?
-
->                                         */
->                                        xa_insert(&encl->page_array, ...);
->                                        /*
->                                         * add page to enclave via EAUG
->                                         * (page is in pending state)
->                                         */
->                                        /*
->                                         * add PTE entry
->                                         */
->                                        vmf_insert_pfn(...);
-> 
->                                        mutex_unlock(&encl->lock);
->                                        return VM_FAULT_NOPAGE;
->                                      }
->                                    }
-
-A brief comment under CPU2 essentially stating that this is a "good"
-flow may help. Something like: "All good up to here. Enclave page successfully
-added to enclave, ready for EACCEPT from user space". (please feel free to
-improve)
-
->      mutex_lock(&encl->lock);
->      /*
->       * alloc encl_page
->       */
-
-This should be outside mutex_lock(). It can even be shown earlier how
-CPU1 and CPU2 can allocate encl_page concurrently (which is fine to do).
-
->      /*
->       * alloc EPC page
->       */
->      epc_page = sgx_alloc_epc_page(...);
->      /*
->       * add page_to enclave's xarray,
-
-hmmm ... is page_to actually intended?
-
->       * this fails with -EBUSY
-
-It may help to highlight that this failure is because CPU1 and CPU2 are both
-attempting to access the same page thus the page was already added in CPU2 flow.
-
->       */
->      xa_insert(&encl->page_array, ...);
-> 
->    err_out_shrink:
->      sgx_encl_free_epc_page(epc_page) {
->        /*
->         * remove page via EREMOVE
->         */
-
-This needs emphasis that this is *BAD*. Something like:
-"BUG: Enclave page added from CPU2 is yanked (via EREMOVE)
-from enclave while it remains "accessible" from OS perspective 
-PTE installed with entry in OS's page_array)."
-
-(please feel free to improve)
-
->        /*
->         * free EPC page
->         */
->        sgx_free_epc_page(epc_page);
->      }
-> 
->       mutex_unlock(&encl->lock);
->       return VM_FAULT_SIGBUS;
-
-This needs emphasis that this is *BAD*. "BUG: SIGBUS is
-returned for a valid enclave page."  (please feel free to
-improve)
-
->     }
->   }
-> 
-> CPU2 added the enclave page (in pending state) to the enclave and installed
-> the PTE. The kernel gives control back to the user space, without raising a
-> signal. The user space on CPU2 retries the memory access and induces a page
-> fault, but now with the SGX bit set in the #PF error code. The #PF handler
-> calls do_user_addr_fault(), which calls access_error() and ultimately
-> raises a SIGSEGV. The userspace SIGSEGV handler is supposed to perform
-> EACCEPT, after which point the enclave page becomes accessible.
-> 
-> CPU1 however jumps to the error handling path because the page was already
-> inserted into the enclave's xarray. This error handling path EREMOVEs the
-> page and also raises a SIGBUS signal to user space. The PTE entry is not
-> removed.
-> 
-> After CPU1 performs EREMOVE, this enclave page becomes perpetually
-> inaccessible (until an SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl). This is because
-> the page is marked accessible in the PTE entry but is not EAUGed. Because
-> of this combination, the #PF handler sees the SGX bit set in the #PF error
-
-Which #PF handler are you referring to here?
-
-> code and does not call sgx_vma_fault() but instead raises a SIGSEGV. The
-> userspace SIGSEGV handler cannot perform EACCEPT because the page was not
-> EAUGed. Thus, the user space is stuck with the inaccessible page.
-> 
-> Also note that in the scenario, CPU1 raises a SIGBUS signal to user space
-> unnecessarily. This signal is spurious because a page-access retry on CPU2
-> will also raise the SIGBUS signal. That said, this side effect is less
-> severe because it affects only user space. Therefore, it could be
-> circumvented in user space alone, but it seems reasonable to fix it in this
-> patch.
-
-The variety of the signals and how they could/should be handled by userspace
-are not completely clear to me but the bugs are clear to me and needs to be
-fixed.
-
->>> This error handling path contains two bugs: (1) SIGBUS is sent to
->>> userspace even though the enclave page is correctly installed by another
->>> thread, and (2) sgx_encl_free_epc_page() is called that performs EREMOVE
->>> even though the enclave page was never intended to be removed. The first
->>> bug is less severe because it impacts only the user space; the second
->>> bug is more severe because it also impacts the OS state by ripping the
->>> page (added by the winning thread) from the enclave.
+>>> Two enclave threads may try to add and remove the same enclave page
+>>> simultaneously (e.g., if the SGX runtime supports both lazy allocation
+>>> and `MADV_DONTNEED` semantics). Consider this race:
 >>>
->>> Fix these two bugs (1) by returning VM_FAULT_NOPAGE to the generic Linux
->>> fault handler so that no signal is sent to userspace, and (2) by
->>> replacing sgx_encl_free_epc_page() with sgx_free_epc_page() so that no
->>> EREMOVE is performed.
->>
->> What is the collateral damage caused by ENCLS[EREMOVE]?
-> 
-> As explained above, the damage is that the SGX driver leaves the enclave
-> page metadata in an inconsistent state: on the one hand, the PTE entry is
-> installed which forces the generic Linux fault handler to raise SIGSEGV,
-> and on the other hand, the page is not in a correct state to be EACCEPTed
-> (i.e., EAUG was not performed on this page).
-> 
->>> Fixes: 5a90d2c3f5ef ("x86/sgx: Support adding of pages to an initialized enclave")
+>>> 1. T1 performs page removal in sgx_encl_remove_pages() and stops right
+>>>    after removing the page table entry and right before re-acquiring the
+>>>    enclave lock to EREMOVE and xa_erase(&encl->page_array) the page.
+>>> 2. T2 tries to access the page, and #PF[not_present] is raised. The
+>>>    condition to EAUG in sgx_vma_fault() is not satisfied because the
+>>>    page is still present in encl->page_array, thus the SGX driver
+>>>    assumes that the fault happened because the page was swapped out. The
+>>>    driver continues on a code path that installs a page table entry
+>>>    *without* performing EAUG.
+>>> 3. The enclave page metadata is in inconsistent state: the PTE is
+>>>    installed but there was no EAUG. Thus, T2 in userspace infinitely
+>>>    receives SIGSEGV on this page (and EACCEPT always fails).
+>>>
+>>> Fix this by making sure that T1 (the page-removing thread) always wins
+>>> this data race. In particular, the page-being-removed is marked as such,
+>>> and T2 retries until the page is fully removed.
+>>>
+>>> Fixes: 9849bb27152c ("x86/sgx: Support complete page removal")
 >>> Cc: stable@vger.kernel.org
->>> Reported-by: Marcelina Kościelnicka <mwk@invisiblethingslab.com>
->>> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
 >>> Signed-off-by: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
 >>> ---
->>>  arch/x86/kernel/cpu/sgx/encl.c | 7 +++++--
->>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>>  arch/x86/kernel/cpu/sgx/encl.c  | 3 ++-
+>>>  arch/x86/kernel/cpu/sgx/encl.h  | 3 +++
+>>>  arch/x86/kernel/cpu/sgx/ioctl.c | 1 +
+>>>  3 files changed, 6 insertions(+), 1 deletion(-)
 >>>
 >>> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
->>> index 279148e72459..41f14b1a3025 100644
+>>> index 41f14b1a3025..7ccd8b2fce5f 100644
 >>> --- a/arch/x86/kernel/cpu/sgx/encl.c
 >>> +++ b/arch/x86/kernel/cpu/sgx/encl.c
->>> @@ -382,8 +382,11 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
->>>  	 * If ret == -EBUSY then page was created in another flow while
->>>  	 * running without encl->lock
->>>  	 */
->>> -	if (ret)
->>> +	if (ret) {
->>> +		if (ret == -EBUSY)
->>> +			vmret = VM_FAULT_NOPAGE;
->>>  		goto err_out_shrink;
->>> +	}
+>>> @@ -257,7 +257,8 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
 >>>  
->>>  	pginfo.secs = (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_page);
->>>  	pginfo.addr = encl_page->desc & PAGE_MASK;
->>> @@ -419,7 +422,7 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
->>>  err_out_shrink:
->>>  	sgx_encl_shrink(encl, va_page);
->>>  err_out_epc:
->>> -	sgx_encl_free_epc_page(epc_page);
->>> +	sgx_free_epc_page(epc_page);
+>>>  	/* Entry successfully located. */
+>>>  	if (entry->epc_page) {
+>>> -		if (entry->desc & SGX_ENCL_PAGE_BEING_RECLAIMED)
+>>> +		if (entry->desc & (SGX_ENCL_PAGE_BEING_RECLAIMED |
+>>> +				   SGX_ENCL_PAGE_BEING_REMOVED))
+>>>  			return ERR_PTR(-EBUSY);
+>>>  
+>>>  		return entry;
+>>> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+>>> index f94ff14c9486..fff5f2293ae7 100644
+>>> --- a/arch/x86/kernel/cpu/sgx/encl.h
+>>> +++ b/arch/x86/kernel/cpu/sgx/encl.h
+>>> @@ -25,6 +25,9 @@
+>>>  /* 'desc' bit marking that the page is being reclaimed. */
+>>>  #define SGX_ENCL_PAGE_BEING_RECLAIMED	BIT(3)
+>>>  
+>>> +/* 'desc' bit marking that the page is being removed. */
+>>> +#define SGX_ENCL_PAGE_BEING_REMOVED	BIT(2)
+>>> +
+>>>  struct sgx_encl_page {
+>>>  	unsigned long desc;
+>>>  	unsigned long vm_max_prot_bits:8;
+>>> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+>>> index b65ab214bdf5..c542d4dd3e64 100644
+>>> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+>>> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+>>> @@ -1142,6 +1142,7 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
+>>>  		 * Do not keep encl->lock because of dependency on
+>>>  		 * mmap_lock acquired in sgx_zap_enclave_ptes().
+>>>  		 */
+>>> +		entry->desc |= SGX_ENCL_PAGE_BEING_REMOVED;
+>>>  		mutex_unlock(&encl->lock);
+>>>  
+>>>  		sgx_zap_enclave_ptes(encl, addr);
 >>
->> This ignores check for the page being reclaimer tracked, i.e. it does
->> changes that have been ignored in the commit message.
+>> It is somewhat trivial to NAK this as the commit message does
+>> not do any effort describing the new flag. By default at least
+>> I have strong opposition against any new flags related to
+>> reclaiming even if it needs a bit of extra synchronization
+>> work in the user space.
+>>
+>> One way to describe concurrency scenarios would be to take
+>> example from https://www.kernel.org/doc/Documentation/memory-barriers.txt
+>>
+>> I.e. see the examples with CPU 1 and CPU 2.
 > 
-> Indeed, sgx_encl_free_epc_page() performs the following check:
+> Thank you for the suggestion. Here is my new attempt at describing the racy
+> scenario:
 > 
->   WARN_ON_ONCE(page->flags & SGX_EPC_PAGE_RECLAIMER_TRACKED);
+> Consider some enclave page added to the enclave. User space decides to
+> temporarily remove this page (e.g., emulating the MADV_DONTNEED semantics)
+> on CPU1. At the same time, user space performs a memory access on the same
+> page on CPU2, which results in a #PF and ultimately in sgx_vma_fault().
+> Scenario proceeds as follows:
 > 
-> However, the EPC page is allocated in sgx_encl_eaug_page() and has
-> zeroed-out flags in all error-handling paths. In other words, the page is
-> marked as reclaimable only in the happy path of sgx_encl_eaug_page().
-> Therefore, in the particular code path that I changed this "page reclaimer
-> tracked" condition is always false, and the warning is never printed.
+> /*
+>  * CPU1: User space performs
+>  * ioctl(SGX_IOC_ENCLAVE_REMOVE_PAGES)
+>  * on a single enclave page
+>  */
+> sgx_encl_remove_pages() {
 > 
-> Do you want me to explain this in the commit message?
+>   mutex_lock(&encl->lock);
+> 
+>   entry = sgx_encl_load_page(encl);
+>   /*
+>    * verify that page is
+>    * trimmed and accepted
+>    */
+> 
+>   mutex_unlock(&encl->lock);
+> 
+>   /*
+>    * remove PTE entry; cannot
+>    * be performed under lock
+>    */
+>   sgx_zap_enclave_ptes(encl);
+>                                    /*
+>                                     * Fault on CPU2
+>                                     */
 
-Since original commit did prompt this question I do think it would
-be helpful to add a snippet about this, yes.
+Please highlight that this fault is related to the page that
+is in process of being removed on CPU1.
 
-The fix looks good to me. I assume that you will add the "CPU1 vs CPU2"
-race description in the next version, that will help a lot to make the
-bugs easier to spot. 
+>                                    sgx_vma_fault() {
+>                                      /*
+>                                       * PTE entry was removed, but the
+>                                       * page is still in enclave's xarray
+>                                       */
+>                                      xa_load(&encl->page_array) != NULL ->
+>                                      /*
+>                                       * SGX driver thinks that this page
+>                                       * was swapped out and loads it
+>                                       */
+>                                      mutex_lock(&encl->lock);
+>                                      /*
+>                                       * this is effectively a no-op
+>                                       */
+>                                      entry = sgx_encl_load_page_in_vma();
+>                                      /*
+>                                       * add PTE entry
+>                                       */
 
-Thanks again for this. Great catch.
+It may be helpful to highlight that this is a problem: "BUG: A PTE
+is installed for a page in process of being removed." (please feel free
+to expand)
+
+>                                      vmf_insert_pfn(...);
+> 
+>                                      mutex_unlock(&encl->lock);
+>                                      return VM_FAULT_NOPAGE;
+>                                    }
+>   /*
+>    * continue with page removal
+>    */
+>   mutex_lock(&encl->lock);
+> 
+>   sgx_encl_free_epc_page(epc_page) {
+>     /*
+>      * remove page via EREMOVE
+>      */
+>     /*
+>      * free EPC page
+>      */
+>     sgx_free_epc_page(epc_page);
+>   }
+> 
+>   xa_erase(&encl->page_array);
+> 
+>   mutex_unlock(&encl->lock);
+> }
+> 
+> CPU1 removed the page. However CPU2 installed the PTE entry on the
+> same page. This enclave page becomes perpetually inaccessible (until
+> another SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl). This is because the page is
+> marked accessible in the PTE entry but is not EAUGed. Because of this
+> combination, any subsequent access to this page raises a fault, and the #PF
+> handler sees the SGX bit set in the #PF error code and does not call
+
+Which #PF handler?
+
+> sgx_vma_fault() but instead raises a SIGSEGV. The userspace SIGSEGV handler
+> cannot perform EACCEPT because the page was not EAUGed. Thus, the user
+> space is stuck with the inaccessible page.
+> 
+> This race can be fixed by forcing the fault handler on CPU2 to back off if
+> the page is currently being removed (on CPU1). Thus a simple change is to
+> introduce a new flag SGX_ENCL_PAGE_BEING_REMOVED, which is unset by default
+> and set only right-before the first mutex_unlock() in
+> sgx_encl_remove_pages(). Upon loading the page, CPU2 checks whether this
+> page is being removed, and if yes then CPU2 backs off and waits until the
+> page is completely removed. After that, any memory access to this page
+> results in a normal "allocate and EAUG a page on #PF" flow.
+
+I have been tripped by these page flags before so would appreciate
+another opinion. From my side this looks like an appropriate fix.
 
 Reinette
- 
+
+
