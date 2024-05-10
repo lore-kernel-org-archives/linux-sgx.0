@@ -1,58 +1,67 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2088.outbound.protection.outlook.com [40.107.237.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2606FC0B;
-	Fri, 10 May 2024 20:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715374012; cv=none; b=geQVrchc+AfvYzzclQOQQ+TErlcBV+Tix/hs6oBTrtt6ocWMwssU/TpM+JEXokX7guMrE0g0RcxuD8S8aCuRXRvgoVZVZxv5cht7pVJnnVmsTiSo10u2nZ/LYr1q951RaRLJq6eA/ZMQ7eHKN4SwXdjT/dMOhKQpuNT8lgDx9jk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715374012; c=relaxed/simple;
-	bh=fdvro2SMQFvU7C5zN+OrfigUP0qDunUUywy2/UNF0SA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=pNuIvWyJY4Cla8ZWAfvCCrB5XnoNXadkBWS1sGg9j1yxhgVwEVttETVs3ssONoupWe4rK18L+XK3RsyANQS8G7MVsCEhhERNnMMGU5YMzzhYfqW1aLpIJgPpa5/sInOdU9AxYRQNJb2iNLyO5H3286nyDxqvRzRgw3STzxPj5dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RI6SwIoQ; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6133D4CE05;
+	Fri, 10 May 2024 20:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715374350; cv=fail; b=LS0HZHd1u3MaRCZ2EQbatIu3YDQIHR1LD7R/wdl6QzH3qTfYtCvSTSAFyW+lTR+u3mFJjl/I512Fs/aHGfc0X4ZvFze6Yupj6x2fH/Fr7EIxL0AdxtV9YVZWlN6gBgFUqo8Vp741vHcsu6JGb6lhYEvzH88h/CdTx+dnsblx3+k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715374350; c=relaxed/simple;
+	bh=4RxBTlP3vkVPxYjWbcDPue4HcP6NhjNCKEqUyGWCO6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bUakfBuj8wD9EIrTHU+q4rNs/Uvbf4JfXZMAG9vnSAsnhrXpeiQr+Xff/lPi7WGVJ9wxoj3SCbne/XftRtJZyTI0t7x0O3U+ix9buuajpLSRLfqyOGsEpWo5hKBav/uOM2F0c7dZ0rjxV81+QNXGOzrcpmua9azbUlZweMk6eFk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JBHSB80w; arc=fail smtp.client-ip=40.107.237.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RI6SwIoQ"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a934ad50so590931866b.1;
-        Fri, 10 May 2024 13:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715374009; x=1715978809; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WMEM98RiYUq0hdtm/YdPk4weUn162VqCwHj8usxBrh0=;
-        b=RI6SwIoQ9Xd8SElEE0YLXfSxnD6ywvuE2ooSIO2EMIGmUUB0i/vGXS43DhD6AaewDO
-         2hDJyBGS8qdC89/DtfK84b0+166Mn+h8IjW8aTVW/bC5Zmp9rTHwM6BqPUil15uVMRCn
-         M3ppPam+KC9GFwShtQdJr98XUC5a1Ebigkg+w0I0bAj3O7l9KUZXMd07RtpJJ9f6qls8
-         exZQLg/NE+F79UTK15op2D6I4ya5ZusUWe4xOXb3Wum6imwuWPNe3HhgZcx4qL/6FXsE
-         fVnND1ONmlS6Xgk82gAZV8iOjlayyqbsUK5BB17wfhnn9UaP6/ZNNiHb001LQVsyath1
-         VMfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715374009; x=1715978809;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WMEM98RiYUq0hdtm/YdPk4weUn162VqCwHj8usxBrh0=;
-        b=TWvGP0oII2/thL9pgBPv6ZrSB0UujbqrJXopQkVBp6+s2M9c37bd0F/a5BEHLdI7cQ
-         1E+dDuOxsH4l6576A5ReD5Iu4nAJdjmY7x9a0val6etYqhA6F9bYcAVS7Uz0lZ59IFI+
-         Tr8TNoWsrg4kQ26hHSuxARihLwbhjUgYx/cVRuYc569nOaRn+Z1nitRPUlchCBZjYxuL
-         ztuffZRF3eBFWYRGDlwSzLC+4iriv8xJg4CfE6QvMUqweptUJMN3wUmvHBl6BOydhrBR
-         TOY7LdEXqBnDBFbPyiRYAi4Zv7gcImUzUfO7uEW1MtfB3w6CtA26W8ZXrNAibZKXvrn+
-         o2/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWMzCWMzx+n4vv//+EGG85CoDHG14jHljd97psyrqqUGhHGwVV72M/tvB6japZJxX+atEHKGs7iSvXeAlDGF28DQsxTZ/09PsKg/7VRNGiX/esfyex43FKm/P+Q5uw8FkhzVfi+1F8W
-X-Gm-Message-State: AOJu0Yy7+/pB/j8xr9NVlnqeboI/YJ5kF8p7nnTemc52jlWeN8CECgve
-	/tX+P5t0BsawPjPzi9LiLVLS85uk7D9vfEwJfL5cG4KjRGaPGLZ/s61yRH3L
-X-Google-Smtp-Source: AGHT+IEdoRgVqcTVs95ruV6D74mUnZI1UyKgszD5KL5X4ahLlK5JkYVuQ4kebfo/LFj3lkuKsI5Vww==
-X-Received: by 2002:a50:c349:0:b0:56d:faa2:789b with SMTP id 4fb4d7f45d1cf-5734d6df1dcmr2213346a12.40.1715374008474;
-        Fri, 10 May 2024 13:46:48 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-221.xnet.hr. [88.207.42.221])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfb83sm2206598a12.46.2024.05.10.13.46.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 13:46:48 -0700 (PDT)
-Message-ID: <150006c9-18c9-459d-9e38-58e83d6653ae@gmail.com>
-Date: Fri, 10 May 2024 22:46:47 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JBHSB80w"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hs7EzgV95ijzNcsJTfmo0XGUwb55HQmzDEWaMbYPRe9HDhzWVs4vcROD+InGo4SnUs3ErTAmjsEkRfEPuw2L8ISWnf9HHdfzurB3d6yuECr8X1EfUilVOxejlC0Iq0oKflmiiPwouwDDdtji5/B9XNOTBhKWy4s/eP6It2jG5h/ltp3RjcBRj9s9oFlOL8QbvO8LsqSK348G9VZTqE+mGsIuDH+BXYpwaKTxp7eXGEQi+pmOrGCgZTFq8+96vf2VWSvkzrLwGg76LGtNoIFSw3hiUgMo0SZcGY7i6dx25g2IbJlWwUUyZ5bQGTGoT4Jw+/qyQ+AnuYrsoy4XzUwZUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0lcWRLUuRGUZgiMFYby1sNEhICC3GFqhiiTUyXYTtXY=;
+ b=e/FyzqpXksWbK4LA+dAT2psx6elAL8gMHdbvzhajKPEjT+TX1ngqdgUlLACmdrcae/TwFnXyByIlrKhaH8FjMRjRpsOGgSnrEtcZx3ahPy/Q8zY2trKuasqBgQoS2x5QjEfZ6E8YRMK17D7zSzbZYcOeNiRUp8VPGAOJKLo5DjCAOnnm3xuFhX7zmJEW5W5UwLGd3i7CvxfOGQj+tFgBRvvXjcbx4r7UxaGutF70O5edA1uuKm6tzGSYaZxCFWu/Qsad0JedHNM2ffK3NkjQ1ivniFmJaeJO8BWOxNCaG2bPO2JVri718zlnsp2A4Kt0I/beRIDqaB38BV+sBHYTIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0lcWRLUuRGUZgiMFYby1sNEhICC3GFqhiiTUyXYTtXY=;
+ b=JBHSB80wgi8qu2tc8TvKXGKR0L/hLzLrGGcTBUBNQ2qLQL0xLOi48SVJpNLN9pKtCK1LCTMNOy47FN96koVNPwbBQ5Ld2KX1iTgNUJpQQDJ9mv0IOEUcP6up+1do+sX3+fkqAc0WsaQSYplgp+dW965tMrZp1LhT6Ki3c6aZnOvzLVSCA/gIejg7rA635b3mZOurvjZoOhmya5VhGWu9YW7pVo5THlRSXdjpIGa4H3twi+gVKB/TntO3qmljn0LJ2GdHOC3PFtCcvnw+ZBLxK2DB9uvRnDLJznmaG8r0YZzNUTwlinQF0o+yceQUtoC4Hcpl8IVEpSVZ7rbdRsJCrA==
+Received: from CH2PR18CA0005.namprd18.prod.outlook.com (2603:10b6:610:4f::15)
+ by SJ1PR12MB6241.namprd12.prod.outlook.com (2603:10b6:a03:458::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.48; Fri, 10 May
+ 2024 20:52:24 +0000
+Received: from CH1PEPF0000AD7D.namprd04.prod.outlook.com
+ (2603:10b6:610:4f:cafe::54) by CH2PR18CA0005.outlook.office365.com
+ (2603:10b6:610:4f::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41 via Frontend
+ Transport; Fri, 10 May 2024 20:52:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH1PEPF0000AD7D.mail.protection.outlook.com (10.167.244.86) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7452.22 via Frontend Transport; Fri, 10 May 2024 20:52:24 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 10 May
+ 2024 13:52:10 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 10 May
+ 2024 13:52:09 -0700
+Message-ID: <4dcd5fca-c200-42d1-a8f2-3045d5430fd6@nvidia.com>
+Date: Fri, 10 May 2024 13:52:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -60,110 +69,106 @@ List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-kselftest@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Shuah Khan <shuah@kernel.org>,
- linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: [PATCH v1 1/1] selftests/sgx: Fix the implicit declaration of
+Subject: Re: [PATCH v1 1/1] selftests/sgx: Fix the implicit declaration of
  asprintf() compiler error
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To: Mirsad Todorovac <mtodorovac69@gmail.com>,
+	<linux-kselftest@vger.kernel.org>
+CC: Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Shuah Khan <shuah@kernel.org>,
+	<linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Edward Liaw
+	<edliaw@google.com>
+References: <656c3b4a-0481-4634-9dd4-19bb9e4cd612@gmail.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <656c3b4a-0481-4634-9dd4-19bb9e4cd612@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7D:EE_|SJ1PR12MB6241:EE_
+X-MS-Office365-Filtering-Correlation-Id: 04877da6-cb2b-49b4-a24d-08dc71331829
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|36860700004|376005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OEZ1MTJzaktzbFhjY0RSMy9qaTF0ZU5McCsyNHRZYTIyZ3NrRllOSFE2b0NO?=
+ =?utf-8?B?bVE4UCtBbTc1YVdZL25xTm9rbTRKZURQbG1sd3VNQkdKRHkyY3JFWG9SSWcw?=
+ =?utf-8?B?aVZwd0kxUW9xUVlVS3A5a2hhNDBabk85SnZiU3o4ZWpidkhJZjZrTDBqaVpv?=
+ =?utf-8?B?RWVVQUVwM3NwUUhWSHVrQzVSUE1xcDF6WWM3MFdHd3p1U3p3ZnZleXRWeUVP?=
+ =?utf-8?B?cnh1ekpLRHhHaVB0VkJCVW9SWisvWW1LdHc1VVNIVU1XS3Zud1RNTTZjZnhP?=
+ =?utf-8?B?N1YxNmRVV2QzcXEwVlpvZUhXQVM5M00vVjN5K29QU2M4TG9sS0ZIZ3BReWxD?=
+ =?utf-8?B?NFVlRzZuWFFLUWxQSmlqb0ZkSmtZdWx1STJlVjlGdzRDc2NKK3NVV0E4ZytV?=
+ =?utf-8?B?SDRUVjVnRlZQdWxQcDFYVEoyWml2QXRwQnJjeXBrdUJqbFlLT3NEZ0hqVC92?=
+ =?utf-8?B?bDBnR2c4eXhOL2xCWEZ3RllWTEJ1Si9xaUU0YktjRXNWTm9sYk4vY2EzZTF1?=
+ =?utf-8?B?L2VQN0VuM05VdWtVTmR6K09iY2pOL3VPZThiWSs3UlZVejNncWFTSkJuNnZM?=
+ =?utf-8?B?Tnc1MFNQTlFOMEZYSDRodFlPQlFSKy8rNjVNRWFvZ3dnTmdqa3VBTzYzOW1y?=
+ =?utf-8?B?WWQ0ejBxeGNmclpJT1JzdmE1MTJ0czg2KzZHRzdGdDJQOXJnTjRseDhlcjFy?=
+ =?utf-8?B?NGRmME5CQlc1cnlhenE5bTk0ZG5hTWdHQnlzQklTRFlSenRqMW9GMFB4Q0kv?=
+ =?utf-8?B?YXBFamZ6WHF2RUZWQ2htdlJpdmNISXNYZ3lBOS8vUkoxUkVXZlZ0UHNyR3BX?=
+ =?utf-8?B?M3hyS1FHbUlycGtIbzQvSUV3WlFLak94OWV4OEpTdTVSYVEwTTlRNXQrQ3lE?=
+ =?utf-8?B?YmIzL0ZoRDJyaHJZMW5jN1F3QXM0NFd4M0hJS25rdnZ4bFIwYkhwaFRvV1cy?=
+ =?utf-8?B?RHlaVXMvcHEvUXkrV0FtN1ZXZVhISUZzZW5XVEs0L2k1NXRoR3pFcy9FQVJC?=
+ =?utf-8?B?SWwweTRQQWJqbGVxdlZQanpaZGZ6QnBXbzVnVXZ4T211MGtiSE5TVmpJeEYv?=
+ =?utf-8?B?V3VJaktsT3BvUFVFU3BtMHpiQk9MMmtvY21YV3A5TVkwK3F4SmZ2S1Q2R0Iy?=
+ =?utf-8?B?OGFjUkRvRUY2SmRJSHJ0SHlkQStIaE03TmF4RG1mYUdzRWVJS2VHdUhodVkz?=
+ =?utf-8?B?SjhjUERtTk5TUVU2NFdEOENVbEo3cVpOcHNFaEEwMlNhQUtmQVB2cjlia0Nm?=
+ =?utf-8?B?RUlHQ2UzSnRZYlVQdWhFSVRJR0Fxc24yaVVWMlNVNTBUWkUvTStWRXdzd0lo?=
+ =?utf-8?B?WGcwTnV0YXZ1Smx0Wkx6MHV2b1I0U1VsK0l2cU9iMUhZT3BMUG5QMk91U0tV?=
+ =?utf-8?B?U0JQZm1ic3JaTW9DZWhmaTE3NUxGRVphMWtvbUJXa3I0V0FGekh3cG13NVg1?=
+ =?utf-8?B?eWhVc1hCVjFWOFpGWXlHMnd0bE5tdWVUc011Q0pNTUhvTmdrdi9VWGQrbmt3?=
+ =?utf-8?B?RlJ0MUFlaUNKSUlDVGYxY1lsak5wNlk3SlN4cGxibDdXeUFlcUxZc3QrUjV0?=
+ =?utf-8?B?U2dNU0dBQjVQbDVkYjFQQ3dxN0F2Y2ZIa3hQUWxxZDFQUHd4cWd1Z2ZmRzlj?=
+ =?utf-8?B?RG1ONUViOGJLTnlEL1JLQ3ZzQkZEMVlnbWdvQnJ0WkZia2xnUWRvcHMzWDA2?=
+ =?utf-8?B?OE5NdVhQZXJ4dlpiTEd5MmQ4bWowaWFNMEpaMXV0MFJBdzlWSnBqMEd0ZkpJ?=
+ =?utf-8?B?L0htN21GV3FsOGxlcTRDTnpVWnJPMUNDL1R5NWN2YU1kS3BwUWcvTy9IN3Iw?=
+ =?utf-8?B?VXZ4dTRiaDdhREIrKzZnVDU3YzIxbXIyWEQxZU9UNkRKREVMdGZ2UURQT3lW?=
+ =?utf-8?Q?tQu5XaMj8rMhq?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(82310400017)(36860700004)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 20:52:24.0701
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04877da6-cb2b-49b4-a24d-08dc71331829
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6241
 
-The selftest/sgx/main.c didn't compile with [-Werror=implicit-function-declaration]
-[edited]:
+On 5/10/24 1:37 PM, Mirsad Todorovac wrote:
+...
+> The fix defines __USE_GNU before including <stdio.h> in case it isn't already
+> defined. After this intervention the module compiles OK.
 
-make[3]: Entering directory 'tools/testing/selftests/sgx'
-gcc -Wall -Werror -g -Itools/testing/selftests/../../../tools/include -fPIC -c main.c \
-        -o tools/testing/selftests/sgx/main.o
-In file included from main.c:21:
-../kselftest_harness.h: In function ‘__run_test’:
-../kselftest_harness.h:1169:13: error: implicit declaration of function ‘asprintf’; \
-        did you mean ‘vsprintf’? [-Werror=implicit-function-declaration]
- 1169 |         if (asprintf(&test_name, "%s%s%s.%s", f->name,
-      |             ^~~~~~~~
-      |             vsprintf
-cc1: all warnings being treated as errors
-make[3]: *** [Makefile:36: tools/testing/selftests/sgx/main.o] Error 1
-
-The cause is in the included <stdio.h> on Ubuntu 22.04 LTS:
-
- 19 /*
- 20  *      ISO C99 Standard: 7.19 Input/output     <stdio.h>
- 21  */
-.
-.
-.
-387 #if __GLIBC_USE (LIB_EXT2)
-388 /* Write formatted output to a string dynamically allocated with `malloc'.
-389    Store the address of the string in *PTR.  */
-390 extern int vasprintf (char **__restrict __ptr, const char *__restrict __f,
-391                       __gnuc_va_list __arg)
-392      __THROWNL __attribute__ ((__format__ (__printf__, 2, 0))) __wur;
-393 extern int __asprintf (char **__restrict __ptr,
-394                        const char *__restrict __fmt, ...)
-395      __THROWNL __attribute__ ((__format__ (__printf__, 2, 3))) __wur;
-396 extern int asprintf (char **__restrict __ptr,
-397                      const char *__restrict __fmt, ...)
-398      __THROWNL __attribute__ ((__format__ (__printf__, 2, 3))) __wur;
-399 #endif
-
-__GLIBC_USE (LIB_EXT2) expands into __GLIBC_USE_LIB_EXT2 as defined here:
-
-/usr/include/features.h:186:#define __GLIBC_USE(F)      __GLIBC_USE_ ## F
-
-Now, what is unobvious is that <stdio.h> includes
-
-/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
-------------------------------------------------------
- 35 /* ISO/IEC TR 24731-2:2010 defines the __STDC_WANT_LIB_EXT2__
- 36    macro.  */
- 37 #undef __GLIBC_USE_LIB_EXT2
- 38 #if (defined __USE_GNU                                                  \
- 39      || (defined __STDC_WANT_LIB_EXT2__ && __STDC_WANT_LIB_EXT2__ > 0))
- 40 # define __GLIBC_USE_LIB_EXT2 1
- 41 #else
- 42 # define __GLIBC_USE_LIB_EXT2 0
- 43 #endif
-
-This makes <stdio.h> exclude line 396 and asprintf() prototype from normal
-include file processing.
-
-The fix defines __USE_GNU before including <stdio.h> in case it isn't already
-defined. After this intervention the module compiles OK.
-
-Converting snprintf() to asprintf() in selftests/kselftest_harness.h:1169
-created this new dependency and the implicit declaration broke the compilation.
-
-Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
-Cc: Edward Liaw <edliaw@google.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-sgx@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Mirsad Todorovac <mtodorov69@gmail.com>
----
- tools/testing/selftests/sgx/main.c | 3 +++
- 1 file changed, 3 insertions(+)
+Instead of interventions, I believe the standard way to do this is to simply
+define _GNU_SOURCE before including the header file(s). For example, the
+following also fixes the compilation failure on Ubuntu:
 
 diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 9820b3809c69..f5cb426bd797 100644
+index 9820b3809c69..bb6e795d06e2 100644
 --- a/tools/testing/selftests/sgx/main.c
 +++ b/tools/testing/selftests/sgx/main.c
-@@ -6,6 +6,9 @@
- #include <errno.h>
- #include <fcntl.h>
- #include <stdbool.h>
-+#ifndef __USE_GNU
-+#define __USE_GNU
-+#endif
- #include <stdio.h>
- #include <stdint.h>
- #include <stdlib.h>
--- 
-2.34.1
+@@ -1,6 +1,7 @@
+  // SPDX-License-Identifier: GPL-2.0
+  /*  Copyright(c) 2016-20 Intel Corporation. */
+  
++#define _GNU_SOURCE
+  #include <cpuid.h>
+  #include <elf.h>
+  #include <errno.h>
 
+
+However, that's not required, because Edward Liaw is already on v4 of
+a patchset[1] that fixes up the _GNU_SOURCE problem for all selftests.
+
+[1] https://lore.kernel.org/all/20240510000842.410729-2-edliaw@google.com/
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
