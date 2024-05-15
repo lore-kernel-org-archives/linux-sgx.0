@@ -1,218 +1,203 @@
-Received: from out0-221.mail.aliyun.com (out0-221.mail.aliyun.com [140.205.0.221])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC20C4879B;
-	Wed, 15 May 2024 07:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D908F2CCD0;
+	Wed, 15 May 2024 12:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715759939; cv=none; b=pNDbTAXjS4c+k9q8LdJbpHQajstVT3qf1EH56Jid01G0PH62+LEnJ3k7WH04B21WpXBcSC1xmuX5TBxe7j8ZvdJMpIqCRMpi9iZ6C+5SC9yXyzIXCWUknyTcEUdg9fz1XiSe2P9pvARWab29STKl6SiyEd+CSNBNSNhnDyxRWTQ=
+	t=1715774782; cv=none; b=ebk0BQ3kyeZiKnj5W5oAxe7Ud0+zY0pfb4NhATAiS6nxW10CLwjR6AsbP6P+FpAkMJILZBHQuczFFyMpz1p0Kkw9ATr5Jy0mLdfKnlzMfodsn7Mn7j8uboDUyyqRcrboj+Q+R+FQENmrt5Zhzwk1jF5MaOI9Rc+EeHa2K/QzMK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715759939; c=relaxed/simple;
-	bh=JyAC/PWdE9ylEuXalxIwuA91LlSHQxAUpNeMRek+xAM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S7SFVZvgDu7Df5AhqoZybaisY+5h8f4zIr3FLUagTC7f7cYw5TbxgFxnoYwdtqBbpFcBCGuA75EdMNj3zMhSrOohTO1sUqfzucN6Z1DXFPPjmih4RchXFE4AHmP0JUV03HMzbWWMc5SVLfF5r5XlgR3JbYDzKDbRfMBMpEOpPHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=OaCNHnGk; arc=none smtp.client-ip=140.205.0.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+	s=arc-20240116; t=1715774782; c=relaxed/simple;
+	bh=fBp/tINIW/W/kb+0aD/MBS7XiS6Vf70YTcOdC+Nzzu8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=BHLV35ZHNN07j06ioT0a3nC+KE6PQFCVbbkTgH6lcFj0zAnWh5I7UVr6BUa/xMazhwJujuDWkv3Hbrl/EGdvAH0bGIcaELmiPX+GIoTvDD2bQBu2QIy9+1CZEjWmNj+9g1LBPVa8swvZ7t+u1VB/G+t0XB3I7mKvF+DVxP0EzAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jE1G4tFl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="OaCNHnGk"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1715759933; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=hpx+4O6VSym8I2MXU0WRGTCsP3ZciqQA0E7w0LMWHlA=;
-	b=OaCNHnGkysPWV0X6xNXaaz7bKbwny0vegc/2goYtkOvucIJpzqhCfhZp/t86k5CPsnbTqgYkCkFNEFFeEb5JXpNTgd9xkvR0gBOe24/PIzEJutOEXPdJNGIzpFtHgTz53VSA9FV0TO3ezxOKU+Nyx4gjmll/kWh3n8qFbDx7U30=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R581e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047213;MF=zhubojun.zbj@antgroup.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---.Xd0WWE._1715756252;
-Received: from localhost(mailfrom:zhubojun.zbj@antgroup.com fp:SMTPD_---.Xd0WWE._1715756252)
-          by smtp.aliyun-inc.com;
-          Wed, 15 May 2024 14:57:38 +0800
-From: "Bojun Zhu" <zhubojun.zbj@antgroup.com>
-To: linux-kernel@vger.kernel.org,
-	linux-sgx@vger.kernel.org,
-	jarkko@kernel.org,
-	dave.hansen@linux.intel.com
-Cc:  <reinette.chatre@intel.com>,
-  "=?UTF-8?B?5YiY5Y+MKOi9qeWxuSk=?=" <ls123674@antgroup.com>,
-  "Bojun Zhu" <zhubojun.zbj@antgroup.com>
-Subject: [RFC PATCH v3 0/1] x86/sgx: Explicitly give up the CPU in EDMM's ioctl() to avoid softlockup
-Date: Wed, 15 May 2024 14:55:20 +0800
-Message-Id: <20240515065521.67908-1-zhubojun.zbj@antgroup.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jE1G4tFl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11B7BC32782;
+	Wed, 15 May 2024 12:06:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715774781;
+	bh=fBp/tINIW/W/kb+0aD/MBS7XiS6Vf70YTcOdC+Nzzu8=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=jE1G4tFlE8+tZ8b7ToRce/5HR6xRftU+pd65LJYbajyMV/mZYwddKcvqi4HmBn/05
+	 tTqZMTURRct4InNdr4d3cRWODupifG2OZvahfm2gYqAiXwLfqmJRMSSWsYUgrb4RwA
+	 mpE1zQHh54/LLouqht5Fm5a2Xq2gxZTAX3xu0TB2eCZNCr5bwocuywfoWuYmVCaflz
+	 4ox3qPgixEQ8oyUbeTcZtwrZ/WEFvxBZs6vlTzn5l5MzKmZzBR1RkuALCEmAmGnmTF
+	 SIW69+AvQTznfCIabF1Xi1L57+rnWomUPJ+FljglAsJ9Aou+Z+W60A9JAIDhryJBui
+	 LeMNcZfMH2WBA==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 15 May 2024 15:06:18 +0300
+Message-Id: <D1A7EBO71WXC.P08C5KQ97AA0@kernel.org>
+Cc: <reinette.chatre@intel.com>, =?utf-8?b?5YiY5Y+MKOi9qeWxuSk=?=
+ <ls123674@antgroup.com>
+Subject: Re: [RFC PATCH v3 1/1] x86/sgx: Explicitly give up the CPU in
+ EDMM's ioctl() to avoid softlockup
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Bojun Zhu" <zhubojun.zbj@antgroup.com>, <linux-kernel@vger.kernel.org>,
+ <linux-sgx@vger.kernel.org>, <dave.hansen@linux.intel.com>
+X-Mailer: aerc 0.17.0
+References: <20240515065521.67908-1-zhubojun.zbj@antgroup.com>
+ <20240515065521.67908-2-zhubojun.zbj@antgroup.com>
+In-Reply-To: <20240515065521.67908-2-zhubojun.zbj@antgroup.com>
 
-Hi folks,
+On Wed May 15, 2024 at 9:55 AM EEST, Bojun Zhu wrote:
+> EDMM's ioctl()s support batch operations, which may be
+> time-consuming. Try to explicitly give up the CPU as the prefix
+> operation at the every begin of "for loop" in
+> sgx_enclave_{ modify_types | restrict_permissions | remove_pages}
+> to give other tasks a chance to run, and avoid softlockup warning.
+>
+> Additionally perform pending signals check as the prefix operation,
+> and introduce sgx_check_signal_and_resched(),
+> which wraps all the checks.
+>
+> The following has been observed on Linux v6.9-rc5 with kernel
+> preemptions disabled(by configuring "PREEMPT_NONE=3Dy"), when kernel
+> is requested to restrict page permissions of a large number of EPC pages.
+>
+>     ------------[ cut here ]------------
+>     watchdog: BUG: soft lockup - CPU#45 stuck for 22s!
+>     ...
+>     RIP: 0010:sgx_enclave_restrict_permissions+0xba/0x1f0
+>     ...
+>     Call Trace:
+>      sgx_ioctl
+>      __x64_sys_ioctl
+>      x64_sys_call
+>      do_syscall_64
+>      entry_SYSCALL_64_after_hwframe
+>     ------------[ end trace ]------------
+>
 
-This is the third version of the patch to fix the softlockup in EDMM iotcl(=
-)[1][2].
+Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-If we run an enclave equipped with large EPC(30G or greater on my platfrom)
-on the Linux with kernel preemptions disabled(by configuring
-"CONFIG_PREEMPT_NONE=3Dy"), we will get the following softlockup warning=20
-messages being reported in "dmesg" log:
+> Signed-off-by: Bojun Zhu <zhubojun.zbj@antgroup.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/ioctl.c | 40 +++++++++++++++++++++++----------
+>  1 file changed, 28 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/io=
+ctl.c
+> index b65ab214bdf5..6199f483143e 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -365,6 +365,20 @@ static int sgx_validate_offset_length(struct sgx_enc=
+l *encl,
+>  	return 0;
+>  }
+> =20
+> +/*
+> + * Check signals and invoke scheduler. Return true for a pending signal.
+> + */
+> +static bool sgx_check_signal_and_resched(void)
+> +{
+> +	if (signal_pending(current))
+> +		return true;
+> +
+> +	if (need_resched())
+> +		cond_resched();
+> +
+> +	return false;
+> +}
+> +
+>  /**
+>   * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PA=
+GES
+>   * @encl:       an enclave pointer
+> @@ -409,7 +423,7 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl=
+ *encl, void __user *arg)
+>  	struct sgx_enclave_add_pages add_arg;
+>  	struct sgx_secinfo secinfo;
+>  	unsigned long c;
+> -	int ret;
+> +	int ret =3D -ERESTARTSYS;
+> =20
+>  	if (!test_bit(SGX_ENCL_CREATED, &encl->flags) ||
+>  	    test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
+> @@ -432,15 +446,8 @@ static long sgx_ioc_enclave_add_pages(struct sgx_enc=
+l *encl, void __user *arg)
+>  		return -EINVAL;
+> =20
+>  	for (c =3D 0 ; c < add_arg.length; c +=3D PAGE_SIZE) {
+> -		if (signal_pending(current)) {
+> -			if (!c)
+> -				ret =3D -ERESTARTSYS;
+> -
+> +		if (sgx_check_signal_and_resched())
+>  			break;
+> -		}
+> -
+> -		if (need_resched())
+> -			cond_resched();
+> =20
+>  		ret =3D sgx_encl_add_page(encl, add_arg.src + c, add_arg.offset + c,
+>  					&secinfo, add_arg.flags);
+> @@ -740,12 +747,15 @@ sgx_enclave_restrict_permissions(struct sgx_encl *e=
+ncl,
+>  	unsigned long addr;
+>  	unsigned long c;
+>  	void *epc_virt;
+> -	int ret;
+> +	int ret =3D -ERESTARTSYS;
+> =20
+>  	memset(&secinfo, 0, sizeof(secinfo));
+>  	secinfo.flags =3D modp->permissions & SGX_SECINFO_PERMISSION_MASK;
+> =20
+>  	for (c =3D 0 ; c < modp->length; c +=3D PAGE_SIZE) {
+> +		if (sgx_check_signal_and_resched())
+> +			goto out;
+> +
+>  		addr =3D encl->base + modp->offset + c;
+> =20
+>  		sgx_reclaim_direct();
+> @@ -898,7 +908,7 @@ static long sgx_enclave_modify_types(struct sgx_encl =
+*encl,
+>  	unsigned long addr;
+>  	unsigned long c;
+>  	void *epc_virt;
+> -	int ret;
+> +	int ret =3D -ERESTARTSYS;
+> =20
+>  	page_type =3D modt->page_type & SGX_PAGE_TYPE_MASK;
+> =20
+> @@ -913,6 +923,9 @@ static long sgx_enclave_modify_types(struct sgx_encl =
+*encl,
+>  	secinfo.flags =3D page_type << 8;
+> =20
+>  	for (c =3D 0 ; c < modt->length; c +=3D PAGE_SIZE) {
+> +		if (sgx_check_signal_and_resched())
+> +			goto out;
+> +
+>  		addr =3D encl->base + modt->offset + c;
+> =20
+>  		sgx_reclaim_direct();
+> @@ -1095,12 +1108,15 @@ static long sgx_encl_remove_pages(struct sgx_encl=
+ *encl,
+>  	unsigned long addr;
+>  	unsigned long c;
+>  	void *epc_virt;
+> -	int ret;
+> +	int ret =3D -ERESTARTSYS;
+> =20
+>  	memset(&secinfo, 0, sizeof(secinfo));
+>  	secinfo.flags =3D SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X;
+> =20
+>  	for (c =3D 0 ; c < params->length; c +=3D PAGE_SIZE) {
+> +		if (sgx_check_signal_and_resched())
+> +			goto out;
+> +
+>  		addr =3D encl->base + params->offset + c;
+> =20
+>  		sgx_reclaim_direct();
 
-The EDMM's ioctl()s (sgx_ioc_enclave_{ modify_types | restrict_permissions =
-|  remove_pages})=20
-interface provided by kernel support batch changing attributes of enclave's=
- EPC.
-If userspace App requests kernel to handle too many EPC pages, kernel
-may stuck for a long time(with preemption disabled).
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-The log is as follows:
-
-------------[ cut here ]------------
-[  901.101294] watchdog: BUG: soft lockup - CPU#92 stuck for 23s! [occlum-r=
-un:4289]
-[  901.109617] Modules linked in: veth xt_conntrack xt_MASQUERADE nf_conntr=
-ack_netlink nfnetlink xfrm_user xfrm_algo iptable_nat nf_nat nf_conntrack n=
-f_defrag_ipv6 nf_defrag_ipv4 libcrc32c xt_addrtype iptable_filter br_netfil=
-ter bridge stp llc overlay nls_iso8859_1 intel_rapl_msr intel_rapl_common i=
-ntel_uncore_frequency intel_uncore_frequency_common i10nm_edac nfit binfmt_=
-misc ipmi_ssif x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm=
- crct10dif_pclmul polyval_clmulni polyval_generic ghash_clmulni_intel sha51=
-2_ssse3 sha256_ssse3 pmt_telemetry sha1_ssse3 pmt_class joydev intel_sdsi i=
-nput_leds aesni_intel crypto_simd cryptd dax_hmem cxl_acpi cmdlinepart rapl=
- cxl_core ast spi_nor intel_cstate drm_shmem_helper einj mtd drm_kms_helper=
- mei_me idxd isst_if_mmio isst_if_mbox_pci isst_if_common intel_vsec idxd_b=
-us mei acpi_ipmi ipmi_si ipmi_devintf ipmi_msghandler acpi_pad acpi_power_m=
-eter mac_hid sch_fq_codel msr parport_pc ppdev lp parport ramoops reed_solo=
-mon pstore_blk pstore_zone efi_pstore drm ip_tables x_tables
-[  901.109670]  autofs4 mlx5_ib ib_uverbs ib_core hid_generic usbhid hid se=
-s enclosure scsi_transport_sas mlx5_core pci_hyperv_intf mlxfw igb ahci psa=
-mple i2c_algo_bit i2c_i801 spi_intel_pci xhci_pci tls megaraid_sas dca spi_=
-intel crc32_pclmul i2c_smbus i2c_ismt libahci xhci_pci_renesas wmi pinctrl_=
-emmitsburg
-[  901.109691] CPU: 92 PID: 4289 Comm: occlum-run Not tainted 6.9.0-rc5 #3
-[  901.109693] Hardware name: Inspur NF5468-M7-A0-R0-00/NF5468-M7-A0-R0-00,=
- BIOS 05.02.01 05/08/2023
-[  901.109695] RIP: 0010:sgx_enclave_restrict_permissions+0xba/0x1f0
-[  901.109701] Code: 48 c1 e6 05 48 89 d1 48 8d 5c 24 40 b8 0e 00 00 00 48 =
-2b 8e 70 8e 15 8b 48 c1 e9 05 48 c1 e1 0c 48 03 8e 68 8e 15 8b 0f 01 cf <a9=
-> 00 00 00 40 0f 85 b2 00 00 00 85 c0 0f 85 db 00 00 00 4c 89 ef
-[  901.109702] RSP: 0018:ffffad0ae5d0f8c0 EFLAGS: 00000202
-[  901.109704] RAX: 0000000000000000 RBX: ffffad0ae5d0f900 RCX: ffffad11dfc=
-0e000
-[  901.109705] RDX: ffffad2adcff81c0 RSI: 0000000000000000 RDI: ffff9a12f5f=
-4f000
-[  901.109706] RBP: ffffad0ae5d0f9b0 R08: 0000000000000002 R09: ffff9a1289f=
-57520
-[  901.109707] R10: 000000000000005d R11: 0000000000000002 R12: 00000006d8f=
-f2000
-[  901.109708] R13: ffff9a12f5f4f000 R14: ffffad0ae5d0fa18 R15: ffff9a12f5f=
-4f020
-[  901.109709] FS:  00007fb20ad1d740(0000) GS:ffff9a317fe00000(0000) knlGS:=
-0000000000000000
-[  901.109710] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  901.109711] CR2: 00007f8041811000 CR3: 0000000118530006 CR4: 00000000007=
-70ef0
-[  901.109712] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
-00000
-[  901.109713] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 00000000000=
-00400
-[  901.109714] PKRU: 55555554
-[  901.109714] Call Trace:
-[  901.109716]  <IRQ>
-[  901.109718]  ? show_regs+0x67/0x70
-[  901.109722]  ? watchdog_timer_fn+0x1f3/0x280
-[  901.109725]  ? __pfx_watchdog_timer_fn+0x10/0x10
-[  901.109727]  ? __hrtimer_run_queues+0xc8/0x220
-[  901.109731]  ? hrtimer_interrupt+0x10c/0x250
-[  901.109733]  ? __sysvec_apic_timer_interrupt+0x53/0x130
-[  901.109736]  ? sysvec_apic_timer_interrupt+0x7b/0x90
-[  901.109739]  </IRQ>
-[  901.109740]  <TASK>
-[  901.109740]  ? asm_sysvec_apic_timer_interrupt+0x1b/0x20
-[  901.109745]  ? sgx_enclave_restrict_permissions+0xba/0x1f0
-[  901.109747]  ? aa_file_perm+0x145/0x550
-[  901.109750]  sgx_ioctl+0x1ab/0x900
-[  901.109751]  ? xas_find+0x84/0x200
-[  901.109754]  ? sgx_enclave_etrack+0xbb/0x140
-[  901.109756]  ? sgx_encl_may_map+0x19a/0x240
-[  901.109758]  ? common_file_perm+0x8a/0x1b0
-[  901.109760]  ? obj_cgroup_charge_pages+0xa2/0x100
-[  901.109763]  ? tlb_flush_mmu+0x31/0x1c0
-[  901.109766]  ? tlb_finish_mmu+0x42/0x80
-[  901.109767]  ? do_mprotect_pkey+0x150/0x530
-[  901.109769]  ? __fget_light+0xc0/0x100
-[  901.109772]  __x64_sys_ioctl+0x95/0xd0
-[  901.109775]  x64_sys_call+0x1209/0x20c0
-[  901.109777]  do_syscall_64+0x6d/0x110
-[  901.109779]  ? syscall_exit_to_user_mode+0x86/0x1c0
-[  901.109782]  ? do_syscall_64+0x79/0x110
-[  901.109783]  ? syscall_exit_to_user_mode+0x86/0x1c0
-[  901.109784]  ? do_syscall_64+0x79/0x110
-[  901.109785]  ? free_unref_page+0x10e/0x180
-[  901.109788]  ? __do_fault+0x36/0x130
-[  901.109791]  ? do_pte_missing+0x2e8/0xcc0
-[  901.109792]  ? __pte_offset_map+0x1c/0x190
-[  901.109795]  ? __handle_mm_fault+0x7b9/0xe60
-[  901.109796]  ? __count_memcg_events+0x70/0x100
-[  901.109798]  ? handle_mm_fault+0x256/0x360
-[  901.109799]  ? do_user_addr_fault+0x3c1/0x860
-[  901.109801]  ? irqentry_exit_to_user_mode+0x67/0x190
-[  901.109803]  ? irqentry_exit+0x3b/0x50
-[  901.109804]  ? exc_page_fault+0x89/0x180
-[  901.109806]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  901.109807] RIP: 0033:0x7fb20b4315cb
-[  901.109810] Code: 0f 1e fa 48 8b 05 c5 78 0d 00 64 c7 00 26 00 00 00 48 =
-c7 c0 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa b8 10 00 00 00 0f 05 <48=
-> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 95 78 0d 00 f7 d8 64 89 01 48
-[  901.109811] RSP: 002b:00007ffc0e7af718 EFLAGS: 00000246 ORIG_RAX: 000000=
-0000000010
-[  901.109812] RAX: ffffffffffffffda RBX: 0000000780000000 RCX: 00007fb20b4=
-315cb
-[  901.109813] RDX: 00007ffc0e7af720 RSI: 00000000c028a405 RDI: 00000000000=
-00005
-[  901.109814] RBP: 0000000000000005 R08: 0000000000000000 R09: 00007ffc0e7=
-af794
-[  901.109815] R10: 00007ffc0e7af7c8 R11: 0000000000000246 R12: 00000000c02=
-8a405
-[  901.109815] R13: 00007ffc0e7af720 R14: 0000000780000000 R15: 00007fb20b2=
-ea980
-[  901.109817]  </TASK>
-------------[ end trace ]------------
-
-We suggest to give up CPU in the ioctl() handler explicitly. I have attache=
-d a
-patch which can fix such issue.
-
-Appreciate for all the review on previous versions.
-Thanks for your time!
-
-Regards,
-Bojun
-
----
-v1 -> v2:
-  - Make the cond_resched() as a prefix op instead of a postfix op (Jarkko)
-  - Additionly check the pending signal at the begin of every for loop (Jar=
-kko)
-  - Introduce sgx_check_signal_and_resched() to wrap the pending check
-    and reschedule operations (Jarkko)
-  - Refine the trace log in commit() message (Kai)
-
-v2 -> v3:
-  - Set the default value of "ret" as "-ERESTARTSYS" to avoid redundantly c=
-heck
-    whether the current iteration is the first one (Dave)
-
-[1] v1: https://lore.kernel.org/linux-sgx/20240423092550.59297-1-zhubojun.z=
-bj@antgroup.com/
-[2] v2: https://lore.kernel.org/linux-sgx/20240426141823.112366-1-zhubojun.=
-zbj@antgroup.com/
-
-Bojun Zhu (1):
-  x86/sgx: Explicitly give up the CPU in EDMM's ioctl() to avoid
-    softlockup
-
- arch/x86/kernel/cpu/sgx/ioctl.c | 40 +++++++++++++++++++++++----------
- 1 file changed, 28 insertions(+), 12 deletions(-)
-
-
-base-commit: ed30a4a51bb196781c8058073ea720133a65596f
---=20
-2.25.1
-
+BR, Jarkko
