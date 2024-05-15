@@ -1,100 +1,101 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95646155723;
-	Wed, 15 May 2024 15:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA42156231;
+	Wed, 15 May 2024 15:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715788376; cv=fail; b=Cjp0bszjWpC6qRVpv6LVSl25110H7ZxS4VLfeAJWLpvA66jb9fQH2SKZQKrwb1blYp8pcF0mA0G4G4ADtReh9f83B5x1ZiCh2VgSh52fs9z4wJu/dvs0WHG038bdLlaJIwsLSUkcf/GAUmh8qoU9oVaXYqhOyQftYLXP7CcuDi4=
+	t=1715788723; cv=fail; b=neV7jcYHIKAPGsIxE7yNJzX5AX3D8oJujfKcTj6fUpvGYadvaedgqOaBa6q0M1O/kcRDCO9eBliHPkwmroowxfnbfqpd/OSkJ6u4tzqLp1Kqzdr86z4Hm9WuN1TuTOCRMS5Fc7jhr2zjQcd1h7jsKyn5KmdDK53UFPJUoJSG4No=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715788376; c=relaxed/simple;
-	bh=OJD4K7NglkEa3Td/4Gf40sFYQvrker8T22zHFwjJIzY=;
+	s=arc-20240116; t=1715788723; c=relaxed/simple;
+	bh=mV2eHTuvISRbbceoPYGqfpJB4bi8XlkqMe/n8KgIndA=;
 	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=C9M72IiPuidkwLEPCzKjpf10OmYb32IqEU/qffVFrq9AWYMYDqerU0y8phnVVrQgAcoX7dwAHwCJC8AqkaiqucyQoIv6+VjVeVw8wS1KfWW9eMLfYTYmuVE7rYz5kmyUVctMxSBEBokmSVMzhT6Uh2X51ki+Tb1dcMRnR9AFo20=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UGTt9ovX; arc=fail smtp.client-ip=198.175.65.19
+	 Content-Type:MIME-Version; b=uzfEubcKJdBh0m5mchPOGpgZkP72st+RxsEWyGPIU8Lq04BhRnc4Qo1o0VPuapi7fct6imHx2tgiYWQxN9MNBwetHDBiqWi2Z/GWf8IRh1/26TtBnUGbJX3Thd3VguYHM1SddJQgrw4TIBkhw6UBzgfA9WZ9m3NJXYd2gWs68xQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ebvkwsqc; arc=fail smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UGTt9ovX"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ebvkwsqc"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715788375; x=1747324375;
+  t=1715788722; x=1747324722;
   h=message-id:date:subject:to:cc:references:from:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=OJD4K7NglkEa3Td/4Gf40sFYQvrker8T22zHFwjJIzY=;
-  b=UGTt9ovXT/cWtN3ddz0NjMYU4JZT+9Jt+Ua7SN3iXwhd1NhJUQqIV7tp
-   cM4ypZFNBlCIl2ubULrCNsMYFIC9r49LGBAt42kxyrl+cPllG8sg293WU
-   dsohFlGnz2Fm3/4ErFLsx3hmfpTrqkYobOEBVfjpwsIblMqXoYhvkJK5+
-   ooYDUKDtL+gFqdoKY98PApcFMno+RR32ctuNiu4Z9X1mb46eOYDs52mPi
-   LqJhlwKrcY4QfbcTWwJPxiqsGKhn0dY+LiOUg2c2LqDurT0sycRLui1jy
-   /es/XU2/13nJy4Jv/zhgvwuAFlLcLbjDhb5xi8qb0GYk733GeetFQbGjz
-   A==;
-X-CSE-ConnectionGUID: h2i5LiUnRHmHOSFgdMEz0w==
-X-CSE-MsgGUID: rbwkA9h7TTuuyotz+jmEMA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11703868"
+  bh=mV2eHTuvISRbbceoPYGqfpJB4bi8XlkqMe/n8KgIndA=;
+  b=ebvkwsqcwmGvIl1YDU/VXOeZtZTLRLSssUv7hvSbcB4LMns3bBswhebr
+   +sYenwglGcB9/jljvWG0zD2a7tVrDycWrepOenKBlypyPDBI22tOCIj3e
+   hh1yiftOoBrl/Box1l5wg1SM4Lfor5dp/ElF3T20Y42wVvI/COnKHCFO3
+   Y09kjYZkqPaHU5GGKoAj87ryXEfF6gWMi+5cSEFmojzdLSHVPnra5uYvU
+   rc7mtzvkdIX4g2zdfpkpMolyG5Z3lSc/BFTMnm7gelz+l5nhMs9QLBD01
+   9qLvnocuO0NfFroEf8etFlY9Opi5TSnwze+/+Yb7wC6YOxtHwOHOUszCT
+   g==;
+X-CSE-ConnectionGUID: kmYi9JOISVKn/bbH33tVJg==
+X-CSE-MsgGUID: abqlxVpNRFaDz1osgxphCQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11679076"
 X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="11703868"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 08:52:39 -0700
-X-CSE-ConnectionGUID: Lo/ndSV2Qq+SMFaIYnEFBw==
-X-CSE-MsgGUID: cHSffqHsQEah1BJtrnwwRQ==
+   d="scan'208";a="11679076"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2024 08:58:41 -0700
+X-CSE-ConnectionGUID: WcBI8P27Tqy32dgBm+K9dg==
+X-CSE-MsgGUID: CLlsu2H1Q2yOhGcd+Q9VUw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,162,1712646000"; 
-   d="scan'208";a="31233744"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 May 2024 08:52:39 -0700
+   d="scan'208";a="31106905"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 May 2024 08:58:40 -0700
 Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 15 May 2024 08:52:38 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ 15.1.2507.35; Wed, 15 May 2024 08:58:40 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
  orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 15 May 2024 08:52:38 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.41) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ 15.1.2507.39 via Frontend Transport; Wed, 15 May 2024 08:58:40 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.168)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 15 May 2024 08:52:38 -0700
+ 15.1.2507.35; Wed, 15 May 2024 08:58:39 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eVDba8P4ab7AwLEAWMOQ77k8DnoYTbDDQZNHSP/BaBd6bzPbT5/kwBttPvhV188VTlFxe1DOvbyOPPpk4vbAMH0dfVSqsTFz5FilOD55+V6s5e7gXngwhrFMt/p538RB5wisViuCHMf/D4U0e15UDR871vm8XR9kH1B3TwmuuoT+IPHKrlmnR5yVnOzXdYdDfS7VrcCwZPsHbu7lOI7ROo97kaGaMEo5TKbkhZuuRaU9h1za6G+2EsglN3fJER75n7D6i2LxZq/mcdbGbbYZuSaDVD8+sswSCAwW/FReIL0yrx5F8GDT2S8JvGzDPEx2HOWz3z7KZLNn3uPCbJRzWA==
+ b=ZlSlUw4Iu7Pc3IrSLCT2vPQiZdZDy0r2q90nS8Bn7YsaN0RCsSnq8mEiLW8lcYTIZv7gVCYotH1//lV8EnI2JwBS22qb27Q+Tflov3HZKOPA4lylEgx/7erNASd1yAJkTBlp3geqOxZmONcjpgnj/tJtK6Krghklc4pN/G1C/kHZXdV54KvLP6U0osTJQf8tieiUzbsiNVeI+XiHnvM/nLPtUrrN6NXYFwE/44ZCYkFZyszbg+zq+DgF9HkbkuLvmk1j8z4XbcbEgcyKqFFhvvndM6/uI3R1u/hx5auIYC25E+apM79B03SXObMpzU6DY++dONI8uS9ZW/VXquTyjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qbBPBoWNanTm1jveWrzXb2HenDjQDbXdbViCwNMr2eU=;
- b=oQEfMI4PiMPgy39VibRkWVXps6yRsILHDRsVxQ5UqCnwUSr6Jp313iSeKcvFOvQcftX9jtBqizxCJrgGW+4KRii7/JrdOlWg8KLqeDEwmjLuUuNYJ8Vp8HZeZE2y6sOxCoV/V7kH+oKdRWWVEJhAGfhaQmKPI+e8E7ZbybSQeN00ejR4EL3MEVdMxeLPPDIVUMkOXQJkljYO10gjanKcLk326XxWpFB3MCsNpv9SstzfoWbxhksVZBRUbkduGiPXEAVEbJs5GTz9pB84Cdh9b+GfAY7zng2+QO+au8PB9QMYwSo4gbODkBbIEWQJxf+kcn5QEWyxWvCs+Uw/jos4VA==
+ bh=oHUiW6NUcS5Qt7VeQW/heq8ozzGg0dS7i+3U3aZyQBQ=;
+ b=gxY6RtctBqJGMG/5Fp/bqE4sPrESwL5Zq9LOjNkTC/xEBFifRCjW2M6fp2iQF8Ki53NwkxqpULangT41reL0rY+deeCrNRs8xMJTnRnHZjscerD+AkntSMG5L2ZfdcSFCSDZd1lUQnHwkO6NfllHpsISh+x+FRjCV9rTOQFF2Thlvrr0MQbrntI8VlYecTW4k6aTx84T1TBcijMVfsRR5VERDmtOLHaFBH2TSmkQ5FBUwZab8S//8qdbyaIB2hziwdY/wl8Gp0k4LYdQHYwCt3AGDNY1BIx4i6hg2c0knLsFJ9+z+RL6pO81JZN4MvT0XpOSO6IBKRf+sUoQ1krlFA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by PH7PR11MB6546.namprd11.prod.outlook.com (2603:10b6:510:212::16) with
+ by CYYPR11MB8407.namprd11.prod.outlook.com (2603:10b6:930:c1::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Wed, 15 May
- 2024 15:52:36 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Wed, 15 May
+ 2024 15:58:37 +0000
 Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::b394:287f:b57e:2519]) by SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::b394:287f:b57e:2519%4]) with mapi id 15.20.7544.052; Wed, 15 May 2024
- 15:52:36 +0000
-Message-ID: <e81e35b2-466b-4804-b717-f3e6dc26bfa2@intel.com>
-Date: Wed, 15 May 2024 08:52:33 -0700
+ 15:58:37 +0000
+Message-ID: <149a736f-8817-400b-93e7-0059b71af9f0@intel.com>
+Date: Wed, 15 May 2024 08:58:34 -0700
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] x86/sgx: Resolve EREMOVE page vs EAUG page data
- race
+Subject: Re: [PATCH v2 1/2] x86/sgx: Resolve EAUG race where losing thread
+ returns SIGBUS
 To: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>,
 	<dave.hansen@linux.intel.com>, <jarkko@kernel.org>, <kai.huang@intel.com>,
 	<haitao.huang@linux.intel.com>, <linux-sgx@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
-CC: <mona.vij@intel.com>, <kailun.qin@intel.com>, <stable@vger.kernel.org>
+CC: <mona.vij@intel.com>, <kailun.qin@intel.com>, <stable@vger.kernel.org>,
+	=?UTF-8?Q?Marcelina_Ko=C5=9Bcielnicka?= <mwk@invisiblethingslab.com>
 References: <20240515131240.1304824-1-dmitrii.kuvaiskii@intel.com>
- <20240515131240.1304824-3-dmitrii.kuvaiskii@intel.com>
+ <20240515131240.1304824-2-dmitrii.kuvaiskii@intel.com>
 Content-Language: en-US
 From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <20240515131240.1304824-3-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240515131240.1304824-2-dmitrii.kuvaiskii@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW2PR2101CA0030.namprd21.prod.outlook.com
- (2603:10b6:302:1::43) To SJ2PR11MB7573.namprd11.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW4PR04CA0343.namprd04.prod.outlook.com
+ (2603:10b6:303:8a::18) To SJ2PR11MB7573.namprd11.prod.outlook.com
  (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -103,176 +104,191 @@ List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH7PR11MB6546:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2150a8d3-2baa-4eda-7ebd-08dc74f70a5c
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CYYPR11MB8407:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a8988c7-6255-4dfe-3e0d-08dc74f7e178
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ODl5Q3BXNE5EdHphSkFUNVNVNy9ydWM2QzhWUkdONUwrRnk3aHp0SEMxR2pq?=
- =?utf-8?B?c0hoWkVwdmlXYVlOMTlWYW9rWDJTSFBoMUdjaTZVeFFaZ21wRmtlRVR6S2VV?=
- =?utf-8?B?WHJ4RmhHQ0lkWGJPUE44YzJSYTA2d2FEb1hpTWNlUjJXWCttTUFNOU9KZWhV?=
- =?utf-8?B?VFM1bFNWdVlONW9FUXJXTkphaGsrNkw2d2NSSVlFLzNTdit5WCtWYzhLLzdq?=
- =?utf-8?B?Vk1VOXBUL2VrMHA5VHJJajVRWFk2M2NoU3RWNmNVbTVERFE1NkR6WWxWNE40?=
- =?utf-8?B?Ky8ybXR2aDEzbTlzOG5sUC9CcDJYZTFQYk9QV1hQS2pwdHIvSGorcVIzM2RP?=
- =?utf-8?B?SjNOTHBGd0dVSmhaSkJxYWpYbDQrMEgzb3lUNzBoUjFkQnZtbU53VGlpQy9h?=
- =?utf-8?B?WkVicnJUZ05XSDlnell3eHJsaW0wZ05QVW0rY3VzRkdFaldOdVh2ejNsTmF6?=
- =?utf-8?B?YkkyZWlnUi9pK2FGZ2ZVbkhVYWhtb3EwN0RzL082Ulgxd2pzUXhzY1NSemJn?=
- =?utf-8?B?bFF5U2M5VDA2SzB3Tm1qVHYyM3hkNTA5Y25QK1dnb0pVOUliWWE2eEYxV1Z4?=
- =?utf-8?B?eVh4aHg0Wk4xWUx3TkI2U3FHa0JzU2NNNkFyWWNZaUFBdXFXd245RmxLNTFu?=
- =?utf-8?B?WVJzS3V4QlNKVC91bGI3U01UNVgrV3M0SUhkVzB5bUo4c0RzTWlNU3laRXhx?=
- =?utf-8?B?Z25BMHBjQlZXK3p3Y2FsZzQrVUE3cjMyNHluR2U3K1FRdnAxUkV6dElKWFhq?=
- =?utf-8?B?NVFjSGhsN0JDWUkwU1QrQkRMMHkyUlJucWp2T21uQVQ3dm5vNDhOUmpiZlYy?=
- =?utf-8?B?bGtQVEYraVJiSjczVHpnd01QVlg3a1RzSytCdnJndjBLTDdQU3FObVp0SmJ6?=
- =?utf-8?B?ZkdwSlJZWi8xZ29CbEFlNWc4YmU3NzJqR01zQWVvVTkwUG5OZVhBQnR1SzhG?=
- =?utf-8?B?OGJSTTRZRlpzYzIrOVdUeVlPMmgxVS91M3VPTk5Wc0IzT3Vwbk45UGJrKzlr?=
- =?utf-8?B?ZFArOWVJbEd6QUtka2c5OXhHSkNqazdRTGRLNmN0Znl0TTlnZGY0VmxhVGFL?=
- =?utf-8?B?Y1ZSVXZxUnQyVVVmSjg5Nm5nKzV5SHc5bVN5MXZJdXdtYjBxK0x4MzE2L212?=
- =?utf-8?B?ZHVMZy9SNVlQcWFkOVVRR1U5c3V4Q0x2b2xpS2ZvZ2E4Tm5oYmttc0Q5MzJW?=
- =?utf-8?B?a25rR0tic1hiU2pnL3dXVkZvdzRYMWJPOTFabDh0UGkxVWQyWUlyaHRCSGJC?=
- =?utf-8?B?bkxCUnhtNW9HOVJ6SGtQb3hWSjAyM1VBcVlkR0RrSzV6WFFTVURJcVZQUXk3?=
- =?utf-8?B?aVpScDhlNFhGc29CL0VDMXFjS1RkeHNkNlNZT0ZYNTB5SFkxbjRySjN5Rmlw?=
- =?utf-8?B?b1VHUU1Hall6bVJLNWJiYnRveDVrK3gvMXpPUUFaSElxelMybDU3RlhHeG5u?=
- =?utf-8?B?WDlOdS9KSThmRS9jTmc1Q2grd0o1ZU94cldYNUpVZDJrV1J5c0FBZXdub3lM?=
- =?utf-8?B?eDF2b0RoNkRuYzkwb3NFd2d2bkxvcnlubXNWQUhWMlhLSXZEb0llcE01Y01N?=
- =?utf-8?B?U04yK2ZqTVYvN2c5bzNPVnl0d3RLZlJ1MjF0aXdlZXZPaFJuTmt2V1FDM3Jp?=
- =?utf-8?B?eUtBK25KTU0wajNCdE00WEdSRFNJQzBQVU9mU2I3ZGNEaVBzclJvSjdIemZ3?=
- =?utf-8?B?ZzZuekFGZSs4TDNNZkJGVFZRY2hUbmFCOW92N0xJSmNwNXE2VHRGMUpBPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?K0lVcXpOWlE1czFISFo5ZS8zTVFUdnN3YmwxTndwRHBtNHBvempNVmVBemVy?=
+ =?utf-8?B?VUlUaEYwM1NLU2I2MHQxekpsdSs1eWxnTmJvRk5rSk05enZRczhOUVp2VTIv?=
+ =?utf-8?B?cCtleHFWWEF5RDRBWWplK3orMUJXSUdYREszOXROMktBaVhYM0pYUUFudGZF?=
+ =?utf-8?B?RWhnRHBiVWdKaVkyZFNRdEtmTldRMjFiemNyY1ZpY0NMSDRKelRIdm8veDBE?=
+ =?utf-8?B?dlM0a3hMOWxaM3N3WmFtT3RGbHNBUXMwWkUreG9OL0g5WHY1eS8wNFJyYTNG?=
+ =?utf-8?B?REEwemhCM0ZuT21NQjhIMTRmWDlrMDM2UGtwSnBiTEd1TmliMFg1S2szU0dX?=
+ =?utf-8?B?RHNGcDlGc1oyNXI0SndLMmJVNitURmlQeHQ2QWV3ajIyRGYxVDBlRTh5eGJ5?=
+ =?utf-8?B?a2oxWHhIckVrSkttb1UyYlp3Sy9VT3NUWVlhSG1lazhrcHNrUklXTEllWGcz?=
+ =?utf-8?B?UGJmTFdPbzNXNGxlcTYyekJ0L1lJejFLNFZJRDF3RzRJSWhITTlITjB4L1VC?=
+ =?utf-8?B?RDkybGFoVXlNN3dkTFpqa2JBcnA3NTFIaEtESUxuRHlaN1VtVzdxYU81NXRY?=
+ =?utf-8?B?NFl1OVp4V2ljWW5pZTEycGVLSDhmRThPRHFGQU16bHFLQjhXVDc2MGJTS1VQ?=
+ =?utf-8?B?VDBzUE9STDk0Mk9wM0VaalBobWFRaEdCaVlqT2JrNHd6OW84SXFEbE11OXgv?=
+ =?utf-8?B?eC92U0V2WVJNaEhDUlJEeUFuK3FReVdXckozMVRmZmQzTG02NE1oOXJZYnF2?=
+ =?utf-8?B?ZlRSbUFEeHdkOWtBR2l5OHUrOFUxMVFrTjhMZjdGZEFzSGE1MU9wWFZtckRa?=
+ =?utf-8?B?SmFUbFdlazBSZGlFakRNSHlzcEtOUmROWHdodVNrYXYwaysxenpTM0s2WGkz?=
+ =?utf-8?B?TWdlbDlDcTNjMzZ1MzAxby9UWGxLbWhicVhlRSsxVVJXUHVlaTE0dDE4NkpM?=
+ =?utf-8?B?OXNmaUVLNmpHd0R5eEtDVkdYTUNHMzlvRkRJbnB5SWp6WS8rTHJlN2FYcVox?=
+ =?utf-8?B?d3d4Y3FIMVdiMlMreVJhb1lUM0hreHRzZGhhKzNQMjgrMkpsdVl0WHJxVXg4?=
+ =?utf-8?B?Mk04VTlwN0FKWkFDYW5zdWt2QmMwcU9xRkVWOXgxNmlsbDFueHVZNzNXeGdZ?=
+ =?utf-8?B?WGIrWmltNHJVbHNRMUZOR1h6Wml4eUp1Vlk1ME1FZ0xLR3BqNkhHWFIrcG5M?=
+ =?utf-8?B?dFZmK0lwa2hPN1NjVTRhRk93UW1PTHJ2WFhHeFp4TElDTzI3NE1CNU1WL3l1?=
+ =?utf-8?B?MGZXUWtCYTJTUkRKWnVMZFp5cU9oeVR3QmwxWmFZOXUxVVJuR3QycjNyMlJq?=
+ =?utf-8?B?d29jREgvL2o5aC9pSm83L0dqSnl6b2swTGRVSnNldWlhN01JUk5WRytQUFdV?=
+ =?utf-8?B?dWQ4alVZT3VPYXZ1cURKT3dKZU9jT0Q2Q044QzVqalJMeEowU1drMXk1TFlt?=
+ =?utf-8?B?WkMwTlgvUHdWT3YzeWtvczNCQXcwS0pVSUpmc0lVVEJxL3A3Mk1QYWRGL0VK?=
+ =?utf-8?B?QU1hUEwxT3phbEIrZWtqRTNKM0VMdUFtNXFwaDVRdVFYSmRwNUdQWE5UZ0ZW?=
+ =?utf-8?B?OTcxcHpzMDhPdjRUZ1B2UDIvYUV0TUp5dHBMZTJGNGwwVjNMb05QbjB0Yk1B?=
+ =?utf-8?B?ZXFBQTFpR2huY0FBd0lGeHF0NU5NZ1o4bmtFVmdxT1NXN01UL3JLbTlyOUZC?=
+ =?utf-8?B?VkxNNHZGRUw1UVdFejBlN3hVem9MMlo4cnJoOUZpTFZ4NFFpSEhDbWN3PT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T0V3OEdoWFk1eWhXUUtOeXVpVUVYSk84bnJ0RndUdnBLL1RhTG1sa0M3NFJx?=
- =?utf-8?B?TWlMOXZrNzJ2NEF2czhLcXZHUDliVkpGVW8zMG1mYnZ0NThSbWNSVFJQTG1u?=
- =?utf-8?B?QldCOE9tdUNOSkNpd2diUGF1dlNtTTFTeFlFRFNKSllrWmVPQnZxaGw4RXVX?=
- =?utf-8?B?NVNnVGt2dkhqZFZnUE9kT3A4bjhLWUtZU1FkZHhPS2pUL0dmU09SalQ0dFZQ?=
- =?utf-8?B?TXloQnZNbFFvUWJlRjJodzJmeW9Mc1FKL2ltYlhGRE5DUFIvMXhxaTV0ck5Z?=
- =?utf-8?B?OEpFbmZhQVFrbVp3dEE5TThlZ214Z1ArL3gyczVjNnpheFFxR0h4NlJ6MkhF?=
- =?utf-8?B?RHJLTU5EVXRHbDRRa0I4M0NQclE5TUN4bHNXMmVSdzdmRGUvVWJuWHN2eldP?=
- =?utf-8?B?OFNndVJNVzUrTVFkR3lOMGExRkJubktrMzV1VnZ2alpNRkd0aEpyeDRhRGk0?=
- =?utf-8?B?Z1l1MkhZR0szZ0Rjc3dHUDVQb1U1LzFKNURlZEx1SjUwM01hR1FwbjVrL25a?=
- =?utf-8?B?TzVSVkRrWnMzR2xyd0t5SUNiOWZNM3lxbGZTNGZFVmNpY3BWNVhFN0E4b0J4?=
- =?utf-8?B?dFdQTE0zUVdKdjhjampHdDc1TWJMZkRhVHRxK2pSS0ZiQXAyb3ZUU2VCc2d3?=
- =?utf-8?B?WHYrM21DemJUNUpGT3RSVGN2UHlJOW94bmMzT1pPM0FreERuOGpFbFNkRTJM?=
- =?utf-8?B?TjJuQXJMb01Ed2o2aXlBNEh0TUtlM2Y5ZUJOYjB0WU8rZkdpWXBUUjhtd20x?=
- =?utf-8?B?US9rL0FLTDFQdHZUTnZPWGlNZ1RtaFhpV2ZDd1o1RmM3VTNGcXp2WlRrZm9L?=
- =?utf-8?B?YVVsMXJKMnJZck03SklKVk9IYjgrVmI5VFl0SVphR1pIUzc4c0xlM1IzMzVV?=
- =?utf-8?B?aU9uSEhpUlRubzltaUlQa29ta1pEYVNTYzFBVXFJOHozbXRQWkY0L3dON3dD?=
- =?utf-8?B?MTd0T1YzK3VleXVtQjVuUnAySHY2RnpTSkVQRkQzK2VRbFJCUjF4OWFITWc2?=
- =?utf-8?B?aWhDV05PaCticlBzV2lUZmdhaFFNakg5SGxETEhibXI0WkZkY05hczMxQW5r?=
- =?utf-8?B?VVpiTGx0YWFUaE5yVHE2ekZoZFVLUDZyVDJDSEZYN1dZbFltZkN2UkpPZnRM?=
- =?utf-8?B?U3BFdkFLTTROYmxjZVFjeTl5eHNmM3ZIS1duVkcxakpuYi90c0k3K2R3RHIz?=
- =?utf-8?B?am1XVXRoMjJvUlpTNnpYU2c0ZnJYU2tYcy9JaWZrOXhCMmpkT1Rac0ZjTlo4?=
- =?utf-8?B?VUM1b2JiSFZBZkRMZzZjTXpPQTNNNkFVNnVIajZuaXc2bnhLanl2SmRvc1Rr?=
- =?utf-8?B?N3NiTHBTU0k0SkJqVHQ1UG1aS1dDM2NJTWRJelREaUczekYzdHJHWEVLTlIw?=
- =?utf-8?B?SEhaY3orUUlBSVA1YUlBYUlpbmMvTzF1NHdkYlIvV05SVzZFckZHcHp5UlA0?=
- =?utf-8?B?WlozQmhBWTlaNnYrQnlPVStYQWJsSE5xNmhtanJxNEw0ZTBWeC9CMTkvMnpC?=
- =?utf-8?B?d2hXVGMzWkVtNlZzdCtmMFNwdmZoUGlKZDZpMkdYbktlNnJQWEFxd0hwREkz?=
- =?utf-8?B?NXJBeHVsOHBwalZ4ZW1sMzdZUjZYZE9uLzZJSmQ2bTNCTHUvbHU4VTJ2SkVP?=
- =?utf-8?B?Z2hMbHgvenAyOWloalJDUGxyQjhlZ2NKTjJDN1FwNE9PaUxzcnlyZFM2c0lV?=
- =?utf-8?B?Q3oyODh0RWhOSGdZcVJtVk1kc0ZqckVXQ2Qzem5BVURYMVF2M25aQ29adjJu?=
- =?utf-8?B?dkc1TzZLbWN3c1JzV2FqV0EzMjgrVGo2TTJsMTlBYUdaemFmaXNqK0szSFlr?=
- =?utf-8?B?cklYcFV5WHVpZU5mTUVSbkY1WGVuM3FqeVBMUlVYOERPVXJ2RmM4QVJTTjhu?=
- =?utf-8?B?M216N3ZydG1KclU0aC9waFJNdFJaSWpsa2tGUEhhQ0dEa3FnbHA0b1R2U1ps?=
- =?utf-8?B?SGQ4Q0Q4eXNXbDY2K21GSFlWbHJKWUZnYWtucjQ5eWtYbHd6Qno5Z0VDOUtl?=
- =?utf-8?B?a0NFMHJxWmNSeEtHY3JsYXdUYWV6Y2JMc3FpbS9NVjVKYklaMnRpUDJEdDk3?=
- =?utf-8?B?ZDRqME0vSHcxbUtsU1pRMEQzTjFOL1pmS0xnY2dMeGJKNHJIRXhSbzNCOTdE?=
- =?utf-8?B?ejlRem5LZXdnWThQZWtqL2YxdFpDdy9VRnJWN0twRlQxUUtSV3U4bWRqazVj?=
- =?utf-8?B?SXc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2150a8d3-2baa-4eda-7ebd-08dc74f70a5c
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cWJJUkR0Q1hQTit4dnBRVGFVRnI3akFGbHdwcXlGNGhqd2xCUmc3TXgrcDNW?=
+ =?utf-8?B?VXlGVk56UUZNTjRYdjV5TURydnhSNmVBQzIwSUhPYjRneWRxOXlxNjR0QXcw?=
+ =?utf-8?B?Z2hNUzVHT1Z5TC8rQi9wVmxwSUxHb2E1REpIQlh6RTE5ejNWcG8ydXRZTmxu?=
+ =?utf-8?B?Q2tYaWhQL1BxVGhyU1gvNU15SHpiU0lOL0xlOWpPanl5Q01DSlBwbmxRaDlJ?=
+ =?utf-8?B?L1lYZnFwNUFicFAzTFdSOVVSZmNWOHRlVEo1bHRZQTZ5Zm9hOTFhUkx2c0NO?=
+ =?utf-8?B?elJubzNIRUlab0c0UWdmWmUzZWhQOHlIYThuZDdEdjFMUUN2eG1NVVN1WkRD?=
+ =?utf-8?B?YUhOdXk2UnZVdW1qRjJpTFB2ZjJaZzNoQ0ZvcTNsaUxoRWZxVGc4QXoxb1ht?=
+ =?utf-8?B?dWdobEZOazlKOHRvUGc1eWViSkFybmJGdjZ0dkJUL1JPOHNCOUJ3SURGaDEw?=
+ =?utf-8?B?TVBoU1R1QnB0RDI1cXBCeC92MEpmWlhCV0ZrM3hJL2VGdmxXRmN1bExMMVBI?=
+ =?utf-8?B?KytUYkRXb0VIVjBJVy9Jbnc1QzhNYzlHdm1NYXBxWExha2Y4azNHN0xMRWlE?=
+ =?utf-8?B?OU1DU3FKaG84RXlUWkpiOUdnU0R1S2RCODVjNSsxeUhzN0wxeGJJY2VQbEg1?=
+ =?utf-8?B?UFVRM3V0ZysvOFUxT0NFZmZEemhGUjhVUXZMaUVGS1BVUnpGTDdxbHM3bndL?=
+ =?utf-8?B?Y0tRMkl3MEJDVlJYaEJhWmlRL2ZOU0JmZ0h0QURwNmVORkNtSnJEd1NuV0Qy?=
+ =?utf-8?B?MEFvY0I0VTlPUlo5NFIxbUwyYWl1dHZLbThENkM1bVM5RFA1YnZSaDVrQlZQ?=
+ =?utf-8?B?R1ltbm9rTHhsMHhqdE9Ca00waGJBcFA5dFNFWGc4ZUxEZndFS3lib2R3dng0?=
+ =?utf-8?B?TXRUV2pDUStOOHdQVHVDMUVyajBQeWFvZ0wzNUtXV0dqTlp6U08xSkNXR05P?=
+ =?utf-8?B?L3YrNGFSYkhiQ0I4KzhFS2dqeVphTHF5UXBwbHJsaUU0QmFFdDEzS2c2WC9q?=
+ =?utf-8?B?bUpWR2Q1M0M1Y1VheVdZclN1d1YybUF4Vlc2MFIraHBxSVpZRGV0YTJyMTVo?=
+ =?utf-8?B?aiswMUZkQm9VYUhrUXdVM3lUODhYN0FJTGJpaGFicUpoeDlYZUR0RDVXb2NW?=
+ =?utf-8?B?R3k2WE90d1h5cUFaRDhXcExjRVl0UlQ2WFhHY3h5V3RGOU5aQStqQjJvbWxY?=
+ =?utf-8?B?ZzFBYk1xR1hnaUp0ZDJ4WWNSL21iSWYxd1RtZUtMK0V5OWx3WTJhZlJ5SjhG?=
+ =?utf-8?B?YUozeHBuaElmaEdZOFU3bzhDWmQybTMyNWFjSGhJaWdxTnZ0UzVmdUh0L1No?=
+ =?utf-8?B?aittUVdnYVZSTmh4Vmc1MmYzUWxWRldHZ3gzNHJzbnVKR0xvRzVqSm0rOUhi?=
+ =?utf-8?B?VGlVSmhFRHhObFFtMjcxekFmWHR3UXdVMXBWSTBTQ3FKZUhydEc1S0FNZTBz?=
+ =?utf-8?B?QzdPZ3JQdXhVcER6aXp2bDd5U1ZmUnRTcnU2WlFBd1pjSjRTRTB2V0NmYkRX?=
+ =?utf-8?B?OTN6WjRVcXV6NnI0YzYyWGZCRVFCVDhxMHVpbU14Z2VKUDJqSk1nWW9WVllp?=
+ =?utf-8?B?NzN1VGxXRVBxc0Fac3BJWE1senppeWoxR1c4a245RkJRVE91eUFXQ0hBRDJt?=
+ =?utf-8?B?WGlFdjFFRFFiZC9YLzdNbmRTa004ZjZIZC9BVldLQ1JsZ1NkZ2grWTNTV2R3?=
+ =?utf-8?B?dGsvczdyVGwzQ3VEcnAvcFQ0TnI0RnE3djd2Mjg2NDhGSms2Zmg5Y3hWSUVh?=
+ =?utf-8?B?WFJBY0w3aTdzQWJXeEVOcWUrUmprMjlweGxSZ1h2MVZvN3dza00vc0QweU9l?=
+ =?utf-8?B?NU5qU0E1YVZlakxmUzYrZHlMWlhFVTduVUVOOGU4TjNSQTI4cXBVaWtvcC9h?=
+ =?utf-8?B?L0hWdE9wcGc5dVZXSFRidlBycjFjZHBPTjl5cXdkR0VaSno4a3U0SFp0WlZW?=
+ =?utf-8?B?OW5wL2R1Z3JEZ1ZBVC83ZmdOUk9BbnoyUENSR1pLSmxadmZVcWpnM1k3Z25D?=
+ =?utf-8?B?ZGxaakNXZW9VVzRtVzhPeXoxR281NVJ2TERIU0Q0d0QrSFgzWmlPZ05oVEtN?=
+ =?utf-8?B?Z1dZRmVEWXluRng3QUVNUmFFWXdmdkpmKzE2RXYvZjZGczdoZXB0bENpQjV0?=
+ =?utf-8?B?eGFkcGl5bjZFbUlsNUpXbjVRVnpEQS9UVVQ0UllCa1l2c3hmUnNKK1hjaGVl?=
+ =?utf-8?B?aEE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a8988c7-6255-4dfe-3e0d-08dc74f7e178
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 15:52:36.0851
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 15:58:36.9392
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ABuHYFGlE425hzDrtqGPa2Np3sqDY0CDg4FUYDOVNIR6A/4KJFL2Yb5Ocqd8ok6wXW1yVgxE8AVP4bYUxdlRD5H036RL0e+m558HjExvu0g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6546
+X-MS-Exchange-CrossTenant-UserPrincipalName: X280jvhSVqK+Of8qSdsovWvM0ryZiws4bTLEaSUovpTKtbL0dKdheeaak6XHKxOYHJcU8opZsF5ePuk93lgkPgVjO+7De9i+mGkH62lwAYA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR11MB8407
 X-OriginatorOrg: intel.com
 
 Hi Dmitrii,
 
 On 5/15/2024 6:12 AM, Dmitrii Kuvaiskii wrote:
-> Two enclave threads may try to add and remove the same enclave page
-> simultaneously (e.g., if the SGX runtime supports both lazy allocation
-> and MADV_DONTNEED semantics). Consider some enclave page added to the
-> enclave. User space decides to temporarily remove this page (e.g.,
-> emulating the MADV_DONTNEED semantics) on CPU1. At the same time, user
-> space performs a memory access on the same page on CPU2, which results
-> in a #PF and ultimately in sgx_vma_fault(). Scenario proceeds as
-> follows:
+> Two enclave threads may try to access the same non-present enclave page
+> simultaneously (e.g., if the SGX runtime supports lazy allocation). The
+> threads will end up in sgx_encl_eaug_page(), racing to acquire the
+> enclave lock. The winning thread will perform EAUG, set up the page
+> table entry, and insert the page into encl->page_array. The losing
+> thread will then get -EBUSY on xa_insert(&encl->page_array) and proceed
+> to error handling path.
 > 
-> /*
->  * CPU1: User space performs
->  * ioctl(SGX_IOC_ENCLAVE_REMOVE_PAGES)
->  * on enclave page X
->  */
-> sgx_encl_remove_pages() {
+> This race condition can be illustrated as follows:
 > 
->   mutex_lock(&encl->lock);
+> /*                             /*
+>  * Fault on CPU1                * Fault on CPU2
+>  * on enclave page X            * on enclave page X
+>  */                             */
+> sgx_vma_fault() {              sgx_vma_fault() {
 > 
->   entry = sgx_encl_load_page(encl);
->   /*
->    * verify that page is
->    * trimmed and accepted
->    */
+>   xa_load(&encl->page_array)     xa_load(&encl->page_array)
+>       == NULL -->                    == NULL -->
 > 
->   mutex_unlock(&encl->lock);
+>   sgx_encl_eaug_page() {         sgx_encl_eaug_page() {
 > 
->   /*
->    * remove PTE entry; cannot
->    * be performed under lock
->    */
->   sgx_zap_enclave_ptes(encl);
->                                  /*
->                                   * Fault on CPU2 on same page X
->                                   */
->                                  sgx_vma_fault() {
->                                    /*
->                                     * PTE entry was removed, but the
->                                     * page is still in enclave's xarray
->                                     */
->                                    xa_load(&encl->page_array) != NULL ->
->                                    /*
->                                     * SGX driver thinks that this page
->                                     * was swapped out and loads it
->                                     */
+>     ...                            ...
+> 
+>     /*                             /*
+>      * alloc encl_page              * alloc encl_page
+>      */                             */
 >                                    mutex_lock(&encl->lock);
 >                                    /*
->                                     * this is effectively a no-op
+>                                     * alloc EPC page
 >                                     */
->                                    entry = sgx_encl_load_page_in_vma();
+>                                    epc_page = sgx_alloc_epc_page(...);
+>                                    /*
+>                                     * add page to enclave's xarray
+>                                     */
+>                                    xa_insert(&encl->page_array, ...);
+>                                    /*
+>                                     * add page to enclave via EAUG
+>                                     * (page is in pending state)
+>                                     */
 >                                    /*
 >                                     * add PTE entry
->                                     *
->                                     * *BUG*: a PTE is installed for a
->                                     * page in process of being removed
 >                                     */
 >                                    vmf_insert_pfn(...);
 > 
 >                                    mutex_unlock(&encl->lock);
 >                                    return VM_FAULT_NOPAGE;
 >                                  }
->   /*
->    * continue with page removal
->    */
->   mutex_lock(&encl->lock);
+>                                }
+>                                /*
+>                                 * All good up to here: enclave page
+>                                 * successfully added to enclave,
+>                                 * ready for EACCEPT from user space
+>                                 */
+>     mutex_lock(&encl->lock);
+>     /*
+>      * alloc EPC page
+>      */
+>     epc_page = sgx_alloc_epc_page(...);
+>     /*
+>      * add page to enclave's xarray,
+>      * this fails with -EBUSY as this
+>      * page was already added by CPU2
+>      */
+>     xa_insert(&encl->page_array, ...);
 > 
->   sgx_encl_free_epc_page(epc_page) {
+>   err_out_shrink:
+>     sgx_encl_free_epc_page(epc_page) {
+>       /*
+>        * remove page via EREMOVE
+>        *
+>        * *BUG*: page added by CPU2 is
+>        * yanked from enclave while it
+>        * remains accessible from OS
+>        * perspective (PTE installed)
+>        */
+>       /*
+>        * free EPC page
+>        */
+>       sgx_free_epc_page(epc_page);
+>     }
+> 
+>     mutex_unlock(&encl->lock);
 >     /*
->      * remove page via EREMOVE
+>      * *BUG*: SIGBUS is returned
+>      * for a valid enclave page
 >      */
->     /*
->      * free EPC page
->      */
->     sgx_free_epc_page(epc_page);
+>     return VM_FAULT_SIGBUS;
 >   }
-> 
->   xa_erase(&encl->page_array);
-> 
->   mutex_unlock(&encl->lock);
 > }
 > 
-> Here, CPU1 removed the page. However CPU2 installed the PTE entry on the
-> same page. This enclave page becomes perpetually inaccessible (until
+> The err_out_shrink error handling path contains two bugs: (1) function
+> sgx_encl_free_epc_page() is called that performs EREMOVE even though the
+> enclave page was never intended to be removed, and (2) SIGBUS is sent to
+> userspace even though the enclave page is correctly installed by another
+> thread.
+> 
+> The first bug renders the enclave page perpetually inaccessible (until
 > another SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl). This is because the page is
 > marked accessible in the PTE entry but is not EAUGed, and any subsequent
 > access to this page raises a fault: with the kernel believing there to
@@ -281,69 +297,63 @@ On 5/15/2024 6:12 AM, Dmitrii Kuvaiskii wrote:
 > sgx_vma_fault() to be skipped and user space receives a SIGSEGV instead.
 > The userspace SIGSEGV handler cannot perform EACCEPT because the page
 > was not EAUGed. Thus, the user space is stuck with the inaccessible
-> page.
+> page. The second bug is less severe: a spurious SIGBUS signal is
+> unnecessarily sent to user space.
 > 
-> Fix this race by forcing the fault handler on CPU2 to back off if the
-> page is currently being removed (on CPU1). This is achieved by
-> introducing a new flag SGX_ENCL_PAGE_BEING_REMOVED, which is unset by
-> default and set only right-before the first mutex_unlock() in
-> sgx_encl_remove_pages(). Upon loading the page, CPU2 checks whether this
-> page is being removed, and if yes then CPU2 backs off and waits until
-> the page is completely removed. After that, any memory access to this
-> page results in a normal "allocate and EAUG a page on #PF" flow.
+> Fix these two bugs (1) by returning VM_FAULT_NOPAGE to the generic Linux
+> fault handler so that no signal is sent to userspace, and (2) by
+> replacing sgx_encl_free_epc_page() with sgx_free_epc_page() so that no
+> EREMOVE is performed.
 > 
-> Fixes: 9849bb27152c ("x86/sgx: Support complete page removal")
+> Note that sgx_encl_free_epc_page() performs an additional WARN_ON_ONCE
+> check in comparison to sgx_free_epc_page(): whether the EPC page is
+> being reclaimer tracked. However, the EPC page is allocated in
+> sgx_encl_eaug_page() and has zeroed-out flags in all error handling
+> paths. In other words, the page is marked as reclaimable only in the
+> happy path of sgx_encl_eaug_page(). Therefore, in the particular code
+> path affected in this commit, the "page reclaimer tracked" condition is
+> always false and the warning is never printed. Thus, it is safe to
+> replace sgx_encl_free_epc_page() with sgx_free_epc_page().
+> 
+> Fixes: 5a90d2c3f5ef ("x86/sgx: Support adding of pages to an initialized enclave")
 > Cc: stable@vger.kernel.org
+> Reported-by: Marcelina Kościelnicka <mwk@invisiblethingslab.com>
+> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
 > Signed-off-by: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
 > ---
->  arch/x86/kernel/cpu/sgx/encl.c  | 3 ++-
->  arch/x86/kernel/cpu/sgx/encl.h  | 3 +++
->  arch/x86/kernel/cpu/sgx/ioctl.c | 1 +
->  3 files changed, 6 insertions(+), 1 deletion(-)
+>  arch/x86/kernel/cpu/sgx/encl.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
 > diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> index 41f14b1a3025..7ccd8b2fce5f 100644
+> index 279148e72459..41f14b1a3025 100644
 > --- a/arch/x86/kernel/cpu/sgx/encl.c
 > +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -257,7 +257,8 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+> @@ -382,8 +382,11 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+>  	 * If ret == -EBUSY then page was created in another flow while
+>  	 * running without encl->lock
+>  	 */
+> -	if (ret)
+> +	if (ret) {
+> +		if (ret == -EBUSY)
+> +			vmret = VM_FAULT_NOPAGE;
+>  		goto err_out_shrink;
+> +	}
 >  
->  	/* Entry successfully located. */
->  	if (entry->epc_page) {
-> -		if (entry->desc & SGX_ENCL_PAGE_BEING_RECLAIMED)
-> +		if (entry->desc & (SGX_ENCL_PAGE_BEING_RECLAIMED |
-> +				   SGX_ENCL_PAGE_BEING_REMOVED))
->  			return ERR_PTR(-EBUSY);
->  
->  		return entry;
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-> index f94ff14c9486..fff5f2293ae7 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.h
-> +++ b/arch/x86/kernel/cpu/sgx/encl.h
-> @@ -25,6 +25,9 @@
->  /* 'desc' bit marking that the page is being reclaimed. */
->  #define SGX_ENCL_PAGE_BEING_RECLAIMED	BIT(3)
->  
-> +/* 'desc' bit marking that the page is being removed. */
-> +#define SGX_ENCL_PAGE_BEING_REMOVED	BIT(2)
-> +
->  struct sgx_encl_page {
->  	unsigned long desc;
->  	unsigned long vm_max_prot_bits:8;
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index b65ab214bdf5..c542d4dd3e64 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -1142,6 +1142,7 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
->  		 * Do not keep encl->lock because of dependency on
->  		 * mmap_lock acquired in sgx_zap_enclave_ptes().
->  		 */
-> +		entry->desc |= SGX_ENCL_PAGE_BEING_REMOVED;
->  		mutex_unlock(&encl->lock);
->  
->  		sgx_zap_enclave_ptes(encl, addr);
+>  	pginfo.secs = (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_page);
+>  	pginfo.addr = encl_page->desc & PAGE_MASK;
+> @@ -419,7 +422,7 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_struct *vma,
+>  err_out_shrink:
+>  	sgx_encl_shrink(encl, va_page);
+>  err_out_epc:
+> -	sgx_encl_free_epc_page(epc_page);
+> +	sgx_free_epc_page(epc_page);
+>  err_out_unlock:
+>  	mutex_unlock(&encl->lock);
+>  	kfree(encl_page);
 
-Thank you very much for tracking down and fixing this issue.
+Thank you very much. I understand the changelog is still being discussed
+and those changes look good to me, to which you can add:
 
-Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
 Reinette
