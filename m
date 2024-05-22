@@ -1,227 +1,119 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21B43CF74;
-	Fri, 17 May 2024 11:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F544158A03
+	for <linux-sgx@vger.kernel.org>; Wed, 22 May 2024 01:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715944497; cv=none; b=QdxUWattYV/lb/TWiUjC6jTIVjJVFQ2P4gKJKo/RDMd6P3TlBK+RUh6bvswcpufebjZA0L+BmNdRvsXhxm9vVTwss9QDdP22rm1bCQ8bxGdV5BjD/Ac7oyzpGWsldE7H7Y3l1CKdWRmoREQFPwjmK+DR/L1fJIGfWyUbeSmF4gY=
+	t=1716339740; cv=none; b=fiiyPrbXF1wzY8OM/BkQw0SqpErJC8XswGnEdY2Rb+pL6y2lbsbPbE4n8ezAC++jBnabBFfRBuoX7e8QPtprYdgOF/k/GSYVEhxkvoB6VQZG0sAK+GqWTx4UkS9PRWUs6gJXYvTG872JKqH54HEkFnH832wo8FmRMwXwBVQT+Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715944497; c=relaxed/simple;
-	bh=1AQLw6XT3mnToBpQL/o4G4Pk3fxWO0mx5XkrE9JobhA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=crvb/5CwEdyzuHs675+hLBpUXn3VjToy7qlSbRwA2ORm5Jj2s8czeTMGnYrkE16zZkIJ3d9Kwo7MHJ9p0u9V8cDMhvkDUjIn56a4MWOAIgv9OOmuD0Imw0PpDHfM3rytYx4UZZmihaO4bnCLJGqlLx7M+yHLl/Ip5nXiNlb5ZCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lIo0Tb0L; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1716339740; c=relaxed/simple;
+	bh=6sKEuw4EVR0IjH9p2JPj0dqFuh+QrksESybdQuYCbp4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=n+ItXkqJSyRj8IVAKlAz6RGQwRHcEzkdC0zx4FszLz5EzZOAhfBtqiGFXcx8PjrInrJZBgSzt0b/rKMe6lFwi7US/LCGqe9uo505P0U5iD3hsOT4rOcIWmsI8mW34WAfdM5MZt8RizMemUEMipF26HaPnVwbukcBanEvLRmLiBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CKKlEEYW; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lIo0Tb0L"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715944496; x=1747480496;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=1AQLw6XT3mnToBpQL/o4G4Pk3fxWO0mx5XkrE9JobhA=;
-  b=lIo0Tb0L0/Kmn7E8aRwBJqYhP5KbwAJznHOEgQI+w7YrNVEZaqBp+lKr
-   Jj8YWN2wjkf6eMPODUhpa2/hFrAmV6+3bq1I48lvFThdnYtF63TSufq7t
-   KjZ39yVjSjHepiFSl/CmMqEy6SMwrueCRngkgp3O7i++n/Yvuq9v6ByXD
-   /Tt0VrddSu08TzvlQoKdKQaDZSPVJeb8lkbuSgl30udZm79EowZMkoF/6
-   Ytu67HHqeLCfhmNsFU1CFPJHmnkYPUhJxDbK0h3B0IelGS2M+qrL9PeYX
-   qZY0kTjNm726qE2F3zmw2Zo/Xd5S/MtbNh7yh2hi33nh4njFRBUVymwjE
-   w==;
-X-CSE-ConnectionGUID: OOOJuRTITCCTyuKiqo03pQ==
-X-CSE-MsgGUID: 8VA6o41+S3aPVCZyZ8/n2A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="23529054"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="23529054"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 04:14:53 -0700
-X-CSE-ConnectionGUID: K64C8VC5RVC4zLZwfkX8uA==
-X-CSE-MsgGUID: cJfoyT6TQLO2nbliraKaQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="36276853"
-Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 04:14:53 -0700
-From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
-To: dave.hansen@linux.intel.com,
-	jarkko@kernel.org,
-	kai.huang@intel.com,
-	haitao.huang@linux.intel.com,
-	reinette.chatre@intel.com,
-	linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: mona.vij@intel.com,
-	kailun.qin@intel.com,
-	stable@vger.kernel.org
-Subject: [PATCH v3 2/2] x86/sgx: Resolve EREMOVE page vs EAUG page data race
-Date: Fri, 17 May 2024 04:06:31 -0700
-Message-Id: <20240517110631.3441817-3-dmitrii.kuvaiskii@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240517110631.3441817-1-dmitrii.kuvaiskii@intel.com>
-References: <20240517110631.3441817-1-dmitrii.kuvaiskii@intel.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CKKlEEYW"
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61be1fcf9abso195242497b3.1
+        for <linux-sgx@vger.kernel.org>; Tue, 21 May 2024 18:02:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716339737; x=1716944537; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2p/91SZXiolultWfykg7Se/3Y6CJnO46NmIdpmtDTd8=;
+        b=CKKlEEYWF+NfTDnKd8/N6EsXuD83wZZn0uhGBJvjGnaoPdsTet98ronmi/8o6oWGCc
+         8lHK/RThrOjmrkpYd/HX6cXv0q1M/hfAyY9+7MVIX9ppTgCtIxrTOx5yD0DmDQTmJ+4T
+         IQNlxjAiwW7mFP9izBD5avmaaRwRr5a7yvmiZ/HRQj/qnzaJX1wAyGsCrMCymvWpREVO
+         r4t+8BLfd0veriBNFHmmAZgQHTTH0VqB5BfUN4llgyt9qvOL9to37hDilnc4OL5swrkZ
+         31BaTtcMVMwdaaW2pruyIfCfPiio6SAc9xKVF3HRLs3Mq+0yNgN/8urIWxZnVWoZM6OQ
+         fY3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716339737; x=1716944537;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2p/91SZXiolultWfykg7Se/3Y6CJnO46NmIdpmtDTd8=;
+        b=CpE6YsKkXU57SneMrYtR/NCm2shrSZVRUJjTWhJqHQJ2MwwZLsJgdc6e3XctJ/yH0B
+         wKbTdxU8jR8b9r5QOjkg5om5deysS4sBK5kYR98sPthcEmBE+jNMplZ6kmokUnQMUNdY
+         +kxfTOsX8srBhmTFb7qLmUU2PAjaO2gPVvaxFYzO4vq8esHTr2JGFCOgBdgW0buHvcqP
+         O+YSGoia5VfJlLxcP5+eyPXdcPWRWDBLSUjXB5yWk/wBwXUkUwXe2mx1W01PxQsfoi+5
+         eLANSj12Kc1tZ7dmXX5bOwvbsWtWJHD0fIYxIZC8tikoAOIWlOhV5EMwelkE0lqjBMp9
+         qzlw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1rBS6PKWa74g1dDBq4Kct/vHTcC4QcL1bEuw+//l/fuVdvzGd5ujkPAmsCA2iR6HNEOgxqgsGqXxdq4Og5rUod/3/r+nbYrJu
+X-Gm-Message-State: AOJu0Yx7IZjicZyyIFgVpWub6+Md0x/r7PYzlAdQKXgBTjPg1LU+nfFP
+	Q0BPegqKCr0Odx9mGLKp2kAGnZdl5nE8ypxADQrUStj4NSropjmwqFY+BfM3w/0vhYlbaj7tjbB
+	UCw==
+X-Google-Smtp-Source: AGHT+IGfhOk9YJsYNy8CZV+lV+R/zOJsJYrZoh4Vhc9wR+bdPu7ruFNEsPOKmbOVrGY3YMxlYG3w5xawAtE=
+X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
+ (user=edliaw job=sendgmr) by 2002:a0d:d80d:0:b0:627:dad9:bf54 with SMTP id
+ 00721157ae682-627e48c3490mr1899317b3.10.1716339737591; Tue, 21 May 2024
+ 18:02:17 -0700 (PDT)
+Date: Wed, 22 May 2024 00:57:43 +0000
+In-Reply-To: <20240522005913.3540131-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240522005913.3540131-1-edliaw@google.com>
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240522005913.3540131-58-edliaw@google.com>
+Subject: [PATCH v5 57/68] selftests/sgx: Compile with -D_GNU_SOURCE
+From: Edward Liaw <edliaw@google.com>
+To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Edward Liaw <edliaw@google.com>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kernel-team@android.com, linux-security-module@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org, 
+	kernel test robot <oliver.sang@intel.com>, linux-sgx@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Two enclave threads may try to add and remove the same enclave page
-simultaneously (e.g., if the SGX runtime supports both lazy allocation
-and MADV_DONTNEED semantics). Consider some enclave page added to the
-enclave. User space decides to temporarily remove this page (e.g.,
-emulating the MADV_DONTNEED semantics) on CPU1. At the same time, user
-space performs a memory access on the same page on CPU2, which results
-in a #PF and ultimately in sgx_vma_fault(). Scenario proceeds as
-follows:
+Add -D_GNU_SOURCE to HOST_CFLAGS and remove #define _GNU_SOURCE.
 
-/*
- * CPU1: User space performs
- * ioctl(SGX_IOC_ENCLAVE_REMOVE_PAGES)
- * on enclave page X
- */
-sgx_encl_remove_pages() {
-
-  mutex_lock(&encl->lock);
-
-  entry = sgx_encl_load_page(encl);
-  /*
-   * verify that page is
-   * trimmed and accepted
-   */
-
-  mutex_unlock(&encl->lock);
-
-  /*
-   * remove PTE entry; cannot
-   * be performed under lock
-   */
-  sgx_zap_enclave_ptes(encl);
-                                 /*
-                                  * Fault on CPU2 on same page X
-                                  */
-                                 sgx_vma_fault() {
-                                   /*
-                                    * PTE entry was removed, but the
-                                    * page is still in enclave's xarray
-                                    */
-                                   xa_load(&encl->page_array) != NULL ->
-                                   /*
-                                    * SGX driver thinks that this page
-                                    * was swapped out and loads it
-                                    */
-                                   mutex_lock(&encl->lock);
-                                   /*
-                                    * this is effectively a no-op
-                                    */
-                                   entry = sgx_encl_load_page_in_vma();
-                                   /*
-                                    * add PTE entry
-                                    *
-                                    * *BUG*: a PTE is installed for a
-                                    * page in process of being removed
-                                    */
-                                   vmf_insert_pfn(...);
-
-                                   mutex_unlock(&encl->lock);
-                                   return VM_FAULT_NOPAGE;
-                                 }
-  /*
-   * continue with page removal
-   */
-  mutex_lock(&encl->lock);
-
-  sgx_encl_free_epc_page(epc_page) {
-    /*
-     * remove page via EREMOVE
-     */
-    /*
-     * free EPC page
-     */
-    sgx_free_epc_page(epc_page);
-  }
-
-  xa_erase(&encl->page_array);
-
-  mutex_unlock(&encl->lock);
-}
-
-Here, CPU1 removed the page. However CPU2 installed the PTE entry on the
-same page. This enclave page becomes perpetually inaccessible (until
-another SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl). This is because the page is
-marked accessible in the PTE entry but is not EAUGed, and any subsequent
-access to this page raises a fault: with the kernel believing there to
-be a valid VMA, the unlikely error code X86_PF_SGX encountered by code
-path do_user_addr_fault() -> access_error() causes the SGX driver's
-sgx_vma_fault() to be skipped and user space receives a SIGSEGV instead.
-The userspace SIGSEGV handler cannot perform EACCEPT because the page
-was not EAUGed. Thus, the user space is stuck with the inaccessible
-page.
-
-Fix this race by forcing the fault handler on CPU2 to back off if the
-page is currently being removed (on CPU1). This is achieved by
-introducing a new flag SGX_ENCL_PAGE_BEING_REMOVED, which is unset by
-default and set only right-before the first mutex_unlock() in
-sgx_encl_remove_pages(). Upon loading the page, CPU2 checks whether this
-page is being removed, and if yes then CPU2 backs off and waits until
-the page is completely removed. After that, any memory access to this
-page results in a normal "allocate and EAUG a page on #PF" flow.
-
-Fixes: 9849bb27152c ("x86/sgx: Support complete page removal")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
-Reviewed-by: Haitao Huang <haitao.huang@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202404301040.3bea5782-oliver.sang@intel.com
+Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- arch/x86/kernel/cpu/sgx/encl.c  | 3 ++-
- arch/x86/kernel/cpu/sgx/encl.h  | 3 +++
- arch/x86/kernel/cpu/sgx/ioctl.c | 1 +
- 3 files changed, 6 insertions(+), 1 deletion(-)
+ tools/testing/selftests/sgx/Makefile    | 2 +-
+ tools/testing/selftests/sgx/sigstruct.c | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 41f14b1a3025..7ccd8b2fce5f 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -257,7 +257,8 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
+index 867f88ce2570..272da790d9ae 100644
+--- a/tools/testing/selftests/sgx/Makefile
++++ b/tools/testing/selftests/sgx/Makefile
+@@ -12,7 +12,7 @@ OBJCOPY := $(CROSS_COMPILE)objcopy
+ endif
  
- 	/* Entry successfully located. */
- 	if (entry->epc_page) {
--		if (entry->desc & SGX_ENCL_PAGE_BEING_RECLAIMED)
-+		if (entry->desc & (SGX_ENCL_PAGE_BEING_RECLAIMED |
-+				   SGX_ENCL_PAGE_BEING_REMOVED))
- 			return ERR_PTR(-EBUSY);
+ INCLUDES := -I$(top_srcdir)/tools/include
+-HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC
++HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC -D_GNU_SOURCE
+ HOST_LDFLAGS := -z noexecstack -lcrypto
+ ENCL_CFLAGS += -Wall -Werror -static-pie -nostdlib -ffreestanding -fPIE \
+ 	       -fno-stack-protector -mrdrnd $(INCLUDES)
+diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
+index d73b29becf5b..200034a0fee5 100644
+--- a/tools/testing/selftests/sgx/sigstruct.c
++++ b/tools/testing/selftests/sgx/sigstruct.c
+@@ -1,7 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*  Copyright(c) 2016-20 Intel Corporation. */
  
- 		return entry;
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index f94ff14c9486..fff5f2293ae7 100644
---- a/arch/x86/kernel/cpu/sgx/encl.h
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -25,6 +25,9 @@
- /* 'desc' bit marking that the page is being reclaimed. */
- #define SGX_ENCL_PAGE_BEING_RECLAIMED	BIT(3)
- 
-+/* 'desc' bit marking that the page is being removed. */
-+#define SGX_ENCL_PAGE_BEING_REMOVED	BIT(2)
-+
- struct sgx_encl_page {
- 	unsigned long desc;
- 	unsigned long vm_max_prot_bits:8;
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 5d390df21440..de59219ae794 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -1142,6 +1142,7 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
- 		 * Do not keep encl->lock because of dependency on
- 		 * mmap_lock acquired in sgx_zap_enclave_ptes().
- 		 */
-+		entry->desc |= SGX_ENCL_PAGE_BEING_REMOVED;
- 		mutex_unlock(&encl->lock);
- 
- 		sgx_zap_enclave_ptes(encl, addr);
+-#define _GNU_SOURCE
+ #include <assert.h>
+ #include <getopt.h>
+ #include <stdbool.h>
 -- 
-2.34.1
+2.45.1.288.g0e0cd299f1-goog
 
