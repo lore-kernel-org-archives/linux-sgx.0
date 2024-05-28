@@ -1,50 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB6A16C688;
-	Tue, 28 May 2024 16:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE30172786;
+	Tue, 28 May 2024 16:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716912073; cv=none; b=gF3aDyOOVeZR1woPKD3V0jbf97fY0kJY978Jrb22oMTqe4OZrUdMzWtDyDio8GjvrQwPGXPotiJUGQEF33/PcfPRrjF/mKxJ9/K+zjgFHFimnCUDWS0KWXsC/IAXFD7nu395DOwvGt3eqFtw2bDp4sXxqXj1MrRF6LydFxQABXw=
+	t=1716913396; cv=none; b=iuTDIXPUjlFvnT4LI5gYDiQKdRTptA28iCTGufSjKQiCzxKT+4wEA7pd5keMt8n7R/pagZNe1n2I7UI5vewN8MNWqqkItoYoPTjLEa2BypasXGid5Ae0AJBYRq3wJ1+5Zpf/K+6SUnv3XGaZOlP0T70eSBKeSONx4ELGjZUGmCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716912073; c=relaxed/simple;
-	bh=5pvb/Ov6TM9B+nYn5BV6klOku8XKtCQtLuh09d9QCe0=;
+	s=arc-20240116; t=1716913396; c=relaxed/simple;
+	bh=eIJT5LAauoUZFbvVBrouDQx9g9TxHrmRhXsibWcNbD4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oZMkfRF9CiaEgO/d1isaHjEGVryv0FY+my1RlH98iXJVd2JXxavmYFRqTsUvpFfkMSF1HYMOJO+fDMjJcg8cYpn09tDWX6CVeSbw6KHRxYls7qCaC1NAbyHClCZ+elZkXIEoRFLC2NHqLAHXk86hNi8AQ1YT26+PM05e0jqVStY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W+nKb/FZ; arc=none smtp.client-ip=198.175.65.9
+	 In-Reply-To:Content-Type; b=BJTb04/Nfr7xAvHt9AVlRZfM+4B2lKE+nVXfixjKS/HjoaHM5xsACxMEuThzhAv5JAfzZ8v+li00sRV1OL7UY7n28rCpA++dlYacgWNrXO7gt3hm4gK/jR5n9bLVlVqo1lKSKx8Y/i3YqCmRDFKuyFcFo/LOU0nIHE0OMOVreWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k7uz/KL6; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W+nKb/FZ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k7uz/KL6"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716912072; x=1748448072;
+  t=1716913394; x=1748449394;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=5pvb/Ov6TM9B+nYn5BV6klOku8XKtCQtLuh09d9QCe0=;
-  b=W+nKb/FZUAQ2e0y7F9qkDfzHbzSCl8LtMbOCFDXnWlTQsjdYrb7pJdVc
-   ydBFTglsXwaoSuc7zNOzeNEuhifl4cEkBSCn5AYTqAmbqMXVbF+CVpeFQ
-   CCy1AX1QJWpfVs/rpKwttWvdav6kpqFj4MgwJ7w1rDnp717KdhXxc8JXX
-   qiYWlU6mSG1P7Fxo897Gok5U1J7Xidr3nllORFTmh8DEEldUC8fHv4WFw
-   ycDyCbBkRw3j+nUT3d2+Aa2EoNvGR4iH5CmFxbMgqHSM2MBaB0PNe/A0n
-   A9Qoj4I+PbdnmX1uhdHguS9Va1KPtJrpGAgCj3v9/WR2qsMKxtmSCK7IO
-   A==;
-X-CSE-ConnectionGUID: pmQSOqIrRaKLQLT+nPmnow==
-X-CSE-MsgGUID: gqgu6ctQRgmr6kGMlVFKqw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="35785239"
+  bh=eIJT5LAauoUZFbvVBrouDQx9g9TxHrmRhXsibWcNbD4=;
+  b=k7uz/KL6CdfKUmlJsQWHr0HXPmxDpyCIcgBufAucNnM/dSvhClHfZzHX
+   FOUSh62D75kqntrvRA/a8kkBsr84B1vQGt/TpJwBVkDzsCI3+3CPUsPDF
+   prq2wViJzKBv3vb9+O1AxKvB168oU+vIVV+UWOo8oAAiX5bSWyhRjfuNI
+   Jz0+SgCGs8LsBORe0sEPkPMVhwQLhEAy4UHinN7QNyzPUJ5043yPpucsu
+   5fX/AKVVtJtn39MS0Ere7MrJiLd6SQ1N9IzExarnLqHWoNmuBsykOubRJ
+   aZQ8TeGWt2aFHN5oUu7mCISMNM6xI1TGxRpIUmzdbTbJOIMqdGBC4XzPi
+   Q==;
+X-CSE-ConnectionGUID: 0aVZLU/jTrK+qS1cRupdGw==
+X-CSE-MsgGUID: DSanTUznQt+bsNg2Plyr0A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="24399578"
 X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="35785239"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 09:01:11 -0700
-X-CSE-ConnectionGUID: IprQquY+RLWqugcUGnYm8g==
-X-CSE-MsgGUID: DSSoelTtSSiMIFbpYz3Ajw==
+   d="scan'208";a="24399578"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 09:23:14 -0700
+X-CSE-ConnectionGUID: +Q8TNIsBRjmfHTrI0bCqgw==
+X-CSE-MsgGUID: ig9cWYbgSRm5TNCuOxUqxw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,195,1712646000"; 
-   d="scan'208";a="39556755"
+   d="scan'208";a="35739920"
 Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.110.248]) ([10.125.110.248])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 09:01:10 -0700
-Message-ID: <2dd91299-650a-4e0e-97f4-0d4e472db9a0@intel.com>
-Date: Tue, 28 May 2024 09:01:10 -0700
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2024 09:23:13 -0700
+Message-ID: <01bb6519-680e-45bf-b8bd-34763658aa17@intel.com>
+Date: Tue, 28 May 2024 09:23:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -52,13 +52,15 @@ List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] x86/sgx: Fix two data races in EAUG/EREMOVE flows
+Subject: Re: [PATCH v3 2/2] x86/sgx: Resolve EREMOVE page vs EAUG page data
+ race
 To: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>,
  dave.hansen@linux.intel.com, jarkko@kernel.org, kai.huang@intel.com,
  haitao.huang@linux.intel.com, reinette.chatre@intel.com,
  linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: mona.vij@intel.com, kailun.qin@intel.com
+Cc: mona.vij@intel.com, kailun.qin@intel.com, stable@vger.kernel.org
 References: <20240517110631.3441817-1-dmitrii.kuvaiskii@intel.com>
+ <20240517110631.3441817-3-dmitrii.kuvaiskii@intel.com>
 From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -104,13 +106,40 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20240517110631.3441817-1-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240517110631.3441817-3-dmitrii.kuvaiskii@intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 5/17/24 04:06, Dmitrii Kuvaiskii wrote:
-> We wrote a trivial stress test to reproduce the hangs observed in
-> real-world applications. The test stresses #PF-based page allocation and
-> SGX_IOC_ENCLAVE_REMOVE_PAGES flows in the SGX driver:
+...
 
-This seems like something we'd want in the kernel SGX selftests.
+First, why is SGX so special here?  How is the SGX problem different
+than what the core mm code does?
+
+> --- a/arch/x86/kernel/cpu/sgx/encl.h
+> +++ b/arch/x86/kernel/cpu/sgx/encl.h
+> @@ -25,6 +25,9 @@
+>  /* 'desc' bit marking that the page is being reclaimed. */
+>  #define SGX_ENCL_PAGE_BEING_RECLAIMED	BIT(3)
+>  
+> +/* 'desc' bit marking that the page is being removed. */
+> +#define SGX_ENCL_PAGE_BEING_REMOVED	BIT(2)
+
+Second, convince me that this _needs_ a new bit.  Why can't we just have
+a bit that effectively means "return EBUSY if you see this bit when
+handling a fault".
+
+>  struct sgx_encl_page {
+>  	unsigned long desc;
+>  	unsigned long vm_max_prot_bits:8;
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> index 5d390df21440..de59219ae794 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -1142,6 +1142,7 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
+>  		 * Do not keep encl->lock because of dependency on
+>  		 * mmap_lock acquired in sgx_zap_enclave_ptes().
+>  		 */
+> +		entry->desc |= SGX_ENCL_PAGE_BEING_REMOVED;
+
+This also needs a comment, no matter what.
