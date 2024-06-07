@@ -1,138 +1,105 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF28619066F;
-	Fri,  7 Jun 2024 17:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4FC19AD90;
+	Fri,  7 Jun 2024 17:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717782200; cv=none; b=aTvKkSpQvWJejn6gepfwr3aKuW8aVQ72rMGqvTm1fUHFFxiYay6YgrT20CXTXDoofQbqK0BBwGN6l0tLALBF1BnsDfKXVonQe1ImeMCEdh2/c2WP/Nxt8fpP2sYCvsz/ZTEgsxTdk+bT5FCPjBe0LeGbdOimn4ddZwTh6l60QOY=
+	t=1717782939; cv=none; b=k0Aed2Mo/67tuaBz9OUOEAEBXIGo5UJ74Oh9g9uYtt65oe7C+WadW7CnBElglxKK7vnzx5N/RTdKj9vZ/DNH5SiVGYTiMgt4Nq6EjkMeOkSJ76vYn7ShyLnGorYzZow47jOGrU+EqSw8z15CXlFdCRylgtj7R1Qojnp93uCxBlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717782200; c=relaxed/simple;
-	bh=BljvyepxXT4x1++sRMx+Q1dhUFcguaAkYXBQIoz5Y4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u2Ak+rd1HKBCnSlNEMoNBV27kN0L2rWFanD3as4vAI35tdnN60NM42Vn8pWVcC0QC3ZIqK0rdBzBDFoyfrvnF9EcLrdXfDsfl4Vg0yLV/7088RcorAgZHk/MmQEPE+Thbf+ffxUscoy0DMvKNTwCgTUem0VqD/tPerZdLiswsEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WJfaBeZj; arc=none smtp.client-ip=192.198.163.10
+	s=arc-20240116; t=1717782939; c=relaxed/simple;
+	bh=9pY0lakFOJQMli3EsSUnKuQMKYfcQqGOb4o+kPooLL8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E1xmIObCWe/sAYQ81oh5U0YcNSIvQerUC1mqus001TcOhc7T/zhwkkXvNWc6OFAvMaWssRNH+/B3J3z3rl4ggKIaxdNWHEdp3wa/UWWvmAn8ska0bsm/mxyfC9OcMtrzSZtT1dFpYSnxrV7Wh55GFjFKl2MRtHZdNLR9vrOnSJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OFzDW8cs; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WJfaBeZj"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OFzDW8cs"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717782199; x=1749318199;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=BljvyepxXT4x1++sRMx+Q1dhUFcguaAkYXBQIoz5Y4E=;
-  b=WJfaBeZjgqqYqaxW+5mccoqY9f8ou+TZJRYEHQdcRfWT6Dj00J5uAMGl
-   Mzn4qX0Hwix/KcX7aupvnGeoMRVNj03dmE8k1uQBVJPNBtGdWUnm76OMR
-   +BIJ+M87tUwTGpE1vwuhGV7o2g0r+Kj5MK2m6lr6Q+COEBzkEYLe+Y+ut
-   gP4+q0T7GOlbXYHKZMWqmL/qlsUHd9ndV1+CNK+mudjcGPrsGHXZdAwmD
-   qcM3i+TkYUfqUNEvAFZBKs0KlUTWjlO55t8Kuc5V1U8ux7JqMnilrEkkC
-   ofTlBHpoHD/4+xQ167uIfiM4Vyq+x1wTwQTHzxjzaxBttTdZH67Zih9zz
-   w==;
-X-CSE-ConnectionGUID: ICIHYRfYTVaBL6QvHIMtFw==
-X-CSE-MsgGUID: Drkyf0ZWSaWDLEQ2VgSz/Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="25918177"
+  t=1717782938; x=1749318938;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=9pY0lakFOJQMli3EsSUnKuQMKYfcQqGOb4o+kPooLL8=;
+  b=OFzDW8csi+R2LLymnh+qi9vK6d/EdniXqoKNhY56yZavbqgVdPkOv18O
+   l88pqtFuC2iwV3Ko8J9Vvggx1DQMcUH8xBWdBXzMSRF298Mqw8ADpAOTr
+   xnBwZyipZOd531OoOCfOfdX13NdZbDS4ntp0KvRr+GMJGTt0Jec8qZ206
+   HbRRwrA9QeB8zwnNgRltBLCxtl71KvcpwphCiuBqFUA1eR3fMPblgS7IY
+   1Xb36o4ONVHvoQ9mkr/vyAqKT+F2Lp6CDFe5ZPN7WE+tF/NrBwt7n5o2z
+   dMykbEfbrjGzylRIHywyk7i2PeIcFNyM03ADdmKp2KH/ufXrhz9BhBKYX
+   g==;
+X-CSE-ConnectionGUID: quC/DEBaS6CxxzqdFYYxuA==
+X-CSE-MsgGUID: GoPI3i91R9SISJXLhK5BVg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14357840"
 X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="25918177"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 10:43:19 -0700
-X-CSE-ConnectionGUID: vbNlkgoBRPyz/3hCWYQDkA==
-X-CSE-MsgGUID: 1NbwmMqBRiuhN/hdh3cqJQ==
+   d="scan'208";a="14357840"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 10:55:38 -0700
+X-CSE-ConnectionGUID: yRJ/o2lLRbyqJ4NPFMy+6g==
+X-CSE-MsgGUID: 6fQUVGT8SzGNU2eGYa4iDA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="69560613"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.109.219]) ([10.125.109.219])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 10:43:16 -0700
-Message-ID: <1d405428-3847-4862-b146-dd57711c881e@intel.com>
-Date: Fri, 7 Jun 2024 10:43:15 -0700
+   d="scan'208";a="38517697"
+Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 10:55:37 -0700
+From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
+To: dave.hansen@intel.com
+Cc: dave.hansen@linux.intel.com,
+	dmitrii.kuvaiskii@intel.com,
+	haitao.huang@linux.intel.com,
+	jarkko@kernel.org,
+	kai.huang@intel.com,
+	kailun.qin@intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-sgx@vger.kernel.org,
+	mona.vij@intel.com,
+	reinette.chatre@intel.com
+Subject: Re: [PATCH v3 0/2] x86/sgx: Fix two data races in EAUG/EREMOVE flows
+Date: Fri,  7 Jun 2024 10:47:18 -0700
+Message-Id: <20240607174718.751068-1-dmitrii.kuvaiskii@intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <2dd91299-650a-4e0e-97f4-0d4e472db9a0@intel.com>
+References: <2dd91299-650a-4e0e-97f4-0d4e472db9a0@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] x86/sgx: Resolve EREMOVE page vs EAUG page data
- race
-To: Haitao Huang <haitao.huang@linux.intel.com>,
- Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>,
- dave.hansen@linux.intel.com, jarkko@kernel.org, kai.huang@intel.com,
- reinette.chatre@intel.com, linux-sgx@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: mona.vij@intel.com, kailun.qin@intel.com, stable@vger.kernel.org
-References: <20240517110631.3441817-1-dmitrii.kuvaiskii@intel.com>
- <20240517110631.3441817-3-dmitrii.kuvaiskii@intel.com>
- <01bb6519-680e-45bf-b8bd-34763658aa17@intel.com>
- <op.2oszlnlowjvjmi@hhuan26-mobl.amr.corp.intel.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <op.2oszlnlowjvjmi@hhuan26-mobl.amr.corp.intel.com>
 Content-Type: text/plain; charset=UTF-8
+Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
 Content-Transfer-Encoding: 8bit
 
-On 6/3/24 11:42, Haitao Huang wrote:
->> Second, convince me that this _needs_ a new bit.  Why can't we just have
->> a bit that effectively means "return EBUSY if you see this bit when
->> handling a fault".
-> 
-> IIUC, reclaimer_writing_to_pcmd() also uses
-> SGX_ENCL_PAGE_BEING_RECLAIMED to check if a page is about being
-> reclaimed in order to prevent its VA slot fro being freed. So I think we
-> do need separate bit for EREMOVE which does not write to VA slot?
+On Tue, May 28, 2024 at 09:01:10AM -0700, Dave Hansen wrote:
+> On 5/17/24 04:06, Dmitrii Kuvaiskii wrote:
+> > We wrote a trivial stress test to reproduce the hangs observed in
+> > real-world applications. The test stresses #PF-based page allocation and
+> > SGX_IOC_ENCLAVE_REMOVE_PAGES flows in the SGX driver:
+>
+> This seems like something we'd want in the kernel SGX selftests.
 
-I think the bits should be centered around what action the code needs to
-take and not what is being done to the page.
+I looked at tools/testing/selftests/sgx/ and I observe several
+complications:
 
-Right now, SGX_ENCL_PAGE_BEING_RECLAIMED has two logical meanings:
+1. The stress test requires creation of several threads (at least two,
+   ideally more). However, current SGX selftests are single-threaded.
+   Adding the scaffolding to add multi-threading support to SGX selftests
+   seems like a non-trivial task.
 
- 1. Don't load the page
- 2. The page is in the backing store
+2. Catching the data race would require a for loop with some threshold.
+   - First, there are no such looping tests in current SGX selftests. Is
+     it normal to add such a test?
+   - Second, what would be the threshold to loop for? I.e., after how many
+     iterations should we consider the data race not manifesting, and
+     report success?
+   - Third, the data race may hang the test. Is this something that is
+     allowed in selftests? (I mean the test can have only two outcomes --
+     either it hangs, meaning the data race was not fixed, or it runs to
+     completion. There is no result that we could EXCEPT or ASSERT on.)
 
-But now folks are suggesting that a new bit is added which means "do #1,
-but not #2".
+Do we still want to add such a selftest? Or could we maybe piggy-back on
+Gramine CI (that will include the test I mentioned in the cover letter)?
 
-Let's take a step back and look at what logical outcomes we want in the
-code and then create the bits based on _that_.
+--
+Dmitrii Kuvaiskii
