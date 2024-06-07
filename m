@@ -1,167 +1,138 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEC6196C68;
-	Fri,  7 Jun 2024 17:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF28619066F;
+	Fri,  7 Jun 2024 17:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717781410; cv=none; b=Qmy8uVc+XL52EXqqBE96RlLNHTHSMSKU5W92nPhdcppdiZ/BdeJXqDW9HaDbmqsLtK+yr99hLvbpHoag6HdRfihlsKJpwaiC+NVZowcDocuXqeWGElMvr7fP4mMPOyGsf1MFOdyAyp2DFfd2dmuAVEktZRgfhl2+lc3vfJAqLow=
+	t=1717782200; cv=none; b=aTvKkSpQvWJejn6gepfwr3aKuW8aVQ72rMGqvTm1fUHFFxiYay6YgrT20CXTXDoofQbqK0BBwGN6l0tLALBF1BnsDfKXVonQe1ImeMCEdh2/c2WP/Nxt8fpP2sYCvsz/ZTEgsxTdk+bT5FCPjBe0LeGbdOimn4ddZwTh6l60QOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717781410; c=relaxed/simple;
-	bh=B9tO+B2hT8Xk/eYrXZW//gyZWpphBGJke5m1suqOmjk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dkrIbpe1NxUaN6LNBkYDj+yUGMDZn8ijsbt+7dY/CnJJW52MNc2t/KhS2REo7lxaKeA3hpHzVHyz5x+lpIBY8d9/BTkpKcejwqh+/0nBqHmcUTWoJyiTqitnsifffBMWcAQhewdZDLn4mHSgwY6zUnunq4HNlBhmisZI2zdq/28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LcL0g5Lo; arc=none smtp.client-ip=192.198.163.12
+	s=arc-20240116; t=1717782200; c=relaxed/simple;
+	bh=BljvyepxXT4x1++sRMx+Q1dhUFcguaAkYXBQIoz5Y4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u2Ak+rd1HKBCnSlNEMoNBV27kN0L2rWFanD3as4vAI35tdnN60NM42Vn8pWVcC0QC3ZIqK0rdBzBDFoyfrvnF9EcLrdXfDsfl4Vg0yLV/7088RcorAgZHk/MmQEPE+Thbf+ffxUscoy0DMvKNTwCgTUem0VqD/tPerZdLiswsEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WJfaBeZj; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LcL0g5Lo"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WJfaBeZj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717781409; x=1749317409;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=B9tO+B2hT8Xk/eYrXZW//gyZWpphBGJke5m1suqOmjk=;
-  b=LcL0g5LoEeTTY7tXfPBb0kyWkeLx+oI2xDNZ2uvA4Fcrvc3nmoQWyQ1A
-   r/p7CYEnX2TfZ8nPmTweGBfQGldkaSAZpT90UmRdadouffc+bBy06SnNN
-   tMUQUSEvMoOXHicuP5AEaOa2S3qiY502myam72gmE+f/NYP0G9zfRuZAj
-   yFztSpLNkDu+1fTA8PInOGuiiTuLZ8AicCrLO616B8gwTiXwjOGAoDZ/S
-   RT/cOKD39Fqj1WSiP914SdbrGye28VFH1uGT+qbuIgcQQQex8lB/VMcZ5
-   TlCoQEG3itoDIANnUhDSIJeJAu1bvY538WhZXDVEL+8RgZOMCPp6Jbnm7
-   A==;
-X-CSE-ConnectionGUID: SyC4y/+MTW+/WX5lxrTsLQ==
-X-CSE-MsgGUID: SupNgW+NTPS6hREdBuN+bw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="18368118"
+  t=1717782199; x=1749318199;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BljvyepxXT4x1++sRMx+Q1dhUFcguaAkYXBQIoz5Y4E=;
+  b=WJfaBeZjgqqYqaxW+5mccoqY9f8ou+TZJRYEHQdcRfWT6Dj00J5uAMGl
+   Mzn4qX0Hwix/KcX7aupvnGeoMRVNj03dmE8k1uQBVJPNBtGdWUnm76OMR
+   +BIJ+M87tUwTGpE1vwuhGV7o2g0r+Kj5MK2m6lr6Q+COEBzkEYLe+Y+ut
+   gP4+q0T7GOlbXYHKZMWqmL/qlsUHd9ndV1+CNK+mudjcGPrsGHXZdAwmD
+   qcM3i+TkYUfqUNEvAFZBKs0KlUTWjlO55t8Kuc5V1U8ux7JqMnilrEkkC
+   ofTlBHpoHD/4+xQ167uIfiM4Vyq+x1wTwQTHzxjzaxBttTdZH67Zih9zz
+   w==;
+X-CSE-ConnectionGUID: ICIHYRfYTVaBL6QvHIMtFw==
+X-CSE-MsgGUID: Drkyf0ZWSaWDLEQ2VgSz/Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="25918177"
 X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="18368118"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 10:30:08 -0700
-X-CSE-ConnectionGUID: SpdaPTKvQbmoP0C/7JLRpw==
-X-CSE-MsgGUID: h0v3KNYvSseJzFH9vNCMuA==
+   d="scan'208";a="25918177"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 10:43:19 -0700
+X-CSE-ConnectionGUID: vbNlkgoBRPyz/3hCWYQDkA==
+X-CSE-MsgGUID: 1NbwmMqBRiuhN/hdh3cqJQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,221,1712646000"; 
-   d="scan'208";a="38472457"
-Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 10:30:07 -0700
-From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
-To: dave.hansen@intel.com
-Cc: dave.hansen@linux.intel.com,
-	dmitrii.kuvaiskii@intel.com,
-	haitao.huang@linux.intel.com,
-	jarkko@kernel.org,
-	kai.huang@intel.com,
-	kailun.qin@intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-sgx@vger.kernel.org,
-	mona.vij@intel.com,
-	reinette.chatre@intel.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] x86/sgx: Resolve EREMOVE page vs EAUG page data race
-Date: Fri,  7 Jun 2024 10:21:46 -0700
-Message-Id: <20240607172146.536993-1-dmitrii.kuvaiskii@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <01bb6519-680e-45bf-b8bd-34763658aa17@intel.com>
-References: <01bb6519-680e-45bf-b8bd-34763658aa17@intel.com>
+   d="scan'208";a="69560613"
+Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.109.219]) ([10.125.109.219])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 10:43:16 -0700
+Message-ID: <1d405428-3847-4862-b146-dd57711c881e@intel.com>
+Date: Fri, 7 Jun 2024 10:43:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] x86/sgx: Resolve EREMOVE page vs EAUG page data
+ race
+To: Haitao Huang <haitao.huang@linux.intel.com>,
+ Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>,
+ dave.hansen@linux.intel.com, jarkko@kernel.org, kai.huang@intel.com,
+ reinette.chatre@intel.com, linux-sgx@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: mona.vij@intel.com, kailun.qin@intel.com, stable@vger.kernel.org
+References: <20240517110631.3441817-1-dmitrii.kuvaiskii@intel.com>
+ <20240517110631.3441817-3-dmitrii.kuvaiskii@intel.com>
+ <01bb6519-680e-45bf-b8bd-34763658aa17@intel.com>
+ <op.2oszlnlowjvjmi@hhuan26-mobl.amr.corp.intel.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <op.2oszlnlowjvjmi@hhuan26-mobl.amr.corp.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
 Content-Transfer-Encoding: 8bit
 
-On Tue, May 28, 2024 at 09:23:13AM -0700, Dave Hansen wrote:
-> On 5/17/24 04:06, Dmitrii Kuvaiskii wrote:
-> ...
->
-> First, why is SGX so special here?  How is the SGX problem different
-> than what the core mm code does?
+On 6/3/24 11:42, Haitao Huang wrote:
+>> Second, convince me that this _needs_ a new bit.  Why can't we just have
+>> a bit that effectively means "return EBUSY if you see this bit when
+>> handling a fault".
+> 
+> IIUC, reclaimer_writing_to_pcmd() also uses
+> SGX_ENCL_PAGE_BEING_RECLAIMED to check if a page is about being
+> reclaimed in order to prevent its VA slot fro being freed. So I think we
+> do need separate bit for EREMOVE which does not write to VA slot?
 
-Here is my understanding why SGX is so special and why I have to introduce
-a new bit SGX_ENCL_PAGE_BEING_REMOVED.
+I think the bits should be centered around what action the code needs to
+take and not what is being done to the page.
 
-In SGX's removal of the enclave page, two operations must happen
-atomically: the PTE entry must be removed and the page must be EREMOVE'd.
+Right now, SGX_ENCL_PAGE_BEING_RECLAIMED has two logical meanings:
 
-Generally, to guarantee atomicity, encl->lock is acquired. Ideally, if
-this encl->lock could be acquired at the beginning of
-sgx_encl_remove_pages() and be released at the very end of this function,
-there would be no EREMOVE page vs EAUG page data race, and my bug fix
-(with SGX_ENCL_PAGE_BEING_REMOVED bit) wouldn't be needed.
+ 1. Don't load the page
+ 2. The page is in the backing store
 
-However, the current implementation of sgx_encl_remove_pages() has to
-release encl->lock before removing the PTE entry. Releasing the lock is
-required because the function that removes the PTE entry --
-sgx_zap_enclave_ptes() -- acquires another, enclave-MM lock:
-mmap_read_lock(encl_mm->mm).
+But now folks are suggesting that a new bit is added which means "do #1,
+but not #2".
 
-The two locks must be taken in this order:
-1. mmap_read_lock(encl_mm->mm)
-2. mutex_lock(&encl->lock)
-
-This lock order is apparent from e.g. sgx_encl_add_page(). This order also
-seems to make intuitive sense: VMA callbacks are called with the MM lock
-being held, so the MM lock should be the first in lock order.
-
-So, if sgx_encl_remove_pages() would _not_ release encl->lock before
-calling sgx_zap_enclave_ptes(), this would violate the lock order and
-might lead to deadlocks. At the same time, releasing encl->lock in the
-middle of the two-operations flow leads to a data race that I found in
-this patch series.
-
-Quick summary:
-- Removing the enclave page requires two operations: removing the PTE and
-  performing EREMOVE.
-- The complete flow of removing the enclave page cannot be protected by a
-  single encl->lock, because it would violate the lock order and would
-  lead to deadlocks.
-- The current upstream implementation thus breaks the flow into two
-  critical sections, releasing encl->lock before sgx_zap_enclave_ptes()
-  and re-acquiring this lock afterwards. This leads to a data race.
-- My patch restores "atomicity" of the flow by introducing a new flag
-  SGX_ENCL_PAGE_BEING_REMOVED.
-
-> > --- a/arch/x86/kernel/cpu/sgx/encl.h
-> > +++ b/arch/x86/kernel/cpu/sgx/encl.h
-> > @@ -25,6 +25,9 @@
-> >  /* 'desc' bit marking that the page is being reclaimed. */
-> >  #define SGX_ENCL_PAGE_BEING_RECLAIMED  BIT(3)
-> >
-> > +/* 'desc' bit marking that the page is being removed. */
-> > +#define SGX_ENCL_PAGE_BEING_REMOVED    BIT(2)
->
-> Second, convince me that this _needs_ a new bit.  Why can't we just have
-> a bit that effectively means "return EBUSY if you see this bit when
-> handling a fault".
-
-As Haitao mentioned in his reply, the bit SGX_ENCL_PAGE_BEING_RECLAIMED is
-also used in reclaimer_writing_to_pcmd(). If we would re-use this bit to
-mark a page being removed, reclaimer_writing_to_pcmd() would incorrectly
-return 1, meaning that the reclaimer is about to write to the PCMD page,
-which is not true.
-
-> >  struct sgx_encl_page {
-> >     unsigned long desc;
-> >     unsigned long vm_max_prot_bits:8;
-> > diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > index 5d390df21440..de59219ae794 100644
-> > --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> > +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> > @@ -1142,6 +1142,7 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
-> >          * Do not keep encl->lock because of dependency on
-> >          * mmap_lock acquired in sgx_zap_enclave_ptes().
-> >          */
-> > +       entry->desc |= SGX_ENCL_PAGE_BEING_REMOVED;
->
-> This also needs a comment, no matter what.
-
-Ok, I will write something along the lines that we want to prevent a data
-race with an EAUG flow, and since we have to release encl->lock (which
-would otherwise prevent the data race) we instead set a bit to mark this
-enclave page as being in the process of removal, so that the EAUG flow
-backs off and retries later.
-
---
-Dmitrii Kuvaiskii
+Let's take a step back and look at what logical outcomes we want in the
+code and then create the bits based on _that_.
