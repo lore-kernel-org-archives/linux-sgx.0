@@ -1,55 +1,55 @@
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDCE1A0732
-	for <linux-sgx@vger.kernel.org>; Mon, 24 Jun 2024 23:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF931AB35F
+	for <linux-sgx@vger.kernel.org>; Mon, 24 Jun 2024 23:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719271754; cv=none; b=UQpCGSqVw5I5qg6mAYOY8ydwEnNzPq11x6plQselt9trTBoGYZNzi9so5EHJhnLpYMWHxux/JU+42BbXkCMfd7aVM8TEV9hXOCF4dgXEph7kvok85imfDaRaGMtIdvjtOBBKZ661nnn1JUUIzm5rpsFYw4ULg2CH/Ok48P3yWJ8=
+	t=1719271760; cv=none; b=EGjgmzxkILxcupY75GdCUihIWqUmnaA7SpfLME+JsJsF9boRvyLTVrGjrnoTZtUZJPu3zCvOYGu/TxWcn/lCCwOI9ykFFLXx9opaxy4kCwrEbuIRitPyKwi1lI1qn/7oThmp3fmVqX6MHDBb1mjf0tsfmVweiQC9fHPE57B4b5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719271754; c=relaxed/simple;
-	bh=atlaXfghS4B3aXHldxOAsjMJ0B5nS66NiP0mFQbDOQI=;
+	s=arc-20240116; t=1719271760; c=relaxed/simple;
+	bh=pWNExpY/MivG68WT1LbkW1rwtOz84qP9M9G1/+5QF7s=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LLM6aKVDOVDiq9zPJ4O3j0Ncw5BP7WIY2ChQHgMVOmiAFGAYax266Fjq8pFP2pg0y1McPkHBfOeg5r+VjwW5qooMzDNTp+btx6PeKaB77ZiXfS1avS9ysbp3DwX2JAiKWV9A7+8NXMA6A4n0dLJDpPyMhL5Is+4gRnIRg5AnW6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NkPjPOLD; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=uZS3+dSA6eQlqQhQYPxToXjeP/FOkGgeLjvxBsAI45g9KbefxSffmK/z7o3xX8pHkP3bqeJkAOtHlW3gOdaNZ+1cgTJugh0RDeH7Q9tezkTtJDofCoad4qV/0isz3eGFYd9sPm0f+g3fa68QNKddTz115w3Elg/UMsl1gmNiLbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FaeCaxlC; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NkPjPOLD"
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0322e5d0daso452404276.0
-        for <linux-sgx@vger.kernel.org>; Mon, 24 Jun 2024 16:29:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FaeCaxlC"
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-721d20a0807so116663a12.1
+        for <linux-sgx@vger.kernel.org>; Mon, 24 Jun 2024 16:29:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719271752; x=1719876552; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719271758; x=1719876558; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KYsd9Rb/6WE30YP2UPtx0BT+t/C3MbQ4dWAZpecv6Gw=;
-        b=NkPjPOLD46sdjSqt3yUq6mlho/lQLQaFvf/DYTSQugRJfZ0qjX+bRxttL0svC/xPq7
-         CmR4Ukj4jnidxzufN2k1nPTLTmBSyp4fUieMhopfJlzNhjilcScRL5AsVz6YDk1WC3ol
-         74gfILUNnF/HKfs2U969Sx8K9TJdq5VrpTmO+CCpxCVN2wWONqNZGBAPvwEYtXK91Zzr
-         2BVNU15HpBTd4KhsI5dXj+ZGCdoqy1r9yZq+Is7EuGH/MxiiTzkyb56Jec3xgjef0JUS
-         Tg6ET13IIE1Rbe7fdbhOurpolpB7hdqOUdimvkuD+l+5BmQ+/ZEhImfjhNym1yjmtE7m
-         UUnA==
+        bh=FdSDNYLWJB5rZ7zGFIgNmO8T8+rT5KpGbZz7pQfLV3k=;
+        b=FaeCaxlCfye7b5YLfuZ6SbYpIxNGujeqgCBDFc5s4U/6+zOC5pLN2lon52z874yWny
+         b3YsKNt+DS7jKNo3qE0oPx8cfvGA1dFA9+75IQ/KraBiQqJQn+g2WPV3uIyG+CW3i3wq
+         Ag2dQOckgcpEgCotsJksqZ2oxkZEf5Gsby9jfVDqOfeW1y9prsQGAoboynpeE7BT7eUC
+         38KmFZ+g2hdGpekag+3+St/zWMRof322lMbzz5KdzKVgJO2cuXmWHgUkj/jfeVSFy1xc
+         slZIkZUb81Zc328fyiEfgpC538fEev3eEixo7+iDdvWzSaz5SWASsR0GwOcc4N+vHDZK
+         PrIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719271752; x=1719876552;
+        d=1e100.net; s=20230601; t=1719271758; x=1719876558;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KYsd9Rb/6WE30YP2UPtx0BT+t/C3MbQ4dWAZpecv6Gw=;
-        b=Pn15xptUpRNtI5CeOGAPzNaRzfi18Mfa57c4rX+b4RwuxbmSsrejAKli/1I3tWUcRF
-         Ao3WmUD82qiINFu8MhupOr6cBVGipeMylzzThSANs5yvpAl+w3g1AxmzBk5ZQMYBCWKz
-         sQPiM8lwdz4ySBb665MUF1BSn0yc1wyj5afJZNSmSw0h2iOnpnuNmgLBUCJw6WabgE9E
-         z0e52Ix9sKscNJrybssx/nWe+9m4vLp7Fg5m7vmP9qIhZIKzFSeVpVsuzGwO6PIcRXpp
-         bhoj95lsg1uhyKBAP6yAJTywndqQKwXy7I0E8Gm8mtx9SO7ZAFYPKmRZ28Sohq1KpLUg
-         Ersw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuBtbbkRb0jJH4/q8WDjveJwk/09kjDZrHRXvS/86Bk0Gr/tZZ8JEIqf3gG+cVZJw8DjOnHPA5F+WaeQLAcKDnb2rw2oD5OMNj
-X-Gm-Message-State: AOJu0YwKmnSfYEbUKCP4WS0ix6aLQdN09oBvRJJVp+EB5q162Dq/iCfp
-	fYLeAoRb9DgNRhF1AqLaZGJxcK51DpuHmOgZNtr0buVftG2oNajzl96x93lBlNVVI8uEVixa6FF
-	k/w==
-X-Google-Smtp-Source: AGHT+IEFOOflQzV3wFuvM2R/hnljfPuosO3Jiw9JP4M4awREYhPcttpeymh3r0w5dseA0yzpFfUKTbd9tHI=
+        bh=FdSDNYLWJB5rZ7zGFIgNmO8T8+rT5KpGbZz7pQfLV3k=;
+        b=j9r7g9M/iNXNbvLTgk+b2wsQQt7buCELlVVkbDkgvgOdlLyDu82sEjxJBWo1TiL3SQ
+         42k/LqyYjSJnrDokTkSzgwAhATVu7R9GN71Y+9JLITWioUr38p+9REN6ZhyUsGnwtnjx
+         WOtDw9zK1U673U8wbTkwdRTJlTMbATslMJioeoRnv3D0QHinb56DwUlcxmNpWaNzxYC+
+         hkQIkvmm/cjCpy0L0fD6qM5/LYqb07DkvnHU0sM3xWFtdVuyiWmjZpc5ZQQVinVYzV/C
+         geEfLEyq81eXWz0C6Wlz3pzkMkX1O5SiaSheiBfxyxTc22Bd0p6gB3vZ/Do3Fl9tqWD+
+         lMow==
+X-Forwarded-Encrypted: i=1; AJvYcCVmXm3iv4ZK/i/0Ky+iWF4LCkJE/kGsWs9nUAPerAaOi87mdduFVTDKQaHNVYIXUOp8JBHIgU2FTrinct9fYb8pk2UcLkJ8uMF7
+X-Gm-Message-State: AOJu0YyTpxma2+OfgtxNTdioTPxAdeKoAhG83jDOyridL+zPYTCIVulk
+	cfha1q1L4t4bRxbAN5fzQ04ksvxSwuVv43GzbIOVUpV9E68jHYhnFWluiEIRqU1x75wJbi1PTUP
+	CyA==
+X-Google-Smtp-Source: AGHT+IGHwhaq3SpDsE/oDwZF6fJSdoqdJu1qur3CUdYhennVxCDTZQrp6vr5HFtn29b7yImBHRAcKRn1tcs=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a25:aa0f:0:b0:e02:7c5f:e0d5 with SMTP id
- 3f1490d57ef6-e02fa00e04amr59299276.4.1719271752514; Mon, 24 Jun 2024 16:29:12
- -0700 (PDT)
-Date: Mon, 24 Jun 2024 23:26:12 +0000
+ (user=edliaw job=sendgmr) by 2002:a63:3d43:0:b0:71a:1f6f:1d0f with SMTP id
+ 41be03b00d2f7-71b5c3db10amr17532a12.6.1719271757877; Mon, 24 Jun 2024
+ 16:29:17 -0700 (PDT)
+Date: Mon, 24 Jun 2024 23:26:13 +0000
 In-Reply-To: <20240624232718.1154427-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -59,8 +59,9 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240624232718.1154427-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Message-ID: <20240624232718.1154427-4-edliaw@google.com>
-Subject: [PATCH v6 03/13] selftests/net: Append to lib.mk CFLAGS in Makefile
+Message-ID: <20240624232718.1154427-5-edliaw@google.com>
+Subject: [PATCH v6 04/13] selftests/exec: Drop redundant -D_GNU_SOURCE CFLAGS
+ in Makefile
 From: Edward Liaw <edliaw@google.com>
 To: linux-kselftest@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>, 
 	Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -80,42 +81,26 @@ Cc: linux-kernel@vger.kernel.org, usama.anjum@collabora.com, seanjc@google.com,
 	linux-sgx@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Instead of overwriting the CFLAGS imported from lib.mk, append instead
-instead.  Also drop -D_GNU_SOURCE from CFLAGS to prevent redefinition
-warning.
+-D_GNU_SOURCE= will be provided by lib.mk CFLAGS, so -D_GNU_SOURCE
+should be dropped to prevent redefinition warnings.
 
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- tools/testing/selftests/net/Makefile        | 2 +-
- tools/testing/selftests/net/tcp_ao/Makefile | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ tools/testing/selftests/exec/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index bc3925200637..8eaffd7a641c 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -1,7 +1,7 @@
+diff --git a/tools/testing/selftests/exec/Makefile b/tools/testing/selftests/exec/Makefile
+index ab67d58cfab7..ba012bc5aab9 100644
+--- a/tools/testing/selftests/exec/Makefile
++++ b/tools/testing/selftests/exec/Makefile
+@@ -1,7 +1,6 @@
  # SPDX-License-Identifier: GPL-2.0
- # Makefile for net selftests
+ CFLAGS = -Wall
+ CFLAGS += -Wno-nonnull
+-CFLAGS += -D_GNU_SOURCE
  
--CFLAGS =  -Wall -Wl,--no-as-needed -O2 -g
-+CFLAGS +=  -Wall -Wl,--no-as-needed -O2 -g
- CFLAGS += -I../../../../usr/include/ $(KHDR_INCLUDES)
- # Additional include paths needed by kselftest.h
- CFLAGS += -I../
-diff --git a/tools/testing/selftests/net/tcp_ao/Makefile b/tools/testing/selftests/net/tcp_ao/Makefile
-index 522d991e310e..bd88b90b902b 100644
---- a/tools/testing/selftests/net/tcp_ao/Makefile
-+++ b/tools/testing/selftests/net/tcp_ao/Makefile
-@@ -26,7 +26,7 @@ LIB	:= $(LIBDIR)/libaotst.a
- LDLIBS	+= $(LIB) -pthread
- LIBDEPS	:= lib/aolib.h Makefile
- 
--CFLAGS	:= -Wall -O2 -g -D_GNU_SOURCE -fno-strict-aliasing
-+CFLAGS	+= -Wall -O2 -g -fno-strict-aliasing
- CFLAGS	+= $(KHDR_INCLUDES)
- CFLAGS	+= -iquote ./lib/ -I ../../../../include/
- 
+ ALIGNS := 0x1000 0x200000 0x1000000
+ ALIGN_PIES        := $(patsubst %,load_address.%,$(ALIGNS))
 -- 
 2.45.2.741.gdbec12cfda-goog
 
