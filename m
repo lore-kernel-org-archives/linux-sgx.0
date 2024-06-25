@@ -1,69 +1,143 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE21F17DE3B;
-	Tue, 25 Jun 2024 20:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935D717F370
+	for <linux-sgx@vger.kernel.org>; Tue, 25 Jun 2024 22:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719348757; cv=none; b=Ntm5Qp96KOPFEyKCvfN1XPq+4szJVCk2kRW8Q5tuowmtGd20orbeUYNcEyz6DSPlLEqC/4hpuChzWn0WZl4/8Z+Opv2+9rAhDA5RyPvZfhphP77SSoginv/o05vw/ltTw9Qw9IEVvkdS7PK2I6vvRx0l/bjZPV3nnWj5Huki620=
+	t=1719354902; cv=none; b=eKUMTLPsapswXO1lk6rQ8Y7SSfRzDfleTrChtKKnMtl0W4E2zOE+3+wbh4ZJeegeGO1H5pNqpM/WLdJ3Y/hWrJhkwsfSUfnbHTMpxlqqSsMrdXxMHlyKQ+JpXBnuvSAuuhCMy7Sz31QKdPyGwGU2XOARqQiD2b2Z6OqVuXQi6Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719348757; c=relaxed/simple;
-	bh=7Vk/57j6HQa3g+1KrpUCkV83IiE+PdNNhcP691viN4I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=bJ+x+O9Yd0hbYYEzBNEdQTvaBizeAdloBMi2rlHSFgO8VWv/29muYRKttdgPJqQVx2xXr2C240tAbBMmDUMT6STE8J5yp9xTUmQZQ8BKFu1Lv86UlZL4LMVreqg95QfUmYOBHB6UO4SyZiHKey791ZxUOjrWfC8U/pvv+bPffq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NSSPCt8y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719354902; c=relaxed/simple;
+	bh=91Z7ox9LiBjORVtCWaAzB8GD58RrfZz+zWI0Wxs5FyY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=kXidyBR8NmWjEWM4ir9dcoU5zZUxxiZDnOEI4vinUgTmULCoeTmn2lF9R3It3jsttm4rO90SifMzPvEDnDDXkw4dSan78HPVAD4v5/ZJN3l60hkKiQW/VwEvqVCDwgSTHXIb0xKQL8tCQ03DkruE0FDnBMm5A2y3PDiH2Y1vHI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c+xHHygr; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NSSPCt8y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53A63C4AF09;
-	Tue, 25 Jun 2024 20:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1719348756;
-	bh=7Vk/57j6HQa3g+1KrpUCkV83IiE+PdNNhcP691viN4I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NSSPCt8y2S5moueuEEc+dT5eo/rJUoj3q1bkCikGiaZe0hzc4gOah0daI3hojxLPh
-	 gHbUYh9kPT3G4MouuG+kVN2ljW30ihFCb0/XLTi7XEMAaIk4F9r9/YlDwr7DPl0SVc
-	 oggO9jAJc7w3KLrFOQsqDeT7HG/dpL00Gh9d0ct0=
-Date: Tue, 25 Jun 2024 13:52:34 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Edward Liaw <edliaw@google.com>
-Cc: linux-kselftest@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
- Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, Davidlohr Bueso
- <dave@stgolabs.net>, =?ISO-8859-1?Q?"Andr=E9_Almeida"?=
- <andrealmeid@igalia.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian
- <kevin.tian@intel.com>, Paolo Bonzini <pbonzini@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre
- <reinette.chatre@intel.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen
- <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
- usama.anjum@collabora.com, seanjc@google.com, kernel-team@android.com,
- linux-mm@kvack.org, iommu@lists.linux.dev, kvm@vger.kernel.org,
- netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-sgx@vger.kernel.org
-Subject: Re: [PATCH v6 00/13] Centralize _GNU_SOURCE definition into lib.mk
-Message-Id: <20240625135234.d52ef77c0d84cb19d37dc44f@linux-foundation.org>
-In-Reply-To: <20240624232718.1154427-1-edliaw@google.com>
-References: <20240624232718.1154427-1-edliaw@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c+xHHygr"
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7068613e4d2so4497350b3a.1
+        for <linux-sgx@vger.kernel.org>; Tue, 25 Jun 2024 15:35:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719354900; x=1719959700; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KACPm6o1sF6MfYdPebomXscoE9qCB1ha0g1j4OaH67g=;
+        b=c+xHHygrtnx3ar0uqm0QnBauxwQRcQHGDB4+KqRa+qVZ6AP2sBSOHc2t4rAP+4xtc/
+         jNZmyp0ZC7AD0QDzcMj5AeCn44eDwFQ+UJLGbapw0AMRut/OCLT/mzf7pIDvDdNb2Ufe
+         OkknPhAsq+vcMblteP5T+SPFpGFKmz5gBuaDxzR2LSEV1dHxuBCRhvOBFoRqsofR4uat
+         u7CqKcu3egVHcX5uGPl9xuv/4J8aMuF3xW+e6aWnqZ9/+x3BMOgIAkT8y54BdYAunfVY
+         zpLSpfcBsZs+AVN45RRvjXvCqus4saGtRXR74luxea9WwS0pX8nd1ka+QQQJX/8QvRTp
+         mAoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719354900; x=1719959700;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KACPm6o1sF6MfYdPebomXscoE9qCB1ha0g1j4OaH67g=;
+        b=bxH/rPGODthoHblm+O2QpDhQwhVkCu9uK/hT147PH+k/h703wnfuIFKuOvn0egQKVm
+         z89OFcxQ2n+rEQxc3O5polRhurV0mN1DjAyaFMSifwTSzpNZqYiaU5SX0Cu9YmxheDPl
+         tuqX3axb9L67QmTj8rDL8C7tbp3Wi00/wCw40quHjxaKoqPliVhVDcWvc6JmCRXqr3Ws
+         WiL0OdVrO2v5ozatiyjhQJJABauiiFgo629g86qmFES4IAz45k1JGgbBZ/BAyLuDkBHZ
+         vh680OqowZaYiId58p132TP8q1zjU2iwgIVWH1tX3IMIkTzpoEENBsu43gTXptCg0MDq
+         IRmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPfaLDT0fIsVU9cVq2/1HhgUZhjFLeuwDG5yTHpRaDUTmKblxM38WoGHqnFy7rDB2Lz3lGvJWsYxsClC3d+aQth8ed8a0LGF7t
+X-Gm-Message-State: AOJu0YztKKEaa+QDJusH+sXM0Y/wbn8/BIM0pt/dNCP3/ace0ZRoGxha
+	2qNVIH5Lp8TA/b7vCLCvPyeftYg+DLxDaTDxGY4Bs/fjcILcOtBA7avohPRENJFYWjjWUUzVmCP
+	T8g==
+X-Google-Smtp-Source: AGHT+IFpOX5CcrzFldMsRz/JodHWPPYjtr1mfNvHUywvuU1/bJCVZhZ6TnspYz+fdShAF0CdfuxKj2ZiUg4=
+X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
+ (user=edliaw job=sendgmr) by 2002:a05:6a00:3698:b0:706:3f17:ca6 with SMTP id
+ d2e1a72fcca58-706746c2606mr330723b3a.3.1719354899705; Tue, 25 Jun 2024
+ 15:34:59 -0700 (PDT)
+Date: Tue, 25 Jun 2024 22:34:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240625223454.1586259-1-edliaw@google.com>
+Subject: [PATCH v7 0/1] Centralize _GNU_SOURCE definition into lib.mk
+From: Edward Liaw <edliaw@google.com>
+To: linux-kselftest@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>, 
+	Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
+	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Fenghua Yu <fenghua.yu@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, usama.anjum@collabora.com, seanjc@google.com, 
+	kernel-team@android.com, Edward Liaw <edliaw@google.com>, linux-mm@kvack.org, 
+	iommu@lists.linux.dev, kvm@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-sgx@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 24 Jun 2024 23:26:09 +0000 Edward Liaw <edliaw@google.com> wrote:
+Centralizes the definition of _GNU_SOURCE into lib.mk and addresses all
+resulting macro redefinition warnings.
 
-> Centralizes the definition of _GNU_SOURCE into lib.mk and addresses all
-> resulting macro redefinition warnings.
-> 
-> These patches will need to be merged in one shot to avoid redefinition
-> warnings.
+The initial attempt at this patch was abandoned because it affected
+lines in many source files and caused a large amount of churn. However,
+from earlier discussions, centralizing _GNU_SOURCE is still desireable.
+This attempt limits the changes to 1 source file and 14 Makefiles.
 
-Yes, please do this as a single patch and resend?
+This is condensed into a single commit to avoid redefinition warnings
+from partial merges.
+
+v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
+v2: https://lore.kernel.org/linux-kselftest/20240507214254.2787305-1-edliaw@google.com/
+ - Add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
+   location.
+ - Remove #define _GNU_SOURCE from source code to resolve redefinition
+   warnings.
+v3: https://lore.kernel.org/linux-kselftest/20240509200022.253089-1-edliaw@google.com/
+ - Rebase onto linux-next 20240508.
+ - Split patches by directory.
+ - Add -D_GNU_SOURCE directly to CFLAGS in lib.mk.
+ - Delete additional _GNU_SOURCE definitions from source code in
+   linux-next.
+ - Delete additional -D_GNU_SOURCE flags from Makefiles.
+v4: https://lore.kernel.org/linux-kselftest/20240510000842.410729-1-edliaw@google.com/
+ - Rebase onto linux-next 20240509.
+ - Remove Fixes tag from patches that drop _GNU_SOURCE definition.
+ - Restore space between comment and includes for selftests/damon.
+v5: https://lore.kernel.org/linux-kselftest/20240522005913.3540131-1-edliaw@google.com/
+ - Rebase onto linux-next 20240521
+ - Drop initial patches that modify KHDR_INCLUDES.
+ - Incorporate Mark Brown's patch to replace static_assert with warning.
+ - Don't drop #define _GNU_SOURCE from nolibc and wireguard.
+ - Change Makefiles for x86 and vDSO to append to CFLAGS.
+v6: https://lore.kernel.org/linux-kselftest/20240624232718.1154427-1-edliaw@google.com/
+ - Rewrite patch to use -D_GNU_SOURCE= form in lib.mk.
+ - Reduce the amount of churn significantly by allowing definition to
+   coexist with source code macro defines.
+v7:
+ - Squash patch into a single commit.
+
+Edward Liaw (1):
+  selftests: Centralize -D_GNU_SOURCE= to CFLAGS in lib.mk
+
+ tools/testing/selftests/exec/Makefile             | 1 -
+ tools/testing/selftests/futex/functional/Makefile | 2 +-
+ tools/testing/selftests/intel_pstate/Makefile     | 2 +-
+ tools/testing/selftests/iommu/Makefile            | 2 --
+ tools/testing/selftests/kvm/Makefile              | 2 +-
+ tools/testing/selftests/lib.mk                    | 3 +++
+ tools/testing/selftests/mm/thuge-gen.c            | 2 +-
+ tools/testing/selftests/net/Makefile              | 2 +-
+ tools/testing/selftests/net/tcp_ao/Makefile       | 2 +-
+ tools/testing/selftests/proc/Makefile             | 1 -
+ tools/testing/selftests/resctrl/Makefile          | 2 +-
+ tools/testing/selftests/ring-buffer/Makefile      | 1 -
+ tools/testing/selftests/riscv/mm/Makefile         | 2 +-
+ tools/testing/selftests/sgx/Makefile              | 2 +-
+ tools/testing/selftests/tmpfs/Makefile            | 1 -
+ 15 files changed, 12 insertions(+), 15 deletions(-)
+
+--
+2.45.2.803.g4e1b14247a-goog
+
