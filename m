@@ -1,136 +1,70 @@
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8358D37165
-	for <linux-sgx@vger.kernel.org>; Thu, 27 Jun 2024 18:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F82020DE8
+	for <linux-sgx@vger.kernel.org>; Sat, 29 Jun 2024 17:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719512088; cv=none; b=JpkGLdJevsjLhDeToUBx42Xa6K2Ur1a91W3Y+L+xLlYYXM4NdVSC+wJhS4BbLYjiAIlub/Z3SSY1i2d1YyiKoJhzEOQQkWQGW0GPCB2v31umdzwOzLW0X/pzSt+itEjFbeV2XJDKCeponv8DMyVXsazxqQhQvuwRaHf0P+G+ZiU=
+	t=1719683271; cv=none; b=myWJ9BLgzRXPWnWllSbK9XjLWZlmEfur5M8rgX11AliR1wQWzImLvtB2Hoq6imy7khstufbp4kYTc+utVgY+6ebCSk8I5i8lQXFyHaS9hj+0FHrrYk7nnmSQqODj896jFUIT8j6Zv5HI9qQ73sCB4hvXnsEhAs4fdXRsuk9zn1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719512088; c=relaxed/simple;
-	bh=2cK5AxOV9l+UMy4wzDeUFqdeQNcGCtOHicEYrQngggg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZgoR83cthGGTuH8qH9mP/Dx++LdLW1zbtcH0e/3E7TpuUrqqCdR1OiUpl0TwD6pNKr/J1kyyOHu2Mf3i71wu+16OUg7P2AK3WcIFirAEONKsUSAIVDWTvrPpl864c+hXVLJ1gnFsAJLOEtMXBwuyy9+1sh2VHwVqUlePmSbjpwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HjE087sO; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1719683271; c=relaxed/simple;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:To; b=dyNFg3doA4xtuR2+FT2t//kePBs++dbAnAAiAUkBUX1G90Q5oVQDPCaf4m4V7cp5jxB+nix8EwWeu9JXn81WNjr6zV5SuVaqgumkr5HUJ0dpAD7+HlcT1uTfg1J21h/SLOmxU9vJlhIyVK+ABY8+aDbdUzY71NU6TLTplAjJTe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=danmerino.com; spf=none smtp.mailfrom=danmerino.com; dkim=pass (2048-bit key) header.d=danmerino-com.20230601.gappssmtp.com header.i=@danmerino-com.20230601.gappssmtp.com header.b=VJEp4Pbr; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=danmerino.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=danmerino.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HjE087sO"
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7f3d4a92857so5683339f.3
-        for <linux-sgx@vger.kernel.org>; Thu, 27 Jun 2024 11:14:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=danmerino-com.20230601.gappssmtp.com header.i=@danmerino-com.20230601.gappssmtp.com header.b="VJEp4Pbr"
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7163489149eso1149879a12.1
+        for <linux-sgx@vger.kernel.org>; Sat, 29 Jun 2024 10:47:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719512085; x=1720116885; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oMHKqtsViAFQ8XOx3exriIx8afAjHEvNWX9sCBFwKMs=;
-        b=HjE087sOGZTN0DJOfWF5kD74/RlY+ZWkCZTQdzqHwACHVT+XeJ3v/wzclu6TgfWMJR
-         ckOJTOO7FmDiilRiO5qzrn3K2fdxlDXL5IEto+jQiZxO0UT0ZMXpqjTF9QuRiplIsdRy
-         5S9NaPOquoVvKRUQs+LbXGcA4uc6fv6j+JwpQ=
+        d=danmerino-com.20230601.gappssmtp.com; s=20230601; t=1719683269; x=1720288069; darn=vger.kernel.org;
+        h=to:message-id:subject:date:mime-version:from
+         :content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=VJEp4PbrP42lIyrdjERUbfL8VJuAIla5JxRGqPxt4CsA7yc9mGAUnlxwsgiHnginsz
+         fG1KAeo7usOFlyJs1YQR9IqYDP+5txa9qgU1inIaNVfky6/GVkfjtQkMOX065ByTTt/i
+         YEap5xa+3HjIPJFvUrsPoQgC6Lux/t0AmjXfYmr5VJsWBH2jmMVQaTDdIWUBKgf17GlN
+         306KLL7fraCnwuHQcLD6e0WqELcmzdyeY3XYG0v6YlMYJKLVxhhcprfJ1202CDREPqPi
+         GTcKzd+NqbEkvnUacRS1aqujkvXWF4Orj/bc1CX7QY61DGumK0SybpOJ043bOiYCpqb8
+         Ucvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719512085; x=1720116885;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oMHKqtsViAFQ8XOx3exriIx8afAjHEvNWX9sCBFwKMs=;
-        b=VvIRB4/OsQlq/+kWwmZiANanYQiSFRSmkqS/uZcAFXi6SgDtyvNpnN2WfYZSq3D9UM
-         IoGAK4S1I426n5Rsb1lFFmONjkVbM8WwfQEa1j371r0rKSqGKlG4OkVVhU+tAYZjyar0
-         kmOijhmZ7OwTpQCUdwLUgS0a2/MabItZoPROza1ptW7wBIN4ov2uaM3t+3gSMMqczdsK
-         fpvP6jbpfwyrsFBUfnhRTu8t8bHUg6yk2SLAC6L0KpALwDnDO+8NFHx0QjEZnPhpzbZ8
-         1AKMHHvlHsxhbNh5kRjydWGpyGqm1WP/xzr4ATp2kgVKC0NikmyDFrIJZanJYBiGEzNx
-         by3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXahu4Ttb8p2KEbXp066k+Z8Q5Libj2zeeEcDtTkI8FSVKI1hR1XA2fXQeRAsW4616/VD4AkPOaCDIqopZFayVdWhxEuamZHulU
-X-Gm-Message-State: AOJu0Ywl2qz2XZJlLVrEPNjVR9KPUR9Rbgio1m9iuAONWAppnbGBv3TY
-	9QJyaoEJgTFWa45bJ6OLEk9aJcigxBKpHQSaWu+LTWG64Y5/42a8I9CDwNWOMBo=
-X-Google-Smtp-Source: AGHT+IFUG5O1SrOnPJRNTLD5kODnctBl78frxmuDBYLRyoOk4cGdplKcVn3bQ6BYVahLxGENnJxatg==
-X-Received: by 2002:a5d:984e:0:b0:7f3:9dd3:15bf with SMTP id ca18e2360f4ac-7f39dd317famr1350449739f.0.1719512085576;
-        Thu, 27 Jun 2024 11:14:45 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7f61ce9d654sm2994739f.13.2024.06.27.11.14.44
+        d=1e100.net; s=20230601; t=1719683269; x=1720288069;
+        h=to:message-id:subject:date:mime-version:from
+         :content-transfer-encoding:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=RuT2FMWXbaUQc1mC1lns8z+lfdsrObK/Ay0xLEZxNbHnI4N6MaD7nMnDE+ZfXyHjx3
+         7NZgQxZywTMCXWKLn0D03rjVq8W9m7ZLx6j4MkGT72s8Hucul0ahTOxqOxhTE9aw1j20
+         kkYDVXrnT6+FxqDCC5iWIQg21gHgFX65G0AG1yWn1iOIyJuHjOYLIsDoM5IzFkVHWh/f
+         v5XbSkwAg+YORTHEUEaz1eXCxqhSlFZOpOwZ85SQ4Eyzktz5OON04q9RXIxKDGwq/vii
+         pOQn9QyJ2fLWS3d4jDaxUQx2YYKRRnPQf/rs96nVgwpnJNy702bE7GdjMs9VoJhiXCoA
+         26rg==
+X-Gm-Message-State: AOJu0Yzg5mGtz8lfDmVspTFs6YU6K2kP9T24UtK2TpicxD46+Qp9L4Ut
+	kJG3gC2W8rJn7kpCpI41Zug681ycYjJgsQSyIsuEkMnpQ5vIxhPh6mVidB3Pa437Mw2/82W6TS4
+	0
+X-Google-Smtp-Source: AGHT+IEgIkeGrO/ctokBi3b1diB85q7krsSyjjL5SJueXUC9mGwWMJhOsHlaCgxxFL3H07UQ37yWFg==
+X-Received: by 2002:a05:6a20:849b:b0:1be:c86e:7a4f with SMTP id adf61e73a8af0-1bef62453dfmr1636755637.54.1719683269017;
+        Sat, 29 Jun 2024 10:47:49 -0700 (PDT)
+Received: from smtpclient.apple ([2605:8d80:402:ea33:131:966c:ef37:e618])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080256bf09sm3526249b3a.66.2024.06.29.10.47.48
+        for <linux-sgx@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 11:14:45 -0700 (PDT)
-Message-ID: <af55d4ae-fefb-4235-a175-83e947ec4c25@linuxfoundation.org>
-Date: Thu, 27 Jun 2024 12:14:43 -0600
+        Sat, 29 Jun 2024 10:47:48 -0700 (PDT)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+From: Dan Merino <dan@danmerino.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/1] selftests: Centralize -D_GNU_SOURCE= to CFLAGS in
- lib.mk
-To: Edward Liaw <edliaw@google.com>, linux-kselftest@vger.kernel.org,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Fenghua Yu <fenghua.yu@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, usama.anjum@collabora.com,
- seanjc@google.com, kernel-team@android.com, linux-mm@kvack.org,
- iommu@lists.linux.dev, kvm@vger.kernel.org, netdev@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-sgx@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240625223454.1586259-1-edliaw@google.com>
- <20240625223454.1586259-2-edliaw@google.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240625223454.1586259-2-edliaw@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (1.0)
+Date: Sat, 29 Jun 2024 10:47:37 -0700
+Subject: Sub
+Message-Id: <6B222F59-421B-4CCB-A987-0C5814962CCD@danmerino.com>
+To: linux-sgx@vger.kernel.org
+X-Mailer: iPhone Mail (21F90)
 
-On 6/25/24 16:34, Edward Liaw wrote:
-> Centralize the _GNU_SOURCE definition to CFLAGS in lib.mk.  Remove
-> redundant defines from Makefiles that import lib.mk.  Convert any usage
-> of "#define _GNU_SOURCE 1" to "#define _GNU_SOURCE".
-> 
-> This uses the form "-D_GNU_SOURCE=", which is equivalent to
-> "#define _GNU_SOURCE".
-> 
-> Otherwise using "-D_GNU_SOURCE" is equivalent to "-D_GNU_SOURCE=1" and
-> "#define _GNU_SOURCE 1", which is less commonly seen in source code and
-> would require many changes in selftests to avoid redefinition warnings.
-> 
-> Suggested-by: John Hubbard <jhubbard@nvidia.com>
-> Signed-off-by: Edward Liaw <edliaw@google.com>
-> ---
->   tools/testing/selftests/exec/Makefile             | 1 -
->   tools/testing/selftests/futex/functional/Makefile | 2 +-
->   tools/testing/selftests/intel_pstate/Makefile     | 2 +-
->   tools/testing/selftests/iommu/Makefile            | 2 --
->   tools/testing/selftests/kvm/Makefile              | 2 +-
->   tools/testing/selftests/lib.mk                    | 3 +++
->   tools/testing/selftests/mm/thuge-gen.c            | 2 +-
->   tools/testing/selftests/net/Makefile              | 2 +-
->   tools/testing/selftests/net/tcp_ao/Makefile       | 2 +-
->   tools/testing/selftests/proc/Makefile             | 1 -
->   tools/testing/selftests/resctrl/Makefile          | 2 +-
->   tools/testing/selftests/ring-buffer/Makefile      | 1 -
->   tools/testing/selftests/riscv/mm/Makefile         | 2 +-
->   tools/testing/selftests/sgx/Makefile              | 2 +-
->   tools/testing/selftests/tmpfs/Makefile            | 1 -
->   15 files changed, 12 insertions(+), 15 deletions(-)
-> 
-
-Andrew,
-
-I am seeing merge conflicts with mm and exec tests. Might be
-better to have you take this through your tree?
-
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
 
