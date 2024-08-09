@@ -1,86 +1,120 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BFF18044;
-	Wed, 31 Jul 2024 19:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A125E190684;
+	Fri,  9 Aug 2024 09:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722455369; cv=none; b=nh5+1jC2UAGegceIfm+sVdspSY98iNJLYBGUK/KTbBQ2ir0Qa1SKQ3Cz59jOsX/+qzqbhAP0CLw89YFU9MmvDfjuG7uyGjVeiecmQ9tNvTIYssjQc8ZvRDaH3uBP8lNp59/Gktm38M+3G7pjI8Uz/YrCw2xlZc7MJWpCcAR88yc=
+	t=1723196618; cv=none; b=EnzN1hCD9D2XI2LVVVX7gfgYq2ARGYS4YgmnrtaiqdJn1M2kv/5Sj0Es5GHF6lztLTOca7i4yiTzL4ZaX2cijznP+Y4K+88/+esHP1GE51QxAcWQhTOXIrk1PH6gqROvKvYS/RTD99IYNjr9T4XFSOeq68ooNERxFuRGDd+ZME4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722455369; c=relaxed/simple;
-	bh=9OIJQf1Vo2Zgm2lXwUO3v0n7h0wbf2yvDoyIUZH40E8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=d46mXFmTBZr95nJNHijKq2aatubGd+XhjGfR7EBgNUVP/h+7GJOqbvI0VvlVYE1Ok2B3pqFT34oyNM+2ymFz3HSPi9faGBHB1zItb0Tj4nAOIuF3fZUsYblflPoqcdv7K+YMgO5TSHUVifwqO28G+6GdWqKtCRyLZ9TzVqThHiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uWpqsSHx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AQU0Kb06; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1723196618; c=relaxed/simple;
+	bh=jSzPM+D//4KGm9m9/EKlgHWU7mMnonAm4fu/0+KnY7g=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ifDGWSij6G6bi3VKmL8YbLXezZKtcIMYckGipklJumSf0kyi6tBJXRYy611uZhHdBOOV/EfF4AU5cgC61jbAPqqUuxNJwK/j108CCqaXyqtXU7dxtlv421Sp251QarFK0oTF55tzRsO4W8VTgT8Dk1qtKdb0tBD76a4ARXcJ6fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CUk8mkuC; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uWpqsSHx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AQU0Kb06"
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722455365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mKGWpfNeiy6ZIL3ItuS4pR1aXovCHXyZTiygwKozo50=;
-	b=uWpqsSHx0M5aXg0JmzQTfGeG+Fv2SgCQ/EaOsdV7saAUEAUz26OJD1ZBWDBf99LHchBip/
-	8g/gvNHA9mW4XrvtSomfItC/QVFTVR3h/Ah0fGvseGEY1jJlV3hdcKAtkfOQHzf9nDPdbh
-	y5QMf5/zKPQq9tKr3rLpdKyZbJf7xtKgxTHnNJ2Ah0vYsbjL+Fs9g+ChVhGN3EG8cKa8Ha
-	gQ4XNVj4ZtBk6rb0hnCjfo11ppTK6rE6Pp033p+kWLRdBUS68rVGE8NdRUUh2x9j/HJpiu
-	O/ebepUC5aiz820QDddNHEo9BiUnAfySfKYnODVPe5IeKB2/jqvCfRsPo8ZGfg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722455365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mKGWpfNeiy6ZIL3ItuS4pR1aXovCHXyZTiygwKozo50=;
-	b=AQU0Kb06pGL0FVW0OXacd86rNFzk6ddsIsys2lvzwIKp5zt6ZdObDcIVc20jcG9iJwjwxE
-	j2nhDiA9BdRM6/BA==
-To: WangYuli <wangyuli@uniontech.com>, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, wangyuli@uniontech.com,
- seanjc@google.com, xiangzelong@uniontech.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, wubo@uniontech.com,
- guanwentao@uniontech.com, baimingcong@uniontech.com,
- linux-sgx@vger.kernel.org, jarkko@kernel.org,
- haitao.huang@linux.intel.com, Kai Huang <kai.huang@intel.com>
-Subject: Re: [PATCH v2] x86/cpu: Adjust the error message when BIOS does not
- support SGX
-In-Reply-To: <D3C34BA892161BCF+20240731153056.303909-1-wangyuli@uniontech.com>
-References: <D3C34BA892161BCF+20240731153056.303909-1-wangyuli@uniontech.com>
-Date: Wed, 31 Jul 2024 21:49:25 +0200
-Message-ID: <87zfpx4a0q.ffs@tglx>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CUk8mkuC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723196617; x=1754732617;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=jSzPM+D//4KGm9m9/EKlgHWU7mMnonAm4fu/0+KnY7g=;
+  b=CUk8mkuCQaQQrwcEzHwJY3E+I/WQ+hxKaZpMoC0GvqFY8K1JCfpdcYzr
+   LHlMeIA7CLSJ7R05sCSM/tfVr9Ty8SYwKD6g4k1To7pkTeuje+5cylMLl
+   j/xmkxQa9QnYX7sMIz8uZnxEIeZzowDrSc1IkgZ88igjDuDu0pyVwISvA
+   59/wdSiFIXTKW0IwgNjpmEKSv4oujVCwPk6Y0ePbEfUEhqPwAxB97UMvl
+   EZI07QYF/4c3xfehU0H6/H79Il7W/rtcARFyZv7Mo2rPH2RviRa6kWa0/
+   eEMaMIkXZXbzTstFeArHIZi3D01HpSn2HLmnFaX35vZU72avnLHOr0fMu
+   g==;
+X-CSE-ConnectionGUID: ruJ5032VQRmzLmPzFgMYLQ==
+X-CSE-MsgGUID: xJgBeIqzReyGPepGVjSiIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21505248"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="21505248"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 02:43:36 -0700
+X-CSE-ConnectionGUID: uZSbRtSjTtO5r2F/DXiGxA==
+X-CSE-MsgGUID: HqvFyYYqRqWKTs9vvAoqgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="57395096"
+Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 02:43:36 -0700
+From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
+To: kai.huang@intel.com
+Cc: dave.hansen@linux.intel.com,
+	dmitrii.kuvaiskii@intel.com,
+	haitao.huang@linux.intel.com,
+	jarkko@kernel.org,
+	kailun.qin@intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-sgx@vger.kernel.org,
+	mona.vij@intel.com,
+	reinette.chatre@intel.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data race
+Date: Fri,  9 Aug 2024 02:35:20 -0700
+Message-Id: <20240809093520.954552-1-dmitrii.kuvaiskii@intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <6645526a-7c56-4f98-be8c-8c8090d8f043@intel.com>
+References: <6645526a-7c56-4f98-be8c-8c8090d8f043@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31 2024 at 23:30, wangyuli@uniontech.com wrote:
-> When SGX is not supported by the BIOS, the kernel log still output
-> the error 'SGX disabled by BIOS', which can be confusing since
-> there might not be an SGX-related option in the BIOS settings.
+On Thu, Jul 25, 2024 at 01:21:56PM +1200, Huang, Kai wrote:
 >
-> As a kernel, it's difficult to distinguish between the BIOS not
-> supporting SGX and the BIOS supporting SGX but it's disabled.
+> > Two enclave threads may try to add and remove the same enclave page
+> > simultaneously (e.g., if the SGX runtime supports both lazy allocation
+> > and MADV_DONTNEED semantics). Consider some enclave page added to the
+> > enclave. User space decides to temporarily remove this page (e.g.,
+> > emulating the MADV_DONTNEED semantics) on CPU1. At the same time, user
+> > space performs a memory access on the same page on CPU2, which results
+> > in a #PF and ultimately in sgx_vma_fault(). Scenario proceeds as
+> > follows:
+> >
+> >   [ ... skipped ... ]
+> >
+> > Here, CPU1 removed the page. However CPU2 installed the PTE entry on the
+> > same page. This enclave page becomes perpetually inaccessible (until
+> > another SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl). This is because the page is
+> > marked accessible in the PTE entry but is not EAUGed, and any subsequent
+> > access to this page raises a fault: with the kernel believing there to
+> > be a valid VMA, the unlikely error code X86_PF_SGX encountered by code
+> > path do_user_addr_fault() -> access_error() causes the SGX driver's
+> > sgx_vma_fault() to be skipped and user space receives a SIGSEGV instead.
+> > The userspace SIGSEGV handler cannot perform EACCEPT because the page
+> > was not EAUGed. Thus, the user space is stuck with the inaccessible
+> > page.
 >
-> Therefore, update the error message to
-> 'SGX disabled or unsupported by BIOS' to make it easier for those
-> reading kernel logs to understand what's happening.
->
-> Reported-by: Bo Wu <wubo@uniontech.com>
-> Link: https://github.com/linuxdeepin/developer-center/issues/10032
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
-> Link: https://lore.kernel.org/all/a30f7700c7817b3e7e2f2bdb37d5c10a318b2c3b.camel@intel.com/
-> Signed-off-by: Zelong Xiang <xiangzelong@uniontech.com>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> Reading the code, it seems the ioctl(sgx_ioc_enclave_modify_types) also zaps
+> EPC mapping when converting a normal page to TSC.  Thus IIUC it should also
+> suffer this issue?
 
-This Signed-off-by chain is invalid. See:
+Technically yes, sgx_enclave_modify_types() has a similar code path and
+can be patched in a similar way.
 
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
+Practically though, I can't imagine an SGX program or framework to allow a
+scenario when CPU1 modifies the type of the enclave page from REG to TCS
+and at the same time CPU2 performs a memory access on the same page. This
+would be clearly a bug in the SGX program/framework. For example, Gramine
+always follows the path of: create a new REG enclave page, modify it to
+TCS, only then start using it; i.e., there is never a point in time at
+which the REG page is allocated and ready to be converted to a TCS page,
+and some other thread/CPU accesses it in-between these steps.
 
-Thanks,
+TLDR: I can add similar handling to sgx_enclave_modify_types() if
+reviewers insist, but I don't see how this data race can ever be
+triggered by benign real-world SGX applications.
 
-        tglx
+--
+Dmitrii Kuvaiskii
