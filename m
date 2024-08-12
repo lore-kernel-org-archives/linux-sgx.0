@@ -1,48 +1,48 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480381876;
-	Mon, 12 Aug 2024 08:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FCE16A95A;
+	Mon, 12 Aug 2024 08:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723451386; cv=none; b=DfPXcwWdM47Q9XTzXFXYf6eIGMuloI+BnolFlyF/fmlmfxh+9ryUrfN75qo3v9+Qm25yYjF/9C6zyooMnBW+Y1ZxHXSaIwqI/wnh5E1e0dHdY+KC7FbxHtkgBki09pp92hnF00KoAU2ezpAOYbHaGaD4WNm1prG4FcZu0gaBUtA=
+	t=1723451641; cv=none; b=KLoNBTG+pfqQi3tFmmWqT8qZ96bNBoPO14GrKrZCNNYyIKs96IvwNJoYPBXtY6vcgUJ+S+JUhDPlX3F5nNeGBfosA+JHr8AvdIY1YlKMo+85/8ne0NRxfLynQ86ue67MfPe22SUiHScoTPQHZoq4sk0QxfUXHd4Kqh4AcBAQynk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723451386; c=relaxed/simple;
-	bh=Hq0CswikbYntUWW3RpVEL9DY5BDGI/8A+nfmQ84NF0Y=;
+	s=arc-20240116; t=1723451641; c=relaxed/simple;
+	bh=pG6wDFyUJxC3AasONzPAws4KS4sgzPKO6TKJ/wpSuUo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SKlbwLVgjixtSEqcywuDxy9Qy34dU/VNfMU4eVyK4P4XLoW2YANF3+KVaYuTgYTBMtk4yuaoqPIVfn1RwMaCESvHP/B+O8kZ9exjOs2PLP/EEmvKqg3pmt3Cew5uo8WoTw3Lm67bcC2L7XWdGBJNaKxPxuhoEh0qyU5FXxvVbUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZZOwXsfi; arc=none smtp.client-ip=198.175.65.21
+	 MIME-Version:Content-Type; b=smvIhahY/dtVIgxqCVQTS27Lg+9m453BAhssveixDvlMIC4mHUU1FbTRoAPSCJJb7SdgYkOb9Lnv5b4StEB+k0pnd6OTOTBp8Rjh3PTwGdSrka+2y1HYEiVVN+BogVxPnIpcBh4jcAbFjVVxQ27kSAeK7rHxw/sK81bZ8dweILc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fvvYa48K; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZZOwXsfi"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fvvYa48K"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723451385; x=1754987385;
+  t=1723451640; x=1754987640;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Hq0CswikbYntUWW3RpVEL9DY5BDGI/8A+nfmQ84NF0Y=;
-  b=ZZOwXsfiis0fNGJbXPCKcS2TYoHhkK/n6qHneQVabQFeM4Hq2ghaJpvF
-   FgAB49YtRm/S3ccQodwqrFTtJ7sYZd65OeDlss8y57B3nop4r3VzXPt6G
-   QoCR6ozLQJckKsa2NR/W/kT4Up6rOHeT6szhT2+mWSIVqngSkYX5EzQ6I
-   ai7shPNU1qBXzmV4724zzjl1MsVGb6htipDWLt9FeS3clpuyOrCoaiXNg
-   73gdgU1LaovATtS80Lq1Dc+ovoqbDqiKP1UHMbUcGQ9N2oKxG2sGq6eur
-   L1W2YSu+6S2F+7BroShGO4rt1rpJ8i4wOvzm8h9h7bGLAg+23vhZfG/6y
-   A==;
-X-CSE-ConnectionGUID: xHjp3z77QYKns4Vpi8jxdw==
-X-CSE-MsgGUID: V61rX5nRREux6RG9W6HvSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21521011"
+  bh=pG6wDFyUJxC3AasONzPAws4KS4sgzPKO6TKJ/wpSuUo=;
+  b=fvvYa48K5rY9WuxSPhimyFcHoS6XuJOEeNkWwe6MQctN023yGKJKDcW2
+   Tpy8TaX6UQGz1VlWGZXRxvzjhyvjs8iXdIRAXqxwIYbl7wlW7r1+WomoY
+   3bWq/pamETVR9raYlMfijiZdkXCjDwX8dpCN98CpJsx1a/Qk5wATbuyJP
+   k/Gx8ZyWRXNNiWG0QglIb7HrcHnDy30VljIGyuwkaL330lX4pryMghRIC
+   TiqcdTiCwcRgUVjwFnZBziMRo7fXW/NsuXNwSQ0r/PtX4JM8+nEvL6t5N
+   d4omJrzc8DgoCMCFC9DgJAxjrdPHrZiQcZeOGdCsE0K7MUjnglwoa4ueO
+   g==;
+X-CSE-ConnectionGUID: 2+G1gPcMQ/+CdOAdjfgyPw==
+X-CSE-MsgGUID: 4sGuEyO6TbGtRSZ5a6Qb9g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21719371"
 X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="21521011"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 01:29:44 -0700
-X-CSE-ConnectionGUID: HtzJ6eyVQ8ycEj3EVLhW/w==
-X-CSE-MsgGUID: CkdVM58+QJGMoMLL8r5fXQ==
+   d="scan'208";a="21719371"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 01:33:58 -0700
+X-CSE-ConnectionGUID: RyPsGtIqSZW6Q/9t8j8MLA==
+X-CSE-MsgGUID: ipb3PWfLT32bD+AwUolfDg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="57846054"
+   d="scan'208";a="58144324"
 Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 01:29:44 -0700
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 01:33:57 -0700
 From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
 To: jarkko@kernel.org
 Cc: dave.hansen@linux.intel.com,
@@ -53,15 +53,14 @@ Cc: dave.hansen@linux.intel.com,
 	linux-kernel@vger.kernel.org,
 	linux-sgx@vger.kernel.org,
 	mona.vij@intel.com,
-	mwk@invisiblethingslab.com,
 	reinette.chatre@intel.com,
 	stable@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] x86/sgx: Resolve EAUG race where losing thread returns SIGBUS
-Date: Mon, 12 Aug 2024 01:21:28 -0700
-Message-Id: <20240812082128.3084051-1-dmitrii.kuvaiskii@intel.com>
+Subject: Re: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data race
+Date: Mon, 12 Aug 2024 01:25:43 -0700
+Message-Id: <20240812082543.3119659-1-dmitrii.kuvaiskii@intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <D2RQZIG59264.2S8OC7IYWLA0F@kernel.org>
-References: <D2RQZIG59264.2S8OC7IYWLA0F@kernel.org>
+In-Reply-To: <D2RQZSM3MMVN.8DFKF3GGGTWE@kernel.org>
+References: <D2RQZSM3MMVN.8DFKF3GGGTWE@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -72,17 +71,15 @@ Content-Type: text/plain; charset=UTF-8
 Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
 Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 17, 2024 at 01:38:37PM +0300, Jarkko Sakkinen wrote:
+On Wed, Jul 17, 2024 at 01:38:59PM +0300, Jarkko Sakkinen wrote:
 
-> Fixes should be in the head of the series so please reorder.
+> Ditto.
 
-Do you mean that the preparation patch [1] should be applied after the two
-bug fixes? This seems to not make sense -- isn't it more correct to first
-refactor code, and then to fix in a cleaner way? I thought that was the
-point of previous Dave Hansen's comments [2].
+Just to be sure: I assume this means "Fixes should be in the head of the
+series so please reorder"? If yes, please see my reply in the other email
+[1].
 
-[1] https://lore.kernel.org/all/20240705074524.443713-2-dmitrii.kuvaiskii@intel.com/
-[2] https://lore.kernel.org/all/1d405428-3847-4862-b146-dd57711c881e@intel.com/
+[1] https://lore.kernel.org/all/20240812082128.3084051-1-dmitrii.kuvaiskii@intel.com/
 
 --
 Dmitrii Kuvaiskii
