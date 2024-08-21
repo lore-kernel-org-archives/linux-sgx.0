@@ -1,641 +1,180 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392D21537D0;
-	Wed, 21 Aug 2024 01:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838DB20E8A0;
+	Wed, 21 Aug 2024 10:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724205273; cv=none; b=lI+jAOZyZlo7cgLvHBo5IMJ/6rhPK/a9NY2TH2pzSHan7J5UnfgVUHKWvrbiLe5xWCtzl6NZikcx0FL+Lwc0cAmaPUc5j6z5QWThU6K5c2DLfkE5sV6F9GMevZyiPYicV7hKKto8cqqF61giINut9zpyaHHi342g50SvbY+o7Jg=
+	t=1724235034; cv=none; b=gsmdqrpL0ekeGzwCwqnAbE8inDtlRJBjHjp6nXXghzefxBpZxQdAeV3Ypds13FPDHEJj/bSy2J6meKi1dSpdYLNlyTpHJPpBLHuMmh1thVv5l3XLql0pPkI/kp4xdcLs3N+FOmHsQg1dYPtMQlbRX6PIfOLdOgLquT3vYwo81+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724205273; c=relaxed/simple;
-	bh=gqNM7suG50XdKcUQVwS+EXp5hwE9ePPAk0Wk44ah0Dg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PiRbNid2A5hstIe6LgeknB9h/2qgU6P5N84vQ2u9Nxlm1WvsQ04VPbkZx3yvUr9dfiLjWPQ+iYNUwwtI/Tm1PaZi+7fy/imsSCbmLvRXYuIC1dvTcorWRknugF4l/5HNaH553UU4K/HCPPzwVqHPZO3cIb8MHBC2WpeeMFB8aUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F39L4hBK; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1724235034; c=relaxed/simple;
+	bh=cmtTzeMhoWUM+dTaSaSv7xxcefRbmsDzC7gixA5EybE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=N9Crc9ZsE87MdhcKiCQGOsnlh1zB6Yr4XjNwI0ReUs83sRHd0zCk/s8y8DZNhQ8AgIIIE4g+X0VQJr2JkFSrY+9ujm0XVddYdCiOMBdvUkp7GEc736bnK/Hfa2VtUDlt0rWT5lUtun3L8fplkfQfMllsCxAYfym35RhE0i4rJk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fcDbAa2W; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F39L4hBK"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fcDbAa2W"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724205271; x=1755741271;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gqNM7suG50XdKcUQVwS+EXp5hwE9ePPAk0Wk44ah0Dg=;
-  b=F39L4hBKWx4H1QB0VXXAk7O1cQLmEwi7cQGODTHteICLsLQ/n2QDwJwx
-   TFzmG75aW+U6bX8OWjXjMmEmHpGIFscCJe/k+N+VipM3uWVLdkxAf4zl5
-   I7d/025BEmSU3J7dWp+F/4awbq/U4xQe31xID0+jD/mFaXzMqrshlPAHv
-   IlpeYQK6xnMRwqfBUvzsQrDDpdylQMLhSt4jmHz7j9U+9Z0TTwYwdq++X
-   zQ7LTbqRNi5p6JpkXEfuOhTWCQROfcyD0FoFaNJ7HEhlG51x7q5W90wBW
-   gikqERHFLGY0Tedkxqifl1/l5jCdJe8IMxt2EsIXkyjj1Glx5WmfeVkUI
+  t=1724235032; x=1755771032;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=cmtTzeMhoWUM+dTaSaSv7xxcefRbmsDzC7gixA5EybE=;
+  b=fcDbAa2Wdo+dwBEbKLFucoUTWKG6SHq5IRVYB2xf1pa6UjNnewYK2YO8
+   LTSXadtbynJQKPEdoL7vwt/RN1bZacURX1BK2UU/hkE5ibPJxDP+tuhNk
+   uj5cfPH6wX/KMakf27V/bwaFiwylg2T5kVFW7q7jLXnUIpcityXYLrqqS
+   De4S25m8k8hC+3PpWiAyG1Zd2x6fM4tgC0ibgHKydmQgFb32cLwSBrk5n
+   eeBt4q0yMMLa+2ib4jBJr0kotE72kNHx5SCyB3Tum0QNjAjeKUOQOw3NW
+   j0DOYxPv3W9I3KSE9cv8hJUGTag6z+Yu+vNNaAirprx1s3zuudAEbh8bN
    Q==;
-X-CSE-ConnectionGUID: ya2tTF5cQoGXUFeUH7mpXg==
-X-CSE-MsgGUID: XpczotPnRPiBOxcgiE16QQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="33107989"
-X-IronPort-AV: E=Sophos;i="6.10,163,1719903600"; 
-   d="scan'208";a="33107989"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 18:54:23 -0700
-X-CSE-ConnectionGUID: MWngKoCjRKKHIO6MNIviAw==
-X-CSE-MsgGUID: pxs51xwfQwGAxZ+QRH7mkg==
+X-CSE-ConnectionGUID: /GkjqXW5QA6lXSYzBy0//w==
+X-CSE-MsgGUID: 9z8uO0dUT/KXsXs3nH6Arw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="33203650"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="33203650"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 03:10:30 -0700
+X-CSE-ConnectionGUID: kzuQUORpQOSf3vgtn7lB9w==
+X-CSE-MsgGUID: JvgfvlxZQ62yCyBAKh4TLg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,163,1719903600"; 
-   d="scan'208";a="61078630"
-Received: from b4969164b36c.jf.intel.com ([10.165.59.5])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 18:54:23 -0700
-From: Haitao Huang <haitao.huang@linux.intel.com>
-To: jarkko@kernel.org,
-	dave.hansen@linux.intel.com,
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="61353147"
+Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 03:10:30 -0700
+From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
+To: dave.hansen@linux.intel.com,
+	jarkko@kernel.org,
 	kai.huang@intel.com,
-	tj@kernel.org,
-	mkoutny@suse.com,
-	chenridong@huawei.com,
-	linux-kernel@vger.kernel.org,
+	haitao.huang@linux.intel.com,
+	reinette.chatre@intel.com,
 	linux-sgx@vger.kernel.org,
-	x86@kernel.org,
-	cgroups@vger.kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	hpa@zytor.com,
-	sohil.mehta@intel.com,
-	tim.c.chen@linux.intel.com
-Cc: zhiquan1.li@intel.com,
-	kristen@linux.intel.com,
-	seanjc@google.com,
-	zhanb@microsoft.com,
-	anakrish@microsoft.com,
-	mikko.ylinen@linux.intel.com,
-	yangjie@microsoft.com,
-	chrisyan@microsoft.com
-Subject: [PATCH v16 16/16] selftests/sgx: Add scripts for EPC cgroup testing
-Date: Tue, 20 Aug 2024 18:54:04 -0700
-Message-ID: <20240821015404.6038-17-haitao.huang@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240821015404.6038-1-haitao.huang@linux.intel.com>
-References: <20240821015404.6038-1-haitao.huang@linux.intel.com>
+	linux-kernel@vger.kernel.org
+Cc: mona.vij@intel.com,
+	kailun.qin@intel.com
+Subject: [PATCH v5 0/3] x86/sgx: Fix two data races in EAUG/EREMOVE flows
+Date: Wed, 21 Aug 2024 03:02:12 -0700
+Message-Id: <20240821100215.4119457-1-dmitrii.kuvaiskii@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
 Content-Transfer-Encoding: 8bit
 
-With different cgroups, the script starts one or multiple concurrent SGX
-selftests (test_sgx), each to run the unclobbered_vdso_oversubscribed
-test case, which loads an enclave of EPC size equal to the EPC capacity
-available on the platform. The script checks results against the
-expectation set for each cgroup and reports success or failure.
+SGX runtimes such as Gramine may implement EDMM-based lazy allocation of
+enclave pages and may support MADV_DONTNEED semantics [1]. The former
+implies #PF-based page allocation, and the latter implies the usage of
+SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl.
 
-The script creates 3 different cgroups at the beginning with following
-expectations:
+EDMM-based lazy allocation and MADV_DONTNEED semantics provide
+significant performance improvement for some workloads that run on
+Gramine. For example, a Java workload with a 16GB enclave size has
+approx. 57x improvement in total runtime. Thus, we consider it important
+to permit these optimizations in Gramine. However, we observed hangs of
+applications (Node.js, PyTorch, R, iperf, Blender, Nginx) when run on
+Gramine with EDMM, lazy allocation and MADV_DONTNEED features enabled.
 
-1) small - intentionally small enough to fail the test loading an
-enclave of size equal to the capacity.
-2) large - large enough to run up to 4 concurrent tests but fail some if
-more than 4 concurrent tests are run. The script starts 4 expecting at
-least one test to pass, and then starts 5 expecting at least one test
-to fail.
-3) larger - limit is the same as the capacity, large enough to run lots of
-concurrent tests. The script starts 8 of them and expects all pass.
-Then it reruns the same test with one process randomly killed and
-usage checked to be zero after all processes exit.
+We wrote a trivial stress test to reproduce the hangs observed in
+real-world applications. The test stresses #PF-based page allocation and
+SGX_IOC_ENCLAVE_REMOVE_PAGES flows in the SGX driver:
 
-The script also includes a test with low mem_cg limit and large sgx_epc
-limit to verify that the RAM used for per-cgroup reclamation is charged
-to a proper mem_cg. For this test, it turns off swapping before start,
-and turns swapping back on afterwards.
+/* repeatedly touch different enclave pages at random and mix with
+ * madvise(MADV_DONTNEED) to stress EAUG/EREMOVE flows */
+static void* thread_func(void* arg) {
+    size_t num_pages = 0xA000 / page_size;
+    for (int i = 0; i < 5000; i++) {
+        size_t page = get_random_ulong() % num_pages;
+        char data = READ_ONCE(((char*)arg)[page * page_size]);
 
-Add README to document how to run the tests.
+        page = get_random_ulong() % num_pages;
+        madvise(arg + page * page_size, page_size, MADV_DONTNEED);
+    }
+}
 
-Signed-off-by: Haitao Huang <haitao.huang@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-V13:
-- More improvement on handling error cases and style fixes.
-- Add settings file for custom timeout
+addr = mmap(NULL, 0xA000, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, -1, 0);
+pthread_t threads[16];
+for (int i = 0; i < 16; i++)
+    pthread_create(&threads[i], NULL, thread_func, addr);
 
-V12:
-- Integrate the scripts to the "run_tests" target. (Jarkko)
+This test uncovers two data races in the SGX driver. The remaining
+patches describe and fix these races.
 
-V11:
-- Remove cgroups-tools dependency and make scripts ash compatible. (Jarkko)
-- Drop support for cgroup v1 and simplify. (Michal, Jarkko)
-- Add documentation for functions. (Jarkko)
-- Turn off swapping before memcontrol tests and back on after
-- Format and style fixes, name for hard coded values
+I performed several stress tests to verify that there are no other data
+races (at least with the test program above):
 
-V7:
-- Added memcontrol test.
+- On Icelake server with 128GB of PRM, without madvise(). This stresses
+  the first data race. A Gramine SGX test suite running in the
+  background for additional stressing. Result: 1,000 runs without hangs
+  (result without the first bug fix: hangs every time).
+- On Icelake server with 128GB of PRM, with madvise(). This stresses the
+  second data race. A Gramine SGX test suite running in the background
+  for additional stressing. Result: 1,000 runs without hangs (result
+  with the first bug fix but without the second bug fix: hangs approx.
+  once in 50 runs).
+- On Icelake server with 4GB of PRM, with madvise(). This additionally
+  stresses the enclave page swapping flows. Two Gramine SGX test suites
+  running in the background for additional stressing of swapping (I
+  observe 100% CPU utilization from ksgxd which confirms that swapping
+  happens). Result: 1,000 runs without hangs.
 
-V5:
-- Added script with automatic results checking, remove the interactive
-script.
-- The script can run independent from the series below.
----
- tools/testing/selftests/sgx/Makefile          |   3 +-
- tools/testing/selftests/sgx/README            | 109 +++++++
- tools/testing/selftests/sgx/ash_cgexec.sh     |  16 +
- tools/testing/selftests/sgx/config            |   4 +
- .../selftests/sgx/run_epc_cg_selftests.sh     | 294 ++++++++++++++++++
- tools/testing/selftests/sgx/settings          |   2 +
- .../selftests/sgx/watch_misc_for_tests.sh     |  11 +
- 7 files changed, 438 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/sgx/README
- create mode 100755 tools/testing/selftests/sgx/ash_cgexec.sh
- create mode 100644 tools/testing/selftests/sgx/config
- create mode 100755 tools/testing/selftests/sgx/run_epc_cg_selftests.sh
- create mode 100644 tools/testing/selftests/sgx/settings
- create mode 100755 tools/testing/selftests/sgx/watch_misc_for_tests.sh
+v4 -> v5:
+- Improved commit message and code comments in the first (preparatory)
+  patch per suggestions from Jarkko Sakkinen [3][4] and Kai Huang [5]
+- Reworked the second patch (that fixes the first bug) as suggested by
+  Kai Huang [6]; the suggested rework is a cleaner fix
+- Added fix for a similar race (for SGX_IOC_ENCLAVE_MODIFY_TYPES ioctl)
+  to the third patch (that fixes the second bug) as suggested by Kai
+  Huang [7]
 
-diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
-index 03b5e13b872b..3e673b8ace3f 100644
---- a/tools/testing/selftests/sgx/Makefile
-+++ b/tools/testing/selftests/sgx/Makefile
-@@ -20,7 +20,8 @@ ENCL_LDFLAGS := -Wl,-T,test_encl.lds,--build-id=none
- 
- ifeq ($(CAN_BUILD_X86_64), 1)
- TEST_CUSTOM_PROGS := $(OUTPUT)/test_sgx
--TEST_FILES := $(OUTPUT)/test_encl.elf
-+TEST_FILES := $(OUTPUT)/test_encl.elf ash_cgexec.sh
-+TEST_PROGS := run_epc_cg_selftests.sh
- 
- all: $(TEST_CUSTOM_PROGS) $(OUTPUT)/test_encl.elf
- endif
-diff --git a/tools/testing/selftests/sgx/README b/tools/testing/selftests/sgx/README
-new file mode 100644
-index 000000000000..f84406bf29a4
---- /dev/null
-+++ b/tools/testing/selftests/sgx/README
-@@ -0,0 +1,109 @@
-+SGX selftests
-+
-+The SGX selftests includes a c program (test_sgx) that covers basic user space
-+facing APIs and a shell scripts (run_sgx_cg_selftests.sh) testing SGX misc
-+cgroup. The SGX cgroup test script requires root privileges and runs a
-+specific test case of  the test_sgx in different cgroups configured by the
-+script. More details about the cgroup test can be found below.
-+
-+All SGX selftests can run with or without kselftest framework.
-+
-+WITH KSELFTEST FRAMEWORK
-+=======================
-+
-+BUILD
-+-----
-+
-+Build executable file "test_sgx" from top level directory of the kernel source:
-+ $ make -C tools/testing/selftests TARGETS=sgx
-+
-+RUN
-+---
-+
-+Run all sgx tests as sudo or root since the cgroup tests need to configure cgroup
-+limits in files under /sys/fs/cgroup.
-+
-+ $ sudo make -C tools/testing/selftests/sgx run_tests
-+
-+Without sudo, SGX cgroup tests will be skipped.
-+
-+On platforms with large Enclave Page Cache (EPC) and/or less cpu cores, you may
-+need adjust the timeout in 'settings' to avoid timeouts.
-+
-+More details about kselftest framework can be found in
-+Documentation/dev-tools/kselftest.rst.
-+
-+WITHOUT KSELFTEST FRAMEWORK
-+===========================
-+
-+BUILD
-+-----
-+
-+Build executable file "test_sgx" from this
-+directory(tools/testing/selftests/sgx/):
-+
-+  $ make
-+
-+RUN
-+---
-+
-+Run all non-cgroup tests:
-+
-+ $ ./test_sgx
-+
-+To test SGX cgroup:
-+
-+ $ sudo ./run_sgx_cg_selftests.sh
-+
-+THE SGX CGROUP TEST SCRIPTS
-+===========================
-+
-+Overview of the main cgroup test script
-+---------------------------------------
-+
-+With different cgroups, the script (run_sgx_cg_selftests.sh) starts one or
-+multiple concurrent SGX selftests (test_sgx), each to run the
-+unclobbered_vdso_oversubscribed test case, which loads an enclave of EPC size
-+equal to the EPC capacity available on the platform. The script checks results
-+against the expectation set for each cgroup and reports success or failure.
-+
-+The script creates 3 different cgroups at the beginning with following
-+expectations:
-+
-+  1) small - intentionally small enough to fail the test loading an enclave of
-+             size equal to the capacity.
-+
-+  2) large - large enough to run up to 4 concurrent tests but fail some if more
-+	     than 4 concurrent tests are run. The script starts 4 expecting at
-+	     least one test to pass, and then starts 5 expecting at least one
-+             test to fail.
-+
-+  3) larger - limit is the same as the capacity, large enough to run lots of
-+	      concurrent tests. The script starts 8 of them and expects all
-+	      pass.  Then it reruns the same test with one process randomly
-+	      killed and usage checked to be zero after all processes exit.
-+
-+The script also includes a test with low mem_cg limit (memory.max) and the
-+'large' sgx_epc limit to verify that the RAM used for per-cgroup reclamation is
-+charged to a proper mem_cg. To validate mem_cg OOM-kills processes when its
-+memory.max limit is reached due to SGX EPC reclamation, the script turns off
-+swapping before start, and turns swapping back on afterwards for this particular
-+test.
-+
-+The helper script
-+------------------------------------------------------
-+
-+To monitor the SGX cgroup settings and behaviors or trouble-shoot during
-+testing, the helper script, watch_misc_for_tests.sh, can be used to watch
-+relevant entries in cgroupfs files. For example, to watch the SGX cgroup
-+'current' counter changes during testing, run this in a separate terminal from
-+this directory:
-+
-+  $ ./watch_misc_for_tests.sh current
-+
-+For more details about SGX cgroups, see "Cgroup Support" in
-+Documentation/arch/x86/sgx.rst.
-+
-+The scripts require cgroup v2 support. More details about cgroup v2 can be found
-+in Documentation/admin-guide/cgroup-v2.rst.
-+
-diff --git a/tools/testing/selftests/sgx/ash_cgexec.sh b/tools/testing/selftests/sgx/ash_cgexec.sh
-new file mode 100755
-index 000000000000..cfa5d2b0e795
---- /dev/null
-+++ b/tools/testing/selftests/sgx/ash_cgexec.sh
-@@ -0,0 +1,16 @@
-+#!/usr/bin/env sh
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright(c) 2024 Intel Corporation.
-+
-+# Start a program in a given cgroup.
-+# Supports V2 cgroup paths, relative to /sys/fs/cgroup
-+if [ "$#" -lt 2 ]; then
-+    echo "Usage: $0 <v2 cgroup path> <command> [args...]"
-+    exit 1
-+fi
-+# Move this shell to the cgroup.
-+echo 0 >/sys/fs/cgroup/$1/cgroup.procs
-+shift
-+# Execute the command within the cgroup
-+exec "$@"
-+
-diff --git a/tools/testing/selftests/sgx/config b/tools/testing/selftests/sgx/config
-new file mode 100644
-index 000000000000..e7f1db1d3eff
---- /dev/null
-+++ b/tools/testing/selftests/sgx/config
-@@ -0,0 +1,4 @@
-+CONFIG_CGROUPS=y
-+CONFIG_CGROUP_MISC=y
-+CONFIG_MEMCG=y
-+CONFIG_X86_SGX=y
-diff --git a/tools/testing/selftests/sgx/run_epc_cg_selftests.sh b/tools/testing/selftests/sgx/run_epc_cg_selftests.sh
-new file mode 100755
-index 000000000000..dab648e0bb53
---- /dev/null
-+++ b/tools/testing/selftests/sgx/run_epc_cg_selftests.sh
-@@ -0,0 +1,294 @@
-+#!/usr/bin/env sh
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright(c) 2023, 2024 Intel Corporation.
-+
-+PROCESS_SUCCESS=1
-+PROCESS_FAILURE=0
-+# Wait for a process and check for expected exit status.
-+#
-+# Arguments:
-+#	$1 - the pid of the process to wait and check.
-+#	$2 - 1 if expecting success, 0 for failure.
-+#
-+# Return:
-+#	0 if the exit status of the process matches the expectation.
-+#	1 otherwise.
-+wait_check_process_status() {
-+    pid=$1
-+    check_for_success=$2
-+
-+    wait "$pid"
-+    status=$?
-+
-+    if [ $check_for_success -eq $PROCESS_SUCCESS ] && [ $status -eq 0 ]; then
-+        echo "# Process $pid succeeded."
-+        return 0
-+    elif [ $check_for_success -eq $PROCESS_FAILURE ] && [ $status -ne 0 ]; then
-+        echo "# Process $pid returned failure."
-+        return 0
-+    fi
-+    return 1
-+}
-+
-+# Wait for a set of processes and check for expected exit status
-+#
-+# Arguments:
-+#	$1 - 1 if expecting success, 0 for failure.
-+#	remaining args - The pids of the processes
-+#
-+# Return:
-+#	0 if exit status of any process matches the expectation.
-+#	1 otherwise.
-+wait_and_detect_for_any() {
-+    check_for_success=$1
-+
-+    shift
-+    detected=1 # 0 for success detection
-+
-+    for pid in $@; do
-+        if wait_check_process_status "$pid" "$check_for_success"; then
-+            detected=0
-+            # Wait for other processes to exit
-+        fi
-+    done
-+
-+    return $detected
-+}
-+
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+if [ "$(id -u)" -ne 0 ]; then
-+    echo "SKIP: SGX cgroup tests need root privileges."
-+    exit $ksft_skip
-+fi
-+
-+cg_root=/sys/fs/cgroup
-+if [ ! -d "$cg_root/$test_root_cg" ]; then
-+    echo "SKIP: SGX cgroup tests require v2 cgroups."
-+    exit $ksft_skip
-+fi
-+test_root_cg=sgx_kselftest
-+#make sure we start clean
-+if [ -d "$cg_root/$test_root_cg" ]; then
-+    echo "SKIP: Please clean up $cg_root/$test_root_cg."
-+    exit $ksft_skip
-+fi
-+
-+test_cg_small_parent=$test_root_cg/sgx_test_small_parent
-+test_cg_large=$test_root_cg/sgx_test_large
-+test_cg_small=$test_cg_small_parent/sgx_test_small
-+test_cg_larger=$test_root_cg/sgx_test_larger
-+
-+clean_up()
-+{
-+    # Wait a little for cgroups to reset counters for dead processes.
-+    sleep 2
-+    rmdir $cg_root/$test_cg_large
-+    rmdir $cg_root/$test_cg_small
-+    rmdir $cg_root/$test_cg_larger
-+    rmdir $cg_root/$test_cg_small_parent
-+    rmdir $cg_root/$test_root_cg
-+}
-+
-+mkdir $cg_root/$test_root_cg && \
-+mkdir $cg_root/$test_cg_small_parent && \
-+mkdir $cg_root/$test_cg_large && \
-+mkdir $cg_root/$test_cg_small && \
-+mkdir $cg_root/$test_cg_larger
-+if [ $? -ne 0 ]; then
-+    echo "FAIL: Failed creating cgroups."
-+    exit 1
-+fi
-+
-+# Turn on misc and memory controller in non-leaf nodes
-+echo "+misc" >  $cg_root/cgroup.subtree_control && \
-+echo "+memory" > $cg_root/cgroup.subtree_control && \
-+echo "+misc" >  $cg_root/$test_root_cg/cgroup.subtree_control && \
-+echo "+memory" > $cg_root/$test_root_cg/cgroup.subtree_control && \
-+echo "+misc" >  $cg_root/$test_cg_small_parent/cgroup.subtree_control
-+if [ $? -ne 0 ]; then
-+    echo "FAIL: can't set up cgroups, make sure misc and memory cgroups are enabled."
-+    clean_up
-+    exit 1
-+fi
-+
-+epc_capacity=$(grep "sgx_epc" "$cg_root/misc.capacity" | awk '{print $2}')
-+
-+# This is below number of VA pages needed for enclave of capacity size. So
-+# should fail oversubscribed cases
-+epc_small_limit=$(( epc_capacity / 512 ))
-+
-+# At least load one enclave of capacity size successfully, maybe up to 4.
-+# But some may fail if we run more than 4 concurrent enclaves of capacity size.
-+epc_large_limit=$(( epc_small_limit * 4 ))
-+
-+# Load lots of enclaves
-+epc_larger_limit=$epc_capacity
-+echo "# Setting up SGX cgroup limits."
-+echo "sgx_epc $epc_small_limit" > $cg_root/$test_cg_small_parent/misc.max && \
-+echo "sgx_epc $epc_large_limit" >  $cg_root/$test_cg_large/misc.max && \
-+echo "sgx_epc $epc_larger_limit" > $cg_root/$test_cg_larger/misc.max
-+if [ $? -ne 0 ]; then
-+    echo "# Failed setting up misc limits for sgx_epc."
-+    echo "SKIP: Kernel does not support SGX cgroup."
-+    clean_up
-+    exit $ksft_skip
-+fi
-+
-+test_cmd="./test_sgx -t unclobbered_vdso_oversubscribed"
-+
-+echo "# Start unclobbered_vdso_oversubscribed with small EPC limit, expecting failure..."
-+./ash_cgexec.sh $test_cg_small $test_cmd >/dev/null 2>&1
-+if [ $? -eq 0 ]; then
-+    echo "FAIL: Fail on small EPC limit, not expecting any test passes."
-+    clean_up
-+    exit 1
-+else
-+    echo "# Test failed as expected."
-+fi
-+
-+echo "PASS: small EPC limit test."
-+
-+echo "# Start 4 concurrent unclobbered_vdso_oversubscribed tests with large EPC limit, \
-+expecting at least one success...."
-+
-+pids=""
-+for i in 1 2 3 4; do
-+    (
-+        ./ash_cgexec.sh $test_cg_large $test_cmd >/dev/null 2>&1
-+    ) &
-+    pids="$pids $!"
-+done
-+
-+if wait_and_detect_for_any $PROCESS_SUCCESS "$pids"; then
-+    echo "PASS: large EPC limit positive testing."
-+else
-+    echo "FAIL: Failed on large EPC limit positive testing, no test passes."
-+    clean_up
-+    exit 1
-+fi
-+
-+echo "# Start 5 concurrent unclobbered_vdso_oversubscribed tests with large EPC limit, \
-+expecting at least one failure...."
-+pids=""
-+for i in 1 2 3 4 5; do
-+    (
-+        ./ash_cgexec.sh $test_cg_large $test_cmd >/dev/null 2>&1
-+    ) &
-+    pids="$pids $!"
-+done
-+
-+if wait_and_detect_for_any $PROCESS_FAILURE "$pids"; then
-+    echo "PASS: large EPC limit negative testing."
-+else
-+    echo "FAIL: Failed on large EPC limit negative testing, no test fails."
-+    clean_up
-+    exit 1
-+fi
-+
-+echo "# Start 8 concurrent unclobbered_vdso_oversubscribed tests with larger EPC limit, \
-+expecting no failure...."
-+pids=""
-+for i in 1 2 3 4 5 6 7 8; do
-+    (
-+        ./ash_cgexec.sh $test_cg_larger $test_cmd >/dev/null 2>&1
-+    ) &
-+    pids="$pids $!"
-+done
-+
-+if wait_and_detect_for_any $PROCESS_FAILURE "$pids"; then
-+    echo "FAIL: Failed on larger EPC limit, at least one test fails."
-+    clean_up
-+    exit 1
-+else
-+    echo "PASS: larger EPC limit tests."
-+fi
-+
-+echo "# Start 8 concurrent unclobbered_vdso_oversubscribed tests with larger EPC limit,\
-+ randomly kill one, expecting no failure...."
-+pids=""
-+for i in 1 2 3 4 5 6 7 8; do
-+    (
-+        ./ash_cgexec.sh $test_cg_larger $test_cmd >/dev/null 2>&1
-+    ) &
-+    pids="$pids $!"
-+done
-+random_number=$(awk 'BEGIN{srand();print int(rand()*5)}')
-+sleep $((random_number + 1))
-+
-+# Randomly select a process to kill
-+# Make sure usage counter not leaked at the end.
-+random_index=$(awk 'BEGIN{srand();print int(rand()*8)}')
-+counter=0
-+for pid in $pids; do
-+    if [ "$counter" -eq "$random_index" ]; then
-+        pid_to_kill=$pid
-+        break
-+    fi
-+    counter=$((counter + 1))
-+done
-+
-+kill $pid_to_kill
-+echo "# Killed process with PID: $pid_to_kill"
-+
-+any_failure=0
-+for pid in $pids; do
-+    wait "$pid"
-+    status=$?
-+    if [ "$pid" != "$pid_to_kill" ]; then
-+        if [ $status -ne 0 ]; then
-+	    echo "# Process $pid returned failure."
-+            any_failure=1
-+        fi
-+    fi
-+done
-+
-+if [ $any_failure -ne 0 ]; then
-+    echo "FAIL: Failed on random killing, at least one test fails."
-+    clean_up
-+    exit 1
-+fi
-+echo "PASS: larger EPC limit test with a process randomly killed."
-+
-+mem_limit_too_small=$((epc_capacity - 2 * epc_large_limit))
-+
-+echo "$mem_limit_too_small" > $cg_root/$test_cg_large/memory.max
-+if [ $? -ne 0 ]; then
-+    echo "FAIL: Failed setting up memory controller."
-+    clean_up
-+    exit 1
-+fi
-+
-+echo "# Start 4 concurrent unclobbered_vdso_oversubscribed tests with large EPC limit, \
-+and too small RAM limit, expecting all failures...."
-+# Ensure swapping off so the OOM killer is activated when mem_cgroup limit is hit.
-+swapoff -a
-+pids=""
-+for i in 1 2 3 4; do
-+    (
-+        ./ash_cgexec.sh $test_cg_large $test_cmd >/dev/null 2>&1
-+    ) &
-+    pids="$pids $!"
-+done
-+
-+if wait_and_detect_for_any $PROCESS_SUCCESS "$pids"; then
-+    echo "FAIL: Failed on tests with memcontrol, some tests did not fail."
-+    clean_up
-+    swapon -a
-+    exit 1
-+else
-+    swapon -a
-+    echo "PASS: large EPC limit tests with memcontrol."
-+fi
-+
-+sleep 2
-+
-+epc_usage=$(grep '^sgx_epc' "$cg_root/$test_root_cg/misc.current" | awk '{print $2}')
-+if [ "$epc_usage" -ne 0 ]; then
-+    echo "FAIL: Final usage is $epc_usage, not 0."
-+else
-+    echo "PASS: leakage check."
-+    echo "PASS: ALL cgroup limit tests, cleanup cgroups..."
-+fi
-+clean_up
-+echo "# Done SGX cgroup tests."
-diff --git a/tools/testing/selftests/sgx/settings b/tools/testing/selftests/sgx/settings
-new file mode 100644
-index 000000000000..4bf7dcbf9fa8
---- /dev/null
-+++ b/tools/testing/selftests/sgx/settings
-@@ -0,0 +1,2 @@
-+# This timeout may need be increased for platforms with EPC larger than 4G
-+timeout=140
-diff --git a/tools/testing/selftests/sgx/watch_misc_for_tests.sh b/tools/testing/selftests/sgx/watch_misc_for_tests.sh
-new file mode 100755
-index 000000000000..9280a5e0962b
---- /dev/null
-+++ b/tools/testing/selftests/sgx/watch_misc_for_tests.sh
-@@ -0,0 +1,11 @@
-+#!/usr/bin/env sh
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright(c) 2023, 2024 Intel Corporation.
-+
-+if [ -z "$1" ]; then
-+    echo "No argument supplied, please provide 'max', 'current', or 'events'"
-+    exit 1
-+fi
-+
-+watch -n 1 'find /sys/fs/cgroup -wholename "*/sgx_test*/misc.'$1'" -exec \
-+    sh -c '\''echo "$1:"; cat "$1"'\'' _ {} \;'
+v3 -> v4:
+- Added a preparatory patch to split the SGX_ENCL_PAGE_BEING_RECLAIMED
+  flag into two: SGX_ENCL_PAGE_BUSY and SGX_ENCL_PAGE_PCMD_BUSY
+  (split suggested by Dave Hansen [2])
+- No changes in the second patch (that fixes the first bug)
+- Trivial changes in the third patch (that fixes the second bug), now
+  that we have a preparatory patch; plus expanded a comment (as
+  suggested by Dave Hansen)
+
+v2 -> v3:
+- No changes in code itself
+- Improved commit message of the first patch (text suggested by Dave
+  Hansen); kept the CPU1 vs CPU2 diagram (as all reviewers liked it)
+- No changes in the commit message of the second patch
+
+v1 -> v2:
+- No changes in code itself
+- Expanded cover letter
+- Added CPU1 vs CPU2 race scenarios in commit messages
+
+[1] https://github.com/gramineproject/gramine/pull/1513
+[2] https://lore.kernel.org/all/1d405428-3847-4862-b146-dd57711c881e@intel.com/
+[3] https://lore.kernel.org/all/D2RQXM679U0X.1XY6BWHSFTRFZ@kernel.org/
+[4] https://lore.kernel.org/all/D2RQYS2CVEWL.3IU1P67NT0D5Y@kernel.org/
+[5] https://lore.kernel.org/all/35441491-99cf-403b-9e64-9d7b0453e59e@intel.com/
+[6] https://lore.kernel.org/all/016c34af-399b-480e-a99c-eaf3e397d33a@intel.com/
+[7] https://lore.kernel.org/all/6645526a-7c56-4f98-be8c-8c8090d8f043@intel.com/
+
+v1: https://lore.kernel.org/all/20240429104330.3636113-3-dmitrii.kuvaiskii@intel.com/
+v2: https://lore.kernel.org/all/20240515131240.1304824-1-dmitrii.kuvaiskii@intel.com/
+v3: https://lore.kernel.org/all/20240517110631.3441817-1-dmitrii.kuvaiskii@intel.com/
+v4: https://lore.kernel.org/all/20240705074524.443713-1-dmitrii.kuvaiskii@intel.com/
+
+Dmitrii Kuvaiskii (3):
+  x86/sgx: Split SGX_ENCL_PAGE_BEING_RECLAIMED into two flags
+  x86/sgx: Resolve EAUG race where losing thread returns SIGBUS
+  x86/sgx: Resolve EREMOVE page vs EAUG page data race
+
+ arch/x86/kernel/cpu/sgx/encl.c  | 52 ++++++++++++++++++---------------
+ arch/x86/kernel/cpu/sgx/encl.h  | 11 +++++--
+ arch/x86/kernel/cpu/sgx/ioctl.c | 17 +++++++++++
+ arch/x86/kernel/cpu/sgx/main.c  |  4 +--
+ 4 files changed, 56 insertions(+), 28 deletions(-)
+
 -- 
 2.43.0
 
