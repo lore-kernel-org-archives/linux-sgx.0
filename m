@@ -1,110 +1,100 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3582E416;
-	Thu, 22 Aug 2024 04:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFF34A07;
+	Sun, 25 Aug 2024 08:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724299267; cv=none; b=Gm/ZbaeInhGkz4RcGpT21LRzExd4nPNkcq/+WxDPTgJUITJxsCFWNGiQgW/R0Ne3pGakLEze8vBbfup2QqmLhrxPRZKO8mn+m2Db1/wjcg72He+dfPOXWANiMcml0IiTjRNj04KJvolHwnnJLidOVDAf9SxwQvD6fyXLCK/bEd8=
+	t=1724573222; cv=none; b=ngFVf+EMQoLJNTYs0l14HhqBlS1RehabCWalaoIp5vVZI/ZQSvCEou1D6dJKguW82Q93vnjhg2MRljoeQvY+RkQxYVyQj6Wqr7/3QEGc/RD68+9FHFqbtKm4lPv9kDBGvgmm+rT18VymzA2VNh+iENiCt/P0PqzbX66sigKDeOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724299267; c=relaxed/simple;
-	bh=F/gSLtnKYiZ+iHz/9zkLaDxiaF4alUERFDL39holi40=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=fNujtI0BoY5sA+qhlGsgcjUHVgFvFiLBqRokKZpuOmKIG4qj0iYXnkywSLLC9AE5UwrbM8FwHE2pPTO9Ar20oSPi0Ump3KgMVZyL5eiTfMpmER0W0rsqCtPgDDtCwF8jtx/dYYo8TSMy8wIQ2lNiaXLQ9lPr5B6ZQRiHrf74No4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WZUTdksn; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1724573222; c=relaxed/simple;
+	bh=IpbdU6Sj153iuiwOEiq/u1c7UG391ADyxKqOjNTIx/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GerTjrkKbpLh49BpjwH1qU40gKCr7i1X3N39nioowIxUbKif3zNKlMeh9qZt6PwOlPo/m2sbJaZQfMu89jiEnAcGKFm4myX+GwvP1l7icXLysrJTjYvJryTlcjRzTP97p/Mrcoo9Lqa0pCLl2H93Tzh53DN+iRym50gYOVkPnTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BZklEFrg; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WZUTdksn"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BZklEFrg"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724299266; x=1755835266;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=F/gSLtnKYiZ+iHz/9zkLaDxiaF4alUERFDL39holi40=;
-  b=WZUTdksnv/dblUFuXguSuD2YPePL+ptGid+Kvw/LpvkKCwdn4R0p1miN
-   swk2IGeay21ONHyrsqk0I2i0t32SdRfJZJi0mSnP73PnecDgOievdmn4P
-   lSftQ9+k0xYNrlV8yLc8DwR12imc+k5V8JFXqedM5rv3BDKJpkiBHf2bu
-   ci5JO+ROTMCfULbJPThSb01tRJ94nBLaxUTli/1yaw6UnJlv8sarbkIkO
-   A90QM5tvfR+Swvscl0bOA308gbWPKxdn+bNFsXLW/ms8m7Mfm8d6yQjXw
-   h/bnbqpW00nO2Ti3WtpxoJlzUPZ4/AIPiyAl6XKpzE/LOPrL6IZ73oXIR
+  t=1724573221; x=1756109221;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=IpbdU6Sj153iuiwOEiq/u1c7UG391ADyxKqOjNTIx/M=;
+  b=BZklEFrguSgg6HwhowoFaKWUAbqGd0iAMVlsFXKTaWvUJCRYObMAoJbv
+   xkVzWlQ6SZyYfUYz7URLkM7Oh4jdWxoI8JNIRi7ashyBNpXzvkgE5/w37
+   PzaiVVxcpeZkpkftmOdyedho85fJaKoc1/EeQZeLIcSSOPsozSUzty8og
+   ZtgOXrMBSeU5eep7put1lyVxl5b7cGg1j37AA7TJg6Mlh9BkB1V3gbteL
+   YFfHqwywxdI7C6XOi3c73ASQk2AB7U7qqgBVipmySUUDSNvr/v+4fLMns
+   XMptJhVluERwH3peAdfV5iVmsJtfAzNysOnGsTy4OVdsHB+rPKYVyIdOR
    w==;
-X-CSE-ConnectionGUID: 7Ts3LtA1QSedT9+9L64VXA==
-X-CSE-MsgGUID: cw0bsFtvQ0iH7caB8WWNRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="26561838"
-X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="26561838"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 21:01:05 -0700
-X-CSE-ConnectionGUID: Yt8gNyoYQSuimIeoYG0wlw==
-X-CSE-MsgGUID: LJUScDFqQImHR1DrzI32DA==
+X-CSE-ConnectionGUID: aa7bOARvQO+B2oNuyiPG2w==
+X-CSE-MsgGUID: HEu5a+wWSxiGJzn4asamIw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="34381451"
+X-IronPort-AV: E=Sophos;i="6.10,175,1719903600"; 
+   d="scan'208";a="34381451"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 01:07:00 -0700
+X-CSE-ConnectionGUID: 7XwDOKtCRnu8fwnQQ5PfzQ==
+X-CSE-MsgGUID: uo/58eKYR16tWvEHNnMiwg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="61167903"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.246.119.97])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 21 Aug 2024 21:00:56 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: jarkko@kernel.org, dave.hansen@linux.intel.com, kai.huang@intel.com,
- tj@kernel.org, mkoutny@suse.com, chenridong@huawei.com,
- linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
- cgroups@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- hpa@zytor.com, sohil.mehta@intel.com, tim.c.chen@linux.intel.com, "Haitao
- Huang" <haitao.huang@linux.intel.com>
-Cc: zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
- zhanb@microsoft.com, anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
- yangjie@microsoft.com, chrisyan@microsoft.com
-Subject: Re: [PATCH v16 09/16] x86/sgx: Add basic EPC reclamation flow for
- cgroup
-References: <20240821015404.6038-1-haitao.huang@linux.intel.com>
- <20240821015404.6038-10-haitao.huang@linux.intel.com>
-Date: Wed, 21 Aug 2024 23:00:53 -0500
+X-IronPort-AV: E=Sophos;i="6.10,175,1719903600"; 
+   d="scan'208";a="62915424"
+Received: from daliomra-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.222.196])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 01:06:58 -0700
+From: Kai Huang <kai.huang@intel.com>
+To: dave.hansen@intel.com,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	jarkko@kernel.org
+Cc: x86@kernel.org,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/sgx: Fix a W=1 build warning in function comment
+Date: Sun, 25 Aug 2024 20:06:49 +1200
+Message-ID: <20240825080649.145250-1-kai.huang@intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2svz3rfywjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <20240821015404.6038-10-haitao.huang@linux.intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Transfer-Encoding: 8bit
 
-> +static struct sgx_cgroup *sgx_cgroup_next_descendant_pre(struct  
-> sgx_cgroup *root,
-> +							 struct sgx_cgroup *cg)
-> +{
-> +	struct cgroup_subsys_state *next;
-> +
-> +	rcu_read_lock();
-> +	for (;;) {
-> +		next = css_next_descendant_pre(&cg->cg->css, &root->cg->css);
+Building the SGX code with W=1 generates below warning:
 
-I  messed it up in a last minute change and rebase. Above should be:
+  arch/x86/kernel/cpu/sgx/main.c:741: warning: Function parameter or struct member 'low' not described in 'sgx_calc_section_metric'
+  arch/x86/kernel/cpu/sgx/main.c:741: warning: Function parameter or struct member 'high' not described in 'sgx_calc_section_metric'
+  ...
 
-+	struct cgroup_subsys_state *next = &cg->cg->css;
-+
-+	rcu_read_lock();
-+	for (;;) {
-+		next = css_next_descendant_pre(next, &root->cg->css);
+The function sgx_calc_section_metric() is a simple helper which is only
+used in sgx/main.c.  There's no need to use k-doc style comment for it.
 
-Fixed in a branch here:  
-https://github.com/haitaohuang/linux/tree/sgx_cg_upstream_v16_plus
-Will include in next version or update if needed.
+Downgrade to normal comment to silence this warning.
 
-> +		if (!next) {
-> +			next = &root->cg->css;
-> +			break;
-> +		}
-> +
-> +		if (css_tryget(next))
-> +			break;
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	return sgx_cgroup_from_misc_cg(css_misc(next));
-> +}
-> +
-BR
-Haitao
+Signed-off-by: Kai Huang <kai.huang@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 27892e57c4ef..1a000acd933a 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -732,7 +732,7 @@ int arch_memory_failure(unsigned long pfn, int flags)
+ 	return 0;
+ }
+ 
+-/**
++/*
+  * A section metric is concatenated in a way that @low bits 12-31 define the
+  * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
+  * metric.
+
+base-commit: e77f8f275278886d05ce6dfe9e3bc854e7bf0713
+-- 
+2.46.0
+
