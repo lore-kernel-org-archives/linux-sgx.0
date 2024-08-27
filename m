@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3261D2F5A;
-	Tue, 27 Aug 2024 18:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC211C57A5;
+	Tue, 27 Aug 2024 18:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782809; cv=none; b=oUF7/YoSJNxZSZVNokDLLaIRC/5e5ormNN6jkE3VunxqAgO7+Z6lVRklLyVulNuA2Wv0G5Jr4bQA2XTPMgADelrbQJhrMKt/SlyYJdVcIIDyT4eveeBcYH9ke/zEre0ifhgzp0ljyLidnk0Bth4KW2MUn/N8KA1/vrnzECm7wvc=
+	t=1724782911; cv=none; b=IYqwpixo90fjXv87WYPyoqggoucVmKUh+GezFhtTST3AYB6C+4jjkk0dLqBvU/H6en45nBEmvmVqhsrUu9cmd+5+aWYQsDIVvnnnOr5Q7UvbRR4KzbWdaEMVLhmL0GPQWCUq75kv8hTIuj+On7WD86nvmOl8xnrsz8WxdwZwhgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782809; c=relaxed/simple;
-	bh=FRABr4azaFuEXiK5Po2lpcwaS0CPZC0pZPz2hJV2pkY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=nvV2CHVM7iBu1aw96vKnThk/y6krd19vtRNfYdQpO98SnKa628ciuXXoeAjvsHs7wjoN+1P2fJO5rKjCpnFtiAAshP7ozHRrHgQmfI0gBsHiMuIuhe+3nt39WPlMbFuaAHTB0Bwx+Et2t27AXccZArjfL3RPb05WnwV7ftdTrFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+czxmJ0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724782911; c=relaxed/simple;
+	bh=PvGLi6GQ+NXl/8ldAF2LH6jGtMg/X2BT0prTRbzqHEw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=t6U1f+tzh45d5i8vt1FtlBjCMja8mk69ZgclyI7+1uR+LEzxCfOC0FYGqE4zmTx8FmfA7Or6Tef9G4XxEGVA5PiZuz7OUGTJwzZA2wDpo08YBMoMF46WV4lp/gZ/uliMXF+JLrxlvQW9BWA7W8grzFmFbS4XbdXp9OumahmThX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJ55VvBD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+czxmJ0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A44FC4AF10;
-	Tue, 27 Aug 2024 18:20:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJ55VvBD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42D8FC4AF64;
+	Tue, 27 Aug 2024 18:21:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724782808;
-	bh=FRABr4azaFuEXiK5Po2lpcwaS0CPZC0pZPz2hJV2pkY=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=H+czxmJ0EUYvUWa9m2CYzscQxGJu3N9rNP7EXKGeba8nLtmM96JgXRFBNPdQLMXmm
-	 mGI7rff0C97RIvANaoX4a9GkkZTdw2IetuZilGLkCrop05T0n5bbD/iGQ+lGhwcbiC
-	 4glq86gS3D4wEAuYAziG0wOBb7KozBy0N+6X9C9aJG9qVEfO0wqTQLQ2x2Y9dSneBC
-	 Z8LxLmSdwCliqW7tZ0EnZhyPTxUBKyLaA/SANxvg0r6coZzmSJzoJx2Di8cecpWnO9
-	 JB/BfOpx6H54toy34MTu+RuIaBnlov0v+PBjYYvI/LJbus707PudinxjsxtI1br6+v
-	 rvXB56PQOAHCQ==
+	s=k20201202; t=1724782910;
+	bh=PvGLi6GQ+NXl/8ldAF2LH6jGtMg/X2BT0prTRbzqHEw=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=UJ55VvBDoEWA3HFm6hPAlLA1cVPnv1yleKlByVGVCbPo67TT8DaHPe913Oy00Ibi7
+	 CfFmBq7opX91ET4gU7ciky6N9Lm0SHQEzAAcjCQj0IdYewPXcmSkHgx2WGIACXStjE
+	 9Wn5zeGXbNZOnOGCflE3w6k6qlxZIQzfSlMOGhqk4RWMt6mXJzR5Gy0hrL21c+p9LN
+	 KnbZNCoKs+UD6epnUtj8cKIkbxOn1GWMtKa474RivQ+4N/m1g2oicmo5tQjHCjwhF1
+	 PLHVu/g9MYbVUgkyyyfKNzy5ghR7KU2pilk65Df/1QsRNbDNaPMCJG/4sjWwJAgtAy
+	 CtPqJEj1lVKOQ==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -34,201 +34,58 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 27 Aug 2024 21:20:05 +0300
-Message-Id: <D3QWH61GROZP.35B5OD2T7FZNZ@kernel.org>
-Cc: <mona.vij@intel.com>, <kailun.qin@intel.com>, <stable@vger.kernel.org>
-Subject: Re: [PATCH v5 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data
- race
+Date: Tue, 27 Aug 2024 21:21:47 +0300
+Message-Id: <D3QWIH0LVC3D.1J26DP9D7R49T@kernel.org>
+To: "Kai Huang" <kai.huang@intel.com>, <dave.hansen@intel.com>,
+ <tglx@linutronix.de>, <bp@alien8.de>, <mingo@redhat.com>, <hpa@zytor.com>
+Cc: <x86@kernel.org>, <linux-sgx@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/sgx: Fix a W=1 build warning in function comment
 From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Dmitrii Kuvaiskii" <dmitrii.kuvaiskii@intel.com>,
- <dave.hansen@linux.intel.com>, <kai.huang@intel.com>,
- <haitao.huang@linux.intel.com>, <reinette.chatre@intel.com>,
- <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 X-Mailer: aerc 0.17.0
-References: <20240821100215.4119457-1-dmitrii.kuvaiskii@intel.com>
- <20240821100215.4119457-4-dmitrii.kuvaiskii@intel.com>
-In-Reply-To: <20240821100215.4119457-4-dmitrii.kuvaiskii@intel.com>
+References: <20240825080649.145250-1-kai.huang@intel.com>
+In-Reply-To: <20240825080649.145250-1-kai.huang@intel.com>
 
-On Wed Aug 21, 2024 at 1:02 PM EEST, Dmitrii Kuvaiskii wrote:
-> Two enclave threads may try to add and remove the same enclave page
-> simultaneously (e.g., if the SGX runtime supports both lazy allocation
-> and MADV_DONTNEED semantics). Consider some enclave page added to the
-> enclave. User space decides to temporarily remove this page (e.g.,
-> emulating the MADV_DONTNEED semantics) on CPU1. At the same time, user
-> space performs a memory access on the same page on CPU2, which results
-> in a #PF and ultimately in sgx_vma_fault(). Scenario proceeds as
-> follows:
+On Sun Aug 25, 2024 at 11:06 AM EEST, Kai Huang wrote:
+> Building the SGX code with W=3D1 generates below warning:
 >
-> /*
->  * CPU1: User space performs
->  * ioctl(SGX_IOC_ENCLAVE_REMOVE_PAGES)
->  * on enclave page X
->  */
-> sgx_encl_remove_pages() {
+>   arch/x86/kernel/cpu/sgx/main.c:741: warning: Function parameter or stru=
+ct member 'low' not described in 'sgx_calc_section_metric'
+>   arch/x86/kernel/cpu/sgx/main.c:741: warning: Function parameter or stru=
+ct member 'high' not described in 'sgx_calc_section_metric'
+>   ...
 >
->   mutex_lock(&encl->lock);
+> The function sgx_calc_section_metric() is a simple helper which is only
+> used in sgx/main.c.  There's no need to use k-doc style comment for it.
 >
->   entry =3D sgx_encl_load_page(encl);
->   /*
->    * verify that page is
->    * trimmed and accepted
->    */
+> Downgrade to normal comment to silence this warning.
 >
->   mutex_unlock(&encl->lock);
->
->   /*
->    * remove PTE entry; cannot
->    * be performed under lock
->    */
->   sgx_zap_enclave_ptes(encl);
->                                  /*
->                                   * Fault on CPU2 on same page X
->                                   */
->                                  sgx_vma_fault() {
->                                    /*
->                                     * PTE entry was removed, but the
->                                     * page is still in enclave's xarray
->                                     */
->                                    xa_load(&encl->page_array) !=3D NULL -=
->
->                                    /*
->                                     * SGX driver thinks that this page
->                                     * was swapped out and loads it
->                                     */
->                                    mutex_lock(&encl->lock);
->                                    /*
->                                     * this is effectively a no-op
->                                     */
->                                    entry =3D sgx_encl_load_page_in_vma();
->                                    /*
->                                     * add PTE entry
->                                     *
->                                     * *BUG*: a PTE is installed for a
->                                     * page in process of being removed
->                                     */
->                                    vmf_insert_pfn(...);
->
->                                    mutex_unlock(&encl->lock);
->                                    return VM_FAULT_NOPAGE;
->                                  }
->   /*
->    * continue with page removal
->    */
->   mutex_lock(&encl->lock);
->
->   sgx_encl_free_epc_page(epc_page) {
->     /*
->      * remove page via EREMOVE
->      */
->     /*
->      * free EPC page
->      */
->     sgx_free_epc_page(epc_page);
->   }
->
->   xa_erase(&encl->page_array);
->
->   mutex_unlock(&encl->lock);
-> }
->
-> Here, CPU1 removed the page. However CPU2 installed the PTE entry on the
-> same page. This enclave page becomes perpetually inaccessible (until
-> another SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl). This is because the page is
-> marked accessible in the PTE entry but is not EAUGed, and any subsequent
-> access to this page raises a fault: with the kernel believing there to
-> be a valid VMA, the unlikely error code X86_PF_SGX encountered by code
-> path do_user_addr_fault() -> access_error() causes the SGX driver's
-> sgx_vma_fault() to be skipped and user space receives a SIGSEGV instead.
-> The userspace SIGSEGV handler cannot perform EACCEPT because the page
-> was not EAUGed. Thus, the user space is stuck with the inaccessible
-> page.
->
-> Fix this race by forcing the fault handler on CPU2 to back off if the
-> page is currently being removed (on CPU1). This is achieved by
-> setting SGX_ENCL_PAGE_BUSY flag right-before the first mutex_unlock() in
-> sgx_encl_remove_pages(). Upon loading the page, CPU2 checks whether this
-> page is busy, and if yes then CPU2 backs off and waits until the page is
-> completely removed. After that, any memory access to this page results
-> in a normal "allocate and EAUG a page on #PF" flow.
->
-> Additionally fix a similar race: user space converts a normal enclave
-> page to a TCS page (via SGX_IOC_ENCLAVE_MODIFY_TYPES) on CPU1, and at
-> the same time, user space performs a memory access on the same page on
-> CPU2. This fix is not strictly necessary (this particular race would
-> indicate a bug in a user space application), but it gives a consistent
-> rule: if an enclave page is under certain operation by the kernel with
-> the mapping removed, then other threads trying to access that page are
-> temporarily blocked and should retry.
->
-> Fixes: 9849bb27152c ("x86/sgx: Support complete page removal")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
 > ---
->  arch/x86/kernel/cpu/sgx/encl.h  |  3 ++-
->  arch/x86/kernel/cpu/sgx/ioctl.c | 17 +++++++++++++++++
->  2 files changed, 19 insertions(+), 1 deletion(-)
+>  arch/x86/kernel/cpu/sgx/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/enc=
-l.h
-> index b566b8ad5f33..96b11e8fb770 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.h
-> +++ b/arch/x86/kernel/cpu/sgx/encl.h
-> @@ -22,7 +22,8 @@
->  /* 'desc' bits holding the offset in the VA (version array) page. */
->  #define SGX_ENCL_PAGE_VA_OFFSET_MASK	GENMASK_ULL(11, 3)
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/mai=
+n.c
+> index 27892e57c4ef..1a000acd933a 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -732,7 +732,7 @@ int arch_memory_failure(unsigned long pfn, int flags)
+>  	return 0;
+>  }
 > =20
-> -/* 'desc' bit indicating that the page is busy (being reclaimed). */
-> +/* 'desc' bit indicating that the page is busy (being reclaimed, removed=
- or
-> + * converted to a TCS page). */
->  #define SGX_ENCL_PAGE_BUSY	BIT(2)
-> =20
->  /*
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/io=
-ctl.c
-> index 5d390df21440..ee619f2b3414 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -969,12 +969,22 @@ static long sgx_enclave_modify_types(struct sgx_enc=
-l *encl,
->  			/*
->  			 * Do not keep encl->lock because of dependency on
->  			 * mmap_lock acquired in sgx_zap_enclave_ptes().
-> +			 *
-> +			 * Releasing encl->lock leads to a data race: while CPU1
-> +			 * performs sgx_zap_enclave_ptes() and removes the PTE
-> +			 * entry for the enclave page, CPU2 may attempt to load
-> +			 * this page (because the page is still in enclave's
-> +			 * xarray). To prevent CPU2 from loading the page, mark
-> +			 * the page as busy before unlock and unmark after lock
-> +			 * again.
->  			 */
-> +			entry->desc |=3D SGX_ENCL_PAGE_BUSY;
->  			mutex_unlock(&encl->lock);
-> =20
->  			sgx_zap_enclave_ptes(encl, addr);
-> =20
->  			mutex_lock(&encl->lock);
-> +			entry->desc &=3D ~SGX_ENCL_PAGE_BUSY;
-> =20
->  			sgx_mark_page_reclaimable(entry->epc_page);
->  		}
-> @@ -1141,7 +1151,14 @@ static long sgx_encl_remove_pages(struct sgx_encl =
-*encl,
->  		/*
->  		 * Do not keep encl->lock because of dependency on
->  		 * mmap_lock acquired in sgx_zap_enclave_ptes().
-> +		 *
-> +		 * Releasing encl->lock leads to a data race: while CPU1
-> +		 * performs sgx_zap_enclave_ptes() and removes the PTE entry
-> +		 * for the enclave page, CPU2 may attempt to load this page
-> +		 * (because the page is still in enclave's xarray). To prevent
-> +		 * CPU2 from loading the page, mark the page as busy.
->  		 */
-> +		entry->desc |=3D SGX_ENCL_PAGE_BUSY;
->  		mutex_unlock(&encl->lock);
-> =20
->  		sgx_zap_enclave_ptes(encl, addr);
+> -/**
+> +/*
+>   * A section metric is concatenated in a way that @low bits 12-31 define=
+ the
+>   * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of=
+ the
+>   * metric.
+>
+> base-commit: e77f8f275278886d05ce6dfe9e3bc854e7bf0713
+
+Agreed, that has went there probably by plain mistake. Do not think it
+has been intentional...
 
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
