@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DD11C8FB0;
-	Tue, 27 Aug 2024 18:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557921C8FB0;
+	Tue, 27 Aug 2024 18:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782782; cv=none; b=c4c53yH/e57WCJXF3KsTGOFs7pyf/Gt7axyUUY4F3hwq00yOQJjiZYKWcNygSuNGdOz1l0RcPLP/+IlKEmq2u4zkcMWznbp8SU7XpCdfsuBkwoAzHMf0NeUeObclE0Ex8B3atIowJkhUBYPbSJOh1BYWA1DZjP1krDT4PXhPia8=
+	t=1724782796; cv=none; b=LqNpF3E22v0Pe1yLV8+FhroChREldUnD+lWCFKoo0+vrIrMjmG8vH9A58BzgTiVpnECnCNEHyL/NcbcIjIUuRGNtfn49HUaMKlWXVf4St7FEvL4J99B++ekdWjvl4BZWYA9XxN1a1VgClb1oasQYQhqI2T+4xXp/DVbcbHUW+dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782782; c=relaxed/simple;
-	bh=PbEqLqS9u3785t/eXJdo2OjO8MY5tj2zq5YTUPyyCWI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=KlPGNGnIH5E/67+PDUoNAoCpRJQ3nlUcoDg+nxpZ84OUFOkBw7P2hlqXt4tnzxJOmAbL9gcA0xQJEurgxmf8bEm8NPU81EiJuz/NtlCW1LJk16B0OEe+4yNSBl5wMuyNRnRLOAoLg5Gy/3zYQv2Sm/uEaudj5b3k3nIQLOpKTzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NAc00yse; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724782796; c=relaxed/simple;
+	bh=ZQUXw99MA12ckKbpaqrt9zvlY5lW/PID+4UMlvpKv+o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=flCxhcLBxcQrMst36MfNICTisXvFwm8I6as/o0uwwbo6Q2omPWEb8LP8qSsP6RrpCdxEGEQdI1PThOdsD+TKkgeycORKX9mj1VFte49BVpJSrySRAaKSe56/N6OoiyYosgO6AdIhD6KBvRxFWrVPg+aeAo+Su0TZm11BABtbu5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5whJXwS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAc00yse"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1169C4AF0F;
-	Tue, 27 Aug 2024 18:19:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5whJXwS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C35A9C4AF0F;
+	Tue, 27 Aug 2024 18:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724782782;
-	bh=PbEqLqS9u3785t/eXJdo2OjO8MY5tj2zq5YTUPyyCWI=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=NAc00yseS0X3OSqp/Wejlf6Jh5FmXtp43NLM9qbn2Vj29SzlmDJuvYAQdX/GcYIq2
-	 j2113s9kvITcoJ0OimQSm30jatfC/5HbTCGJJXZ+NEAmrbXNFXM3NsNOZmQk3YC/Ep
-	 nyXZ7GlAS3LKYZOLagMP+76ELtnIzmCgIFY59lQ2oJXwEllF/Vv4LNkhAvt4bmKbkh
-	 60Lvdxj+4SAf2uJLfdZY3PyNnR0YErP9symdGeYYZzaqYxzcNtu7/oFnQSsqPelT9x
-	 iMyvdRG3/BvAlyNybCehkZxpHxXbsum4g93jobbVLeuhqmcRQu+FwOAr2v2zPBLrjs
-	 Ufl+duiaU1ryg==
+	s=k20201202; t=1724782796;
+	bh=ZQUXw99MA12ckKbpaqrt9zvlY5lW/PID+4UMlvpKv+o=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=t5whJXwSKa9WHswwCj5aRBF/hC2ifA5CUp6WaMpwLz59CkM70OEXvhyYwJ6HH8ahS
+	 ER9Q4YGoLIR26zYq8Lr9uR8+uQSkc4gGvC+C8UzSQ94Byt4wlIwynP5ZMlg7lfzHoV
+	 6Ieveib9EjHL91Bxt6KmjVPmJ4Wjg4508euesRRt7QPc4AYa0HznIjPsplA+SI5ee8
+	 HQ66SFWE8BG1BOSog3+7DVSSPLYDpQ2qeZXil7/etYvM4bMJfIpxDqbl1+bSAb4IIO
+	 hW2JikghlKQWnJQagguoFlUnxFiHKN0g83SonG9NyX080T7pKmgnS1YCD7ckEEpRbD
+	 vKxyWSQ5zPrPw==
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -34,151 +34,230 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 27 Aug 2024 21:19:38 +0300
-Message-Id: <D3QWGTWLAX0R.11U42QH2Y1TLB@kernel.org>
-Subject: Re: [PATCH v5 1/3] x86/sgx: Split SGX_ENCL_PAGE_BEING_RECLAIMED
- into two flags
+Date: Tue, 27 Aug 2024 21:19:52 +0300
+Message-Id: <D3QWH0D6PVDA.3RU74RKMW1AEZ@kernel.org>
+Cc: <mona.vij@intel.com>, <kailun.qin@intel.com>, <stable@vger.kernel.org>,
+ =?utf-8?q?Marcelina_Ko=C5=9Bcielnicka?= <mwk@invisiblethingslab.com>
+Subject: Re: [PATCH v5 2/3] x86/sgx: Resolve EAUG race where losing thread
+ returns SIGBUS
 From: "Jarkko Sakkinen" <jarkko@kernel.org>
 To: "Dmitrii Kuvaiskii" <dmitrii.kuvaiskii@intel.com>,
  <dave.hansen@linux.intel.com>, <kai.huang@intel.com>,
  <haitao.huang@linux.intel.com>, <reinette.chatre@intel.com>,
  <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <mona.vij@intel.com>, <kailun.qin@intel.com>, <stable@vger.kernel.org>
 X-Mailer: aerc 0.17.0
 References: <20240821100215.4119457-1-dmitrii.kuvaiskii@intel.com>
- <20240821100215.4119457-2-dmitrii.kuvaiskii@intel.com>
-In-Reply-To: <20240821100215.4119457-2-dmitrii.kuvaiskii@intel.com>
+ <20240821100215.4119457-3-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240821100215.4119457-3-dmitrii.kuvaiskii@intel.com>
 
 On Wed Aug 21, 2024 at 1:02 PM EEST, Dmitrii Kuvaiskii wrote:
-> The page reclaimer thread sets SGX_ENC_PAGE_BEING_RECLAIMED flag when
-> the enclave page is being reclaimed (moved to the backing store). This
-> flag however has two logical meanings:
+> Imagine an mmap()'d file. Two threads touch the same address at the same
+> time and fault. Both allocate a physical page and race to install a PTE
+> for that page. Only one will win the race. The loser frees its page, but
+> still continues handling the fault as a success and returns
+> VM_FAULT_NOPAGE from the fault handler.
 >
-> 1. Don't attempt to load the enclave page (the page is busy), see
->    __sgx_encl_load_page().
-> 2. Don't attempt to remove the PCMD page corresponding to this enclave
->    page (the PCMD page is busy), see reclaimer_writing_to_pcmd().
+> The same race can happen with SGX. But there's a bug: the loser in the
+> SGX steers into a failure path. The loser EREMOVE's the winner's EPC
+> page, then returns SIGBUS, likely killing the app.
 >
-> To reflect these two meanings, split SGX_ENCL_PAGE_BEING_RECLAIMED into
-> two flags: SGX_ENCL_PAGE_BUSY and SGX_ENCL_PAGE_PCMD_BUSY. Currently,
-> both flags are set only when the enclave page is being reclaimed (by the
-> page reclaimer thread). A future commit will introduce new cases when
-> the enclave page is being operated on; these new cases will set only the
-> SGX_ENCL_PAGE_BUSY flag.
+> Fix the SGX loser's behavior. Check whether another thread already
+> allocated the page and if yes, return with VM_FAULT_NOPAGE.
 >
+> The race can be illustrated as follows:
+>
+> /*                             /*
+>  * Fault on CPU1                * Fault on CPU2
+>  * on enclave page X            * on enclave page X
+>  */                             */
+> sgx_vma_fault() {              sgx_vma_fault() {
+>
+>   xa_load(&encl->page_array)     xa_load(&encl->page_array)
+>       =3D=3D NULL -->                    =3D=3D NULL -->
+>
+>   sgx_encl_eaug_page() {         sgx_encl_eaug_page() {
+>
+>     ...                            ...
+>
+>     /*                             /*
+>      * alloc encl_page              * alloc encl_page
+>      */                             */
+>                                    mutex_lock(&encl->lock);
+>                                    /*
+>                                     * alloc EPC page
+>                                     */
+>                                    epc_page =3D sgx_alloc_epc_page(...);
+>                                    /*
+>                                     * add page to enclave's xarray
+>                                     */
+>                                    xa_insert(&encl->page_array, ...);
+>                                    /*
+>                                     * add page to enclave via EAUG
+>                                     * (page is in pending state)
+>                                     */
+>                                    /*
+>                                     * add PTE entry
+>                                     */
+>                                    vmf_insert_pfn(...);
+>
+>                                    mutex_unlock(&encl->lock);
+>                                    return VM_FAULT_NOPAGE;
+>                                  }
+>                                }
+>                                /*
+>                                 * All good up to here: enclave page
+>                                 * successfully added to enclave,
+>                                 * ready for EACCEPT from user space
+>                                 */
+>     mutex_lock(&encl->lock);
+>     /*
+>      * alloc EPC page
+>      */
+>     epc_page =3D sgx_alloc_epc_page(...);
+>     /*
+>      * add page to enclave's xarray,
+>      * this fails with -EBUSY as this
+>      * page was already added by CPU2
+>      */
+>     xa_insert(&encl->page_array, ...);
+>
+>   err_out_shrink:
+>     sgx_encl_free_epc_page(epc_page) {
+>       /*
+>        * remove page via EREMOVE
+>        *
+>        * *BUG*: page added by CPU2 is
+>        * yanked from enclave while it
+>        * remains accessible from OS
+>        * perspective (PTE installed)
+>        */
+>       /*
+>        * free EPC page
+>        */
+>       sgx_free_epc_page(epc_page);
+>     }
+>
+>     mutex_unlock(&encl->lock);
+>     /*
+>      * *BUG*: SIGBUS is returned
+>      * for a valid enclave page
+>      */
+>     return VM_FAULT_SIGBUS;
+>   }
+> }
+>
+> Fixes: 5a90d2c3f5ef ("x86/sgx: Support adding of pages to an initialized =
+enclave")
 > Cc: stable@vger.kernel.org
+> Reported-by: Marcelina Ko=C5=9Bcielnicka <mwk@invisiblethingslab.com>
+> Suggested-by: Kai Huang <kai.huang@intel.com>
 > Signed-off-by: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
-> Reviewed-by: Haitao Huang <haitao.huang@linux.intel.com>
-> Acked-by: Kai Huang <kai.huang@intel.com>
 > ---
->  arch/x86/kernel/cpu/sgx/encl.c | 16 +++++++---------
->  arch/x86/kernel/cpu/sgx/encl.h | 10 ++++++++--
->  arch/x86/kernel/cpu/sgx/main.c |  4 ++--
->  3 files changed, 17 insertions(+), 13 deletions(-)
+>  arch/x86/kernel/cpu/sgx/encl.c | 36 ++++++++++++++++++++--------------
+>  1 file changed, 21 insertions(+), 15 deletions(-)
 >
 > diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/enc=
 l.c
-> index 279148e72459..c0a3c00284c8 100644
+> index c0a3c00284c8..2aa7ced0e4a0 100644
 > --- a/arch/x86/kernel/cpu/sgx/encl.c
 > +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> @@ -46,10 +46,10 @@ static int sgx_encl_lookup_backing(struct sgx_encl *e=
-ncl, unsigned long page_ind
->   * a check if an enclave page sharing the PCMD page is in the process of=
- being
->   * reclaimed.
->   *
-> - * The reclaimer sets the SGX_ENCL_PAGE_BEING_RECLAIMED flag when it
-> - * intends to reclaim that enclave page - it means that the PCMD page
-> - * associated with that enclave page is about to get some data and thus
-> - * even if the PCMD page is empty, it should not be truncated.
-> + * The reclaimer sets the SGX_ENCL_PAGE_PCMD_BUSY flag when it intends t=
-o
-> + * reclaim that enclave page - it means that the PCMD page associated wi=
-th that
-> + * enclave page is about to get some data and thus even if the PCMD page=
- is
-> + * empty, it should not be truncated.
->   *
->   * Context: Enclave mutex (&sgx_encl->lock) must be held.
->   * Return: 1 if the reclaimer is about to write to the PCMD page
-> @@ -77,8 +77,7 @@ static int reclaimer_writing_to_pcmd(struct sgx_encl *e=
-ncl,
->  		 * Stop when reaching the SECS page - it does not
->  		 * have a page_array entry and its reclaim is
->  		 * started and completed with enclave mutex held so
-> -		 * it does not use the SGX_ENCL_PAGE_BEING_RECLAIMED
-> -		 * flag.
-> +		 * it does not use the SGX_ENCL_PAGE_PCMD_BUSY flag.
->  		 */
->  		if (addr =3D=3D encl->base + encl->size)
->  			break;
-> @@ -91,8 +90,7 @@ static int reclaimer_writing_to_pcmd(struct sgx_encl *e=
-ncl,
->  		 * VA page slot ID uses same bit as the flag so it is important
->  		 * to ensure that the page is not already in backing store.
->  		 */
-> -		if (entry->epc_page &&
-> -		    (entry->desc & SGX_ENCL_PAGE_BEING_RECLAIMED)) {
-> +		if (entry->epc_page && (entry->desc & SGX_ENCL_PAGE_PCMD_BUSY)) {
->  			reclaimed =3D 1;
->  			break;
->  		}
-> @@ -257,7 +255,7 @@ static struct sgx_encl_page *__sgx_encl_load_page(str=
-uct sgx_encl *encl,
+> @@ -337,6 +337,16 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_=
+struct *vma,
+>  	if (!test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
+>  		return VM_FAULT_SIGBUS;
 > =20
->  	/* Entry successfully located. */
->  	if (entry->epc_page) {
-> -		if (entry->desc & SGX_ENCL_PAGE_BEING_RECLAIMED)
-> +		if (entry->desc & SGX_ENCL_PAGE_BUSY)
->  			return ERR_PTR(-EBUSY);
-> =20
->  		return entry;
-> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/enc=
-l.h
-> index f94ff14c9486..b566b8ad5f33 100644
-> --- a/arch/x86/kernel/cpu/sgx/encl.h
-> +++ b/arch/x86/kernel/cpu/sgx/encl.h
-> @@ -22,8 +22,14 @@
->  /* 'desc' bits holding the offset in the VA (version array) page. */
->  #define SGX_ENCL_PAGE_VA_OFFSET_MASK	GENMASK_ULL(11, 3)
-> =20
-> -/* 'desc' bit marking that the page is being reclaimed. */
-> -#define SGX_ENCL_PAGE_BEING_RECLAIMED	BIT(3)
-> +/* 'desc' bit indicating that the page is busy (being reclaimed). */
-> +#define SGX_ENCL_PAGE_BUSY	BIT(2)
+> +	mutex_lock(&encl->lock);
 > +
-> +/*
-> + * 'desc' bit indicating that PCMD page associated with the enclave page=
- is
-> + * busy (because the enclave page is being reclaimed).
-> + */
-> +#define SGX_ENCL_PAGE_PCMD_BUSY	BIT(3)
+> +	/*
+> +	 * Multiple threads may try to fault on the same page concurrently.
+> +	 * Re-check if another thread has already done that.
+> +	 */
+> +	encl_page =3D xa_load(&encl->page_array, PFN_DOWN(addr));
+> +	if (encl_page)
+> +		goto done;
+> +
+>  	/*
+>  	 * Ignore internal permission checking for dynamically added pages.
+>  	 * They matter only for data added during the pre-initialization
+> @@ -345,23 +355,23 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area=
+_struct *vma,
+>  	 */
+>  	secinfo_flags =3D SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X;
+>  	encl_page =3D sgx_encl_page_alloc(encl, addr - encl->base, secinfo_flag=
+s);
+> -	if (IS_ERR(encl_page))
+> -		return VM_FAULT_OOM;
+> -
+> -	mutex_lock(&encl->lock);
+> +	if (IS_ERR(encl_page)) {
+> +		vmret =3D VM_FAULT_OOM;
+> +		goto err_out_unlock;
+> +	}
 > =20
->  struct sgx_encl_page {
->  	unsigned long desc;
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/mai=
-n.c
-> index 166692f2d501..e94b09c43673 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -204,7 +204,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_pag=
-e,
->  	void *va_slot;
->  	int ret;
+>  	epc_page =3D sgx_encl_load_secs(encl);
+>  	if (IS_ERR(epc_page)) {
+>  		if (PTR_ERR(epc_page) =3D=3D -EBUSY)
+>  			vmret =3D VM_FAULT_NOPAGE;
+> -		goto err_out_unlock;
+> +		goto err_out_encl;
+>  	}
 > =20
-> -	encl_page->desc &=3D ~SGX_ENCL_PAGE_BEING_RECLAIMED;
-> +	encl_page->desc &=3D ~(SGX_ENCL_PAGE_BUSY | SGX_ENCL_PAGE_PCMD_BUSY);
+>  	epc_page =3D sgx_alloc_epc_page(encl_page, false);
+>  	if (IS_ERR(epc_page)) {
+>  		if (PTR_ERR(epc_page) =3D=3D -EBUSY)
+>  			vmret =3D  VM_FAULT_NOPAGE;
+> -		goto err_out_unlock;
+> +		goto err_out_encl;
+>  	}
 > =20
->  	va_page =3D list_first_entry(&encl->va_pages, struct sgx_va_page,
->  				   list);
-> @@ -340,7 +340,7 @@ static void sgx_reclaim_pages(void)
->  			goto skip;
->  		}
+>  	va_page =3D sgx_encl_grow(encl, false);
+> @@ -376,10 +386,6 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_=
+struct *vma,
 > =20
-> -		encl_page->desc |=3D SGX_ENCL_PAGE_BEING_RECLAIMED;
-> +		encl_page->desc |=3D SGX_ENCL_PAGE_BUSY | SGX_ENCL_PAGE_PCMD_BUSY;
->  		mutex_unlock(&encl_page->encl->lock);
->  		continue;
+>  	ret =3D xa_insert(&encl->page_array, PFN_DOWN(encl_page->desc),
+>  			encl_page, GFP_KERNEL);
+> -	/*
+> -	 * If ret =3D=3D -EBUSY then page was created in another flow while
+> -	 * running without encl->lock
+> -	 */
+>  	if (ret)
+>  		goto err_out_shrink;
+> =20
+> @@ -389,7 +395,7 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area_s=
+truct *vma,
+> =20
+>  	ret =3D __eaug(&pginfo, sgx_get_epc_virt_addr(epc_page));
+>  	if (ret)
+> -		goto err_out;
+> +		goto err_out_eaug;
+> =20
+>  	encl_page->encl =3D encl;
+>  	encl_page->epc_page =3D epc_page;
+> @@ -408,20 +414,20 @@ static vm_fault_t sgx_encl_eaug_page(struct vm_area=
+_struct *vma,
+>  		mutex_unlock(&encl->lock);
+>  		return VM_FAULT_SIGBUS;
+>  	}
+> +done:
+>  	mutex_unlock(&encl->lock);
+>  	return VM_FAULT_NOPAGE;
+> =20
+> -err_out:
+> +err_out_eaug:
+>  	xa_erase(&encl->page_array, PFN_DOWN(encl_page->desc));
+> -
+>  err_out_shrink:
+>  	sgx_encl_shrink(encl, va_page);
+>  err_out_epc:
+>  	sgx_encl_free_epc_page(epc_page);
+> +err_out_encl:
+> +	kfree(encl_page);
+>  err_out_unlock:
+>  	mutex_unlock(&encl->lock);
+> -	kfree(encl_page);
+> -
+>  	return vmret;
+>  }
 > =20
 
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
