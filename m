@@ -1,95 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72171DFE3E;
-	Wed,  4 Sep 2024 14:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8B5193422;
+	Thu,  5 Sep 2024 08:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459449; cv=none; b=KS269b3tp4BFg0w6iya9Xb0Rn/DV7BSebNwHtQwzGfEvri/cE0nPGfUjwQAqyfwxLfr2PvkKffDzG8yx/jcdZ3vlFeD9dj2jlRV8E5gn5HJXqL7FOdnWPuwW3vfqqmYApr53z7aqd5pehTRln0vMY89jciLabzZphnnDJvMAx2A=
+	t=1725523818; cv=none; b=sbNRogOlhTImtl3lBZjsJo25E5GjmxkANreKYqtt31IuE0nS/RikTX/AiA18RZauoRGcBjdcW0sCUB0wP1GG4smgNrqjbNuVnWmZH4quEtZOdvZAEOucvvAkjqB/9I+/p9VhI6e+1e0XmO4l7riOxCrZaKvd7V/2RS1pkzOjkrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459449; c=relaxed/simple;
-	bh=eH6bW4sexyXRXcNaSxzi/8wNw2/wByog0ovvggmCDpk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=WHtn6KcM07QzB2rKBIOBf15QS2jr/BJInWAq4fPJldMLLEUaWYR5tjxPl6ZSCtuZCKHIQfQ4NVtaTf2bqVqqPONSvt/fSJDXyZ5C+UVtr2TBoqclUuQBUhoV0jXvrZsLJI99PqXrfUSRf+eLtyxzJeVM4YVS0ezD2C5SMPe53H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYODs4Ap; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725523818; c=relaxed/simple;
+	bh=7QGzJXWTmaf+a9+vpBXbIQ2fIM99UtgFtfkgrqtxLak=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A/4EijeOdq5atmqntYry3EgCLEjP43ONgocxQFKNHqVqw5yx0itg3ygEKFYN9nbU5OLadQAh0/u0UucdCW9zjN5/6Q7OIa5AuWdiw0UBGnWKFqA3xHi2ne7WXBEWd5sEUSPm8n1OakXxYDXpGeVpFv3ZWaNWrLDxuLULP6VsAec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mof1y1fm; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYODs4Ap"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23830C4CEC3;
-	Wed,  4 Sep 2024 14:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725459448;
-	bh=eH6bW4sexyXRXcNaSxzi/8wNw2/wByog0ovvggmCDpk=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=iYODs4ApxkoiRDBdX7jDtDqY5U3vZ31zujSr5SdCQFXyRPu0mmvFnGpXUrUqXL2CT
-	 MY2v0QybDpEn8RtA9eqrgxBkS+E5F8Hwhc3EgLTTNFvKUqWZGopoDQMSzRPl5Z4djG
-	 bsFVJ0wTgJM3jJOnG2VOZh7581X9vfZ8NgcycDClIMd20bSQukx9FajTNSg6TZyHR5
-	 SZgaI2H4zSzQKR5aPRNYilGvFyQ9MvwNZtlhiOnJ44P0gD7iZLBeCbfo3Y9FpGsxSM
-	 a/g2rg6nDy+WWBjVcVMf4kbkDAajgQpFujTuQzme73mrVttbQMPri3qsoEia0CaHbZ
-	 14/cdNeCgL7NQ==
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mof1y1fm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725523818; x=1757059818;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7QGzJXWTmaf+a9+vpBXbIQ2fIM99UtgFtfkgrqtxLak=;
+  b=mof1y1fmyWmNd0x6Gx6dcXLKXlJD+oZwJ89CTteIzRido5z1ZxEDvTKp
+   AtS/U740w+Fr86lgzZf2ayRMad6OI/7l73k+wEpMbgxl0Sl4/fcXxsXoj
+   UdOsP5j9oqxThnpL0kaEViDmaJLJcY+AgM/YvnFLa848beaqyGpebahW8
+   h1LRxUwDp5s1NVw04bbDexS6xjtuhpHt9rQphqWRB6a+mU/mLYHziYT3i
+   cPJltYuxGFCMoanYeeVsd7cHKlkImtVKfLPBKX2lfXek5KRPdrBhmdPV0
+   yM5aGoJ3omqWgxhh+ncMMcWTTGjZMEtlU5LE8MMoyK/ZEsdOye+J0Jv7d
+   A==;
+X-CSE-ConnectionGUID: 5jyfh0z5TpimWLhPSxGb3A==
+X-CSE-MsgGUID: xrFzaidSQRuPA9+pQNbV1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24176505"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="24176505"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 01:10:17 -0700
+X-CSE-ConnectionGUID: KI6JQhziSES21zgzFN+8NA==
+X-CSE-MsgGUID: aNkTIrHqRD22d36F/xlIag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="65528390"
+Received: from ziqianlu-desk2.sh.intel.com ([10.239.159.54])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 01:10:15 -0700
+From: Aaron Lu <aaron.lu@intel.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>
+Cc: "Molina Sabido, Gerardo" <gerardo.molina.sabido@intel.com>,
+	Zhimin Luo <zhimin.luo@intel.com>,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v2 0/2] SGX NUMA fix
+Date: Thu,  5 Sep 2024 16:08:53 +0800
+Message-ID: <20240905080855.1699814-1-aaron.lu@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 04 Sep 2024 17:17:24 +0300
-Message-Id: <D3XKBPX6DBX4.2BYXD4D5NZGWZ@kernel.org>
-Subject: Re: [PATCH] x86/sgx: Fix deadloop in __sgx_alloc_epc_page()
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Aaron Lu" <aaron.lu@intel.com>
-Cc: "Dave Hansen" <dave.hansen@linux.intel.com>, <x86@kernel.org>,
- <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Zhimin Luo"
- <zhimin.luo@intel.com>
-X-Mailer: aerc 0.18.2
-References: <20240829023800.1671210-1-aaron.lu@intel.com>
- <D3SJOVADFM48.JNOIOZJ0J6OE@kernel.org> <ZtFjPwNWS_hfs4px@ziqianlu-kbl>
- <D3WS02D8SZMG.62T9IWX6WZI4@kernel.org> <Zte6ROmqrwdCSIn8@ziqianlu-kbl>
-In-Reply-To: <Zte6ROmqrwdCSIn8@ziqianlu-kbl>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Sep 4, 2024 at 4:39 AM EEST, Aaron Lu wrote:
-> On Tue, Sep 03, 2024 at 07:05:40PM +0300, Jarkko Sakkinen wrote:
-> > On Fri Aug 30, 2024 at 9:14 AM EEST, Aaron Lu wrote:
-> > > On Thu, Aug 29, 2024 at 07:44:13PM +0300, Jarkko Sakkinen wrote:
-> > > > On Thu Aug 29, 2024 at 5:38 AM EEST, Aaron Lu wrote:
-> > > > > When current node doesn't have a EPC section configured by firmwa=
-re and
-> > > > > all other EPC sections memory are used up, CPU can stuck inside t=
-he
-> > > > > while loop in __sgx_alloc_epc_page() forever and soft lockup will=
- happen.
-> > > > > Note how nid_of_current will never equal to nid in that while loo=
-p because
-> > > >                                                      ~~~~
-> > > >=20
-> > > > Oh *that* while loop ;-) Please be more specific.
-> > >
-> > > What about:
-> > > Note how nid_of_current will never be equal to nid in the while loop =
-that
-> > > searches an available EPC page from remote nodes because nid_of_curre=
-nt is
-> > > not set in sgx_numa_mask.
-> >=20
-> > That would work I think!
->
-> While rewriting the changelog, I find it more natural to explain this
-> "while loop" when I first mentioned it, i.e.
->
->     When the current node doesn't have an EPC section configured by firmw=
-are
->     and all other EPC sections are used up, CPU can get stuck inside the
->     while loop that looks for an available EPC page from remote nodes
->     indefinitely, leading to a soft lockup. Note how nid_of_current will
->     never be equal to nid in that while loop because nid_of_current is no=
-t
->     set in sgx_numa_mask.
->
-> I hope this looks fine to you.
+Hi,
 
-Yes, it is. I just want the storyline to the commit message as
-a reminder why we did this, that's all. It helps a lot later on
-when having to look into commit history.
+A soft lockup issue was found during some SGX testing and it turned
+out to be a problem in SGX code related to NUMA, please see patch1/2
+for details.
 
-BR, Jarkko
+While Dave reviewed v1 of patch1/2, he suggested dumping an info when
+a node has both CPUs and memory but no EPC section, so that's patch2/2.
+
+Comments are welcome, thanks.
+
+v2:
+- Enhance changelog for patch1/2 according to Kai, Dave and Jarkko's
+  suggestions;
+- Fix Reported-by tag, it should be Gerardo. Sorry for the mistake.
+- Collect review tags.
+- Add patch2/2.
+
+Aaron Lu (2):
+  x86/sgx: Fix deadlock in SGX NUMA node search
+  x86/sgx: Log information when a node lacks an EPC section
+
+ arch/x86/kernel/cpu/sgx/main.c | 34 +++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
+
+-- 
+2.45.2
+
