@@ -1,57 +1,57 @@
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EEE13B58E
-	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B04F1C9DD7
+	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757749; cv=none; b=e3La1o+d+7yTfKYh6AkL4Z9aPLTBZDUjXlMDSF9EIG3E4oiq/VgEuJ9iijgkkl60gsnAMroMfIQhFPURejVU3iOP0bZco9ZpTiYUG3kH2Tr1TxlZvnjb7aALPYPDfudshhLTNWBfdsecLjqj91Yt0o4VnjtdgyYCyGXTVEwzXn0=
+	t=1732757750; cv=none; b=DVDMKi6c8bCCxzgrM5UUB5ZYPIUtRXfoblbwwJqQFHBVwFtLNGaToY8giBeShqcB+TMsSoWfi2PvwVQ9jPEvL74mvNG1VJlS9QcwuyC7A6dNdyT2Dp3eW9uxLovUn6QaNb4vMqI56p/OMB5N2gequaQDIMv+XBfuk0Y9wn2Jrhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757749; c=relaxed/simple;
-	bh=TB2Njr8V9gci+zAwKAzdTpYDyYSzzQCUHvTbCzkV3Hg=;
+	s=arc-20240116; t=1732757750; c=relaxed/simple;
+	bh=AhzkXtmCCM2uzNkbc1wKogSBqvYhkXQzLU3RFLMop8Q=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KyRVXVOwJMVExj43E4A+aNrejfx6l0eM19327Rloamy+PXWKkTc0SFDFxTj0tmfqwxVUJr+pZhAlkBWc7g4JQC23Jbon40IIj736SJTRfafVuoc3DBMez0XOdBxuuTQ7cB787m3fbug9UIqxNfhJbTDXCLsNRBb9HvP5sxhgF2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NyqeEdNx; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=E73ouNK4J0w3JtLCyDBsA1r+290M1oHR4Eq/BS5rCREoM8c9+lYoKpqNHRO6VStrm63706Guu7uLrRyCm33B6dKCT7hijuOfX3wDxJTpJKuvvHjBvTNBshWM6FYCMzEF5qXprG3v0Wh6ZNgpJLgNVVzF/m/C5EvCpEeLZte/nEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zzjPRRjp; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NyqeEdNx"
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7fc1becad32so207951a12.0
-        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:35:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zzjPRRjp"
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ea5bf5354fso353191a91.3
+        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:35:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757747; x=1733362547; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757749; x=1733362549; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Es0q4g30GZYN60Cs+30x4ZdeXkrOyT6BVfqdCAMrxSg=;
-        b=NyqeEdNxr62JIS4wKhBkEYQfrYQNbJnMxePdve7093p+f5phOK5wxR2WWz0NnQZzJb
-         qom2eTfHfVsuE8CIRxYc9XKVbWnFgttiyGWGVBNAz2m90wNJpfbTyi7agny9r55TLG94
-         LNBVpOxjGuRL1+gqbmmXIKNHSRSWkwnERuJg5SPvOfymQ5BX8TaDXm0DB+wp+ryS1/J1
-         A72lxqM7gCYQCtMEEBN8/SwumKyAtPMSyJR8hbX6ZLtnJ91AMMW6eGiOfsPo3XyqJgKg
-         3V17z3ykuf8QoJ7remgNyYz45fkeI8WTwm+GLzvCcUiHJh48MnQzLqRuTaLvL06vHmls
-         6wSQ==
+        bh=oX4zoA92uX/TiwHEJXa6fKLIdOdEnfDXoZc1BynGc94=;
+        b=zzjPRRjpb61nqCznY61COVXXsVjcVN59XMGGDgbHDtP3OeTLyw0KbV9DLWUZNvIAtc
+         PxYWagO3mSXqeWxs/8ODv3eUkpI35pzX3EyXg/9nV53WNSdMNXFMzm3POy4VmnGcMN6U
+         TU0FtsmRV9Tn6aUxOoaPomdRblcTaDsKbSRENMdKNSPnPuppw1cyR3zBU0Ff7kS41jl8
+         4wLGwcGVH1iWFYxW4Kmitj6/yYDVDyBpb3BabwQ9IYknaUbGRt89dfCvCUQAW6RZG09T
+         rNVY8fiq/7ZJvGertMVxHM9d6A/BfsvblnOh5W2VpyBT9h+veUgQ4G6pAIrA0v7DwcW9
+         qxLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757747; x=1733362547;
+        d=1e100.net; s=20230601; t=1732757749; x=1733362549;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Es0q4g30GZYN60Cs+30x4ZdeXkrOyT6BVfqdCAMrxSg=;
-        b=cl43Fl4F0YDdICDtvwwPovKOHYNrBLp4oxHu5R6BztyycWWMHV6eeECrrf4geaflhn
-         6Cdk0yTuMJUfLB43ux3evUo8sfTY3D8hTtI56aoFX5K5tjIwzraXiAYyZKO1HDOQ9Avp
-         Vu0Z04Ts1yAu29GelCW+o31Tl09qLi0XyCpuAjw9YMdL0lYY7UAQagOqD1Kx4O1avCX5
-         HuSqxDUdOs0Ed2ZuTHEnqFsikc1PVLAejqFZ5dcsremh8XrIKkYNHiy0gsNwN3m16DxU
-         nDKgFCGbQSEvBACHXL6lpqhqDeh5BYuHXPJDXvSDxrs+r9gHpsJ9E5uc5jX805VlVtZ0
-         NEUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3tUHmGiFV0VUuChlxETxhpUB4cwXSlRB2ZRw8x9PFAd+/g4Wl/Yq0zP1ySTmrPEBn5F0BkIckLAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCReE5taPFvHJYlj9jT8RXKf65LsN0fVJqoY41gGMagj+DDBoK
-	LZPsKqig1YOss1xztuijqzSWGOrXo7WCLp4yEDl+l/nXCTIpGENVqbc3fbsLLoKCjBJiucK8aEh
-	OTw==
-X-Google-Smtp-Source: AGHT+IEw6weSthxvIraAPD0rAOQgIGwIWRbZouQyB9Vwv1JsmLlIKy5a1yr3A2u3ZRRwqrGTZTdXmZekq60=
-X-Received: from pjbpd3.prod.google.com ([2002:a17:90b:1dc3:b0:2ea:543f:9b80])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:734a:b0:1e0:d1f7:9437
- with SMTP id adf61e73a8af0-1e0e0b80369mr6780795637.38.1732757746942; Wed, 27
- Nov 2024 17:35:46 -0800 (PST)
+        bh=oX4zoA92uX/TiwHEJXa6fKLIdOdEnfDXoZc1BynGc94=;
+        b=EKH1t17u2vcd//mmxnZB1JDBkEZ/gKDAd281jeehHTrQxvw4szr1dhdr6nnKgDg/7l
+         vKGFG4ueE0G9RzkelC+sfkd0UK08H+7DIRVH2GcDcdsJLYAT5wcHHpqdibMUNUr7v8IS
+         sXMJD7XR7/Vt69UPVGU0J6tJBofbYn6Zasa4tBJYJz5EIfDXtpFj+1ev0JrOcA2373dL
+         e0zmpgpoPI9X+9PnGyWYfW1ED+vjHXcufwece/iX1PVQiVDURBJ6dbfnFKQSHbdmc2Cn
+         5I0k2aCnAPjy6LupTx03SlUdHg50WHiDnp1/OvfNa6ZXIXZDzMlQED1WXd2sHV5Ewa+C
+         CESA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQMX6rDbRv8moh1SfgoMC9lHgI8FD19LRNk9RBxRBjkDknQY8Bit8DM5Vh5dAuqRVS54drQg7He9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHpf+10NKtDNEts3IL/0OV5ius60qdmS4Hx4RkptASJS3ae/Ss
+	+DOLj0MMs4nKnSdFzY1kEsDwF1KP/eRiACCWcL0DtHnBoJU/B5qKs9qiH8PsCAE8R2xR93reJJD
+	V2w==
+X-Google-Smtp-Source: AGHT+IHqiBW7ylFioQH9r/0FDeS4VWt48HcfPZ5KbrnqgDIhirizajDMmTT+yUaR52RQ2Ssu5wGSCgPDzk0=
+X-Received: from pjbqn15.prod.google.com ([2002:a17:90b:3d4f:b0:2e0:aba3:662a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c04:b0:2ea:3a13:4916
+ with SMTP id 98e67ed59e1d1-2ee08e9980emr6733033a91.6.1732757748712; Wed, 27
+ Nov 2024 17:35:48 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:34:10 -0800
+Date: Wed, 27 Nov 2024 17:34:11 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -61,9 +61,8 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-44-seanjc@google.com>
-Subject: [PATCH v3 43/57] KVM: x86: Treat MONTIOR/MWAIT as a "partially
- emulated" feature
+Message-ID: <20241128013424.4096668-45-seanjc@google.com>
+Subject: [PATCH v3 44/57] KVM: x86: Initialize guest cpu_caps based on KVM support
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -75,66 +74,134 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Enumerate MWAIT in cpuid_func_emulated(), but only if the caller wants to
-include "partially emulated" features, i.e. features that KVM kinda sorta
-emulates, but with major caveats.  This will allow initializing the guest
-cpu_caps based on the set of features that KVM virtualizes and/or emulates,
-without needing to handle things like MONITOR/MWAIT as one-off exceptions.
+Constrain all guest cpu_caps based on KVM support instead of constraining
+only the few features that KVM _currently_ needs to verify are actually
+supported by KVM.  The intent of cpu_caps is to track what the guest is
+actually capable of using, not the raw, unfiltered CPUID values that the
+guest sees.
 
-Adding one-off handling for individual features is quite painful,
-especially when considering future hardening.  It's very doable to verify,
-at compile time, that every CPUID-based feature that KVM queries when
-emulating guest behavior is actually known to KVM, e.g. to prevent KVM
-bugs where KVM emulates some feature but fails to advertise support to
-userspace.  In other words, any features that are special cased, i.e. not
-handled generically in the CPUID framework, would also need to be special
-cased for any hardening efforts that build on said framework.
+I.e. KVM should always consult it's only support when making decisions
+based on guest CPUID, and the only reason KVM has historically made the
+checks opt-in was due to lack of centralized tracking.
 
+Suggested-by: Maxim Levitsky <mlevitsk@redhat.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/cpuid.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ arch/x86/kvm/cpuid.c   | 15 ++++++++++++++-
+ arch/x86/kvm/cpuid.h   |  7 -------
+ arch/x86/kvm/svm/svm.c | 11 -----------
+ arch/x86/kvm/vmx/vmx.c |  9 ++-------
+ 4 files changed, 16 insertions(+), 26 deletions(-)
 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 153c4378b987..0c63492f119d 100644
+index 0c63492f119d..8015d6b52a69 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -1192,7 +1192,8 @@ static struct kvm_cpuid_entry2 *do_host_cpuid(struct kvm_cpuid_array *array,
- 	return entry;
+@@ -355,6 +355,9 @@ static u32 cpuid_get_reg_unsafe(struct kvm_cpuid_entry2 *entry, u32 reg)
+ 	}
  }
  
--static int cpuid_func_emulated(struct kvm_cpuid_entry2 *entry, u32 func)
 +static int cpuid_func_emulated(struct kvm_cpuid_entry2 *entry, u32 func,
-+			       bool include_partially_emulated)
++			       bool include_partially_emulated);
++
+ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
  {
- 	memset(entry, 0, sizeof(*entry));
+ 	struct kvm_lapic *apic = vcpu->arch.apic;
+@@ -373,6 +376,7 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+ 	 */
+ 	for (i = 0; i < NR_KVM_CPU_CAPS; i++) {
+ 		const struct cpuid_reg cpuid = reverse_cpuid[i];
++		struct kvm_cpuid_entry2 emulated;
  
-@@ -1206,6 +1207,16 @@ static int cpuid_func_emulated(struct kvm_cpuid_entry2 *entry, u32 func)
- 		return 1;
- 	case 1:
- 		entry->ecx = feature_bit(MOVBE);
+ 		if (!cpuid.function)
+ 			continue;
+@@ -381,7 +385,16 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+ 		if (!entry)
+ 			continue;
+ 
+-		vcpu->arch.cpu_caps[i] = cpuid_get_reg_unsafe(entry, cpuid.reg);
++		cpuid_func_emulated(&emulated, cpuid.function, true);
++
 +		/*
-+		 * KVM allows userspace to enumerate MONITOR+MWAIT support to
-+		 * the guest, but the MWAIT feature flag is never advertised
-+		 * to userspace because MONITOR+MWAIT aren't virtualized by
-+		 * hardware, can't be faithfully emulated in software (KVM
-+		 * emulates them as NOPs), and allowing the guest to execute
-+		 * them natively requires enabling a per-VM capability.
++		 * A vCPU has a feature if it's supported by KVM and is enabled
++		 * in guest CPUID.  Note, this includes features that are
++		 * supported by KVM but aren't advertised to userspace!
 +		 */
-+		if (include_partially_emulated)
-+			entry->ecx |= feature_bit(MWAIT);
- 		return 1;
- 	case 7:
- 		entry->flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
-@@ -1223,7 +1234,7 @@ static int __do_cpuid_func_emulated(struct kvm_cpuid_array *array, u32 func)
- 	if (array->nent >= array->maxnent)
- 		return -E2BIG;
++		vcpu->arch.cpu_caps[i] = kvm_cpu_caps[i] |
++					 cpuid_get_reg_unsafe(&emulated, cpuid.reg);
++		vcpu->arch.cpu_caps[i] &= cpuid_get_reg_unsafe(entry, cpuid.reg);
+ 	}
  
--	array->nent += cpuid_func_emulated(&array->entries[array->nent], func);
-+	array->nent += cpuid_func_emulated(&array->entries[array->nent], func, false);
- 	return 0;
+ 	kvm_update_cpuid_runtime(vcpu);
+diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+index 8c9d6be8cb58..27da0964355c 100644
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -263,13 +263,6 @@ static __always_inline void guest_cpu_cap_change(struct kvm_vcpu *vcpu,
+ 		guest_cpu_cap_clear(vcpu, x86_feature);
  }
  
+-static __always_inline void guest_cpu_cap_constrain(struct kvm_vcpu *vcpu,
+-						    unsigned int x86_feature)
+-{
+-	if (!kvm_cpu_cap_has(x86_feature))
+-		guest_cpu_cap_clear(vcpu, x86_feature);
+-}
+-
+ static __always_inline bool guest_cpu_cap_has(struct kvm_vcpu *vcpu,
+ 					      unsigned int x86_feature)
+ {
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 3b94cb6c2b7a..0045fe474023 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -4406,10 +4406,6 @@ static void svm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+ 			     boot_cpu_has(X86_FEATURE_XSAVES) &&
+ 			     guest_cpuid_has(vcpu, X86_FEATURE_XSAVE));
+ 
+-	guest_cpu_cap_constrain(vcpu, X86_FEATURE_NRIPS);
+-	guest_cpu_cap_constrain(vcpu, X86_FEATURE_TSCRATEMSR);
+-	guest_cpu_cap_constrain(vcpu, X86_FEATURE_LBRV);
+-
+ 	/*
+ 	 * Intercept VMLOAD if the vCPU model is Intel in order to emulate that
+ 	 * VMLOAD drops bits 63:32 of SYSENTER (ignoring the fact that exposing
+@@ -4417,13 +4413,6 @@ static void svm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+ 	 */
+ 	if (guest_cpuid_is_intel_compatible(vcpu))
+ 		guest_cpu_cap_clear(vcpu, X86_FEATURE_V_VMSAVE_VMLOAD);
+-	else
+-		guest_cpu_cap_constrain(vcpu, X86_FEATURE_V_VMSAVE_VMLOAD);
+-
+-	guest_cpu_cap_constrain(vcpu, X86_FEATURE_PAUSEFILTER);
+-	guest_cpu_cap_constrain(vcpu, X86_FEATURE_PFTHRESHOLD);
+-	guest_cpu_cap_constrain(vcpu, X86_FEATURE_VGIF);
+-	guest_cpu_cap_constrain(vcpu, X86_FEATURE_VNMI);
+ 
+ 	svm_recalc_instruction_intercepts(vcpu, svm);
+ 
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 8b95ba323a17..a7c2c36f2a4f 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -7828,15 +7828,10 @@ void vmx_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+ 	 * to the guest.  XSAVES depends on CR4.OSXSAVE, and CR4.OSXSAVE can be
+ 	 * set if and only if XSAVE is supported.
+ 	 */
+-	if (boot_cpu_has(X86_FEATURE_XSAVE) &&
+-	    guest_cpuid_has(vcpu, X86_FEATURE_XSAVE))
+-		guest_cpu_cap_constrain(vcpu, X86_FEATURE_XSAVES);
+-	else
++	if (!boot_cpu_has(X86_FEATURE_XSAVE) ||
++	    !guest_cpuid_has(vcpu, X86_FEATURE_XSAVE))
+ 		guest_cpu_cap_clear(vcpu, X86_FEATURE_XSAVES);
+ 
+-	guest_cpu_cap_constrain(vcpu, X86_FEATURE_VMX);
+-	guest_cpu_cap_constrain(vcpu, X86_FEATURE_LAM);
+-
+ 	vmx_setup_uret_msrs(vmx);
+ 
+ 	if (cpu_has_secondary_exec_ctrls())
 -- 
 2.47.0.338.g60cca15819-goog
 
