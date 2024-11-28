@@ -1,57 +1,57 @@
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486561494B5
-	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FACA14B092
+	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757691; cv=none; b=nSI5lfsF7HMw5P9BWiZPx55wdSJLifR49AVkUaosypB1OQy5KRrQKV17KdnBN88ktuD0phvHuGOt8XJlVMSriJWAPtvDRks33PHQQNYlOUG0l+Wt7kex0KDBRYRvbUIMVtPJFfsw2LpVDM0VIqO4KeoVV2ZCp/yGWU0Sk3OrUkc=
+	t=1732757693; cv=none; b=LIe2O7xrV7rnLy4liQPD8mKIm2CjfJa9th2LOjl3jGd1buBR7OOjEE4O0QJURsd9FhIwA47hS7tG7DkPgHjq/J8jUAqPK+BZq/I9uJZ2/bYF28LXKhQkjP15ID79jiV//697SZKPVhQaK7BQdaAbAotLRQ6QnNxcq1NmW28OPGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757691; c=relaxed/simple;
-	bh=XUJ82Rtg0dvNzftBjBgZdlUMYIOHxk/MRQT5EY38WoY=;
+	s=arc-20240116; t=1732757693; c=relaxed/simple;
+	bh=8M4UbYKmp2Gh3Zl4jYlDZTt0BoGbSmn6dRyyLDCWFzs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fniT4KF1eoBH9eZp+5NZ+vVayeSEc8h9V/2hVRM7kzb+pA+3ylyswmw68M/uWfzPMxc2/qFFJNSAZp7NhoYuiNQTgT/zOL49KE0wgl7p81dNAYQ2SvLi1O4gXbpaPUer5DQ0GUZFhdTsuGstcrQX7SLFxJfEAzpytQJ1vGPlM78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nza6PhcQ; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=rc1geP1l70Jw1/4C+SDCLXH0mo5Dwq7IddPUqYLlq7xcQKWGmO4I62wJSKD7IvvtP1/0gj7/PB17hWtzfJyuLazeJPdG/A7W7utyunnMoCv6rjESEMWqh3TGMPKa1iu6PiFypMniZ5UVCsJIar3VKj/z64Vi8rfZs/j/rzz9MjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MiKR/3qg; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nza6PhcQ"
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-211fcbd2325so3684475ad.1
-        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:34:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MiKR/3qg"
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2edba08c89bso388524a91.1
+        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:34:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757690; x=1733362490; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757691; x=1733362491; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=QO1nbKSuw4xAHdvTKrWO+XAcBIQugd+Jc8EgRJlODfQ=;
-        b=Nza6PhcQEXmZL+iho4fLgaJ6f3bq6o4OfIMQ6j5MzuOKBJ31D3s86/rzivsYIDNku0
-         iFJ9IpnZVmlGgKQu4QIzRPx3xCo4W3BzvB0RO8c6nmSPA7vrtyE5JWbyJozNUNTbg8xT
-         KWuXNLbD0SokMV/EZ3WVpMwDZ6SgJzCyxmap3SsQeaRiyjMMUopnhIBWlvJ8o3tgybUn
-         WCsITdV8l436hjOQIbo87xEObU5ertnnfwlB6Rd+6jywJ/siq2wean0YlmHt6YaKQbX2
-         u+2hDn/cQPkCAwjyp+3YqhIf3mBN9pQ+lZUHP13KRZnGagH0O3vpzvVgBPvW36aNK2fO
-         IRIA==
+        bh=En/ebXFE7IQduzFpZQdCqb30HJiQ4lZcee0ytf8Ga+A=;
+        b=MiKR/3qgJH4REfUoGPzlFpALpdIbgwl/ret7NLzLlKib7Wljca/iiqV4pPUpSaKbIt
+         8DmAkqMeZY1inyBOyyTz40jX/PsobyH/V+dvmNMubEsquz8dzxFd3kF4IBzxs0P/ID2s
+         44Rx5abNB77VoZJWa+2AQnlaqYpc2AhAr84Xer5rkhK0zS13bzdEtyh0+KZPE4eTn6NX
+         N8obH6AQmv5dWVU6hiP+3rtv78P+2d4oAi+9+6T6GQSUW82LJLAkSBEQiNmjSN9SBMd3
+         TpPHbX00NZl9I/GSHKUSyKuBAnOqXo6ZZ8l8QPgYBzoPP0jyRNSABcgcoK6KhcZNWp72
+         WWoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757690; x=1733362490;
+        d=1e100.net; s=20230601; t=1732757691; x=1733362491;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QO1nbKSuw4xAHdvTKrWO+XAcBIQugd+Jc8EgRJlODfQ=;
-        b=TSiKYVZfkO5LSMGbmKBMqRVD0Ap5PZ1rTpbyRVhSUJz/So1Dqjxd19XFR4sPDWNyvo
-         CLAH60fCM6oh+ZAk3J0/mgxrAobL4R0dMu+fuVVthIKo8PfBppyRV3BStkodg5nhxKfd
-         7BUlJfqCJ2nA9BvTDpWlGR1rF9yzy1HpMaGE+CgAy/w2E+lhC1TQUm35LuEOIUP6cw5Y
-         MHyNg3bv/a2hIiA1MpaGWIgWY0304OuZBqOdsqme54QRx//XTQtWbBLokKwdDGsCRCYU
-         6kBv9nNNOVt7hW17K4NMd6ljgn20C/fPHfg7n0VwZzIp+PTXM2+6JbCaeiN4S54kHA+E
-         6wEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiLtGgubPuZqq81/gIaE693jT1cE/ttf6otnAvpivo7b2iD/ISmibhxSW0Di2MkJcsOzOgXLbxbSg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyurHJuxzkLNdP/y+/fA5PPRtG9GTtuF1Sdn4iERBDEnfTy1WgS
-	ulaXZDy1zoiVP39Msa0vXrMu/BWaF/vGb/Ijx4+Pi9eIENQghF27raxMKsYSaGZs4TevUjYArpX
-	n1Q==
-X-Google-Smtp-Source: AGHT+IFql/TwOfNwT9CVZ0WNulnEpsE+uGEyzsfAGgYdcC+q97T9HfG6pl6mZwpvJ0LoRod86oyPOYL8AVc=
-X-Received: from pllb7.prod.google.com ([2002:a17:902:e947:b0:212:4557:e89b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d50f:b0:1fa:1dd8:947a
- with SMTP id d9443c01a7336-21501d58ac1mr60024385ad.46.1732757689708; Wed, 27
- Nov 2024 17:34:49 -0800 (PST)
+        bh=En/ebXFE7IQduzFpZQdCqb30HJiQ4lZcee0ytf8Ga+A=;
+        b=My/3S++Xq+sXRsu9KjpkJmpNxn9GyZXzjr5ifyR4I6U7aOVNI1OTsN8rHTJPmO+ZdH
+         fZe9p7q49niipxY5CQOpPiiOqamVoC5/Hf5Rt8NWTq8Zc7GaKy7JN5WyDTFU8v4eRXUK
+         SoSiBPz8B71BK1czmyeWPR/fP/hZeAmDY1olIZC66CI6o9CPHVb7eFT5+ff0LHLMrzJ5
+         e+gMEwW5H6DRgUANHqBRDUNwcrXUg+fmBfQTo1OvFd2VncHIqN9bjk+T39h+RYUSshyK
+         jl7L287XMrOzAOmnbEL+RI6bpERQWGy8KsFRCtBbUa38eDfRFkzqlKC8rBviZbMJBj7S
+         A6HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLdTHTOILNF8wpuxLH0GVlB9pweWP/A+u/ael8eN/3gUy3aXGcISVXITg7gN7brdKFLA7FwKxaTLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfJySuKDJjeiFu51oxcFeDooIvD7xZ9cZFf2YlW5dPra7rYOHc
+	eOuljyyI1jIGW2Mj6fRkFRxynYqnvzUewZqeGDlXiZcV8TahAqOADtJb7LOXwbHjAVaS8u42Ag4
+	YBg==
+X-Google-Smtp-Source: AGHT+IEjLtBeoOk0kP8rZqlEKEWA2SUCicvERQLF5yyR4OIJCyQDVxB251zmH/KpQQb4kFZaHqyk1H0JDY0=
+X-Received: from pjbpl3.prod.google.com ([2002:a17:90b:2683:b0:2e9:5043:f55b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b87:b0:2ea:8e42:c39
+ with SMTP id 98e67ed59e1d1-2ee08eb2a35mr6655972a91.11.1732757691529; Wed, 27
+ Nov 2024 17:34:51 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:33:37 -0800
+Date: Wed, 27 Nov 2024 17:33:38 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -61,8 +61,8 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-11-seanjc@google.com>
-Subject: [PATCH v3 10/57] KVM: x86: Move __kvm_is_valid_cr4() definition to x86.h
+Message-ID: <20241128013424.4096668-12-seanjc@google.com>
+Subject: [PATCH v3 11/57] KVM: x86/pmu: Drop now-redundant refresh() during init()
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -74,63 +74,27 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Let vendor code inline __kvm_is_valid_cr4() now x86.c's cr4_reserved_bits
-no longer exists, as keeping cr4_reserved_bits local to x86.c was the only
-reason for "hiding" the definition of __kvm_is_valid_cr4().
-
-No functional change intended.
+Drop the manual kvm_pmu_refresh() from kvm_pmu_init() now that
+kvm_arch_vcpu_create() performs the refresh via kvm_vcpu_after_set_cpuid().
 
 Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/x86.c | 9 ---------
- arch/x86/kvm/x86.h | 6 +++++-
- 2 files changed, 5 insertions(+), 10 deletions(-)
+ arch/x86/kvm/pmu.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 5288d53fef5c..5c6ade1f976e 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1281,15 +1281,6 @@ int kvm_emulate_xsetbv(struct kvm_vcpu *vcpu)
+diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+index 47a46283c866..75e9cfc689f8 100644
+--- a/arch/x86/kvm/pmu.c
++++ b/arch/x86/kvm/pmu.c
+@@ -797,7 +797,6 @@ void kvm_pmu_init(struct kvm_vcpu *vcpu)
+ 
+ 	memset(pmu, 0, sizeof(*pmu));
+ 	kvm_pmu_call(init)(vcpu);
+-	kvm_pmu_refresh(vcpu);
  }
- EXPORT_SYMBOL_GPL(kvm_emulate_xsetbv);
  
--bool __kvm_is_valid_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
--{
--	if (cr4 & vcpu->arch.cr4_guest_rsvd_bits)
--		return false;
--
--	return true;
--}
--EXPORT_SYMBOL_GPL(__kvm_is_valid_cr4);
--
- static bool kvm_is_valid_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
- {
- 	return __kvm_is_valid_cr4(vcpu, cr4) &&
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index ec623d23d13d..7a87c5fc57f1 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -550,7 +550,6 @@ static inline void kvm_machine_check(void)
- void kvm_load_guest_xsave_state(struct kvm_vcpu *vcpu);
- void kvm_load_host_xsave_state(struct kvm_vcpu *vcpu);
- int kvm_spec_ctrl_test_value(u64 value);
--bool __kvm_is_valid_cr4(struct kvm_vcpu *vcpu, unsigned long cr4);
- int kvm_handle_memory_failure(struct kvm_vcpu *vcpu, int r,
- 			      struct x86_exception *e);
- int kvm_handle_invpcid(struct kvm_vcpu *vcpu, unsigned long type, gva_t gva);
-@@ -577,6 +576,11 @@ enum kvm_msr_access {
- #define  KVM_MSR_RET_UNSUPPORTED	2
- #define  KVM_MSR_RET_FILTERED		3
- 
-+static inline bool __kvm_is_valid_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
-+{
-+	return !(cr4 & vcpu->arch.cr4_guest_rsvd_bits);
-+}
-+
- #define __cr4_reserved_bits(__cpu_has, __c)             \
- ({                                                      \
- 	u64 __reserved_bits = CR4_RESERVED_BITS;        \
+ /* Release perf_events for vPMCs that have been unused for a full time slice.  */
 -- 
 2.47.0.338.g60cca15819-goog
 
