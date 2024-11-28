@@ -1,57 +1,57 @@
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BFF1CDFDD
-	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D8D1CF294
+	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757763; cv=none; b=jAKSCFvixcvtHEdueoxHfNhHMBu9i0pPtFPfVq/7roOPFyBruafW7Ulx+j3nCOPHo5BCt5yo6DdPHLuhh7Y/7IXNHNqjEqwoSMgMF2bGeqzT5ySa3vZcSAObG64ptrQKvUiIPnX0rcNvzUqRRdUB0hAHDlReOC1lLkjhN7o8iTM=
+	t=1732757766; cv=none; b=goa4pWMLgL2xg3sVweafDIR8tZwOlCyfmkg9Q+ph9T0JFMdmfD/W+HCoGRI1NxN09QRvFao9Eu3Gifi9TTam5iFTaGw9w27P4DSZ2Ah24esERgOTcbTHirawMFDyWlvsY0ED4xX0hHqWzp+1mNpt3d7ATkHu4h3xihd14wnzikE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757763; c=relaxed/simple;
-	bh=UGQtKvn16ZV/4C8CCLUFGRgLWpqSOYFX6Ot6ILNhdrg=;
+	s=arc-20240116; t=1732757766; c=relaxed/simple;
+	bh=R+Jy+4BCnS+JqaVrYJvT66a9YrgXyVUkAuexl3Wd8eo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XuFnXCTCgiy4J1xnJjDM9LzrEduKEVSUNIL6CxSyMXwAqqspQ5YztoFZJaDpczN+mpabxOF2oCIUJV5L5OwuHsD5LWX1mHmRn+ysxx3Q9GjyU8XipQdx7Epz5oyj1RNK5/3AFydM8UmC1gUEH0/EF53U5IrhxGhU3rlmoX/Yhkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BjBrcJ10; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=h04sutcPWHcYpdQ7xruQAP4zTL2tLFFE2kqeJdmDls5kVR+bUSONsnhGcvq/uJup/b86uEEu2xxuquYMAyLUc1w0m1c/c1ANDIIhAr3qLDhL8LEdOeaK2E4EkZDDiX2FppQQHsOtWRwHz9ckhgQmK+C8sb2R6ZTRTbk1I9XN3t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TrPJzA5U; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BjBrcJ10"
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7c6b192a39bso213653a12.2
-        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:36:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TrPJzA5U"
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea33ae82efso362854a91.3
+        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:36:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757761; x=1733362561; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757763; x=1733362563; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=taMQEzcRa7YqlC/xz4BvUNJGPN3JpmMrop9avvyNBPs=;
-        b=BjBrcJ10RV6dYNRXJR4KfiZ0jrm6gdYfUS3JYuLp+QQfvY8IYol1zYYxTA/K5L0v2Q
-         jfD66CiWIfe7UZQ8bIc3jpBFkbPkDpZAkcI+9LV1J03jvG9RZW9S8OibuycLKxzRG7ns
-         ipqeDKhgWbKYSl/YhH7fZYGhmojoYhseK8aTLdxc7zEXaz7w0JH1nobhxX3O08Fsfdie
-         vP6aXf+Agy4L+zrZeulWfXlc0k4v7JNWTYK0fGo6EBAGG2iGk8ji4jh9F03hObfHNE49
-         Of8iUrvsKL8YsY4FKkbk3yDJcqDInCcJjnHXyMQi6fFuOj8p+qye7thMvsyU8bYoRy7h
-         Lddw==
+        bh=LnF7ynB4Px9kV74WJlG52B9/ebUeqESErE/aee+VqeA=;
+        b=TrPJzA5U0yB9VEXElcPy9+ymvPZqo5yH4w4qRKGwkYF1czE0Ce7kCPT/FWitVrVZr7
+         UdIGiNFOWJfWHJ3OzexecauDjTo9muPHKK9VSuO6Ghv4cOjH6k4a93wJW5LltBqWVZN4
+         LFRIib2ntV8ADqpUmQ88/RE4Z6hJoxx6D7LT/e2qYm8Tq0Md/lPOCCIBgsAeZ4XkmPde
+         1ke7XpSuBmAojBIdNA5vi+vnBT5pY45KTN3DCPjvHfdfGBZuYxa/T1zEA/fgiM2UFqWM
+         QkNSbdcW3jyMN3mRVBPsjmiSmBVVw2a3q5Tacqcrt+9Qf75GXNqeuZ5i5sK7/Gqindxs
+         Yang==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757761; x=1733362561;
+        d=1e100.net; s=20230601; t=1732757763; x=1733362563;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=taMQEzcRa7YqlC/xz4BvUNJGPN3JpmMrop9avvyNBPs=;
-        b=l5cR2qIJ5Kvp10oXwEGTRhzsO77RnomeUfP9o9N2DUVVLtUYFyObVY1lZUvP/5+iTl
-         kSrX1odQ5K7g25cG7iXMJgWKYDZfZn5ZK9cZJ5a0weKdhMxmhlW+XeAao2wHu4mVqHmm
-         LL2wlOnxN36bDO5Z+DvN9SOMMFIA8O89Ag77y9KLS10ok8y6+5l5DQccTD1M6FpCgmr7
-         7WTDOHCQhzw3duOmeQW5uXadcUW8s+tKMCQ3R8h4yZsOK/g6fFtkxxnSi29DBKLT5Yqb
-         fYZp5M3zvv3iTTmYPRC5jz1cvQ73HeHgICXHuVHSnZlccfIwXPR6MRuY9XH+e2iSjNLp
-         Xdng==
-X-Forwarded-Encrypted: i=1; AJvYcCWu8WdqqwMHVdm585Mt5qTKFRRZ4RmpinPOY4z2p/q3MncWU7EO18esoQV0H8uy6jKoa6755JA5CQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPvbnkrAgwuCzZ2bcbPPAAMzXhzmMKdWph1UG2h3r9snFTzqY8
-	7bzulZjwYy+Bx107mpV7tS1CVQme8ano62hPB9Z4u1pS7Sxv3BopC4ItkUjZCKCZHGtdx2hs/67
-	H4Q==
-X-Google-Smtp-Source: AGHT+IFIVvp2w9dKtTRkfao6OgNQxbqBRKc/t7Il86/MlJOVJC006+/HRidtUDBBvGNaX9G3lBburcuABwE=
-X-Received: from pjtd1.prod.google.com ([2002:a17:90b:41:b0:2ed:f958:16e6])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2583:b0:1e0:dd4d:1de4
- with SMTP id adf61e73a8af0-1e0e0b3688emr9046630637.23.1732757761302; Wed, 27
- Nov 2024 17:36:01 -0800 (PST)
+        bh=LnF7ynB4Px9kV74WJlG52B9/ebUeqESErE/aee+VqeA=;
+        b=VSChHG4/8uVdY0+D4D6iGOorDLWqwe7KSjbnXin6jA1ICxEuGv+uREab3nEwYyVu0e
+         G0gzFx6jPZOvdDOKqVFfL/pa+6X1GvGmcPVf+yg9bmHUiQJAcx1wtkOORr0/AFa3Kxr3
+         DRgyLJdWiE3xWDRJi4cDIegqUUw5VbLCxJvTba+6aspalykrapYE3rgXzCkWjflt7BV9
+         3gt2tRiGO+EznGH6yQXj8+RPxh+9aYQZaffiv8Nhs3U8Lmn5MqPxj5Krwm1POhY7hcj+
+         6Jh3VbKowe5dM0eM/WJIWnCw0DP9lXr5O41G7eJzhgTdG+v/siFEr678iSV0lGa7ZAkM
+         8WxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYnsADfwlxhgnev9bB7cc0Wk54/K6GlMd3/bP09sTNkdR6ccY8r8D32JbZ2Yh9lwOgFMHchP5apBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV4lAJDX7JDzneBxZ9Mt2YjpqNdag0L6R4WSJuqXZQ5X2FB/fl
+	HS7Ivrl0dkN3ChYq0DBVbApvadpR8gBx2T0G0DhTZAt08duDmB0YXdXyTNIzD6fd/j1LLwVS7f7
+	cwA==
+X-Google-Smtp-Source: AGHT+IFaKmXX2SmUl85eulR6undd8wSLSTIU71ulzpYU7OrJRQuWYdazMGn7J2i6eG5vSRcVKgle9L91+VI=
+X-Received: from pjbpd3.prod.google.com ([2002:a17:90b:1dc3:b0:2ea:543f:9b80])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3147:b0:2ea:5e0c:2852
+ with SMTP id 98e67ed59e1d1-2ee08e9fd7bmr6856873a91.11.1732757763167; Wed, 27
+ Nov 2024 17:36:03 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:34:18 -0800
+Date: Wed, 27 Nov 2024 17:34:19 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -61,9 +61,9 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-52-seanjc@google.com>
-Subject: [PATCH v3 51/57] KVM: x86: Drop superfluous host XSAVE check when
- adjusting guest XSAVES caps
+Message-ID: <20241128013424.4096668-53-seanjc@google.com>
+Subject: [PATCH v3 52/57] KVM: x86: Add a macro for features that are
+ synthesized into boot_cpu_data
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -75,45 +75,122 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Drop the manual boot_cpu_has() checks on XSAVE when adjusting the guest's
-XSAVES capabilities now that guest cpu_caps incorporates KVM's support.
-The guest's cpu_caps are initialized from kvm_cpu_caps, which are in turn
-initialized from boot_cpu_data, i.e. checking guest_cpu_cap_has() also
-checks host/KVM capabilities (which is the entire point of cpu_caps).
+Add yet another CPUID macro, this time for features that the host kernel
+synthesizes into boot_cpu_data, i.e. that the kernel force sets even in
+situations where the feature isn't reported by CPUID.  Thanks to the
+macro shenanigans of kvm_cpu_cap_init(), such features can now be handled
+in the core CPUID framework, i.e. don't need to be handled out-of-band and
+thus without as many guardrails.
 
-Cc: Maxim Levitsky <mlevitsk@redhat.com>
+Adding a dedicated macro also helps document what's going on, e.g. the
+calls to kvm_cpu_cap_check_and_set() are very confusing unless the reader
+knows exactly how kvm_cpu_cap_init() generates kvm_cpu_caps (and even
+then, it's far from obvious).
+
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/svm/svm.c | 1 -
- arch/x86/kvm/vmx/vmx.c | 3 +--
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ arch/x86/kvm/cpuid.c | 49 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 30 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 734b3ca40311..07911ddf1efe 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -4402,7 +4402,6 @@ static void svm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
- 	 * the guest read/write access to the host's XSS.
- 	 */
- 	guest_cpu_cap_change(vcpu, X86_FEATURE_XSAVES,
--			     boot_cpu_has(X86_FEATURE_XSAVE) &&
- 			     boot_cpu_has(X86_FEATURE_XSAVES) &&
- 			     guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVE));
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 8d088a888a0d..2b05a7e61994 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -665,6 +665,7 @@ do {									\
+ 	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);	\
+ 	const u32 __maybe_unused kvm_cpu_cap_init_in_progress = leaf;	\
+ 	u32 kvm_cpu_cap_passthrough = 0;				\
++	u32 kvm_cpu_cap_synthesized = 0;				\
+ 	u32 kvm_cpu_cap_emulated = 0;					\
+ 									\
+ 	if (leaf < NCAPINTS)						\
+@@ -673,7 +674,8 @@ do {									\
+ 		kvm_cpu_caps[leaf] = (mask);				\
+ 									\
+ 	kvm_cpu_caps[leaf] |= kvm_cpu_cap_passthrough;			\
+-	kvm_cpu_caps[leaf] &= raw_cpuid_get(cpuid);			\
++	kvm_cpu_caps[leaf] &= (raw_cpuid_get(cpuid) |			\
++			       kvm_cpu_cap_synthesized);		\
+ 	kvm_cpu_caps[leaf] |= kvm_cpu_cap_emulated;			\
+ } while (0)
  
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 6e5edaa2ba3a..cf872d8691b5 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7825,8 +7825,7 @@ void vmx_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
- 	 * to the guest.  XSAVES depends on CR4.OSXSAVE, and CR4.OSXSAVE can be
- 	 * set if and only if XSAVE is supported.
- 	 */
--	if (!boot_cpu_has(X86_FEATURE_XSAVE) ||
--	    !guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVE))
-+	if (!guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVE))
- 		guest_cpu_cap_clear(vcpu, X86_FEATURE_XSAVES);
+@@ -720,6 +722,17 @@ do {									\
+ 	F(name);						\
+ })
  
- 	vmx_setup_uret_msrs(vmx);
++/*
++ * Synthesized Feature - For features that are synthesized into boot_cpu_data,
++ * i.e. may not be present in the raw CPUID, but can still be advertised to
++ * userspace.  Primarily used for mitigation related feature flags.
++ */
++#define SYNTHESIZED_F(name)					\
++({								\
++	kvm_cpu_cap_synthesized |= F(name);			\
++	F(name);						\
++})
++
+ /*
+  * Passthrough Feature - For features that KVM supports based purely on raw
+  * hardware CPUID, i.e. that KVM virtualizes even if the host kernel doesn't
+@@ -1084,35 +1097,32 @@ void kvm_set_cpu_caps(void)
+ 
+ 	kvm_cpu_cap_init(CPUID_8000_0021_EAX,
+ 		F(NO_NESTED_DATA_BP) |
+-		F(LFENCE_RDTSC) |
++		/*
++		 * Synthesize "LFENCE is serializing" into the AMD-defined entry
++		 * in KVM's supported CPUID, i.e. if the feature is reported as
++		 * supported by the kernel.  LFENCE_RDTSC was a Linux-defined
++		 * synthetic feature long before AMD joined the bandwagon, e.g.
++		 * LFENCE is serializing on most CPUs that support SSE2.  On
++		 * CPUs that don't support AMD's leaf, ANDing with the raw host
++		 * CPUID will drop the flags, and reporting support in AMD's
++		 * leaf can make it easier for userspace to detect the feature.
++		 */
++		SYNTHESIZED_F(LFENCE_RDTSC) |
+ 		0 /* SmmPgCfgLock */ |
+ 		F(NULL_SEL_CLR_BASE) |
+ 		F(AUTOIBRS) |
+ 		EMULATED_F(NO_SMM_CTL_MSR) |
+ 		0 /* PrefetchCtlMsr */ |
+-		F(WRMSR_XX_BASE_NS)
++		F(WRMSR_XX_BASE_NS) |
++		SYNTHESIZED_F(SBPB) |
++		SYNTHESIZED_F(IBPB_BRTYPE) |
++		SYNTHESIZED_F(SRSO_NO)
+ 	);
+ 
+-	kvm_cpu_cap_check_and_set(X86_FEATURE_SBPB);
+-	kvm_cpu_cap_check_and_set(X86_FEATURE_IBPB_BRTYPE);
+-	kvm_cpu_cap_check_and_set(X86_FEATURE_SRSO_NO);
+-
+ 	kvm_cpu_cap_init(CPUID_8000_0022_EAX,
+ 		F(PERFMON_V2)
+ 	);
+ 
+-	/*
+-	 * Synthesize "LFENCE is serializing" into the AMD-defined entry in
+-	 * KVM's supported CPUID if the feature is reported as supported by the
+-	 * kernel.  LFENCE_RDTSC was a Linux-defined synthetic feature long
+-	 * before AMD joined the bandwagon, e.g. LFENCE is serializing on most
+-	 * CPUs that support SSE2.  On CPUs that don't support AMD's leaf,
+-	 * kvm_cpu_cap_init() will unfortunately drop the flag due to ANDing
+-	 * the mask with the raw host CPUID, and reporting support in AMD's
+-	 * leaf can make it easier for userspace to detect the feature.
+-	 */
+-	if (cpu_feature_enabled(X86_FEATURE_LFENCE_RDTSC))
+-		kvm_cpu_cap_set(X86_FEATURE_LFENCE_RDTSC);
+ 	if (!static_cpu_has_bug(X86_BUG_NULL_SEG))
+ 		kvm_cpu_cap_set(X86_FEATURE_NULL_SEL_CLR_BASE);
+ 
+@@ -1150,6 +1160,7 @@ EXPORT_SYMBOL_GPL(kvm_set_cpu_caps);
+ #undef SF
+ #undef X86_64_F
+ #undef EMULATED_F
++#undef SYNTHESIZED_F
+ #undef PASSTHROUGH_F
+ #undef ALIASED_1_EDX_F
+ 
 -- 
 2.47.0.338.g60cca15819-goog
 
