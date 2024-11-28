@@ -1,57 +1,57 @@
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C374199FDD
-	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0369619B59C
+	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757710; cv=none; b=H7YWfWwv1u/EMpdFZw2F6Dl5O1K//yqWA0vcj9zzCEdRQNuNmaRPmo6qLxp/lM0w241d06L1dFhQI74ijq7eX1jAwJYg4kej5H2PLr7GJwOJzMkyperkAmgXZul1vUGVRSJVNe3d7flgvIXxCLNvakU3vYMTBSvOnijgmVc8sg4=
+	t=1732757712; cv=none; b=CrrXRcEtVhoH0F/tpgWvg1yRHIxN/6Tmb1vDevhDongdP8gmIiKJ1BdJEzOIF1m7WtCUF9lWa1uEdXPoLmYHUahELIhTsA1EGmjJk5tAgkBcUe9hbV3bdE3ATLz2/mHTgCjb7VQGh5n1g7yLszXET3nO3LEJSj2gANhyEx1xfEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757710; c=relaxed/simple;
-	bh=IjugnqL6ZQNQ/DIuDn2cFOEAl0DXrDDZbsV125OySxY=;
+	s=arc-20240116; t=1732757712; c=relaxed/simple;
+	bh=seDlWAgaw351ZxlqRBGal9NJH4Rs+9UMeeH8rzIVrU8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Tj7VD6mbAtfDzjgt4wLPPVtD+xw9g/JHcZjCe8NISTwq/3VW6JeHxLM2shcglfAPeO1rtQLewXuBPUJ7mvLVHIEi74rWbhxzOFS8jtYL0UvjKCNmEd8H2AZVzx1BIRARbv9H6jv40WpWWBAnLFJZAAnQaOrpbac38wZdnkCKXAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I+fbWs1v; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=dW14UBiTU6Jq6+JeLjhEvP9xvhzdx9GC8KYVRT6Anb9yKc0ylTIkzAcL/j2lsBjgvimLiPWAqPbF9z3A/8lsiDWh4V0P+qjn8vgHFVS1fv+u660zPdjP10zCjLq3K86wBaNHx4FtFq8pJ+h6dx4BCt8YcFdkc1uQHIkq5xXs5as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OBaSTyxz; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I+fbWs1v"
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-72516cbe91bso457300b3a.2
-        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:35:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OBaSTyxz"
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ea2bf5b5fbso331041a91.2
+        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:35:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757709; x=1733362509; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757710; x=1733362510; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=w37cfii7duZUi8WZ7tHrDI2rMh9nkiFXWTR2nGRtjs8=;
-        b=I+fbWs1vSyUqBdBUhs66v3Xk9thObT6JGQmLrWYWTgeey6NghSzr/AgJesSswdqRpD
-         tpMI5uqqxwdP7ViYgNSJQA3Wn8bgUJto7HuGjn8gNp607xziZihGK3ZLoJNdJzc/N53f
-         TrrLqiA6mFs0HNHRQfw3HHipp0/mKJBfsMX7/Jqb+3LooWOUKOuIbDeyl8dp9kHAN1b3
-         c4KwUH8OuJxHqSeJwOueNdeI9L6kfjfw/c6BGLkIKC46WVzdXLCbgSQEWWXQbtUplMs0
-         ha0WCU/MOz0ssWEopPLegbXOOZDEY18oLRUshsPu61HcwlMMTg25JMnFHs3/4EE3Y+sk
-         8eEw==
+        bh=YKeQqfQm6Ijzea2XkvtvAsPalXlucbBmc84Ws6ehmPM=;
+        b=OBaSTyxzmcBI+54I7uAkE+vzUA+7QDHby6Pk5K6875+2aK5XQJEGYgiJ0JecWIbvS5
+         kiK9+n3Eq5xccLll5Gijmm1ifw8kdlykMhW+WJJVofcfBWsTsHxfUlAHrswq9eIbQnHI
+         GGIpr4H+4rLsAMCoVZNRNojg/eQs80bYijteEXHDvQDQnSL8hi6wEXX3ZuQ7CHSkuri0
+         IqL+oRFYyPF1UE98oUEdWls50oBnuUB2Ujqu+sLERPgkYcAgq01irZ8d/KHVDYHSrBnh
+         FmQ7hoZVfAnQis4pt/BmbFpppFt8BcaCKICGcKKALKmepFQF650Xv0+98s1499bFUEnd
+         fynQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757709; x=1733362509;
+        d=1e100.net; s=20230601; t=1732757710; x=1733362510;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=w37cfii7duZUi8WZ7tHrDI2rMh9nkiFXWTR2nGRtjs8=;
-        b=Dnl5RUwXVy8uPOOvN2KmoXrHseXGTT8UDzxW3HQjT4Vkq9BdSB2IC+Bpl6zwzzAmGC
-         m+nmJSyLtCBDjpPJwg+iDKaeHb3Sq0KnnqZ96UwgS+93Sm1v479ONe18QYvEmtUVLc68
-         aDHYmykKxxHEaegIM18I01sE0IE44ZX7qmi+wpFmrCEqxjeTgpwPrCniFkMHn/V4GfaI
-         ZSV5KhX9KXH3hgk1c3Qnhu1clqZOqw5BJBAWW0Vd6/mAs655pRiFJ2Y1QYWuZoGfdvSD
-         12KoRQ0YlTqIBngUMYYBFnv9Xt79c/HXlOGqcLRFTVRtkIM7aA5SrSQfst5FAHyfRcK+
-         i6bw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6yj1LBALrCXzaYwb1cNfLWvrXFA83mXl/zNlGInToaD5DNBNsF9I8+qXS9dBBlz9Emob9MNWYA9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0Z+Jg823CVaQ1HF01TowWI/54Sm1nkxZGmM+2bHez/eX06viw
-	dRn9Yy9APwiSM0J3tifZwHMVvc0uIT67OHCmNlXpePSpe4yYtg4og0LK83DQsGTRHMtWpl/95Ue
-	BEA==
-X-Google-Smtp-Source: AGHT+IHGl1QQks3ar40WLUC+4/XZWej3Jj3cFtuTNS++ehK7wneav6FD4jzw8EYh26NVQsl0JaOaOMUeNXs=
-X-Received: from pjboh6.prod.google.com ([2002:a17:90b:3a46:b0:2ea:af4a:4c40])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:548f:b0:2ea:b564:4b31
- with SMTP id 98e67ed59e1d1-2ee08eb7ca7mr6568390a91.19.1732757708647; Wed, 27
- Nov 2024 17:35:08 -0800 (PST)
+        bh=YKeQqfQm6Ijzea2XkvtvAsPalXlucbBmc84Ws6ehmPM=;
+        b=gnnRJKaC0DzUjfgegjMsry7vlK1hcYsVTWbgpl3esB9N/GEmValUojPGXgQ7YmeoDT
+         VymWM7k3ihTP06HrqnHLwJ5kMb4Z3fMTFnI9FynYdEylQ/OFa6dPha6sWeDk9FMtZCMR
+         6aS+zoyGzvwGksAZxcKpA/4UnuqxpY8d4L84TDBMhTONs1ek8LDPFPX+sxV1FBRI2Wgj
+         xxprKcRjVIdue1nMkgUWKCpakwNzytjsCY64awn2HgLCDlcOp7WFyfK5YFirWyTHslMU
+         wT0poh9pWEPHI+sELpj61+JDapSi1FRCnCr9K1reGdYuY7b1EMp250sVvNkovy1NC1od
+         SRpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNKnjejld6VRHaHWvdQZP3DzhlTyMIgRx4N8WNh2cHNv6Sb4/z3Z5vTSke9roR3uYRJnq5ZeVyCew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyikzw+gEyFSnOk8Z18+erud2ZwmC3Zs31ylcvXDiJS86U/Wchm
+	QYjTdIIWSLYbWC0nL5VlNxnB4NYLr8pR0t3AZQstFW7wYUnNfdcxfgrGEzZUmnL1JhO9zYre5gI
+	Rig==
+X-Google-Smtp-Source: AGHT+IEAKDv4Kqf9/0cMqKIOwPUSkZfoWa3P1o8BkHtA6oDGTCOvnfbmr+zhciKsFfTD9XyQy1tWw5DCFvs=
+X-Received: from pjbpv18.prod.google.com ([2002:a17:90b:3c92:b0:2ea:4139:e72d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38c5:b0:2ea:5823:c150
+ with SMTP id 98e67ed59e1d1-2ee097bbec2mr6731674a91.30.1732757710458; Wed, 27
+ Nov 2024 17:35:10 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:33:48 -0800
+Date: Wed, 27 Nov 2024 17:33:49 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -61,9 +61,9 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-22-seanjc@google.com>
-Subject: [PATCH v3 21/57] KVM: x86: Account for max supported CPUID leaf when
- getting raw host CPUID
+Message-ID: <20241128013424.4096668-23-seanjc@google.com>
+Subject: [PATCH v3 22/57] KVM: x86: Unpack F() CPUID feature flag macros to
+ one flag per line of code
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -75,74 +75,404 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Explicitly zero out the feature word in kvm_cpu_caps if the word's
-associated CPUID function is greater than the max leaf supported by the
-CPU.  For such unsupported functions, Intel CPUs return the output from
-the last supported leaf, not all zeros.
+Refactor kvm_set_cpu_caps() to express each supported (or not) feature
+flag on a separate line, modulo a handful of cases where KVM does not, and
+likely will not, support a sequence of flags.  This will allow adding
+fancier macros with longer, more descriptive names without resulting in
+absurd line lengths and/or weird code.  Isolating each flag also makes it
+far easier to review changes, reduces code conflicts, and generally makes
+it easier to resolve conflicts.  Lastly, it allows co-locating comments
+for notable flags, e.g. MONITOR, precisely with the relevant flag.
 
-Practically speaking, this is likely a benign bug, as KVM uses the raw
-host CPUID to mask the kernel's computed capabilities, and the kernel does
-perform max leaf checks when populating boot_cpu_data.  The only way KVM's
-goof could be problematic is if the kernel force-set a feature in a leaf
-that is completely unsupported, _and_ the max supported leaf happened to
-return a value with '1' the same bit position.  Which is theoretically
-possible, but extremely unlikely.  And even if that did happen, it's
-entirely possible that KVM would still provide the correct functionality;
-the kernel did set the capability after all.
+No functional change intended.
 
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+Suggested-by: Maxim Levitsky <mlevitsk@redhat.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/cpuid.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+ arch/x86/kvm/cpuid.c | 295 +++++++++++++++++++++++++++++++++----------
+ 1 file changed, 231 insertions(+), 64 deletions(-)
 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index bfb81e417bef..c7fb6b764075 100644
+index c7fb6b764075..00b5b1a2a66f 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -579,18 +579,37 @@ int kvm_vcpu_ioctl_get_cpuid2(struct kvm_vcpu *vcpu,
- 	return 0;
- }
+@@ -662,48 +662,121 @@ void kvm_set_cpu_caps(void)
+ 	       sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)));
  
-+static __always_inline u32 raw_cpuid_get(struct cpuid_reg cpuid)
-+{
-+	struct kvm_cpuid_entry2 entry;
-+	u32 base;
-+
-+	/*
-+	 * KVM only supports features defined by Intel (0x0), AMD (0x80000000),
-+	 * and Centaur (0xc0000000).  WARN if a feature for new vendor base is
-+	 * defined, as this and other code would need to be updated.
-+	 */
-+	base = cpuid.function & 0xffff0000;
-+	if (WARN_ON_ONCE(base && base != 0x80000000 && base != 0xc0000000))
-+		return 0;
-+
-+	if (cpuid_eax(base) < cpuid.function)
-+		return 0;
-+
-+	cpuid_count(cpuid.function, cpuid.index,
-+		    &entry.eax, &entry.ebx, &entry.ecx, &entry.edx);
-+
-+	return *__cpuid_entry_get_reg(&entry, cpuid.reg);
-+}
-+
- /* Mask kvm_cpu_caps for @leaf with the raw CPUID capabilities of this CPU. */
- static __always_inline void __kvm_cpu_cap_mask(unsigned int leaf)
- {
- 	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
--	struct kvm_cpuid_entry2 entry;
+ 	kvm_cpu_cap_mask(CPUID_1_ECX,
++		F(XMM3) |
++		F(PCLMULQDQ) |
++		0 /* DTES64 */ |
+ 		/*
+ 		 * NOTE: MONITOR (and MWAIT) are emulated as NOP, but *not*
+ 		 * advertised to guests via CPUID!
+ 		 */
+-		F(XMM3) | F(PCLMULQDQ) | 0 /* DTES64, MONITOR */ |
++		0 /* MONITOR */ |
+ 		0 /* DS-CPL, VMX, SMX, EST */ |
+-		0 /* TM2 */ | F(SSSE3) | 0 /* CNXT-ID */ | 0 /* Reserved */ |
+-		F(FMA) | F(CX16) | 0 /* xTPR Update */ | F(PDCM) |
+-		F(PCID) | 0 /* Reserved, DCA */ | F(XMM4_1) |
+-		F(XMM4_2) | F(X2APIC) | F(MOVBE) | F(POPCNT) |
+-		0 /* Reserved*/ | F(AES) | F(XSAVE) | 0 /* OSXSAVE */ | F(AVX) |
+-		F(F16C) | F(RDRAND)
++		0 /* TM2 */ |
++		F(SSSE3) |
++		0 /* CNXT-ID */ |
++		0 /* Reserved */ |
++		F(FMA) |
++		F(CX16) |
++		0 /* xTPR Update */ |
++		F(PDCM) |
++		F(PCID) |
++		0 /* Reserved, DCA */ |
++		F(XMM4_1) |
++		F(XMM4_2) |
++		F(X2APIC) |
++		F(MOVBE) |
++		F(POPCNT) |
++		0 /* Reserved*/ |
++		F(AES) |
++		F(XSAVE) |
++		0 /* OSXSAVE */ |
++		F(AVX) |
++		F(F16C) |
++		F(RDRAND)
+ 	);
+ 	/* KVM emulates x2apic in software irrespective of host support. */
+ 	kvm_cpu_cap_set(X86_FEATURE_X2APIC);
  
- 	reverse_cpuid_check(leaf);
+ 	kvm_cpu_cap_mask(CPUID_1_EDX,
+-		F(FPU) | F(VME) | F(DE) | F(PSE) |
+-		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
+-		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SEP) |
+-		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
+-		F(PAT) | F(PSE36) | 0 /* PSN */ | F(CLFLUSH) |
+-		0 /* Reserved, DS, ACPI */ | F(MMX) |
+-		F(FXSR) | F(XMM) | F(XMM2) | F(SELFSNOOP) |
++		F(FPU) |
++		F(VME) |
++		F(DE) |
++		F(PSE) |
++		F(TSC) |
++		F(MSR) |
++		F(PAE) |
++		F(MCE) |
++		F(CX8) |
++		F(APIC) |
++		0 /* Reserved */ |
++		F(SEP) |
++		F(MTRR) |
++		F(PGE) |
++		F(MCA) |
++		F(CMOV) |
++		F(PAT) |
++		F(PSE36) |
++		0 /* PSN */ |
++		F(CLFLUSH) |
++		0 /* Reserved, DS, ACPI */ |
++		F(MMX) |
++		F(FXSR) |
++		F(XMM) |
++		F(XMM2) |
++		F(SELFSNOOP) |
+ 		0 /* HTT, TM, Reserved, PBE */
+ 	);
  
--	cpuid_count(cpuid.function, cpuid.index,
--		    &entry.eax, &entry.ebx, &entry.ecx, &entry.edx);
--
--	kvm_cpu_caps[leaf] &= *__cpuid_entry_get_reg(&entry, cpuid.reg);
-+	kvm_cpu_caps[leaf] &= raw_cpuid_get(cpuid);
- }
+ 	kvm_cpu_cap_mask(CPUID_7_0_EBX,
+-		F(FSGSBASE) | F(SGX) | F(BMI1) | F(HLE) | F(AVX2) |
+-		F(FDP_EXCPTN_ONLY) | F(SMEP) | F(BMI2) | F(ERMS) | F(INVPCID) |
+-		F(RTM) | F(ZERO_FCS_FDS) | 0 /*MPX*/ | F(AVX512F) |
+-		F(AVX512DQ) | F(RDSEED) | F(ADX) | F(SMAP) | F(AVX512IFMA) |
+-		F(CLFLUSHOPT) | F(CLWB) | 0 /*INTEL_PT*/ | F(AVX512PF) |
+-		F(AVX512ER) | F(AVX512CD) | F(SHA_NI) | F(AVX512BW) |
++		F(FSGSBASE) |
++		F(SGX) |
++		F(BMI1) |
++		F(HLE) |
++		F(AVX2) |
++		F(FDP_EXCPTN_ONLY) |
++		F(SMEP) |
++		F(BMI2) |
++		F(ERMS) |
++		F(INVPCID) |
++		F(RTM) |
++		F(ZERO_FCS_FDS) |
++		0 /*MPX*/ |
++		F(AVX512F) |
++		F(AVX512DQ) |
++		F(RDSEED) |
++		F(ADX) |
++		F(SMAP) |
++		F(AVX512IFMA) |
++		F(CLFLUSHOPT) |
++		F(CLWB) |
++		0 /*INTEL_PT*/ |
++		F(AVX512PF) |
++		F(AVX512ER) |
++		F(AVX512CD) |
++		F(SHA_NI) |
++		F(AVX512BW) |
+ 		F(AVX512VL));
  
- static __always_inline
+ 	kvm_cpu_cap_mask(CPUID_7_ECX,
+-		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
+-		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
+-		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
+-		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/ |
+-		F(SGX_LC) | F(BUS_LOCK_DETECT)
++		F(AVX512VBMI) |
++		F(LA57) |
++		F(PKU) |
++		0 /*OSPKE*/ |
++		F(RDPID) |
++		F(AVX512_VPOPCNTDQ) |
++		F(UMIP) |
++		F(AVX512_VBMI2) |
++		F(GFNI) |
++		F(VAES) |
++		F(VPCLMULQDQ) |
++		F(AVX512_VNNI) |
++		F(AVX512_BITALG) |
++		F(CLDEMOTE) |
++		F(MOVDIRI) |
++		F(MOVDIR64B) |
++		0 /*WAITPKG*/ |
++		F(SGX_LC) |
++		F(BUS_LOCK_DETECT)
+ 	);
+ 	/* Set LA57 based on hardware capability. */
+ 	if (cpuid_ecx(7) & feature_bit(LA57))
+@@ -717,11 +790,22 @@ void kvm_set_cpu_caps(void)
+ 		kvm_cpu_cap_clear(X86_FEATURE_PKU);
+ 
+ 	kvm_cpu_cap_mask(CPUID_7_EDX,
+-		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
+-		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
+-		F(MD_CLEAR) | F(AVX512_VP2INTERSECT) | F(FSRM) |
+-		F(SERIALIZE) | F(TSXLDTRK) | F(AVX512_FP16) |
+-		F(AMX_TILE) | F(AMX_INT8) | F(AMX_BF16) | F(FLUSH_L1D)
++		F(AVX512_4VNNIW) |
++		F(AVX512_4FMAPS) |
++		F(SPEC_CTRL) |
++		F(SPEC_CTRL_SSBD) |
++		F(ARCH_CAPABILITIES) |
++		F(INTEL_STIBP) |
++		F(MD_CLEAR) |
++		F(AVX512_VP2INTERSECT) |
++		F(FSRM) |
++		F(SERIALIZE) |
++		F(TSXLDTRK) |
++		F(AVX512_FP16) |
++		F(AMX_TILE) |
++		F(AMX_INT8) |
++		F(AMX_BF16) |
++		F(FLUSH_L1D)
+ 	);
+ 
+ 	/* TSC_ADJUST and ARCH_CAPABILITIES are emulated in software. */
+@@ -738,50 +822,110 @@ void kvm_set_cpu_caps(void)
+ 		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL_SSBD);
+ 
+ 	kvm_cpu_cap_mask(CPUID_7_1_EAX,
+-		F(SHA512) | F(SM3) | F(SM4) | F(AVX_VNNI) | F(AVX512_BF16) |
+-		F(CMPCCXADD) | F(FZRM) | F(FSRS) | F(FSRC) | F(AMX_FP16) |
+-		F(AVX_IFMA) | F(LAM)
++		F(SHA512) |
++		F(SM3) |
++		F(SM4) |
++		F(AVX_VNNI) |
++		F(AVX512_BF16) |
++		F(CMPCCXADD) |
++		F(FZRM) |
++		F(FSRS) |
++		F(FSRC) |
++		F(AMX_FP16) |
++		F(AVX_IFMA) |
++		F(LAM)
+ 	);
+ 
+ 	kvm_cpu_cap_init_kvm_defined(CPUID_7_1_EDX,
+-		F(AVX_VNNI_INT8) | F(AVX_NE_CONVERT) | F(AMX_COMPLEX) |
+-		F(AVX_VNNI_INT16) | F(PREFETCHITI) | F(AVX10)
++		F(AVX_VNNI_INT8) |
++		F(AVX_NE_CONVERT) |
++		F(AMX_COMPLEX) |
++		F(AVX_VNNI_INT16) |
++		F(PREFETCHITI) |
++		F(AVX10)
+ 	);
+ 
+ 	kvm_cpu_cap_init_kvm_defined(CPUID_7_2_EDX,
+-		F(INTEL_PSFD) | F(IPRED_CTRL) | F(RRSBA_CTRL) | F(DDPD_U) |
+-		F(BHI_CTRL) | F(MCDT_NO)
++		F(INTEL_PSFD) |
++		F(IPRED_CTRL) |
++		F(RRSBA_CTRL) |
++		F(DDPD_U) |
++		F(BHI_CTRL) |
++		F(MCDT_NO)
+ 	);
+ 
+ 	kvm_cpu_cap_mask(CPUID_D_1_EAX,
+-		F(XSAVEOPT) | F(XSAVEC) | F(XGETBV1) | F(XSAVES) | f_xfd
++		F(XSAVEOPT) |
++		F(XSAVEC) |
++		F(XGETBV1) |
++		F(XSAVES) |
++		f_xfd
+ 	);
+ 
+ 	kvm_cpu_cap_init_kvm_defined(CPUID_12_EAX,
+-		SF(SGX1) | SF(SGX2) | SF(SGX_EDECCSSA)
++		SF(SGX1) |
++		SF(SGX2) |
++		SF(SGX_EDECCSSA)
+ 	);
+ 
+ 	kvm_cpu_cap_init_kvm_defined(CPUID_24_0_EBX,
+-		F(AVX10_128) | F(AVX10_256) | F(AVX10_512)
++		F(AVX10_128) |
++		F(AVX10_256) |
++		F(AVX10_512)
+ 	);
+ 
+ 	kvm_cpu_cap_mask(CPUID_8000_0001_ECX,
+-		F(LAHF_LM) | F(CMP_LEGACY) | 0 /*SVM*/ | 0 /* ExtApicSpace */ |
+-		F(CR8_LEGACY) | F(ABM) | F(SSE4A) | F(MISALIGNSSE) |
+-		F(3DNOWPREFETCH) | F(OSVW) | 0 /* IBS */ | F(XOP) |
+-		0 /* SKINIT, WDT, LWP */ | F(FMA4) | F(TBM) |
+-		F(TOPOEXT) | 0 /* PERFCTR_CORE */
++		F(LAHF_LM) |
++		F(CMP_LEGACY) |
++		0 /*SVM*/ |
++		0 /* ExtApicSpace */ |
++		F(CR8_LEGACY) |
++		F(ABM) |
++		F(SSE4A) |
++		F(MISALIGNSSE) |
++		F(3DNOWPREFETCH) |
++		F(OSVW) |
++		0 /* IBS */ |
++		F(XOP) |
++		0 /* SKINIT, WDT, LWP */ |
++		F(FMA4) |
++		F(TBM) |
++		F(TOPOEXT) |
++		0 /* PERFCTR_CORE */
+ 	);
+ 
+ 	kvm_cpu_cap_mask(CPUID_8000_0001_EDX,
+-		F(FPU) | F(VME) | F(DE) | F(PSE) |
+-		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
+-		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SYSCALL) |
+-		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
+-		F(PAT) | F(PSE36) | 0 /* Reserved */ |
+-		F(NX) | 0 /* Reserved */ | F(MMXEXT) | F(MMX) |
+-		F(FXSR) | F(FXSR_OPT) | f_gbpages | F(RDTSCP) |
+-		0 /* Reserved */ | f_lm | F(3DNOWEXT) | F(3DNOW)
++		F(FPU) |
++		F(VME) |
++		F(DE) |
++		F(PSE) |
++		F(TSC) |
++		F(MSR) |
++		F(PAE) |
++		F(MCE) |
++		F(CX8) |
++		F(APIC) |
++		0 /* Reserved */ |
++		F(SYSCALL) |
++		F(MTRR) |
++		F(PGE) |
++		F(MCA) |
++		F(CMOV) |
++		F(PAT) |
++		F(PSE36) |
++		0 /* Reserved */ |
++		F(NX) |
++		0 /* Reserved */ |
++		F(MMXEXT) |
++		F(MMX) |
++		F(FXSR) |
++		F(FXSR_OPT) |
++		f_gbpages |
++		F(RDTSCP) |
++		0 /* Reserved */ |
++		f_lm |
++		F(3DNOWEXT) |
++		F(3DNOW)
+ 	);
+ 
+ 	if (!tdp_enabled && IS_ENABLED(CONFIG_X86_64))
+@@ -792,10 +936,18 @@ void kvm_set_cpu_caps(void)
+ 	);
+ 
+ 	kvm_cpu_cap_mask(CPUID_8000_0008_EBX,
+-		F(CLZERO) | F(XSAVEERPTR) |
+-		F(WBNOINVD) | F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
+-		F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_STIBP_ALWAYS_ON) |
+-		F(AMD_PSFD) | F(AMD_IBPB_RET)
++		F(CLZERO) |
++		F(XSAVEERPTR) |
++		F(WBNOINVD) |
++		F(AMD_IBPB) |
++		F(AMD_IBRS) |
++		F(AMD_SSBD) |
++		F(VIRT_SSBD) |
++		F(AMD_SSB_NO) |
++		F(AMD_STIBP) |
++		F(AMD_STIBP_ALWAYS_ON) |
++		F(AMD_PSFD) |
++		F(AMD_IBPB_RET)
+ 	);
+ 
+ 	/*
+@@ -832,12 +984,20 @@ void kvm_set_cpu_caps(void)
+ 	kvm_cpu_cap_mask(CPUID_8000_000A_EDX, 0);
+ 
+ 	kvm_cpu_cap_mask(CPUID_8000_001F_EAX,
+-		0 /* SME */ | 0 /* SEV */ | 0 /* VM_PAGE_FLUSH */ | 0 /* SEV_ES */ |
+-		F(SME_COHERENT));
++		0 /* SME */ |
++		0 /* SEV */ |
++		0 /* VM_PAGE_FLUSH */ |
++		0 /* SEV_ES */ |
++		F(SME_COHERENT)
++	);
+ 
+ 	kvm_cpu_cap_mask(CPUID_8000_0021_EAX,
+-		F(NO_NESTED_DATA_BP) | F(LFENCE_RDTSC) | 0 /* SmmPgCfgLock */ |
+-		F(NULL_SEL_CLR_BASE) | F(AUTOIBRS) | 0 /* PrefetchCtlMsr */ |
++		F(NO_NESTED_DATA_BP) |
++		F(LFENCE_RDTSC) |
++		0 /* SmmPgCfgLock */ |
++		F(NULL_SEL_CLR_BASE) |
++		F(AUTOIBRS) |
++		0 /* PrefetchCtlMsr */ |
+ 		F(WRMSR_XX_BASE_NS)
+ 	);
+ 
+@@ -866,9 +1026,16 @@ void kvm_set_cpu_caps(void)
+ 	kvm_cpu_cap_set(X86_FEATURE_NO_SMM_CTL_MSR);
+ 
+ 	kvm_cpu_cap_mask(CPUID_C000_0001_EDX,
+-		F(XSTORE) | F(XSTORE_EN) | F(XCRYPT) | F(XCRYPT_EN) |
+-		F(ACE2) | F(ACE2_EN) | F(PHE) | F(PHE_EN) |
+-		F(PMM) | F(PMM_EN)
++		F(XSTORE) |
++		F(XSTORE_EN) |
++		F(XCRYPT) |
++		F(XCRYPT_EN) |
++		F(ACE2) |
++		F(ACE2_EN) |
++		F(PHE) |
++		F(PHE_EN) |
++		F(PMM) |
++		F(PMM_EN)
+ 	);
+ 
+ 	/*
 -- 
 2.47.0.338.g60cca15819-goog
 
