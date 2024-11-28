@@ -1,57 +1,57 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D8D1CF294
-	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA8D1CF2AD
+	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757766; cv=none; b=goa4pWMLgL2xg3sVweafDIR8tZwOlCyfmkg9Q+ph9T0JFMdmfD/W+HCoGRI1NxN09QRvFao9Eu3Gifi9TTam5iFTaGw9w27P4DSZ2Ah24esERgOTcbTHirawMFDyWlvsY0ED4xX0hHqWzp+1mNpt3d7ATkHu4h3xihd14wnzikE=
+	t=1732757767; cv=none; b=dH0H9GRC705BsNOtrFGVM/D+T84/c6uDUQAojwsKplbpZvi9H4eN7E/HVFwrc9ZwgYRyJSAjKQK9W5YIBmKlZvJoJDHNk5t29ksdcQ4A9VJV7eQqADbmR5NzvnZWwSH762YTL1ugMBtWE/UthmYdZ4P9LPH05Mz5pLqj2J3Pdus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757766; c=relaxed/simple;
-	bh=R+Jy+4BCnS+JqaVrYJvT66a9YrgXyVUkAuexl3Wd8eo=;
+	s=arc-20240116; t=1732757767; c=relaxed/simple;
+	bh=MMiZl9iY/e+X4ElPn4IVVdodHF/M0Jd++AmXSEry4Kk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=h04sutcPWHcYpdQ7xruQAP4zTL2tLFFE2kqeJdmDls5kVR+bUSONsnhGcvq/uJup/b86uEEu2xxuquYMAyLUc1w0m1c/c1ANDIIhAr3qLDhL8LEdOeaK2E4EkZDDiX2FppQQHsOtWRwHz9ckhgQmK+C8sb2R6ZTRTbk1I9XN3t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TrPJzA5U; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=RJfSUniZlMNdrW6HHlTpBiYWOZJ2nBOK2ZjArSR97d1b03wrQnsLHeytT8WGPfi2i3z23l5I0rM8jnwZU8M5eGQ0gg79vfmJ9tLlfwR0lrdnbNokXc26pT67gHDFME80a7FW/AoaGEgmEJTes7Go9ESVUq8a90JokLGm6XGH7c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XWSTJS0v; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TrPJzA5U"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea33ae82efso362854a91.3
-        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:36:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XWSTJS0v"
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7fc1becad32so208127a12.0
+        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:36:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757763; x=1733362563; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757765; x=1733362565; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=LnF7ynB4Px9kV74WJlG52B9/ebUeqESErE/aee+VqeA=;
-        b=TrPJzA5U0yB9VEXElcPy9+ymvPZqo5yH4w4qRKGwkYF1czE0Ce7kCPT/FWitVrVZr7
-         UdIGiNFOWJfWHJ3OzexecauDjTo9muPHKK9VSuO6Ghv4cOjH6k4a93wJW5LltBqWVZN4
-         LFRIib2ntV8ADqpUmQ88/RE4Z6hJoxx6D7LT/e2qYm8Tq0Md/lPOCCIBgsAeZ4XkmPde
-         1ke7XpSuBmAojBIdNA5vi+vnBT5pY45KTN3DCPjvHfdfGBZuYxa/T1zEA/fgiM2UFqWM
-         QkNSbdcW3jyMN3mRVBPsjmiSmBVVw2a3q5Tacqcrt+9Qf75GXNqeuZ5i5sK7/Gqindxs
-         Yang==
+        bh=B//UkNeK73y2hzL0OUmcG/RbjTED96o4ACtsqb9F7d0=;
+        b=XWSTJS0v1Kbj0+E0CGloAzU0TwicPl35VXAp4ZT2eX0RvlQrauuj9XQEzQONlyJyru
+         TpNwLMUi9umZTNb5tUsi17e/0DzI21+57V494dcG/YmVXAHoPqAJvYoI6/3VKOoUxlE4
+         JaBx15PMUNZ215lQZ3tv1hq/Vu3R+UNAcZBSAcTp9lXEKbndYyzNxx5VHdIyvD+UG/g8
+         RBrbk76dCi+TLdmxgAzFUMJoOitCZEUBMu9Hlz0/GaQ+MoTuXerIfwQOFBoJ12WvXlYK
+         xRa3pum0bmXvvbQTI4u5Q0JHtFWG8lG1VQQv8ZRrt43Z17whKjMUKhxLosWWEjcHsu7N
+         +EWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757763; x=1733362563;
+        d=1e100.net; s=20230601; t=1732757765; x=1733362565;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LnF7ynB4Px9kV74WJlG52B9/ebUeqESErE/aee+VqeA=;
-        b=VSChHG4/8uVdY0+D4D6iGOorDLWqwe7KSjbnXin6jA1ICxEuGv+uREab3nEwYyVu0e
-         G0gzFx6jPZOvdDOKqVFfL/pa+6X1GvGmcPVf+yg9bmHUiQJAcx1wtkOORr0/AFa3Kxr3
-         DRgyLJdWiE3xWDRJi4cDIegqUUw5VbLCxJvTba+6aspalykrapYE3rgXzCkWjflt7BV9
-         3gt2tRiGO+EznGH6yQXj8+RPxh+9aYQZaffiv8Nhs3U8Lmn5MqPxj5Krwm1POhY7hcj+
-         6Jh3VbKowe5dM0eM/WJIWnCw0DP9lXr5O41G7eJzhgTdG+v/siFEr678iSV0lGa7ZAkM
-         8WxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYnsADfwlxhgnev9bB7cc0Wk54/K6GlMd3/bP09sTNkdR6ccY8r8D32JbZ2Yh9lwOgFMHchP5apBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV4lAJDX7JDzneBxZ9Mt2YjpqNdag0L6R4WSJuqXZQ5X2FB/fl
-	HS7Ivrl0dkN3ChYq0DBVbApvadpR8gBx2T0G0DhTZAt08duDmB0YXdXyTNIzD6fd/j1LLwVS7f7
-	cwA==
-X-Google-Smtp-Source: AGHT+IFaKmXX2SmUl85eulR6undd8wSLSTIU71ulzpYU7OrJRQuWYdazMGn7J2i6eG5vSRcVKgle9L91+VI=
-X-Received: from pjbpd3.prod.google.com ([2002:a17:90b:1dc3:b0:2ea:543f:9b80])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3147:b0:2ea:5e0c:2852
- with SMTP id 98e67ed59e1d1-2ee08e9fd7bmr6856873a91.11.1732757763167; Wed, 27
- Nov 2024 17:36:03 -0800 (PST)
+        bh=B//UkNeK73y2hzL0OUmcG/RbjTED96o4ACtsqb9F7d0=;
+        b=mysju4cgiy6MzAc/e02FnHUMgQuN03ehjK62V1qq408x1Z5OmZksVyshflDmQOKUZw
+         QryaBRMt+nO1G+GfrewkipMHDct3IyMcx+44LGS/dEhWLvnlRMRGtX/valFUs+jm0sap
+         idfz4F290UuHFfZIksz2XDRUCYqh/2OLTpno3hRqPssN56K044bsAMm7SNbFfEN2+S8J
+         CJqONDPziuoqHbLeS6H4159byzJN2Ra954KQ1HsBuYjz8YYHSmLvEHT/oABG/wc6r3t3
+         zMsxTkleO/RY1A33dFSAZO2M0UJw7+367YncF+5eAYLyO0WfJh04ekQmEyfnFciSKsrs
+         ZjGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWU18B/+FPrStEyNM1mbGLQzt1LCRPdzn7kd8SKRCqAHbMhXr6VEcYmm+nXHeqnuqCsXKj5cAEJGNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznOHPCWc8HxS2X/5Zmj5PAEvMuUBQ69R1vNKQA/96dLs2ZniE7
+	5ZC2DAv5xLpB8ExKVZBimWe8YPCgqEOXmWGnVNRVnMyAhk1MDz0qpGOAjCl6j0FXLWrSdaWE1bZ
+	Q2A==
+X-Google-Smtp-Source: AGHT+IGav2YrMKCSsi0KLsriYCbteWLnwXMh9zd2luggfwwO3gPhoujBO8/44GnfWCNLBK+2ZL62U5efhiI=
+X-Received: from pjbpt17.prod.google.com ([2002:a17:90b:3d11:b0:2ea:5be5:da6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:1192:b0:1e0:cd97:be
+ with SMTP id adf61e73a8af0-1e0e0b8ce17mr7582568637.42.1732757764981; Wed, 27
+ Nov 2024 17:36:04 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:34:19 -0800
+Date: Wed, 27 Nov 2024 17:34:20 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -61,9 +61,9 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-53-seanjc@google.com>
-Subject: [PATCH v3 52/57] KVM: x86: Add a macro for features that are
- synthesized into boot_cpu_data
+Message-ID: <20241128013424.4096668-54-seanjc@google.com>
+Subject: [PATCH v3 53/57] KVM: x86: Pull CPUID capabilities from boot_cpu_data
+ only as needed
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -75,122 +75,65 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add yet another CPUID macro, this time for features that the host kernel
-synthesizes into boot_cpu_data, i.e. that the kernel force sets even in
-situations where the feature isn't reported by CPUID.  Thanks to the
-macro shenanigans of kvm_cpu_cap_init(), such features can now be handled
-in the core CPUID framework, i.e. don't need to be handled out-of-band and
-thus without as many guardrails.
+Don't memcpy() all of boot_cpu_data.x86_capability, and instead explicitly
+fill each kvm_cpu_cap_init leaf during kvm_cpu_cap_init().  While clever,
+copying all kernel capabilities risks over-reporting KVM capabilities,
+e.g. if KVM added support in __do_cpuid_func(), but neglected to init the
+supported set of capabilities.
 
-Adding a dedicated macro also helps document what's going on, e.g. the
-calls to kvm_cpu_cap_check_and_set() are very confusing unless the reader
-knows exactly how kvm_cpu_cap_init() generates kvm_cpu_caps (and even
-then, it's far from obvious).
+Note, explicitly grabbing leafs deliberately keeps Linux-defined leafs as
+0!  KVM should never advertise Linux-defined leafs; any relevant features
+that are "real", but scattered, must be gathered in their correct hardware-
+defined leaf.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/cpuid.c | 49 +++++++++++++++++++++++++++-----------------
- 1 file changed, 30 insertions(+), 19 deletions(-)
+ arch/x86/kvm/cpuid.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 8d088a888a0d..2b05a7e61994 100644
+index 2b05a7e61994..3b8ec5e7e39a 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -665,6 +665,7 @@ do {									\
+@@ -657,21 +657,23 @@ static __always_inline u32 raw_cpuid_get(struct cpuid_reg cpuid)
+ }
+ 
+ /*
+- * For kernel-defined leafs, mask the boot CPU's pre-populated value.  For KVM-
+- * defined leafs, explicitly set the leaf, as KVM is the one and only authority.
++ * For kernel-defined leafs, mask KVM's supported feature set with the kernel's
++ * capabilities as well as raw CPUID.  For KVM-defined leafs, consult only raw
++ * CPUID, as KVM is the one and only authority (in the kernel).
+  */
+ #define kvm_cpu_cap_init(leaf, mask)					\
+ do {									\
  	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);	\
  	const u32 __maybe_unused kvm_cpu_cap_init_in_progress = leaf;	\
++	const u32 *kernel_cpu_caps = boot_cpu_data.x86_capability;	\
  	u32 kvm_cpu_cap_passthrough = 0;				\
-+	u32 kvm_cpu_cap_synthesized = 0;				\
+ 	u32 kvm_cpu_cap_synthesized = 0;				\
  	u32 kvm_cpu_cap_emulated = 0;					\
  									\
++	kvm_cpu_caps[leaf] = (mask);					\
++									\
  	if (leaf < NCAPINTS)						\
-@@ -673,7 +674,8 @@ do {									\
- 		kvm_cpu_caps[leaf] = (mask);				\
+-		kvm_cpu_caps[leaf] &= (mask);				\
+-	else								\
+-		kvm_cpu_caps[leaf] = (mask);				\
++		kvm_cpu_caps[leaf] &= kernel_cpu_caps[leaf];		\
  									\
  	kvm_cpu_caps[leaf] |= kvm_cpu_cap_passthrough;			\
--	kvm_cpu_caps[leaf] &= raw_cpuid_get(cpuid);			\
-+	kvm_cpu_caps[leaf] &= (raw_cpuid_get(cpuid) |			\
-+			       kvm_cpu_cap_synthesized);		\
- 	kvm_cpu_caps[leaf] |= kvm_cpu_cap_emulated;			\
- } while (0)
+ 	kvm_cpu_caps[leaf] &= (raw_cpuid_get(cpuid) |			\
+@@ -769,9 +771,6 @@ void kvm_set_cpu_caps(void)
+ 	BUILD_BUG_ON(sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)) >
+ 		     sizeof(boot_cpu_data.x86_capability));
  
-@@ -720,6 +722,17 @@ do {									\
- 	F(name);						\
- })
- 
-+/*
-+ * Synthesized Feature - For features that are synthesized into boot_cpu_data,
-+ * i.e. may not be present in the raw CPUID, but can still be advertised to
-+ * userspace.  Primarily used for mitigation related feature flags.
-+ */
-+#define SYNTHESIZED_F(name)					\
-+({								\
-+	kvm_cpu_cap_synthesized |= F(name);			\
-+	F(name);						\
-+})
-+
- /*
-  * Passthrough Feature - For features that KVM supports based purely on raw
-  * hardware CPUID, i.e. that KVM virtualizes even if the host kernel doesn't
-@@ -1084,35 +1097,32 @@ void kvm_set_cpu_caps(void)
- 
- 	kvm_cpu_cap_init(CPUID_8000_0021_EAX,
- 		F(NO_NESTED_DATA_BP) |
--		F(LFENCE_RDTSC) |
-+		/*
-+		 * Synthesize "LFENCE is serializing" into the AMD-defined entry
-+		 * in KVM's supported CPUID, i.e. if the feature is reported as
-+		 * supported by the kernel.  LFENCE_RDTSC was a Linux-defined
-+		 * synthetic feature long before AMD joined the bandwagon, e.g.
-+		 * LFENCE is serializing on most CPUs that support SSE2.  On
-+		 * CPUs that don't support AMD's leaf, ANDing with the raw host
-+		 * CPUID will drop the flags, and reporting support in AMD's
-+		 * leaf can make it easier for userspace to detect the feature.
-+		 */
-+		SYNTHESIZED_F(LFENCE_RDTSC) |
- 		0 /* SmmPgCfgLock */ |
- 		F(NULL_SEL_CLR_BASE) |
- 		F(AUTOIBRS) |
- 		EMULATED_F(NO_SMM_CTL_MSR) |
- 		0 /* PrefetchCtlMsr */ |
--		F(WRMSR_XX_BASE_NS)
-+		F(WRMSR_XX_BASE_NS) |
-+		SYNTHESIZED_F(SBPB) |
-+		SYNTHESIZED_F(IBPB_BRTYPE) |
-+		SYNTHESIZED_F(SRSO_NO)
- 	);
- 
--	kvm_cpu_cap_check_and_set(X86_FEATURE_SBPB);
--	kvm_cpu_cap_check_and_set(X86_FEATURE_IBPB_BRTYPE);
--	kvm_cpu_cap_check_and_set(X86_FEATURE_SRSO_NO);
+-	memcpy(&kvm_cpu_caps, &boot_cpu_data.x86_capability,
+-	       sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)));
 -
- 	kvm_cpu_cap_init(CPUID_8000_0022_EAX,
- 		F(PERFMON_V2)
- 	);
- 
--	/*
--	 * Synthesize "LFENCE is serializing" into the AMD-defined entry in
--	 * KVM's supported CPUID if the feature is reported as supported by the
--	 * kernel.  LFENCE_RDTSC was a Linux-defined synthetic feature long
--	 * before AMD joined the bandwagon, e.g. LFENCE is serializing on most
--	 * CPUs that support SSE2.  On CPUs that don't support AMD's leaf,
--	 * kvm_cpu_cap_init() will unfortunately drop the flag due to ANDing
--	 * the mask with the raw host CPUID, and reporting support in AMD's
--	 * leaf can make it easier for userspace to detect the feature.
--	 */
--	if (cpu_feature_enabled(X86_FEATURE_LFENCE_RDTSC))
--		kvm_cpu_cap_set(X86_FEATURE_LFENCE_RDTSC);
- 	if (!static_cpu_has_bug(X86_BUG_NULL_SEG))
- 		kvm_cpu_cap_set(X86_FEATURE_NULL_SEL_CLR_BASE);
- 
-@@ -1150,6 +1160,7 @@ EXPORT_SYMBOL_GPL(kvm_set_cpu_caps);
- #undef SF
- #undef X86_64_F
- #undef EMULATED_F
-+#undef SYNTHESIZED_F
- #undef PASSTHROUGH_F
- #undef ALIASED_1_EDX_F
- 
+ 	kvm_cpu_cap_init(CPUID_1_ECX,
+ 		F(XMM3) |
+ 		F(PCLMULQDQ) |
 -- 
 2.47.0.338.g60cca15819-goog
 
