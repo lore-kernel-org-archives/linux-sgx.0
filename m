@@ -1,57 +1,57 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BC01C174A
-	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2181C1F32
+	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757738; cv=none; b=LC5ruwhLCX7Opzci+AOaEqpyGUgnOXmKQ4RaCPzwSsAoUIlPT4xsEAqC12xCH56lUQNP5PtaU5/5Eh0/WZWsegoBKdyWJgoly57qd/nrDJvupa646PzHeSApQNytMGUiRvDrQzZurXcFvsOBdbfiBAXcH83hpcrWZUWgg9sAwbQ=
+	t=1732757740; cv=none; b=pp8wuyYDZFONRnnKsOsHxMu9NT08XQdFWMEqY5UdphFpO58lx+yy3yCG2BpZN1K1yIE1UN4siiDkBoBAh090uRNvKY81cGDLpqXYej4ENNQMMMirCWzwwFH8mnb6eo7tgTE5yq9fFfNbCDGaCK8JdvGU1YTvC5tE7amhLmzMXT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757738; c=relaxed/simple;
-	bh=Yzxh32zMC9cuwCoV0mcDRBR5LUTqIY74e9pZtQNtQIA=;
+	s=arc-20240116; t=1732757740; c=relaxed/simple;
+	bh=I/YDR3JStGxjrdjAITcHrtFRex6HHvT0+U3XKq8mm6M=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aOr16h4Kpv/3Mv4ljFC/XGtpoGCwjiqPIZpJnWKRDIWRLvnutlu+/mwyEqzl0WQ5deYH45SoeRpY977PHmAa1AYtBthvnYnC84aBNz54IMvOAop470LIF6Oq5qkFciuTNF5QFJSCwj0RLQEt8tnrYZSOwTowBEwgDG3dCYyYOs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tNkKa1Qc; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=sqZonszyBeDkJOc7hnX1ekS57RzlYym49U2Hq9XsTDYhyZJSt6GpLuHbCPw9rD66Jr74yT/5fzhjcwKI9C8W+CNHa/iVtmzUBB2rG/6MQX+D/RsysojKqWtqKRXRhMUyNbJPPXoFQWYWCVBmT3Eeau02hEu8JR+lxWEVGSHFgAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=coHkjAS0; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tNkKa1Qc"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea5a0f7547so408979a91.1
-        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:35:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="coHkjAS0"
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7fbbb61a67cso151614a12.3
+        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:35:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757736; x=1733362536; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757738; x=1733362538; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=+r3YaJVI8SArru6YzRyxshHYF9vDpkxkSnZ/zCtA4vg=;
-        b=tNkKa1QcB36OvgQvQOGjE1vZqBes79dd/ZrAb2pBEU+9ldJwfoRpWo/yIeCGRBupoK
-         VflFvpYP0BYn6nXjS2hFypq4nueuV96i1oNAbtP3Bsiavr+dwJgVsE4JKfM+vk17pQWz
-         aIhSiRWUqvwqFwKiY6OPuQFwQDDitkerlbTaZ09lSFmjEJ5JfnFCgSUMV6KXZnKlkSb7
-         yt/lg8nvyvrR44D+q/YdIbqxE+r3yVTiB7wR7TT+IyXQwxeUYARW/p4FxslX1GZXa9fb
-         OQhCrrrito5qex4hyOfqHYSTfx/GVGkYfOoiH7QsKMaQoBjb9w7NDbdgKcw1YTQTMHJo
-         UYKQ==
+        bh=iYvz2Rhm4HLNhXyImO2FrXh2iHX5TjPw17ql6ofDjOI=;
+        b=coHkjAS0VE0Ntv9SpGYT+KmW5QivqO9hdzy/8Ax60ZfvF72ph+inLrr0cuanXV5l3f
+         fNX2R4CobbCm+VghtCvZciydhfQpP1cxLQdf3aX72gFWbt46AD4wqbhnb4op3InCxZCb
+         98F6sD0OsuqrTRUv8BrtVJjKGNwTI1Zl1tkKjITkojEX7EWY4Jc00gwCQuBiydBco0eJ
+         TwBlhlp3kGjpzVnfkOWQsTcZhFQj44bpe27d/Dn+egYGM+mzwXdYuJhsRh4Sw6O6czW9
+         ZmDygonrDlAOp2myVj2NFtDPX/QEjqXDaZ7g0hYTiV0ltVIs3rQSn3bk7bI3w8zIiTlV
+         SMVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757736; x=1733362536;
+        d=1e100.net; s=20230601; t=1732757738; x=1733362538;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+r3YaJVI8SArru6YzRyxshHYF9vDpkxkSnZ/zCtA4vg=;
-        b=XDR/lzQcM8xzgqDCG5U81/L9ZvMbd46CNqNTZlX7hIKZUBq821Ljelh3pzzr6lEWfe
-         rlGhH80PsO/0XLfHjgd/FU2w2IlHZkp/6wClBfaIZYRKCRqTAjZlCqBwmYQbqJNwHGD4
-         wxSqGMX041kHODLmpwKqlaSIamYoQR2B+9f4ZG2dX2dgpJ3QdNiuNZ84gjFKAk1k4ZoM
-         K1ZzdohWw/J2sl+DDiIGMWUb6Ca0rHoETOzTHGNJ6AL5O3SVBSRrb9jmOV4qPuEQ9Q32
-         wd7Ic99bvRCbOEPpFkQaH+Efptbl2RvB9HiiTUhgYS1FWtz9kqiRMQzkbN6KQ9UFQ0dH
-         SQWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6SDLizfdyRhCM6t2v5mLTPDRyGQVuwpPs44oAOalsY0ZOJcF2sqRDdJdeHHvU4U6/PuZe1bg5pis=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/E3jWFOEL9L/carJrPZtSroccmp252MPbOyUO+h0lV/0tXo0a
-	eKpN+lXyIWr9+V/vNDUJIuEJNq0zrrwD8j1cQsQIMM73UYt3CjF2WJUc9MG2+jYIz+gqCHNQupK
-	doA==
-X-Google-Smtp-Source: AGHT+IHBjhGVoI3QpGx6LnIojWm/sC/X+Cwik3k+m9dhBlZ/JeQyiuq1m19KKA0Gh5+j9faOtyHPg9PbRso=
-X-Received: from pjbsy13.prod.google.com ([2002:a17:90b:2d0d:b0:2e2:8611:a2cb])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b4f:b0:2ea:8aac:6aa9
- with SMTP id 98e67ed59e1d1-2ee08eb7cb2mr6058336a91.21.1732757736300; Wed, 27
- Nov 2024 17:35:36 -0800 (PST)
+        bh=iYvz2Rhm4HLNhXyImO2FrXh2iHX5TjPw17ql6ofDjOI=;
+        b=AeiC1I8A7N4kSt3c5TojHuULdKWVHtgCrXZyhPLPcbea6izxQWm1T6GmQ+Nf6vo0FZ
+         yaJN+sXv6GIOZR2SUVK7QMV/Fdh71IsXwyu2uyCzQGu18oDcYLIobAaoG/8QByZG6Ovs
+         XY9UldqlsjKHg1+C36zt+eo2Jj9zR5B74f1MF5b6mLDWJdIa17/1eW1MRNIRPkbAzIgb
+         nH78eSNlIylsNcEUUaxGXzAYVaNKUm3Sy1mnSbbJiyj+IkPq9keOt28tqrR/xRaAfwoj
+         gFIfe7WzV31ndyd5zl9fhftaYhRCso/WAl1Wczu8gGYwusKyeXP7wfTgWe2q8U0yuTt8
+         U4jA==
+X-Forwarded-Encrypted: i=1; AJvYcCVU6yEYnHR5IEdWE0GE8CNoR+pX8sqcp0/rfTGFkQf7kxfTqMsMbApddCb1wBkOfG/ADEBmz1Ysz5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLPIoOxqhElL+uSqn/kdUmBpB6tB0gDqkhs5847Yh4f3TexNEt
+	uzO0dKWKyj9SjgHzYnXwkXczFxv1paHttx4gcBVuRX7IaG3aVi1Inc0UAJoz0Rnv9W54ptdCBPa
+	Xgg==
+X-Google-Smtp-Source: AGHT+IEVvsXIduk+X8FhHtMD4fvZwF9esFmBYy1M6G4Vt/JFtxhh+BZnNYrS8WzpeGLVp9j7hfA8IMyyDBc=
+X-Received: from pfba4.prod.google.com ([2002:a05:6a00:ac04:b0:724:e712:5cbe])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2451:b0:1e0:d45d:645f
+ with SMTP id adf61e73a8af0-1e0e0b9a2fcmr9216517637.39.1732757738016; Wed, 27
+ Nov 2024 17:35:38 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:34:04 -0800
+Date: Wed, 27 Nov 2024 17:34:05 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -61,8 +61,8 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-38-seanjc@google.com>
-Subject: [PATCH v3 37/57] KVM: x86: Advertise TSC_DEADLINE_TIMER in KVM_GET_SUPPORTED_CPUID
+Message-ID: <20241128013424.4096668-39-seanjc@google.com>
+Subject: [PATCH v3 38/57] KVM: x86: Advertise HYPERVISOR in KVM_GET_SUPPORTED_CPUID
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -74,66 +74,30 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Unconditionally advertise TSC_DEADLINE_TIMER via KVM_GET_SUPPORTED_CPUID,
-as KVM always emulates deadline mode, *if* the VM has an in-kernel local
-APIC.  The odds of a VMM emulating the local APIC in userspace, not
-emulating the TSC deadline timer, _and_ reflecting
-KVM_GET_SUPPORTED_CPUID back into KVM_SET_CPUID2, i.e. the risk of
-over-advertising and breaking any setups, is extremely low.
-
-KVM has _unconditionally_ advertised X2APIC via CPUID since commit
-0d1de2d901f4 ("KVM: Always report x2apic as supported feature"), and it
-is completely impossible for userspace to emulate X2APIC as KVM doesn't
-support forwarding the MSR accesses to userspace.  I.e. KVM has relied on
-userspace VMMs to not misreport local APIC capabilities for nearly 13
-years.
+Unconditionally advertise "support" for the HYPERVISOR feature in CPUID,
+as the flag simply communicates to the guest that's it's running under a
+hypervisor.
 
 Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- Documentation/virt/kvm/api.rst | 9 ++++++---
- arch/x86/kvm/cpuid.c           | 2 +-
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ arch/x86/kvm/cpuid.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index bbe445e6c113..61bf1f693e2d 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -1825,15 +1825,18 @@ emulate them efficiently. The fields in each entry are defined as follows:
-          the values returned by the cpuid instruction for
-          this function/index combination
- 
--The TSC deadline timer feature (CPUID leaf 1, ecx[24]) is always returned
--as false, since the feature depends on KVM_CREATE_IRQCHIP for local APIC
--support.  Instead it is reported via::
-+x2APIC (CPUID leaf 1, ecx[21) and TSC deadline timer (CPUID leaf 1, ecx[24])
-+may be returned as true, but they depend on KVM_CREATE_IRQCHIP for in-kernel
-+emulation of the local APIC.  TSC deadline timer support is also reported via::
- 
-   ioctl(KVM_CHECK_EXTENSION, KVM_CAP_TSC_DEADLINE_TIMER)
- 
- if that returns true and you use KVM_CREATE_IRQCHIP, or if you emulate the
- feature in userspace, then you can enable the feature for KVM_SET_CPUID2.
- 
-+Enabling x2APIC in KVM_SET_CPUID2 requires KVM_CREATE_IRQCHIP as KVM doesn't
-+support forwarding x2APIC MSR accesses to userspace, i.e. KVM does not support
-+emulating x2APIC in userspace.
- 
- 4.47 KVM_PPC_GET_PVINFO
- -----------------------
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 150d397345d5..51792cf48cd7 100644
+index 51792cf48cd7..a13bf0ab417d 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -716,7 +716,7 @@ void kvm_set_cpu_caps(void)
- 		EMULATED_F(X2APIC) |
- 		F(MOVBE) |
- 		F(POPCNT) |
--		0 /* Reserved*/ |
-+		EMULATED_F(TSC_DEADLINE_TIMER) |
- 		F(AES) |
- 		F(XSAVE) |
+@@ -722,7 +722,8 @@ void kvm_set_cpu_caps(void)
  		0 /* OSXSAVE */ |
+ 		F(AVX) |
+ 		F(F16C) |
+-		F(RDRAND)
++		F(RDRAND) |
++		EMULATED_F(HYPERVISOR)
+ 	);
+ 
+ 	kvm_cpu_cap_init(CPUID_1_EDX,
 -- 
 2.47.0.338.g60cca15819-goog
 
