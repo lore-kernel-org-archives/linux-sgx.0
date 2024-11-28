@@ -1,57 +1,57 @@
 Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C300B1A2C11
-	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EA61A9B55
+	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757719; cv=none; b=KF4BqaJVNMEwBdUyj/2ufluU8pQapa/Q3lb0nFlR7x52NSxXUPZYtwKcuFftqWm8noTbZEXqAdBrO5fWRB6DNG/aKn6ynwdy+6jI30sb1qDjU1T/hztltOESZ1zNbQdgoTMNWtjh1Uh9drXcqcBs0yN/qe9Kewywh4u/+Odt+Is=
+	t=1732757720; cv=none; b=rkP/UTVHx1RMu8JQnAmfzgs5ULvw3IaOoZ+wRCM81uwdg81joNWMHWiBBFroWXVYZllIvVYZYMEFXI7cLlFWDDP6aDyY0ZnLvs7+0xZrwAB5yhAFK0bXDOLgW7fiO8j2udj+NP+vx68fXksI4TwLKIM9f5KbYU8SkClaXL9K1PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757719; c=relaxed/simple;
-	bh=03vFd+gOroODh8C9T2sGp7JBfixgtUjep2ou9I0cgFo=;
+	s=arc-20240116; t=1732757720; c=relaxed/simple;
+	bh=p3CBzhkm6ujU4s52ZTEXum8M/Hl6dyxVOGgM/SCeLYc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=W7CLFKcU6ASWND/2fxK++akkE5Y4tUYP57FVloild7xiePbQIQuLB4abspA+HX4riKuO8gdmj7RWltzXU6EorQ9vKJTFkkXhuo4UiyXAg5KeJS6slepjo0NMScGB8imzXbXGSIiCuW1J7PwF9irHXjvqiazn4TFautk3LKReFJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QOAbczJO; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=RmbfaL/rEk2U3qKtS8YUWoMNV9/C06m0avOvIzYlea0t4QTNV2N3sYr6Q5jBsx3AL7YVRYx+rsyOJdfcwluxxACxfrpNVwucyThVxCoX0Qo+K4kGqCb9UnscwtXI4dc/LJnpcGN4ACnzKmqlubCtWOut7PQAbemb6hsafbLvmvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=us+LS7wO; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QOAbczJO"
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ea2b6b08e4so368247a91.0
-        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:35:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="us+LS7wO"
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ea2dd29d16so345560a91.0
+        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:35:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757717; x=1733362517; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757719; x=1733362519; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=aTsYQpwTexwHG3yKKxJkIwGG0dvQpQ9Ljw6Jssadn/0=;
-        b=QOAbczJO1zMG+O0cl5abqtQwBU1I1kQeGDIjle4GWkCNfDpfXx4kx8mnJ6DOJ3/v/B
-         jtjPY+60JF4IOEj8gRQotixdmfjLWoOocsF4AqWbpt5ye4k8g4NngjNx1QlwbLIuWOGy
-         nXoT8NKyMPo4fcZQJVYP2mQByYIwAJES5h5BLjx80o0s0H1UJ4/w3cgH3I+qtbZxf/Yn
-         MXjldkOzsomeenaNKZWo9Ugc027qWnb2wd+H6LfEPMpQrBcIadE8Nu7u4aAJ8mMbKT8O
-         GThTYtSjKRO15DCDfBvj7CDTtI7UpjDzcphSikcZNrZuIsUGzgnb/r/yBdZqN9fQ+w2D
-         DZkw==
+        bh=gZJBOmAP26+0yF/bEhrb3rRX/4R15M+YqMVdFmFdghQ=;
+        b=us+LS7wOwWyTFD1Y0pQmV2cFsogvUO+pXs52ig6hkj2TxrGbDbRkLSiz4x+FwGfFUZ
+         p8YD7vnr0zykd8tkovHP5QATnQeRDMiKLBCrNFzE/yV2R4+oGL2oYM7IFv2HGohZnEjJ
+         B8b5FGBlkqdQ4tsP7901n3dTcNFm+OdUdw83ziYHnTP03A3PAnRoGBIOOWhoaLrmK+ah
+         LV39KBO4yKfpVrhXGv+l2U0hJ8y8fc8CtU6jZqrxFyUm8KMWupq2K1OesGUuZpECkgvZ
+         34b/x2bVOXglwYAI4bkdcP5FICf/J5/0DcIGBzPzFY4okLai1aMXPhUnn29gLTzdMSKf
+         j4tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757717; x=1733362517;
+        d=1e100.net; s=20230601; t=1732757719; x=1733362519;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aTsYQpwTexwHG3yKKxJkIwGG0dvQpQ9Ljw6Jssadn/0=;
-        b=EseLXxAQhqi8HjAtFn7IBbMJxPhS+hM0ZsJ7oj74CLGt1NbS+ZQhVuiGAPCOtNR00n
-         OFmuarjmtzKEuOcXsSGloxvrhqaSItPHbCtOxeAYkyeir1UCrem1Uhmmxhl7oXvPb4fm
-         vXt6qmtZa5oQ9Fg/g0BnnmBF2Jd/MGTYpGiX5jwbpolCuVfcPijDW3pxAI8eGs8W5EM1
-         v8Nywu6biyfEfttElertY4jna4qop0oC/B7Y4DnjO/gQfIPwoj+XpTXw3TmGHJvUhjrl
-         +diV64wVyvJWGG898/7qLtD7Kso87KpVFYrgITiXByhwu0gYitom+JQskt2OE0/zPOR2
-         iJbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXC32QimXyoaUpUo4QL21E2TAix25ZANkWr+0Kg2dh2c7uK7QUNZ85JHV1YZDO+oGWlWA8BYb2qUgA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrHJOnv/OrggpSJaRW8qcKTgdxikpg2uECvAA1z09d3yZkwV8O
-	JNly/M5MS+xQeTefqVojvjX/o6eWlSHYJ7JODWw00g5bHMzdksNzj9eTtIWxIjqp/d8XV55MalV
-	I1w==
-X-Google-Smtp-Source: AGHT+IF25yaZO9df1NGjMlKWj48Yvt3nBDt+80lXZmbLiOO/wECyYSxbM3ry8GaNmjsPc3OIt081rI5FNF4=
-X-Received: from pjbnd11.prod.google.com ([2002:a17:90b:4ccb:b0:2e9:ee22:8881])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3947:b0:2ea:61de:38ef
- with SMTP id 98e67ed59e1d1-2ee097bf33dmr5685347a91.28.1732757717375; Wed, 27
- Nov 2024 17:35:17 -0800 (PST)
+        bh=gZJBOmAP26+0yF/bEhrb3rRX/4R15M+YqMVdFmFdghQ=;
+        b=rEsJG8gBlyhklfA42PuPpy34LVf0GMVdTOK1lcWsODvZb7XNNJqrD+5ip4VPer+6BX
+         ZEDgCInIjiFREImxxmFvifvTGDyrK4gXNauYifMm0vdDUuvwFiw/eIM/63xU317IPgKS
+         DG04GXQ2n1oGnOnzxmo3B4161DMxr8BU2pvQ7/8pjLK4tPLoxb0v3PJ6MVZF0BM0JcL2
+         glta4G75KHsL7NBSgKwYvQKjYzW4PuUy1CPtsqraQWRVfFMw5yPqQSbc5mWiJHTQtxAM
+         V8JGMqtDcawuop4B03QMvJUXfns6XfZX0gNntV2Lv750lfTeJPbFNgb3bCOtRNc369/W
+         2Hug==
+X-Forwarded-Encrypted: i=1; AJvYcCUzNST9aLfNn5g/L7zAYu2S+AdiJQUwJ3UogMTQS9wZZgQfqddYJaeR60tTMbWR66TW3x8ZKGnkUss=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx90Nnl+XKHmD0VGsUQK2hwTOi+aKZKvhVEvasycKg4SLxAKSBD
+	Cy1IYGHtkeFItQv5A7/umqFXuliwL6C+HcoFPI3GicKzyFsUyjXDF/ncw4hYkPS1Iau9F8OmPM4
+	ylw==
+X-Google-Smtp-Source: AGHT+IHoBRCOykd0M/JG0OnOX96GiVjTOBq+7QjcigybBzm1eoql7wNABr53Ji6d8itQZ8cWe3pKz5HSf/8=
+X-Received: from pjbli10.prod.google.com ([2002:a17:90b:48ca:b0:2e1:8750:2b46])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1bcb:b0:2ea:4e67:5638
+ with SMTP id 98e67ed59e1d1-2ee097e3b21mr6975530a91.35.1732757719107; Wed, 27
+ Nov 2024 17:35:19 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:33:53 -0800
+Date: Wed, 27 Nov 2024 17:33:54 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -61,9 +61,9 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-27-seanjc@google.com>
-Subject: [PATCH v3 26/57] KVM: x86: Handle kernel- and KVM-defined CPUID words
- in a single helper
+Message-ID: <20241128013424.4096668-28-seanjc@google.com>
+Subject: [PATCH v3 27/57] KVM: x86: #undef SPEC_CTRL_SSBD in cpuid.c to avoid
+ macro collisions
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -75,123 +75,36 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Merge kvm_cpu_cap_init() and kvm_cpu_cap_init_kvm_defined() into a single
-helper.  The only advantage of separating the two was to make it somewhat
-obvious that KVM directly initializes the KVM-defined words, whereas using
-a common helper will allow for hardening both kernel- and KVM-defined
-CPUID words without needing copy+paste.
+Undefine SPEC_CTRL_SSBD, which is #defined by msr-index.h to represent the
+enable flag in MSR_IA32_SPEC_CTRL, to avoid issues with the macro being
+unpacked into its raw value when passed to KVM's F() macro.  This will
+allow using multiple layers of macros in F() and friends, e.g. to harden
+against incorrect usage of F().
 
-No functional change intended.
+No functional change intended (cpuid.c doesn't consume SPEC_CTRL_SSBD).
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/cpuid.c | 46 +++++++++++++++-----------------------------
- 1 file changed, 16 insertions(+), 30 deletions(-)
+ arch/x86/kvm/cpuid.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index ddff0c7c78b9..73e756d097e4 100644
+index 73e756d097e4..efff83da3df3 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -602,37 +602,23 @@ static __always_inline u32 raw_cpuid_get(struct cpuid_reg cpuid)
- 	return *__cpuid_entry_get_reg(&entry, cpuid.reg);
- }
+@@ -644,6 +644,12 @@ static __always_inline void kvm_cpu_cap_init(u32 leaf, u32 mask)
+ 	feature_bit(name);							\
+ })
  
--/* Mask kvm_cpu_caps for @leaf with the raw CPUID capabilities of this CPU. */
--static __always_inline void __kvm_cpu_cap_mask(unsigned int leaf)
-+static __always_inline void kvm_cpu_cap_init(u32 leaf, u32 mask)
++/*
++ * Undefine the MSR bit macro to avoid token concatenation issues when
++ * processing X86_FEATURE_SPEC_CTRL_SSBD.
++ */
++#undef SPEC_CTRL_SSBD
++
+ void kvm_set_cpu_caps(void)
  {
- 	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
- 
--	reverse_cpuid_check(leaf);
-+	/*
-+	 * For kernel-defined leafs, mask the boot CPU's pre-populated value.
-+	 * For KVM-defined leafs, explicitly set the leaf, as KVM is the one
-+	 * and only authority.
-+	 */
-+	if (leaf < NCAPINTS)
-+		kvm_cpu_caps[leaf] &= mask;
-+	else
-+		kvm_cpu_caps[leaf] = mask;
- 
- 	kvm_cpu_caps[leaf] &= raw_cpuid_get(cpuid);
- }
- 
--static __always_inline
--void kvm_cpu_cap_init_kvm_defined(enum kvm_only_cpuid_leafs leaf, u32 mask)
--{
--	/* Use kvm_cpu_cap_init for leafs that aren't KVM-only. */
--	BUILD_BUG_ON(leaf < NCAPINTS);
--
--	kvm_cpu_caps[leaf] = mask;
--
--	__kvm_cpu_cap_mask(leaf);
--}
--
--static __always_inline void kvm_cpu_cap_init(enum cpuid_leafs leaf, u32 mask)
--{
--	/* Use kvm_cpu_cap_init_kvm_defined for KVM-only leafs. */
--	BUILD_BUG_ON(leaf >= NCAPINTS);
--
--	kvm_cpu_caps[leaf] &= mask;
--
--	__kvm_cpu_cap_mask(leaf);
--}
--
- #define F feature_bit
- 
- /* Scattered Flag - For features that are scattered by cpufeatures.h. */
-@@ -843,7 +829,7 @@ void kvm_set_cpu_caps(void)
- 		F(LAM)
- 	);
- 
--	kvm_cpu_cap_init_kvm_defined(CPUID_7_1_EDX,
-+	kvm_cpu_cap_init(CPUID_7_1_EDX,
- 		F(AVX_VNNI_INT8) |
- 		F(AVX_NE_CONVERT) |
- 		F(AMX_COMPLEX) |
-@@ -852,7 +838,7 @@ void kvm_set_cpu_caps(void)
- 		F(AVX10)
- 	);
- 
--	kvm_cpu_cap_init_kvm_defined(CPUID_7_2_EDX,
-+	kvm_cpu_cap_init(CPUID_7_2_EDX,
- 		F(INTEL_PSFD) |
- 		F(IPRED_CTRL) |
- 		F(RRSBA_CTRL) |
-@@ -869,13 +855,13 @@ void kvm_set_cpu_caps(void)
- 		X86_64_F(XFD)
- 	);
- 
--	kvm_cpu_cap_init_kvm_defined(CPUID_12_EAX,
-+	kvm_cpu_cap_init(CPUID_12_EAX,
- 		SF(SGX1) |
- 		SF(SGX2) |
- 		SF(SGX_EDECCSSA)
- 	);
- 
--	kvm_cpu_cap_init_kvm_defined(CPUID_24_0_EBX,
-+	kvm_cpu_cap_init(CPUID_24_0_EBX,
- 		F(AVX10_128) |
- 		F(AVX10_256) |
- 		F(AVX10_512)
-@@ -938,7 +924,7 @@ void kvm_set_cpu_caps(void)
- 	if (!tdp_enabled && IS_ENABLED(CONFIG_X86_64))
- 		kvm_cpu_cap_set(X86_FEATURE_GBPAGES);
- 
--	kvm_cpu_cap_init_kvm_defined(CPUID_8000_0007_EDX,
-+	kvm_cpu_cap_init(CPUID_8000_0007_EDX,
- 		SF(CONSTANT_TSC)
- 	);
- 
-@@ -1012,7 +998,7 @@ void kvm_set_cpu_caps(void)
- 	kvm_cpu_cap_check_and_set(X86_FEATURE_IBPB_BRTYPE);
- 	kvm_cpu_cap_check_and_set(X86_FEATURE_SRSO_NO);
- 
--	kvm_cpu_cap_init_kvm_defined(CPUID_8000_0022_EAX,
-+	kvm_cpu_cap_init(CPUID_8000_0022_EAX,
- 		F(PERFMON_V2)
- 	);
- 
+ 	memset(kvm_cpu_caps, 0, sizeof(kvm_cpu_caps));
 -- 
 2.47.0.338.g60cca15819-goog
 
