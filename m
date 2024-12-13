@@ -1,822 +1,203 @@
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BDC142903
-	for <linux-sgx@vger.kernel.org>; Thu, 28 Nov 2024 01:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757774; cv=none; b=SpybBkH+S2fAL1uJqEflNQD4ZctFF5Y0FP3yp9d3x6TDjeptK6bRweBJUyOUp2zuO6iGothYAIoYFFMhiCrNyoQdeI6Q9mujsa7p5aGqcg85x5fiMOEJijahTCtDSJuYBakDmo1egvDjw66TsNOXvNSqERSd75hciH+C9wIa+E8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757774; c=relaxed/simple;
-	bh=QXiVgofEOC5+d++0Hy4KZ0nFVeGh7HhLS1QnnQ4HPG4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ui3wrQGwFTSJ9Xz/rgrODS7rEvLnaEqrE3WcjZbjI0W69hU1at/W0k9JcR0BM0al2erlF8vWH8m5gt4TjbEDnOJ6PSvkT1l1Pm5/oWx+e9vTfLn1wW4Z7CwIJEu3D8za3j0YsYm+1uLJRxtB5otCnBAhdILe7kexGzs+yRVD1qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pIh47QtV; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC401373;
+	Fri, 13 Dec 2024 01:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734053445; cv=fail; b=smeSh7EHnzR05lPwC/PqxTZu78/PaSXOp7frbtEH9+hfVQBp/aBA9sX/vHphDglHKAhk8XHdvU1B1jkZjHXPq1oL3c1aB8aWc/VaPtCAMWkok5/ZNQ5EH6Tcv96wxGKV1HCOZv6VNfCscn31T7qNBFfJ1AWoL3J+k7Cj0KIyHcc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734053445; c=relaxed/simple;
+	bh=j0HgcO2RHOWuJ9GJqFdfSlYKITgDdDFADK68QqZ6p/A=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GEcb8YREQ2Ypdwvn8erx+hcpIuaUWsujmQgMXEsR/cef7WfCpogs8murz21CvsuuSDEwd7nqvERFZun6ksxb5k2rsODECoXJ/R/6pSdoYO2fsDVfeRtcUfEUjj3lgvOH3L5PEnt+7swgNwLdXt7bjPkBv/WS/hSFtxUfh1cpUac=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q9TU2t1B; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pIh47QtV"
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ea5bf5354fso353524a91.3
-        for <linux-sgx@vger.kernel.org>; Wed, 27 Nov 2024 17:36:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757772; x=1733362572; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=N92yrd6ibiwhVGbWmDI81B5t5iE79c6CGTpBzLJ/PUk=;
-        b=pIh47QtVAjxvAJgs6gV/0pR6h4+YVoM48qIJhN4cW9JZmYydxa4d78eImWbywenmZJ
-         fSf++T4WMhEKpNtQTqlO4EKFYfJ9ZMIIcSBQMWJM/CZUbp6peLL225S+NTH8130Vq1P0
-         H3iLpaO274lNWDTa0IZh7zmxSTt6hAYHXBBaozBxjzokNu3kg4cOawbaVLLe+5/6DRZ/
-         eRS0eBWT2WQW2VLP/PIGN0Ae35FWRAsh/6YDpPSyaE5xSRhf+ckYEm2JdftI9FRFVpv1
-         FPWVoKG3PgEeKXR2wgVMilgCHC7Hg0GEkacDUXKRzWEoZ4b874QblSceaLvU9lKtOM3Q
-         EZpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757772; x=1733362572;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N92yrd6ibiwhVGbWmDI81B5t5iE79c6CGTpBzLJ/PUk=;
-        b=JZSr+rgCflZ6u4cAm0hsydGCHQUUaTMMlOc6hMqTaX7EoDSnGXNLOegbVGd9Ei38tb
-         VPGl+JUKL0RSxU8751XbddLJD9ycdWDOjUqRdYmae0fKGSiCHrd08f+puQuqHFZvjdtp
-         pEOuZPMSZnsv3ik3tvnmuvefinH2srShsxKuRKEsYGD2jBgb990/YxBSK2xS9kJPt9tI
-         pwjtrHvWmnSzSeddjh7IRm2hVCCwT1Fc/LFsZNSUEGNFkgUTuvGCrmURdTalldKNuWT+
-         ibQFiMNhCscasPx4zV+JojUzwXFhHZ4qvC1YOU8uNxnhzx7qeN/5Obq3nD2qV2NhBxmm
-         /cwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzG1fn1eIPbj9PBxLKyJ0O3nMyWqgJhOvfqW47MePkEFNfdFYZBcpDoG7SKCRSVyP/jj/L2nE8CAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRHRjeZYOFl9MN2IspUjR81TQrzmCNaLdeu/d6WhabXsrP63WI
-	pvfyh7SMJjuyUFLf30LQEqmv/TR5Us2gCLTajCnG6Ye3VVwrsuMrEGApZYIlxW9KZnSy8sbF1e2
-	T4Q==
-X-Google-Smtp-Source: AGHT+IE3Ubt1FJBmHBFQWyCuDufvC5sJ8LXxeLht2Ljbx9QzWGCJryzyyFiqCqmLPS9zT8CasW3yTn2BNow=
-X-Received: from pjbsb15.prod.google.com ([2002:a17:90b:50cf:b0:2eb:12d7:fedd])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:54c4:b0:2ea:3f34:f18f
- with SMTP id 98e67ed59e1d1-2ee08ecd358mr6548081a91.19.1732757771755; Wed, 27
- Nov 2024 17:36:11 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:34:24 -0800
-In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q9TU2t1B"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734053444; x=1765589444;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=j0HgcO2RHOWuJ9GJqFdfSlYKITgDdDFADK68QqZ6p/A=;
+  b=Q9TU2t1Bhdux2J3qk0K3PTlsEy88zTsaOIlAeQw3ThQPS5nh8LvNakEB
+   roWzQFaKnP79yYDUX8UTkSXw9hMm8IbDMLhIii3kH7Fm/NsN3JKGiEEzS
+   6TOP4CsFpyEduB/5Kl6FDppzUnvNO7amN4hHvdPRM+Ixm4RDq4rr1Siyw
+   PbgnlBya6+UYw55qe13BAJJPeHbAOd0bALXCd0up2B1v2PHMUcp5visGZ
+   gL4UvBErsQdOhbRSiTBOV8nGhSaXKggUyXVawm/tF7Y3KxXkvaoBTPQTt
+   W1WG2ftgILOu9B+sgc7vrT8GTodDXxZStHDQbz0yJ0ihxMZPPvNgdgB0R
+   A==;
+X-CSE-ConnectionGUID: zNrM1RiYQc2oVf56eRXAgw==
+X-CSE-MsgGUID: IOnw55QlRHiQfdcsAkzf3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="38277275"
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="38277275"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 17:30:43 -0800
+X-CSE-ConnectionGUID: +6/wfkqkQ2ibrzn0Xq34qg==
+X-CSE-MsgGUID: VqvPK2V9QsWjCsvaOQGv/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="101425843"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Dec 2024 17:30:43 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 12 Dec 2024 17:30:42 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Thu, 12 Dec 2024 17:30:42 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.48) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 12 Dec 2024 17:30:42 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rQemuHqBnCWqMY6P4PnAdkG6ySgAE2KAQ6ROO4HNNxT1URGXE3P2GdTGXSJ4AhPN9s4cKuRcfxeTRv6O2oKTKZMjtHR+chszkCE1hdTmSAk0ZzzuR9yd4xIt+Q4P6PmMOk8KrQ4XNwQ59SeYgTukDxQEokqDcHUxcj+09mggndcPa/CMDLVvJe6hAXVfrsEifQ77KbuMZESykRM5Wtqdrago9ZtIN4X6cU2Z9aMWicZAt5iT1R9xW1PyD9Q4b05Kk88YEhz8JPpFlVk22SxK4irAaLvYgO3+SbT+fo45kTiQbFJvDUor736SL2elWYSZwev0N/SlnMUiA91dJfOW4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iF8NGVAF1mYfqgSbBg9v738SRNDrEohxCeGXJ0cR/TI=;
+ b=vRZdKUc8X1JiMJOPJH/u1hWaxuo1RFR5XLFHBB0Q+hAH+0cE8pI/Q7vCl3JtXjUZecgvnJn4UcLXbduwji60jGAs++67XIPN0hSGMGETQntobRhRilQyyCIJaw5WQQJNJTpg6euKZDx8pw1hbc9CBl0uejn3ynHu9eFi+BDSc8fqyPT5/gCShVSO6SC/6sri2LW8sklP+H+ey2WBoouC9bUgNHnomMeW50/Ddkzow7SUvesFLTpNLtADDqfqZXUsD0uW2KE8ffylSj5bNOW+HGPt5uB5ZWU0Sx5Mp2ypeFwLeJ2UifuwEHHWsLXpRz3hN8hS9SAXw8u6VDxEkdgt2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by SA1PR11MB5899.namprd11.prod.outlook.com (2603:10b6:806:22a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.20; Fri, 13 Dec
+ 2024 01:30:36 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%2]) with mapi id 15.20.8251.015; Fri, 13 Dec 2024
+ 01:30:36 +0000
+Date: Fri, 13 Dec 2024 09:30:25 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
+	<vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+	<kvm@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Maxim Levitsky <mlevitsk@redhat.com>, "Hou
+ Wenlong" <houwenlong.hwl@antgroup.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>,
+	"Binbin Wu" <binbin.wu@linux.intel.com>, Yang Weijiang
+	<weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
+Subject: Re: [PATCH v3 05/57] KVM: x86: Account for KVM-reserved CR4 bits
+ when passing through CR4 on VMX
+Message-ID: <Z1uOMdYiWz68LAPo@intel.com>
+References: <20241128013424.4096668-1-seanjc@google.com>
+ <20241128013424.4096668-6-seanjc@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241128013424.4096668-6-seanjc@google.com>
+X-ClientProxiedBy: SG2PR06CA0214.apcprd06.prod.outlook.com
+ (2603:1096:4:68::22) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241128013424.4096668-1-seanjc@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-58-seanjc@google.com>
-Subject: [PATCH v3 57/57] KVM: x86: Use only local variables (no bitmask) to
- init kvm_cpu_caps
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
-Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Hou Wenlong <houwenlong.hwl@antgroup.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SA1PR11MB5899:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71a264fb-e954-4edc-51a4-08dd1b15bead
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?fQZCSzQt39gV/nHNSTD6B7YWplTo+QmDAQIWg6AI/ncCFEeOUq2AAcjVWvQg?=
+ =?us-ascii?Q?uhEfXrfsG6SPPfe4WNA3RGuQkRVJHwSTdebOdn5Vq45H0/WLPc+zjS6sin94?=
+ =?us-ascii?Q?E/ic6oqJOw8hYgNbJ1E5YghLgFduP+kujwOCJNx18nwNi/uMMVS+BMqAU8As?=
+ =?us-ascii?Q?h8RmwerlstfEK1zhLcAiKWSClqPqDsjdjMvlusT/SMDoPTZ9lzHKue0ehCpZ?=
+ =?us-ascii?Q?5HLwEdaRRYd1ouygpyqtjTR1nSh0zpZYdjEhvkutmrbXkOl0bJwAcU9ksFsl?=
+ =?us-ascii?Q?9ILFHsVWiSWEwhqQcAtCvbEiHxUenmfK5s4yCbxmsc6S9N+qPci7QAE7GSXc?=
+ =?us-ascii?Q?vPU245dsmWfozwA7I5PZQRKDl7UbQbS9IuGPlv5M5VIqxVzpfEhHNGQ0PJNE?=
+ =?us-ascii?Q?ulg3roAtnG4YnTD45OfgNVHVU2uv7TJsmA1XLgkSPya+l61boxvAlJ2JOOyz?=
+ =?us-ascii?Q?BHRJCuxFvC3TrI6qhnlNKUvkdRaxp3OKol5MB8ud5E8CrwcJlgH+EN058oXK?=
+ =?us-ascii?Q?Fo3kUXBWyzpa83/843p6qF+WhKYhgrW3kQsCWhIioThP0LKZ/RORjmBfHG+2?=
+ =?us-ascii?Q?7KQXyu5SFqchIXGbg8gBr/G6KL61KeYRpg8l5IPJqUuHP82V/OXONTpiA8no?=
+ =?us-ascii?Q?kDW1uL4hp1/2d4OFnbtaubdfRJ/2JGWHeIjmmbW9Jn5OWRYDD6YTSzXVx464?=
+ =?us-ascii?Q?5DDgD20JzDUJnZSj8IsJi/75cOe1LBRW7mtKvRVrYsRfAEWSfBpYjJpMmDX0?=
+ =?us-ascii?Q?DBQQwM4EQCecKf16cf7zzfLskiMsGeZPtspbo/jLp+uZCKy5+HU3TzMNzlFg?=
+ =?us-ascii?Q?lyG3Nada2vL2wIhqYpsllBHlsj5hkfhfOnxmeTr64RJ+FSn4BIi6BiFAEAUR?=
+ =?us-ascii?Q?JrcsU1pkhIk7wt2fXqyBEG0xK73m95MBfrJY+2TGJDBXvpbEQgSnehSqBIvy?=
+ =?us-ascii?Q?wi07UbMrWauhc/xjxQCjbWX/0eW4yx4k1aZqLRhSB7zH64X4mKQg8Y31yErZ?=
+ =?us-ascii?Q?Qae7F93+JoNVU0Cacqk3G0DZGt/x9GFjnqUukO2RBwSqG7k03inexIzpcNnC?=
+ =?us-ascii?Q?SpJ14sel5LfQ/0iZaATac4/rFkpqBOxSSBshmnYb/Q4cbWIgjJZ3Z49aRmaM?=
+ =?us-ascii?Q?9547mYCyeibAFOufzyjTIcNqxge28N/pKS5q24zO/mZyUpyAhQFjGdTrmV2e?=
+ =?us-ascii?Q?6ZV5MmZmCXm6Wz4vgN3hnT57LOu0MpL/3mvCbCwMwC+04nU5qDDazlMNr8jh?=
+ =?us-ascii?Q?SlyWzUnHyQE0JtCM0uQ88j1zaPn0+OOS1b313H3LLix/1ZPxd2pTKZ4HrkqA?=
+ =?us-ascii?Q?Ocs/hcwryKtHTMH/TEZyvYSTkTFlr4CBi3Q35tTHXbmW2A=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?GYKioX5043gZRrUM6LXwfb6Gc3rrX3cxLwBmZx/UuAaSwxYbOs3CehfezEKk?=
+ =?us-ascii?Q?WJ9rw7Na0NPZhl4TyfqHJNZWTjbGiMIOBc0n6XDhGcl7cPboHi2MBQHUJCQt?=
+ =?us-ascii?Q?36Qr9eoG4H/W0EfJYEzAnbtHozjwmKswDEjFedQgm6NyulloA3HrlROqwQHU?=
+ =?us-ascii?Q?8h4ujDyW7Yy2fB5z7gkXrPv7BhGv3mcZHoXynPSpaCK/lLQf8N280ybbokQO?=
+ =?us-ascii?Q?+O6XQdreElseFHFHZ7wSdIXn8dwuNcoiNt44mhhMp1DLat8EGUbo6c/vSaIn?=
+ =?us-ascii?Q?Gripyyd18luBW3q92SyUvJi6XCMjPvAYbjhegKgdbtLeK3pwyPIJ5jpKUnTn?=
+ =?us-ascii?Q?0e9b6M53j90mqPf/wyWORaOojHsl+lyih47I/Zq3gM+VOGs0LX6iYLsC49g7?=
+ =?us-ascii?Q?3/PJQoL+zVPr0a7x0qkxBdIexB0bDolrKIsniITZJc0i4ZTUL48gGBnEYUct?=
+ =?us-ascii?Q?Elu+XluaDaBOqk9EiWEWjpjSEpMsdLLxrnZ13vPPpqJc3jaIXL708sxzhM+O?=
+ =?us-ascii?Q?tB1DzACSdQKYjW69gwhnZYe6gZPU3yaGPcYwLzBI6hKDI5MRn31U0b9y3ctO?=
+ =?us-ascii?Q?81d9qezqtRU6uNPNad1NVNZeKKe95n7ntTY5rc88IQBHfikff6espZOEpqQt?=
+ =?us-ascii?Q?NuEOcoc59Y3ZkZiYBiwwi1RuIGBpGA54fv4PaKhs4BAn+stLaT1GllMaSjH/?=
+ =?us-ascii?Q?DnZjfIl1m6Ae3JgWDmPPso3L4xWjmgv77ZMklTrz1s6FSIXHDnD0m4blZ5yo?=
+ =?us-ascii?Q?92YdMcXktrRGA1EJTkuKvprDpZe9RjSI/7ZxThTrRwM4E2Q/zLCsShqzDmAR?=
+ =?us-ascii?Q?fkkSspeZ+cpb0wJ1q8AiS8hHfnSR6SJIihgA0aPs9nMel0oeHlM3dmCEB25H?=
+ =?us-ascii?Q?z2bbEuS4ucj/XwkBKvwtfwumDwcOOilEnFMUZm/NJ0gs9etTJKTPJTAXMlcu?=
+ =?us-ascii?Q?HcM5QIK+H6fIl47QhqznDl+esnia4xq4ZxKp//htLh7DnLJocGHtEWNPXWi8?=
+ =?us-ascii?Q?IDrqYj485NWJ0ZrO2i1ygHvaYcTrpVjc+/pBI497haOK0eCCpdpCSNSCapmr?=
+ =?us-ascii?Q?Fhf3hAOOZ2S3NQa++MrKyRycxijq6dUGyqPeU8kXpWP+brjsFp73OXCBdDmb?=
+ =?us-ascii?Q?1N3NddF7TK3w6r1qa6dsxXWNBoMgmLlE+wqD4EzrDNZ+8cVDn7QfqNuG0ibK?=
+ =?us-ascii?Q?gvPQrIH7zhFiSnXK24cNOZ1GG0xaU3SgQXIv7ScOCM1gAAmcGO4QqXR1E9X/?=
+ =?us-ascii?Q?p111yXkYfGXu56L++PkDyKKQw1REYE5Jvk0Vz+KNlQNjwqjDcuaeF6i53SuS?=
+ =?us-ascii?Q?HiDAIhO//KewsXdJgS0JfLlv1b2IUf57S+hhFSJ8Ru8K8Z4OOUieJ8/MIT7f?=
+ =?us-ascii?Q?GE/rvbnzh8ymKgjE2HdEmzfamMmMRXmPwOR4pupxwyFRtJcPUy2JWEu70L0Q?=
+ =?us-ascii?Q?dnVMibPGzkrLgbjx3agTJn0jLgiHNls3jbPKbR3kC2jRdMtevHMW4PIQs2Yp?=
+ =?us-ascii?Q?XBJlIDJJsRJCJznA0cOnxhC5ozpOek/9cGmFIfJLUiVlmPTVBN3kRROvA31i?=
+ =?us-ascii?Q?+XGvWzUZLA1nzQ9UFw5XJR+vwrWZIhznY3qON7qz?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71a264fb-e954-4edc-51a4-08dd1b15bead
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 01:30:36.5438
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gmnO7ilTYdVIZdj9UxgDoGlGIPMGWD4y/B1K++YUdZzO3YLh2xL8f0WEyNbYjgWbclRDP8h6aNnLgmKWDdXt6A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5899
+X-OriginatorOrg: intel.com
 
-Refactor the kvm_cpu_cap_init() macro magic to collect supported features
-in a local variable instead of passing them to the macro as a "mask".  As
-pointed out by Maxim, relying on macros to "return" a value and set local
-variables is surprising, as the bitwise-OR logic suggests the macros are
-pure, i.e. have no side effects.
+On Wed, Nov 27, 2024 at 05:33:32PM -0800, Sean Christopherson wrote:
+>Drop x86.c's local pre-computed cr4_reserved bits and instead fold KVM's
+>reserved bits into the guest's reserved bits.  This fixes a bug where VMX's
+>set_cr4_guest_host_mask() fails to account for KVM-reserved bits when
+>deciding which bits can be passed through to the guest.  In most cases,
+>letting the guest directly write reserved CR4 bits is ok, i.e. attempting
+>to set the bit(s) will still #GP, but not if a feature is available in
+>hardware but explicitly disabled by the host, e.g. if FSGSBASE support is
+>disabled via "nofsgsbase".
+>
+>Note, the extra overhead of computing host reserved bits every time
+>userspace sets guest CPUID is negligible.  The feature bits that are
+>queried are packed nicely into a handful of words, and so checking and
+>setting each reserved bit costs in the neighborhood of ~5 cycles, i.e. the
+>total cost will be in the noise even if the number of checked CR4 bits
+>doubles over the next few years.  In other words, x86 will run out of CR4
+>bits long before the overhead becomes problematic.
+>
+>Note #2, __cr4_reserved_bits() starts from CR4_RESERVED_BITS, which is
+>why the existing __kvm_cpu_cap_has() processing doesn't explicitly OR in
+>CR4_RESERVED_BITS (and why the new code doesn't do so either).
+>
+>Fixes: 2ed41aa631fc ("KVM: VMX: Intercept guest reserved CR4 bits to inject #GP fault")
+>Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+>Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Ideally, the feature initializers would have zero side effects, e.g. would
-take local variables as params, but there isn't a sane way to do so
-without either sacrificing the various compile-time assertions (basically
-a non-starter), or passing at least one variable, e.g. a struct, to each
-macro usage (adds a lot of noise and boilerplate code).
-
-Opportunistically force callers to emit a trailing comma by intentionally
-omitting a semicolon after invoking the feature initializers.  Forcing a
-trailing comma isotales futures changes to a single line, i.e. doesn't
-cause churn for unrelated features/lines when adding/removing/modifying a
-feature.
-
-No functional change intended.
-
-Suggested-by: Maxim Levitsky <mlevitsk@redhat.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/cpuid.c | 541 ++++++++++++++++++++++---------------------
- 1 file changed, 273 insertions(+), 268 deletions(-)
-
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index e03154b9833f..572dfa7e206e 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -661,7 +661,7 @@ static __always_inline u32 raw_cpuid_get(struct cpuid_reg cpuid)
-  * capabilities as well as raw CPUID.  For KVM-defined leafs, consult only raw
-  * CPUID, as KVM is the one and only authority (in the kernel).
-  */
--#define kvm_cpu_cap_init(leaf, mask)					\
-+#define kvm_cpu_cap_init(leaf, feature_initializers...)			\
- do {									\
- 	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);	\
- 	const u32 __maybe_unused kvm_cpu_cap_init_in_progress = leaf;	\
-@@ -669,8 +669,11 @@ do {									\
- 	u32 kvm_cpu_cap_passthrough = 0;				\
- 	u32 kvm_cpu_cap_synthesized = 0;				\
- 	u32 kvm_cpu_cap_emulated = 0;					\
-+	u32 kvm_cpu_cap_features = 0;					\
- 									\
--	kvm_cpu_caps[leaf] = (mask);					\
-+	feature_initializers						\
-+									\
-+	kvm_cpu_caps[leaf] = kvm_cpu_cap_features;			\
- 									\
- 	if (leaf < NCAPINTS)						\
- 		kvm_cpu_caps[leaf] &= kernel_cpu_caps[leaf];		\
-@@ -696,7 +699,7 @@ do {									\
- #define F(name)							\
- ({								\
- 	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
--	feature_bit(name);					\
-+	kvm_cpu_cap_features |= feature_bit(name);		\
- })
- 
- /* Scattered Flag - For features that are scattered by cpufeatures.h. */
-@@ -704,14 +707,16 @@ do {									\
- ({								\
- 	BUILD_BUG_ON(X86_FEATURE_##name >= MAX_CPU_FEATURES);	\
- 	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
--	(boot_cpu_has(X86_FEATURE_##name) ? F(name) : 0);	\
-+	if (boot_cpu_has(X86_FEATURE_##name))			\
-+		F(name);					\
- })
- 
- /* Features that KVM supports only on 64-bit kernels. */
- #define X86_64_F(name)						\
- ({								\
- 	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
--	(IS_ENABLED(CONFIG_X86_64) ? F(name) : 0);		\
-+	if (IS_ENABLED(CONFIG_X86_64))				\
-+		F(name);					\
- })
- 
- /*
-@@ -720,7 +725,7 @@ do {									\
-  */
- #define EMULATED_F(name)					\
- ({								\
--	kvm_cpu_cap_emulated |= F(name);			\
-+	kvm_cpu_cap_emulated |= feature_bit(name);		\
- 	F(name);						\
- })
- 
-@@ -731,7 +736,7 @@ do {									\
-  */
- #define SYNTHESIZED_F(name)					\
- ({								\
--	kvm_cpu_cap_synthesized |= F(name);			\
-+	kvm_cpu_cap_synthesized |= feature_bit(name);		\
- 	F(name);						\
- })
- 
-@@ -743,7 +748,7 @@ do {									\
-  */
- #define PASSTHROUGH_F(name)					\
- ({								\
--	kvm_cpu_cap_passthrough |= F(name);			\
-+	kvm_cpu_cap_passthrough |= feature_bit(name);		\
- 	F(name);						\
- })
- 
-@@ -755,7 +760,7 @@ do {									\
- ({										\
- 	BUILD_BUG_ON(__feature_leaf(X86_FEATURE_##name) != CPUID_1_EDX);	\
- 	BUILD_BUG_ON(kvm_cpu_cap_init_in_progress != CPUID_8000_0001_EDX);	\
--	feature_bit(name);							\
-+	kvm_cpu_cap_features |= feature_bit(name);				\
- })
- 
- /*
-@@ -765,7 +770,6 @@ do {									\
- #define VENDOR_F(name)						\
- ({								\
- 	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
--	0;							\
- })
- 
- /*
-@@ -775,7 +779,6 @@ do {									\
- #define RUNTIME_F(name)						\
- ({								\
- 	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
--	0;							\
- })
- 
- /*
-@@ -795,126 +798,128 @@ void kvm_set_cpu_caps(void)
- 		     sizeof(boot_cpu_data.x86_capability));
- 
- 	kvm_cpu_cap_init(CPUID_1_ECX,
--		F(XMM3) |
--		F(PCLMULQDQ) |
--		VENDOR_F(DTES64) |
-+		F(XMM3),
-+		F(PCLMULQDQ),
-+		VENDOR_F(DTES64),
- 		/*
- 		 * NOTE: MONITOR (and MWAIT) are emulated as NOP, but *not*
- 		 * advertised to guests via CPUID!  MWAIT is also technically a
- 		 * runtime flag thanks to IA32_MISC_ENABLES; mark it as such so
- 		 * that KVM is aware that it's a known, unadvertised flag.
- 		 */
--		RUNTIME_F(MWAIT) |
--		VENDOR_F(VMX) |
--		0 /* DS-CPL, SMX, EST */ |
--		0 /* TM2 */ |
--		F(SSSE3) |
--		0 /* CNXT-ID */ |
--		0 /* Reserved */ |
--		F(FMA) |
--		F(CX16) |
--		0 /* xTPR Update */ |
--		F(PDCM) |
--		F(PCID) |
--		0 /* Reserved, DCA */ |
--		F(XMM4_1) |
--		F(XMM4_2) |
--		EMULATED_F(X2APIC) |
--		F(MOVBE) |
--		F(POPCNT) |
--		EMULATED_F(TSC_DEADLINE_TIMER) |
--		F(AES) |
--		F(XSAVE) |
--		RUNTIME_F(OSXSAVE) |
--		F(AVX) |
--		F(F16C) |
--		F(RDRAND) |
--		EMULATED_F(HYPERVISOR)
-+		RUNTIME_F(MWAIT),
-+		/* DS-CPL */
-+		VENDOR_F(VMX),
-+		/* SMX, EST */
-+		/* TM2 */
-+		F(SSSE3),
-+		/* CNXT-ID */
-+		/* Reserved */
-+		F(FMA),
-+		F(CX16),
-+		/* xTPR Update */
-+		F(PDCM),
-+		F(PCID),
-+		/* Reserved, DCA */
-+		F(XMM4_1),
-+		F(XMM4_2),
-+		EMULATED_F(X2APIC),
-+		F(MOVBE),
-+		F(POPCNT),
-+		EMULATED_F(TSC_DEADLINE_TIMER),
-+		F(AES),
-+		F(XSAVE),
-+		RUNTIME_F(OSXSAVE),
-+		F(AVX),
-+		F(F16C),
-+		F(RDRAND),
-+		EMULATED_F(HYPERVISOR),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_1_EDX,
--		F(FPU) |
--		F(VME) |
--		F(DE) |
--		F(PSE) |
--		F(TSC) |
--		F(MSR) |
--		F(PAE) |
--		F(MCE) |
--		F(CX8) |
--		F(APIC) |
--		0 /* Reserved */ |
--		F(SEP) |
--		F(MTRR) |
--		F(PGE) |
--		F(MCA) |
--		F(CMOV) |
--		F(PAT) |
--		F(PSE36) |
--		0 /* PSN */ |
--		F(CLFLUSH) |
--		0 /* Reserved */ |
--		VENDOR_F(DS) |
--		0 /* ACPI */ |
--		F(MMX) |
--		F(FXSR) |
--		F(XMM) |
--		F(XMM2) |
--		F(SELFSNOOP) |
--		0 /* HTT, TM, Reserved, PBE */
-+		F(FPU),
-+		F(VME),
-+		F(DE),
-+		F(PSE),
-+		F(TSC),
-+		F(MSR),
-+		F(PAE),
-+		F(MCE),
-+		F(CX8),
-+		F(APIC),
-+		/* Reserved */
-+		F(SEP),
-+		F(MTRR),
-+		F(PGE),
-+		F(MCA),
-+		F(CMOV),
-+		F(PAT),
-+		F(PSE36),
-+		/* PSN */
-+		F(CLFLUSH),
-+		/* Reserved */
-+		VENDOR_F(DS),
-+		/* ACPI */
-+		F(MMX),
-+		F(FXSR),
-+		F(XMM),
-+		F(XMM2),
-+		F(SELFSNOOP),
-+		/* HTT, TM, Reserved, PBE */
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_7_0_EBX,
--		F(FSGSBASE) |
--		EMULATED_F(TSC_ADJUST) |
--		F(SGX) |
--		F(BMI1) |
--		F(HLE) |
--		F(AVX2) |
--		F(FDP_EXCPTN_ONLY) |
--		F(SMEP) |
--		F(BMI2) |
--		F(ERMS) |
--		F(INVPCID) |
--		F(RTM) |
--		F(ZERO_FCS_FDS) |
--		VENDOR_F(MPX) |
--		F(AVX512F) |
--		F(AVX512DQ) |
--		F(RDSEED) |
--		F(ADX) |
--		F(SMAP) |
--		F(AVX512IFMA) |
--		F(CLFLUSHOPT) |
--		F(CLWB) |
--		VENDOR_F(INTEL_PT) |
--		F(AVX512PF) |
--		F(AVX512ER) |
--		F(AVX512CD) |
--		F(SHA_NI) |
--		F(AVX512BW) |
--		F(AVX512VL));
-+		F(FSGSBASE),
-+		EMULATED_F(TSC_ADJUST),
-+		F(SGX),
-+		F(BMI1),
-+		F(HLE),
-+		F(AVX2),
-+		F(FDP_EXCPTN_ONLY),
-+		F(SMEP),
-+		F(BMI2),
-+		F(ERMS),
-+		F(INVPCID),
-+		F(RTM),
-+		F(ZERO_FCS_FDS),
-+		VENDOR_F(MPX),
-+		F(AVX512F),
-+		F(AVX512DQ),
-+		F(RDSEED),
-+		F(ADX),
-+		F(SMAP),
-+		F(AVX512IFMA),
-+		F(CLFLUSHOPT),
-+		F(CLWB),
-+		VENDOR_F(INTEL_PT),
-+		F(AVX512PF),
-+		F(AVX512ER),
-+		F(AVX512CD),
-+		F(SHA_NI),
-+		F(AVX512BW),
-+		F(AVX512VL),
-+	);
- 
- 	kvm_cpu_cap_init(CPUID_7_ECX,
--		F(AVX512VBMI) |
--		PASSTHROUGH_F(LA57) |
--		F(PKU) |
--		RUNTIME_F(OSPKE) |
--		F(RDPID) |
--		F(AVX512_VPOPCNTDQ) |
--		F(UMIP) |
--		F(AVX512_VBMI2) |
--		F(GFNI) |
--		F(VAES) |
--		F(VPCLMULQDQ) |
--		F(AVX512_VNNI) |
--		F(AVX512_BITALG) |
--		F(CLDEMOTE) |
--		F(MOVDIRI) |
--		F(MOVDIR64B) |
--		VENDOR_F(WAITPKG) |
--		F(SGX_LC) |
--		F(BUS_LOCK_DETECT)
-+		F(AVX512VBMI),
-+		PASSTHROUGH_F(LA57),
-+		F(PKU),
-+		RUNTIME_F(OSPKE),
-+		F(RDPID),
-+		F(AVX512_VPOPCNTDQ),
-+		F(UMIP),
-+		F(AVX512_VBMI2),
-+		F(GFNI),
-+		F(VAES),
-+		F(VPCLMULQDQ),
-+		F(AVX512_VNNI),
-+		F(AVX512_BITALG),
-+		F(CLDEMOTE),
-+		F(MOVDIRI),
-+		F(MOVDIR64B),
-+		VENDOR_F(WAITPKG),
-+		F(SGX_LC),
-+		F(BUS_LOCK_DETECT),
- 	);
- 
- 	/*
-@@ -925,22 +930,22 @@ void kvm_set_cpu_caps(void)
- 		kvm_cpu_cap_clear(X86_FEATURE_PKU);
- 
- 	kvm_cpu_cap_init(CPUID_7_EDX,
--		F(AVX512_4VNNIW) |
--		F(AVX512_4FMAPS) |
--		F(SPEC_CTRL) |
--		F(SPEC_CTRL_SSBD) |
--		EMULATED_F(ARCH_CAPABILITIES) |
--		F(INTEL_STIBP) |
--		F(MD_CLEAR) |
--		F(AVX512_VP2INTERSECT) |
--		F(FSRM) |
--		F(SERIALIZE) |
--		F(TSXLDTRK) |
--		F(AVX512_FP16) |
--		F(AMX_TILE) |
--		F(AMX_INT8) |
--		F(AMX_BF16) |
--		F(FLUSH_L1D)
-+		F(AVX512_4VNNIW),
-+		F(AVX512_4FMAPS),
-+		F(SPEC_CTRL),
-+		F(SPEC_CTRL_SSBD),
-+		EMULATED_F(ARCH_CAPABILITIES),
-+		F(INTEL_STIBP),
-+		F(MD_CLEAR),
-+		F(AVX512_VP2INTERSECT),
-+		F(FSRM),
-+		F(SERIALIZE),
-+		F(TSXLDTRK),
-+		F(AVX512_FP16),
-+		F(AMX_TILE),
-+		F(AMX_INT8),
-+		F(AMX_BF16),
-+		F(FLUSH_L1D),
- 	);
- 
- 	if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
-@@ -953,132 +958,132 @@ void kvm_set_cpu_caps(void)
- 		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL_SSBD);
- 
- 	kvm_cpu_cap_init(CPUID_7_1_EAX,
--		F(SHA512) |
--		F(SM3) |
--		F(SM4) |
--		F(AVX_VNNI) |
--		F(AVX512_BF16) |
--		F(CMPCCXADD) |
--		F(FZRM) |
--		F(FSRS) |
--		F(FSRC) |
--		F(AMX_FP16) |
--		F(AVX_IFMA) |
--		F(LAM)
-+		F(SHA512),
-+		F(SM3),
-+		F(SM4),
-+		F(AVX_VNNI),
-+		F(AVX512_BF16),
-+		F(CMPCCXADD),
-+		F(FZRM),
-+		F(FSRS),
-+		F(FSRC),
-+		F(AMX_FP16),
-+		F(AVX_IFMA),
-+		F(LAM),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_7_1_EDX,
--		F(AVX_VNNI_INT8) |
--		F(AVX_NE_CONVERT) |
--		F(AMX_COMPLEX) |
--		F(AVX_VNNI_INT16) |
--		F(PREFETCHITI) |
--		F(AVX10)
-+		F(AVX_VNNI_INT8),
-+		F(AVX_NE_CONVERT),
-+		F(AMX_COMPLEX),
-+		F(AVX_VNNI_INT16),
-+		F(PREFETCHITI),
-+		F(AVX10),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_7_2_EDX,
--		F(INTEL_PSFD) |
--		F(IPRED_CTRL) |
--		F(RRSBA_CTRL) |
--		F(DDPD_U) |
--		F(BHI_CTRL) |
--		F(MCDT_NO)
-+		F(INTEL_PSFD),
-+		F(IPRED_CTRL),
-+		F(RRSBA_CTRL),
-+		F(DDPD_U),
-+		F(BHI_CTRL),
-+		F(MCDT_NO),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_D_1_EAX,
--		F(XSAVEOPT) |
--		F(XSAVEC) |
--		F(XGETBV1) |
--		F(XSAVES) |
--		X86_64_F(XFD)
-+		F(XSAVEOPT),
-+		F(XSAVEC),
-+		F(XGETBV1),
-+		F(XSAVES),
-+		X86_64_F(XFD),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_12_EAX,
--		SCATTERED_F(SGX1) |
--		SCATTERED_F(SGX2) |
--		SCATTERED_F(SGX_EDECCSSA)
-+		SCATTERED_F(SGX1),
-+		SCATTERED_F(SGX2),
-+		SCATTERED_F(SGX_EDECCSSA),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_24_0_EBX,
--		F(AVX10_128) |
--		F(AVX10_256) |
--		F(AVX10_512)
-+		F(AVX10_128),
-+		F(AVX10_256),
-+		F(AVX10_512),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_8000_0001_ECX,
--		F(LAHF_LM) |
--		F(CMP_LEGACY) |
--		VENDOR_F(SVM) |
--		0 /* ExtApicSpace */ |
--		F(CR8_LEGACY) |
--		F(ABM) |
--		F(SSE4A) |
--		F(MISALIGNSSE) |
--		F(3DNOWPREFETCH) |
--		F(OSVW) |
--		0 /* IBS */ |
--		F(XOP) |
--		0 /* SKINIT, WDT, LWP */ |
--		F(FMA4) |
--		F(TBM) |
--		F(TOPOEXT) |
--		VENDOR_F(PERFCTR_CORE)
-+		F(LAHF_LM),
-+		F(CMP_LEGACY),
-+		VENDOR_F(SVM),
-+		/* ExtApicSpace */
-+		F(CR8_LEGACY),
-+		F(ABM),
-+		F(SSE4A),
-+		F(MISALIGNSSE),
-+		F(3DNOWPREFETCH),
-+		F(OSVW),
-+		/* IBS */
-+		F(XOP),
-+		/* SKINIT, WDT, LWP */
-+		F(FMA4),
-+		F(TBM),
-+		F(TOPOEXT),
-+		VENDOR_F(PERFCTR_CORE),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_8000_0001_EDX,
--		ALIASED_1_EDX_F(FPU) |
--		ALIASED_1_EDX_F(VME) |
--		ALIASED_1_EDX_F(DE) |
--		ALIASED_1_EDX_F(PSE) |
--		ALIASED_1_EDX_F(TSC) |
--		ALIASED_1_EDX_F(MSR) |
--		ALIASED_1_EDX_F(PAE) |
--		ALIASED_1_EDX_F(MCE) |
--		ALIASED_1_EDX_F(CX8) |
--		ALIASED_1_EDX_F(APIC) |
--		0 /* Reserved */ |
--		F(SYSCALL) |
--		ALIASED_1_EDX_F(MTRR) |
--		ALIASED_1_EDX_F(PGE) |
--		ALIASED_1_EDX_F(MCA) |
--		ALIASED_1_EDX_F(CMOV) |
--		ALIASED_1_EDX_F(PAT) |
--		ALIASED_1_EDX_F(PSE36) |
--		0 /* Reserved */ |
--		F(NX) |
--		0 /* Reserved */ |
--		F(MMXEXT) |
--		ALIASED_1_EDX_F(MMX) |
--		ALIASED_1_EDX_F(FXSR) |
--		F(FXSR_OPT) |
--		X86_64_F(GBPAGES) |
--		F(RDTSCP) |
--		0 /* Reserved */ |
--		X86_64_F(LM) |
--		F(3DNOWEXT) |
--		F(3DNOW)
-+		ALIASED_1_EDX_F(FPU),
-+		ALIASED_1_EDX_F(VME),
-+		ALIASED_1_EDX_F(DE),
-+		ALIASED_1_EDX_F(PSE),
-+		ALIASED_1_EDX_F(TSC),
-+		ALIASED_1_EDX_F(MSR),
-+		ALIASED_1_EDX_F(PAE),
-+		ALIASED_1_EDX_F(MCE),
-+		ALIASED_1_EDX_F(CX8),
-+		ALIASED_1_EDX_F(APIC),
-+		/* Reserved */
-+		F(SYSCALL),
-+		ALIASED_1_EDX_F(MTRR),
-+		ALIASED_1_EDX_F(PGE),
-+		ALIASED_1_EDX_F(MCA),
-+		ALIASED_1_EDX_F(CMOV),
-+		ALIASED_1_EDX_F(PAT),
-+		ALIASED_1_EDX_F(PSE36),
-+		/* Reserved */
-+		F(NX),
-+		/* Reserved */
-+		F(MMXEXT),
-+		ALIASED_1_EDX_F(MMX),
-+		ALIASED_1_EDX_F(FXSR),
-+		F(FXSR_OPT),
-+		X86_64_F(GBPAGES),
-+		F(RDTSCP),
-+		/* Reserved */
-+		X86_64_F(LM),
-+		F(3DNOWEXT),
-+		F(3DNOW),
- 	);
- 
- 	if (!tdp_enabled && IS_ENABLED(CONFIG_X86_64))
- 		kvm_cpu_cap_set(X86_FEATURE_GBPAGES);
- 
- 	kvm_cpu_cap_init(CPUID_8000_0007_EDX,
--		SCATTERED_F(CONSTANT_TSC)
-+		SCATTERED_F(CONSTANT_TSC),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_8000_0008_EBX,
--		F(CLZERO) |
--		F(XSAVEERPTR) |
--		F(WBNOINVD) |
--		F(AMD_IBPB) |
--		F(AMD_IBRS) |
--		F(AMD_SSBD) |
--		F(VIRT_SSBD) |
--		F(AMD_SSB_NO) |
--		F(AMD_STIBP) |
--		F(AMD_STIBP_ALWAYS_ON) |
--		F(AMD_PSFD) |
--		F(AMD_IBPB_RET)
-+		F(CLZERO),
-+		F(XSAVEERPTR),
-+		F(WBNOINVD),
-+		F(AMD_IBPB),
-+		F(AMD_IBRS),
-+		F(AMD_SSBD),
-+		F(VIRT_SSBD),
-+		F(AMD_SSB_NO),
-+		F(AMD_STIBP),
-+		F(AMD_STIBP_ALWAYS_ON),
-+		F(AMD_PSFD),
-+		F(AMD_IBPB_RET),
- 	);
- 
- 	/*
-@@ -1110,30 +1115,30 @@ void kvm_set_cpu_caps(void)
- 
- 	/* All SVM features required additional vendor module enabling. */
- 	kvm_cpu_cap_init(CPUID_8000_000A_EDX,
--		VENDOR_F(NPT) |
--		VENDOR_F(VMCBCLEAN) |
--		VENDOR_F(FLUSHBYASID) |
--		VENDOR_F(NRIPS) |
--		VENDOR_F(TSCRATEMSR) |
--		VENDOR_F(V_VMSAVE_VMLOAD) |
--		VENDOR_F(LBRV) |
--		VENDOR_F(PAUSEFILTER) |
--		VENDOR_F(PFTHRESHOLD) |
--		VENDOR_F(VGIF) |
--		VENDOR_F(VNMI) |
--		VENDOR_F(SVME_ADDR_CHK)
-+		VENDOR_F(NPT),
-+		VENDOR_F(VMCBCLEAN),
-+		VENDOR_F(FLUSHBYASID),
-+		VENDOR_F(NRIPS),
-+		VENDOR_F(TSCRATEMSR),
-+		VENDOR_F(V_VMSAVE_VMLOAD),
-+		VENDOR_F(LBRV),
-+		VENDOR_F(PAUSEFILTER),
-+		VENDOR_F(PFTHRESHOLD),
-+		VENDOR_F(VGIF),
-+		VENDOR_F(VNMI),
-+		VENDOR_F(SVME_ADDR_CHK),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_8000_001F_EAX,
--		VENDOR_F(SME) |
--		VENDOR_F(SEV) |
--		0 /* VM_PAGE_FLUSH */ |
--		VENDOR_F(SEV_ES) |
--		F(SME_COHERENT)
-+		VENDOR_F(SME),
-+		VENDOR_F(SEV),
-+		/* VM_PAGE_FLUSH */
-+		VENDOR_F(SEV_ES),
-+		F(SME_COHERENT),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_8000_0021_EAX,
--		F(NO_NESTED_DATA_BP) |
-+		F(NO_NESTED_DATA_BP),
- 		/*
- 		 * Synthesize "LFENCE is serializing" into the AMD-defined entry
- 		 * in KVM's supported CPUID, i.e. if the feature is reported as
-@@ -1144,36 +1149,36 @@ void kvm_set_cpu_caps(void)
- 		 * CPUID will drop the flags, and reporting support in AMD's
- 		 * leaf can make it easier for userspace to detect the feature.
- 		 */
--		SYNTHESIZED_F(LFENCE_RDTSC) |
--		0 /* SmmPgCfgLock */ |
--		F(NULL_SEL_CLR_BASE) |
--		F(AUTOIBRS) |
--		EMULATED_F(NO_SMM_CTL_MSR) |
--		0 /* PrefetchCtlMsr */ |
--		F(WRMSR_XX_BASE_NS) |
--		SYNTHESIZED_F(SBPB) |
--		SYNTHESIZED_F(IBPB_BRTYPE) |
--		SYNTHESIZED_F(SRSO_NO)
-+		SYNTHESIZED_F(LFENCE_RDTSC),
-+		/* SmmPgCfgLock */
-+		F(NULL_SEL_CLR_BASE),
-+		F(AUTOIBRS),
-+		EMULATED_F(NO_SMM_CTL_MSR),
-+		/* PrefetchCtlMsr */
-+		F(WRMSR_XX_BASE_NS),
-+		SYNTHESIZED_F(SBPB),
-+		SYNTHESIZED_F(IBPB_BRTYPE),
-+		SYNTHESIZED_F(SRSO_NO),
- 	);
- 
- 	kvm_cpu_cap_init(CPUID_8000_0022_EAX,
--		F(PERFMON_V2)
-+		F(PERFMON_V2),
- 	);
- 
- 	if (!static_cpu_has_bug(X86_BUG_NULL_SEG))
- 		kvm_cpu_cap_set(X86_FEATURE_NULL_SEL_CLR_BASE);
- 
- 	kvm_cpu_cap_init(CPUID_C000_0001_EDX,
--		F(XSTORE) |
--		F(XSTORE_EN) |
--		F(XCRYPT) |
--		F(XCRYPT_EN) |
--		F(ACE2) |
--		F(ACE2_EN) |
--		F(PHE) |
--		F(PHE_EN) |
--		F(PMM) |
--		F(PMM_EN)
-+		F(XSTORE),
-+		F(XSTORE_EN),
-+		F(XCRYPT),
-+		F(XCRYPT_EN),
-+		F(ACE2),
-+		F(ACE2_EN),
-+		F(PHE),
-+		F(PHE_EN),
-+		F(PMM),
-+		F(PMM_EN),
- 	);
- 
- 	/*
--- 
-2.47.0.338.g60cca15819-goog
-
+Reviewed-by: Chao Gao <chao.gao@intel.com>
