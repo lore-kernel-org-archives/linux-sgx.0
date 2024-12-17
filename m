@@ -1,133 +1,128 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FBB1C3BEA
-	for <linux-sgx@vger.kernel.org>; Fri, 13 Dec 2024 10:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58C9647
+	for <linux-sgx@vger.kernel.org>; Tue, 17 Dec 2024 00:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734087241; cv=none; b=T8x+PDu3mOrlrDKMiICs5YrFbmZObwDG/cPWBW6UGaRPKm/zp3KW05A2SWhkdvDzEhPDXJJSBNR3IM0mdqp3ixCd0aPNvegKdzK/m4O7yaFJmENPg4FyB4m8ozeY19rGdvn6MoXEL4EtgzdGZvSLkMjTXnNke4BgQdbIuiY2PiQ=
+	t=1734393904; cv=none; b=bbI/a6gwa+W5Q8IBtQt1mIt1Y/KpPjhQQ2d9PkuVo6xajSulre78daet4rzjul//gG3JRwZhm1ubJoPKdBX3OxOJ8zClDVhTDxT6Ql/C0r5VcHWsoJlVfkcMzrcs7e72HsYMqSBDSadtXto+C0SvK0ZjNpztcwqKYyo3CNM94jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734087241; c=relaxed/simple;
-	bh=okqpacIbcOlbR8x92errleYPqAKmSIoPXXz7pzDyyqI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=etblaX05esxryPciLprhdsuSXROltkUlDsZS3vefTua1vGT86+3iFEDjTC4Wa/Be3c/YV0M4isKd1NJP2KdDUplXzRyqPTuqoZ29YpS2RLDArtPIvTjn2y19udhj81nnYM6Jd4WRkgZoVM8MpDDi7RKxv39cekysEFSOgNR8/Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LsRap7bg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1734393904; c=relaxed/simple;
+	bh=tTuscJutUdd2sLQt+uLIwhRsouGBqOWQjhuN9kir8Nk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iEQqh4vby6s1kNvkOc5Fb3xU6xB/M2ODFtprT5Q2U1l56Y46yEVfw7diIxjWYmjI3q3PnSS03UlmgQohZ2VftZ4/300j837l5YLanXSudIvxd0CqTZyUfIak6dvIBsaXVFeaS74smBDdzadBironrPf7SM6XSenfUn1FKhGpanU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0ExLu/oo; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LsRap7bg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734087238;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tZP36RlbgyjCPid9qIB9xpaONyqLFu9PuB4d/BcSVyY=;
-	b=LsRap7bgoSHcgHTV4oLkKdWtl2Ym8iIwWt5OOyJOBnobwgAMey7ZYnyy4am7/9W6nI1ucV
-	55wsvAENP7WLm7W/IXpeedhuu6RsTWjZ0vLpFo71ZVrZ9WYCBkUaCdN+cJcRsLSJZxfpiT
-	RwQBpK3pp0hK3TJ/fxV+/bvXYim3ajI=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-474-NNJx07asNmeXcmaswDWwKQ-1; Fri, 13 Dec 2024 05:53:57 -0500
-X-MC-Unique: NNJx07asNmeXcmaswDWwKQ-1
-X-Mimecast-MFC-AGG-ID: NNJx07asNmeXcmaswDWwKQ
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-aa676465b44so43625966b.2
-        for <linux-sgx@vger.kernel.org>; Fri, 13 Dec 2024 02:53:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0ExLu/oo"
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2eebfd6d065so6346379a91.3
+        for <linux-sgx@vger.kernel.org>; Mon, 16 Dec 2024 16:05:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734393902; x=1734998702; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vzh8gciBofFR0aOO1K9biPKw16hOgRnrNY7XSncO8gw=;
+        b=0ExLu/ooFubqj3+M3dPKEC8d0DH7UE3h78v9hO8LQpbjOEP5up8ufkuL0wFJ4DnCX6
+         Li8JwkabStB/xd81j3U9y/NUtUbvknxwiYIBwOrU/jMdDhbILC/ZSUD3GkoRk/NdPfdG
+         HpkVeHY2ZmNBDBm4pTE7jvqJ70MnUOBdmK4QspgxQW23rikobbOMfns21pURUpNNxvJo
+         GaW7LxVUtj3z9V9dsyiS6ykPzJhe+/IGOR2WBMAiDCziJHhBiaNV6cIzQZp8P2hluRQr
+         E0xRIX/mP6exdMoVq0gjhR3xazZfI3QEH7DMpdcnkUlphw+rfBhOZiyjhgfbZAKqpVQ/
+         GAGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734087236; x=1734692036;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tZP36RlbgyjCPid9qIB9xpaONyqLFu9PuB4d/BcSVyY=;
-        b=phbb467WBzAX1H14QYR3CQGtVtj9CW1IMp9Bdi+NQ7x1i8rY48o4q/9CCtqwMPW0gp
-         ZxCT1tgy6MymUWre8hdCcy/Q8jlxaPKxuX2/abVJo6mcxa2XEyG0jatUgTUqZ/VmBiUf
-         xiXufCgF0VROG98GSDPDH/uSiN0IuMw2NcwFED1m/8v0YnRfDj6FPUqt+0QNW96XtLed
-         CX5JPUzjbsrGkKGmmemR31K9II+N2gyAl2WQ0gnWqDNq5FmSl5gqwUhuy703N2UeGKpn
-         iKRfXOsEoR/YJ7l941h+GZel90M70ddOfDgnkjlVFQ2ssGcfCz/v62wFn0XyR3oQGzxV
-         Ycsg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7FB5PlhV0+LNK/GkDLBwndMXwttT4XvEufa0bxO7cQJ+h6ZnfQH1eokpZ83KzhFP4jsMvH3HdxVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGIHF6wzuTclB9YXv4XrGjl0M4s5o57/EP0usNjmsj8f0E/WLl
-	RHLLCn5b8qnjW2ls7+tOBq2Dkc7eBGRwgy4O9l3FC8bzvjcJlQk9N3qpQe3y6ObY1eaQcDxznBn
-	ERxGg2XSn6JKa6tVv+W4/0B8Ua+NX8xUkXXuOw0Xv7deOxvWl6KSKCwuOHA==
-X-Gm-Gg: ASbGncsRrlDHFNsqgfQrlMzfz1DMzKCmHpIvmxWrb3ICbdGiu+cCvkDaCO+PINE4VLg
-	HrH/uw7/D5sDNFLcFX+Wxduq3xjYKcpk0ybKqOqTKhlh8LZTulVuLsD0Kw/tE8Siod2qJNsMlpc
-	HsSDyQXRe3RnQ9ccs6lcIv0oqEE1IeXocK+dFDazFXslPsTfDPsX0+kiVHizsnUM0FK/omwcZt/
-	S+o8SbyAxkbDD0gvEFq1RppWxwn9JQSaK/F8wChVFTSEbuT++0=
-X-Received: by 2002:a17:907:7853:b0:aa6:762e:8c20 with SMTP id a640c23a62f3a-aab77e96883mr225244966b.43.1734087236006;
-        Fri, 13 Dec 2024 02:53:56 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHpmtuh+bOXDCMGt5rVmLOBisZQNKYOnKYDf15tmo1bduSNwY/0Lm8b87Kpa+9sghGVqcOKLg==
-X-Received: by 2002:a17:907:7853:b0:aa6:762e:8c20 with SMTP id a640c23a62f3a-aab77e96883mr225242366b.43.1734087235662;
-        Fri, 13 Dec 2024 02:53:55 -0800 (PST)
-Received: from fedora (g2.ign.cz. [91.219.240.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa69f639f59sm513076066b.193.2024.12.13.02.53.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 02:53:55 -0800 (PST)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Jarkko
- Sakkinen <jarkko@kernel.org>
-Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
- linux-kernel@vger.kernel.org, Maxim Levitsky <mlevitsk@redhat.com>, Hou
- Wenlong <houwenlong.hwl@antgroup.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>,
- Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang
- <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
-Subject: Re: [PATCH v3 01/57] KVM: x86: Use feature_bit() to clear
- CONSTANT_TSC when emulating CPUID
-In-Reply-To: <20241128013424.4096668-2-seanjc@google.com>
-References: <20241128013424.4096668-1-seanjc@google.com>
- <20241128013424.4096668-2-seanjc@google.com>
-Date: Fri, 13 Dec 2024 11:53:54 +0100
-Message-ID: <87ed2bsvjx.fsf@redhat.com>
+        d=1e100.net; s=20230601; t=1734393902; x=1734998702;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vzh8gciBofFR0aOO1K9biPKw16hOgRnrNY7XSncO8gw=;
+        b=kAQpNoqGTrqvKHCFsmo/s54FP3X/MHc2Z6JrmfuobQtUQdmauHe12KQK4ykgkAdE32
+         xjNx7cqKlCCzjrZqFi4ZKahh+MOZO661Fb+BYQTY64iNpGLsw4xhowD3g30UTwWuSrCb
+         RUnUwT4Qz1uajOdr+iwCgRHQpEILkmR+jH1FsW+Yr0Zf9YCD+CpxH9o1L5eQG6ZXwRkS
+         3MqqCEbRGrAtNVcb69RTukumXBMgWKg62k74X6/BfFBvaVo4VUTbGojir2hPM0lnjOKF
+         KS3/YuDs5UylVEOX71GY8w8mCaS8w5QtVofye2zbAbPBxC575GfZRuJAb5V7LWI/sLNS
+         D3nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaC2G82ZN+wwgNPTPanQYsMS8p/52xL2TzG0Zlp4i1kmB5jtTEtq3WQ36vXq+Glr0mEO7ruvEm3kI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHBOs6DjJo0aHIK9l+vpDvLE2cM8VwKvOmSxKP5eUlP3SQuczv
+	mokyZw4jyKqEyWkfj+3g8DwQWZvbMvdlmWeJmnXeuRD2dcEWGk3kA23YbatMovWdSb87EuPX40q
+	C8w==
+X-Google-Smtp-Source: AGHT+IEfEGYrf9Kp0+2ubym5ip7jGdmma8H6AvjPeN7XwsvYzFyoI8GJuVmio+ck2iYi43MOyqOFlyy+ZwQ=
+X-Received: from pjbdy11.prod.google.com ([2002:a17:90b:6cb:b0:2eb:12c1:bf8f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2e48:b0:2ee:6736:8512
+ with SMTP id 98e67ed59e1d1-2f28fb6f983mr27557050a91.12.1734393902184; Mon, 16
+ Dec 2024 16:05:02 -0800 (PST)
+Date: Mon, 16 Dec 2024 16:05:00 -0800
+In-Reply-To: <Z1uYihcPhJVRmrxh@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: sBdBhlGvSv_ysMk8N57db8w8tn2PrdSUUwy6rm-jd_c_1734087236
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <20241128013424.4096668-1-seanjc@google.com> <20241128013424.4096668-51-seanjc@google.com>
+ <Z1uYihcPhJVRmrxh@intel.com>
+Message-ID: <Z2DALDUcfgAHJi79@google.com>
+Subject: Re: [PATCH v3 50/57] KVM: x86: Replace (almost) all guest CPUID
+ feature queries with cpu_caps
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, kvm@vger.kernel.org, linux-sgx@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Maxim Levitsky <mlevitsk@redhat.com>, 
+	Hou Wenlong <houwenlong.hwl@antgroup.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Sean Christopherson <seanjc@google.com> writes:
+On Fri, Dec 13, 2024, Chao Gao wrote:
+> On Wed, Nov 27, 2024 at 05:34:17PM -0800, Sean Christopherson wrote:
+> >diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> >index d3c3e1327ca1..8d088a888a0d 100644
+> >--- a/arch/x86/kvm/cpuid.c
+> >+++ b/arch/x86/kvm/cpuid.c
+> >@@ -416,7 +416,7 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+> > 	 * and can install smaller shadow pages if the host lacks 1GiB support.
+> > 	 */
+> > 	allow_gbpages = tdp_enabled ? boot_cpu_has(X86_FEATURE_GBPAGES) :
+> >-				      guest_cpuid_has(vcpu, X86_FEATURE_GBPAGES);
+> >+				      guest_cpu_cap_has(vcpu, X86_FEATURE_GBPAGES);
+> > 	guest_cpu_cap_change(vcpu, X86_FEATURE_GBPAGES, allow_gbpages);
+> > 
+> > 	best = kvm_find_cpuid_entry(vcpu, 1);
+> >@@ -441,7 +441,7 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+> > 
+> > #define __kvm_cpu_cap_has(UNUSED_, f) kvm_cpu_cap_has(f)
+> > 	vcpu->arch.cr4_guest_rsvd_bits = __cr4_reserved_bits(__kvm_cpu_cap_has, UNUSED_) |
+> >-					 __cr4_reserved_bits(guest_cpuid_has, vcpu);
+> >+					 __cr4_reserved_bits(guest_cpu_cap_has, vcpu);
+> 
+> So, actually, __cr4_reserved_bits(__kvm_cpu_cap_has, UNUSED_) can be dropped.
+> Is there any reason to keep it? It makes perfect sense to just look up the
+> guest cpu_caps given it already takes KVM caps into consideration.
 
-> When clearing CONSTANT_TSC during CPUID emulation due to a Hyper-V quirk,
-> use feature_bit() instead of SF() to ensure the bit is actually cleared.
-> SF() evaluates to zero if the _host_ doesn't support the feature.  I.e.
-> KVM could keep the bit set if userspace advertised CONSTANT_TSC despite
-> it not being supported in hardware.
+Hmm, good point.  I agree that that keeping the __kvm_cpu_cap_has() checks is
+unnecessary, though I'm tempted to turn it into a WARN.  E.g. to guard against
+stuffing a feature into cpu_caps without thinking through the implications.
 
-FWIW, I would strongly discourage such setups, all sorts of weird hangs
-will likely be observed with Windows guests if TSC rate actually
-changes.
-
->
-> Note, translating from a scattered feature to a the hardware version is
-> done by __feature_translate(), not SF().  The sole purpose of SF() is to
-> check kernel support for the scattered feature, *before* translation.
->
-> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/cpuid.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 097bdc022d0f..776f24408fa3 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -1630,7 +1630,7 @@ bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
->  				*ebx &= ~(F(RTM) | F(HLE));
->  		} else if (function == 0x80000007) {
->  			if (kvm_hv_invtsc_suppressed(vcpu))
-> -				*edx &= ~SF(CONSTANT_TSC);
-> +				*edx &= ~feature_bit(CONSTANT_TSC);
->  		}
->  	} else {
->  		*eax = *ebx = *ecx = *edx = 0;
-
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-
--- 
-Vitaly
-
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index edef30359c19..3cbf384aeb7a 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -460,9 +460,16 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+ 
+        kvm_pmu_refresh(vcpu);
+ 
++       vcpu->arch.cr4_guest_rsvd_bits = __cr4_reserved_bits(guest_cpu_cap_has, vcpu);
++       /*
++        * KVM's capabilities are incorporated into the vCPU's capabilities,
++        * and letting the guest to use a CR4-based feature that KVM doesn't
++        * support isn't allowed as KVM either needs to explicitly emulate the
++        * feature or set the CR4 bit in hardware.
++        */
+ #define __kvm_cpu_cap_has(UNUSED_, f) kvm_cpu_cap_has(f)
+-       vcpu->arch.cr4_guest_rsvd_bits = __cr4_reserved_bits(__kvm_cpu_cap_has, UNUSED_) |
+-                                        __cr4_reserved_bits(guest_cpu_cap_has, vcpu);
++       WARN_ON_ONCE(~vcpu->arch.cr4_guest_rsvd_bits &
++                    __cr4_reserved_bits(__kvm_cpu_cap_has, UNUSED_));
+ #undef __kvm_cpu_cap_has
+ 
+        kvm_hv_set_cpuid(vcpu, kvm_cpuid_has_hyperv(vcpu));
