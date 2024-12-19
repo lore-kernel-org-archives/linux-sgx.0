@@ -1,844 +1,206 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386DF1E487
-	for <linux-sgx@vger.kernel.org>; Wed, 18 Dec 2024 01:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252F64C98
+	for <linux-sgx@vger.kernel.org>; Thu, 19 Dec 2024 02:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734484533; cv=none; b=BiVzN1wdtjQSnHM0e+vdY/I804P+BzNrP/y6CUAmLJd4YmgcouGCnCVvesV6N6p+fq41SYcWl8fEp5fYOiJS/eBH3FgXbXCGGeHUtpG4Jj+3DXukTQFWC/wpy8bz6xwUudpz87E4E7STj2YbRHmwGsaeA0Tor/Vf6TjKriEZDnY=
+	t=1734576152; cv=none; b=t0rSo7oKl+gpQdDVTjibR5Q9UXvuhNEMJAOLWlj9qypUdZQYO1jbDkNgruCj6Xkrb+DzO7mR6fnhO/R3iqdSniF5MVebY/0FwY5FExHkarvmITPIKnBkr8XZXwjMXLdm8mA/uU/MxB22o+zdDx0qQbXEYNMvYCHQdw1j9mLT5eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734484533; c=relaxed/simple;
-	bh=cg5m4Yn8xKF7kjEkXzIx+87NZL00c/zqLPKF34nJudI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hAq6nJdQRLDRyKP2oNv5LU79wuiHmvEFWQ2RK6r8FWeYoYbT0bIDdyg21a4T0QfDpFE3P4mpBJg7l4Z3vypkii/L0qCEqTCaH35oh9qgzzS7NRus+OYg6lvCYCbyfN8Tg8TFNyhP7c7Su2iv36/EIvlI/jSiKFxTAu6L31LL/+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hbpBDTXC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1734576152; c=relaxed/simple;
+	bh=wqR7x6AVUn9CFmwRHzguFjVoQEXqBhut+J2L9R1+Mok=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MmN7QbaH4euIXH3eLO6+PPOHpgjhPTQ1UN1VrDfABAOTShEZk1wOVNXKSg3qyL/PXRBgbcro1r70PRPFkzvlfTrUk5O1u29kHRSIfc29JJRBVbNmHAwH18asbv6bKaUq4V8h1Smp7Gw6lSNTN4xvSl09GQwaLfl1wkjXg9Z9oE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tBhfkvOP; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hbpBDTXC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734484529;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u1dQqcIf6SlIURxsmmuuJ5mwQlxUQiNbm/exJZubZvI=;
-	b=hbpBDTXCpbpOAcQG9g1ZE6ZZ2uESIqPiUxJZzR7D8p9+/VtkzLE3w7HgFoE8is0qTv+gin
-	WdbU1ufl8Zmd+e03ZCMO2MGqQtk9JCMgJOdV5PiyAHFygkTuCh18Oy9g1dwLYqkT+H4WzG
-	HQl4rfIyPN1zP03BQEmv22wTPztIihY=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-636-m9KCmGGtMPSC4A9SYdGOZg-1; Tue, 17 Dec 2024 20:15:27 -0500
-X-MC-Unique: m9KCmGGtMPSC4A9SYdGOZg-1
-X-Mimecast-MFC-AGG-ID: m9KCmGGtMPSC4A9SYdGOZg
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-844e7f9d37dso884747939f.2
-        for <linux-sgx@vger.kernel.org>; Tue, 17 Dec 2024 17:15:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tBhfkvOP"
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7eaac1e95ffso161269a12.2
+        for <linux-sgx@vger.kernel.org>; Wed, 18 Dec 2024 18:42:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734576149; x=1735180949; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VbFFCvosM7beCnQ9jmt3aQywf9OTnT50KhFJlLu0KQA=;
+        b=tBhfkvOPIT/CHSYhgrT3dppHsSXQ86rflCKPcaRHYCDLXHC2FbUvW5eM9eFCXADRxo
+         QOwnVKbL3sxkl32tXdFn8wbtkWvs1ssxV3dW99wWfilB2IZebD8A28ldOuW9PTsGjh/N
+         X7otq7i0Ac0CxJfX4//hIu7g8qj9ZZauNQqAf0YvTdA30L5DvMukycKGjN2FtukmKUVo
+         hD044k+C6X4EnBkocQfMAxbPiSb3zTbErtVVsYo7Mau2yZrW6R3+x/c7UjIXDzUrx+Rd
+         yVepqhyl+bhq/RvrkyFWNm2qIsdlZC6+ZQ1l9ofYXxhyqebQhyxgN+EpVrjeyrEg2ijx
+         L9+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734484527; x=1735089327;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u1dQqcIf6SlIURxsmmuuJ5mwQlxUQiNbm/exJZubZvI=;
-        b=rl96IADfwlgIOnu8GtMfzDyCaJwhXidxP6Oty+ZYdDtPuyBjwATUKHOJrQFEe/ZMOj
-         tJfQQ3tjeTSz0f+A/mO7Qaq/4O2UnDqJP8batpO9xmm0dNsuk3YpTF7YTzo93ufbZdY8
-         wFcrjs+FoIyD8pSorpof2dm49NyB/0QF08ZT3K+Wmu+V8nT/p6PvtTDuKTmmFwjR9CjA
-         yc5U9QuhPXP1j3fZo/W2rDnM06OtompppZk+CnwbAk66C0p00TxNqx0h7H+S8furPmfa
-         aaqF2+p7P33frb5fBMErSFPpMHpuitdzkTngPazWP1fE2Mtt4OuH2TjC1xCsYQMlS6NM
-         XwFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOT3IVpPjSkQng3MkFXUI57t/tI4JpptNhEEgMKA+ONeY2ptci/47T71ynzcQxH0criz1iyhJpFg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFVq/zRis4mxVcnwHKLj4aUP1HiUFKUXNMkgl4O38lI6w+zFol
-	S48dxdvr1Tmx/IiGOtdV/AifHfufkzK2dbyzRLyZ5wKBFwMd8lXaAMeb2Q81c6N8bG+bAdz4yXI
-	X+LvU8w/IaoXRd3FQ9MclT71SG7svGx8wuVbbQcufdKCIHUj9ksT8+CxoMw==
-X-Gm-Gg: ASbGncvepqaEM1Obq6vL62sgfD4XNY6NA7D0t6tK6UXVarSfFfrOrJngyhZAksWSOhx
-	hBekOX+lIza453G2YcrAdW9rjTy08eHL1GnHVdk9Hrt1c0Fk6qqKpmxsU+YF+6yjTEKestERbWU
-	wMJtrO/SXgaCXmfvHj1zyGP39YvCE4+hTl3OAXIMwGPNYf29/bFTFXvLsnD/8WB2gceyAzSExXi
-	gnA1WJwRRHGLPM/emQ4gjkBHmBMCr4dWQ2dsJFjTbTOWQASqE7QWJO8
-X-Received: by 2002:a05:6602:3fc1:b0:844:cb1f:bbf5 with SMTP id ca18e2360f4ac-8475860c2e0mr102141739f.15.1734484527030;
-        Tue, 17 Dec 2024 17:15:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGfIw1wzMQ/SmXWoHldxrINtmXoJfQdhDCobRyzD+3Ns0TsaYxN1wYEpLmBcicwQg0Y9brFUQ==
-X-Received: by 2002:a05:6602:3fc1:b0:844:cb1f:bbf5 with SMTP id ca18e2360f4ac-8475860c2e0mr102138939f.15.1734484526596;
-        Tue, 17 Dec 2024 17:15:26 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e5e32a33c2sm1999175173.109.2024.12.17.17.15.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 17:15:26 -0800 (PST)
-Message-ID: <4e346e991e36bf4fbd7411c8f634c8476f8f3d31.camel@redhat.com>
-Subject: Re: [PATCH v3 57/57] KVM: x86: Use only local variables (no
- bitmask) to init kvm_cpu_caps
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko
- Sakkinen <jarkko@kernel.org>
-Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
- Xiaoyao Li <xiaoyao.li@intel.com>, Kechen Lu <kechenl@nvidia.com>, Oliver
- Upton <oliver.upton@linux.dev>,  Binbin Wu <binbin.wu@linux.intel.com>,
- Yang Weijiang <weijiang.yang@intel.com>, Robert Hoo
- <robert.hoo.linux@gmail.com>
-Date: Tue, 17 Dec 2024 20:15:24 -0500
-In-Reply-To: <20241128013424.4096668-58-seanjc@google.com>
-References: <20241128013424.4096668-1-seanjc@google.com>
-	 <20241128013424.4096668-58-seanjc@google.com>
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32)
+        d=1e100.net; s=20230601; t=1734576149; x=1735180949;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VbFFCvosM7beCnQ9jmt3aQywf9OTnT50KhFJlLu0KQA=;
+        b=EpfCIkK7usCHD2nuowDy7KGs9Xz08b+vkaj4rUxT5YriOYf4hMITWLH540o42cbo+E
+         Y1MdKA2lEbD5o/f9FbliXB82uNxRaPN+Mxc7+gQeD79QFkWw1ksaOlqj8pr7Z3UnK9i+
+         CCVdUNrHyljSkGRVofeUpZ3ziMMzDJ8TLh7yQV0fkggPCTlpjN1b093jpWVzrYUoNlMD
+         t+xxfahf18gRGERmCxKOs/YVM0dew5Asy+Im2k/Q62W2cNvCald+HkiXFYFc/blVmCx6
+         O92DBNmTjFPvSrfp//kogVEU82VfigbBcVx0OLQJnGiN9PLTXGGLty4yTKp3qhuJHoZg
+         W7xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVarvP4JpQUk4DaUuJwG4lSj85nrkOaAhH4sSTLMmb8La6X81/+vGXgEXmW36H+yrtFovoiGuDMixU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKkuKQYOzLNYDufE4NLURJE42WXB2TNiJ+s9QpZLR1iQMwq/ho
+	0LNBY9YRAaOOjZHwq3voW646TkH1yeuvUu217trUL91B3QFVjQTqDSN1QNfIFn3Jwq4tGpM7sD9
+	0aQ==
+X-Google-Smtp-Source: AGHT+IF6gl9bmvRqTdsnr4nvCU9pHdNTaqp0SGQ23mTpUKWZXZwSyIvzFrJHRPlH6t5aNqXiP+AKz8ZN3i0=
+X-Received: from pgeu9.prod.google.com ([2002:a63:a909:0:b0:7ff:d6:4f28])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7f99:b0:1e1:ab63:c5ed
+ with SMTP id adf61e73a8af0-1e5b48233b1mr8061533637.23.1734576149409; Wed, 18
+ Dec 2024 18:42:29 -0800 (PST)
+Date: Wed, 18 Dec 2024 18:40:50 -0800
+In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -8wD-sJfZH4wfz7BA1Okh4M7Qq9tKtIFUJG9CnS0HeU_1734484527
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20241128013424.4096668-1-seanjc@google.com>
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
+Message-ID: <173457554492.3295736.445579202892214043.b4-ty@google.com>
+Subject: Re: [PATCH v3 00/57] KVM: x86: CPUID overhaul, fixes, and caching
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
+Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Maxim Levitsky <mlevitsk@redhat.com>, 
+	Hou Wenlong <houwenlong.hwl@antgroup.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, 2024-11-27 at 17:34 -0800, Sean Christopherson wrote:
-> Refactor the kvm_cpu_cap_init() macro magic to collect supported features
-> in a local variable instead of passing them to the macro as a "mask".  As
-> pointed out by Maxim, relying on macros to "return" a value and set local
-> variables is surprising, as the bitwise-OR logic suggests the macros are
-> pure, i.e. have no side effects.
+On Wed, 27 Nov 2024 17:33:27 -0800, Sean Christopherson wrote:
+> The super short TL;DR: snapshot all X86_FEATURE_* flags that KVM cares
+> about so that all queries against guest capabilities are "fast", e.g. don't
+> require manual enabling or judgment calls as to where a feature needs to be
+> fast.
 > 
-> Ideally, the feature initializers would have zero side effects, e.g. would
-> take local variables as params, but there isn't a sane way to do so
-> without either sacrificing the various compile-time assertions (basically
-> a non-starter), or passing at least one variable, e.g. a struct, to each
-> macro usage (adds a lot of noise and boilerplate code).
+> The guest_cpu_cap_* nomenclature follows the existing kvm_cpu_cap_*
+> except for a few (maybe just one?) cases where guest cpu_caps need APIs
+> that kvm_cpu_caps don't.  In theory, the similar names will make this
+> approach more intuitive.
 > 
-> Opportunistically force callers to emit a trailing comma by intentionally
-> omitting a semicolon after invoking the feature initializers.  Forcing a
-> trailing comma isotales futures changes to a single line, i.e. doesn't
-> cause churn for unrelated features/lines when adding/removing/modifying a
-> feature.
-> 
-> No functional change intended.
-> 
-> Suggested-by: Maxim Levitsky <mlevitsk@redhat.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/cpuid.c | 541 ++++++++++++++++++++++---------------------
->  1 file changed, 273 insertions(+), 268 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index e03154b9833f..572dfa7e206e 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -661,7 +661,7 @@ static __always_inline u32 raw_cpuid_get(struct cpuid_reg cpuid)
->   * capabilities as well as raw CPUID.  For KVM-defined leafs, consult only raw
->   * CPUID, as KVM is the one and only authority (in the kernel).
->   */
-> -#define kvm_cpu_cap_init(leaf, mask)					\
-> +#define kvm_cpu_cap_init(leaf, feature_initializers...)			\
->  do {									\
->  	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);	\
->  	const u32 __maybe_unused kvm_cpu_cap_init_in_progress = leaf;	\
-> @@ -669,8 +669,11 @@ do {									\
->  	u32 kvm_cpu_cap_passthrough = 0;				\
->  	u32 kvm_cpu_cap_synthesized = 0;				\
->  	u32 kvm_cpu_cap_emulated = 0;					\
-> +	u32 kvm_cpu_cap_features = 0;					\
->  									\
-> -	kvm_cpu_caps[leaf] = (mask);					\
-> +	feature_initializers						\
-> +									\
-> +	kvm_cpu_caps[leaf] = kvm_cpu_cap_features;			\
->  									\
->  	if (leaf < NCAPINTS)						\
->  		kvm_cpu_caps[leaf] &= kernel_cpu_caps[leaf];		\
-> @@ -696,7 +699,7 @@ do {									\
->  #define F(name)							\
->  ({								\
->  	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
-> -	feature_bit(name);					\
-> +	kvm_cpu_cap_features |= feature_bit(name);		\
->  })
->  
->  /* Scattered Flag - For features that are scattered by cpufeatures.h. */
-> @@ -704,14 +707,16 @@ do {									\
->  ({								\
->  	BUILD_BUG_ON(X86_FEATURE_##name >= MAX_CPU_FEATURES);	\
->  	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
-> -	(boot_cpu_has(X86_FEATURE_##name) ? F(name) : 0);	\
-> +	if (boot_cpu_has(X86_FEATURE_##name))			\
-> +		F(name);					\
->  })
->  
->  /* Features that KVM supports only on 64-bit kernels. */
->  #define X86_64_F(name)						\
->  ({								\
->  	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
-> -	(IS_ENABLED(CONFIG_X86_64) ? F(name) : 0);		\
-> +	if (IS_ENABLED(CONFIG_X86_64))				\
-> +		F(name);					\
->  })
->  
->  /*
-> @@ -720,7 +725,7 @@ do {									\
->   */
->  #define EMULATED_F(name)					\
->  ({								\
-> -	kvm_cpu_cap_emulated |= F(name);			\
-> +	kvm_cpu_cap_emulated |= feature_bit(name);		\
->  	F(name);						\
->  })
->  
-> @@ -731,7 +736,7 @@ do {									\
->   */
->  #define SYNTHESIZED_F(name)					\
->  ({								\
-> -	kvm_cpu_cap_synthesized |= F(name);			\
-> +	kvm_cpu_cap_synthesized |= feature_bit(name);		\
->  	F(name);						\
->  })
->  
-> @@ -743,7 +748,7 @@ do {									\
->   */
->  #define PASSTHROUGH_F(name)					\
->  ({								\
-> -	kvm_cpu_cap_passthrough |= F(name);			\
-> +	kvm_cpu_cap_passthrough |= feature_bit(name);		\
->  	F(name);						\
->  })
->  
-> @@ -755,7 +760,7 @@ do {									\
->  ({										\
->  	BUILD_BUG_ON(__feature_leaf(X86_FEATURE_##name) != CPUID_1_EDX);	\
->  	BUILD_BUG_ON(kvm_cpu_cap_init_in_progress != CPUID_8000_0001_EDX);	\
-> -	feature_bit(name);							\
-> +	kvm_cpu_cap_features |= feature_bit(name);				\
->  })
->  
->  /*
-> @@ -765,7 +770,6 @@ do {									\
->  #define VENDOR_F(name)						\
->  ({								\
->  	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
-> -	0;							\
->  })
->  
->  /*
-> @@ -775,7 +779,6 @@ do {									\
->  #define RUNTIME_F(name)						\
->  ({								\
->  	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
-> -	0;							\
->  })
->  
->  /*
-> @@ -795,126 +798,128 @@ void kvm_set_cpu_caps(void)
->  		     sizeof(boot_cpu_data.x86_capability));
->  
->  	kvm_cpu_cap_init(CPUID_1_ECX,
-> -		F(XMM3) |
-> -		F(PCLMULQDQ) |
-> -		VENDOR_F(DTES64) |
-> +		F(XMM3),
-> +		F(PCLMULQDQ),
-> +		VENDOR_F(DTES64),
->  		/*
->  		 * NOTE: MONITOR (and MWAIT) are emulated as NOP, but *not*
->  		 * advertised to guests via CPUID!  MWAIT is also technically a
->  		 * runtime flag thanks to IA32_MISC_ENABLES; mark it as such so
->  		 * that KVM is aware that it's a known, unadvertised flag.
->  		 */
-> -		RUNTIME_F(MWAIT) |
-> -		VENDOR_F(VMX) |
-> -		0 /* DS-CPL, SMX, EST */ |
-> -		0 /* TM2 */ |
-> -		F(SSSE3) |
-> -		0 /* CNXT-ID */ |
-> -		0 /* Reserved */ |
-> -		F(FMA) |
-> -		F(CX16) |
-> -		0 /* xTPR Update */ |
-> -		F(PDCM) |
-> -		F(PCID) |
-> -		0 /* Reserved, DCA */ |
-> -		F(XMM4_1) |
-> -		F(XMM4_2) |
-> -		EMULATED_F(X2APIC) |
-> -		F(MOVBE) |
-> -		F(POPCNT) |
-> -		EMULATED_F(TSC_DEADLINE_TIMER) |
-> -		F(AES) |
-> -		F(XSAVE) |
-> -		RUNTIME_F(OSXSAVE) |
-> -		F(AVX) |
-> -		F(F16C) |
-> -		F(RDRAND) |
-> -		EMULATED_F(HYPERVISOR)
-> +		RUNTIME_F(MWAIT),
-> +		/* DS-CPL */
-> +		VENDOR_F(VMX),
-> +		/* SMX, EST */
-> +		/* TM2 */
-> +		F(SSSE3),
-> +		/* CNXT-ID */
-> +		/* Reserved */
-> +		F(FMA),
-> +		F(CX16),
-> +		/* xTPR Update */
-> +		F(PDCM),
-> +		F(PCID),
-> +		/* Reserved, DCA */
-> +		F(XMM4_1),
-> +		F(XMM4_2),
-> +		EMULATED_F(X2APIC),
-> +		F(MOVBE),
-> +		F(POPCNT),
-> +		EMULATED_F(TSC_DEADLINE_TIMER),
-> +		F(AES),
-> +		F(XSAVE),
-> +		RUNTIME_F(OSXSAVE),
-> +		F(AVX),
-> +		F(F16C),
-> +		F(RDRAND),
-> +		EMULATED_F(HYPERVISOR),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_1_EDX,
-> -		F(FPU) |
-> -		F(VME) |
-> -		F(DE) |
-> -		F(PSE) |
-> -		F(TSC) |
-> -		F(MSR) |
-> -		F(PAE) |
-> -		F(MCE) |
-> -		F(CX8) |
-> -		F(APIC) |
-> -		0 /* Reserved */ |
-> -		F(SEP) |
-> -		F(MTRR) |
-> -		F(PGE) |
-> -		F(MCA) |
-> -		F(CMOV) |
-> -		F(PAT) |
-> -		F(PSE36) |
-> -		0 /* PSN */ |
-> -		F(CLFLUSH) |
-> -		0 /* Reserved */ |
-> -		VENDOR_F(DS) |
-> -		0 /* ACPI */ |
-> -		F(MMX) |
-> -		F(FXSR) |
-> -		F(XMM) |
-> -		F(XMM2) |
-> -		F(SELFSNOOP) |
-> -		0 /* HTT, TM, Reserved, PBE */
-> +		F(FPU),
-> +		F(VME),
-> +		F(DE),
-> +		F(PSE),
-> +		F(TSC),
-> +		F(MSR),
-> +		F(PAE),
-> +		F(MCE),
-> +		F(CX8),
-> +		F(APIC),
-> +		/* Reserved */
-> +		F(SEP),
-> +		F(MTRR),
-> +		F(PGE),
-> +		F(MCA),
-> +		F(CMOV),
-> +		F(PAT),
-> +		F(PSE36),
-> +		/* PSN */
-> +		F(CLFLUSH),
-> +		/* Reserved */
-> +		VENDOR_F(DS),
-> +		/* ACPI */
-> +		F(MMX),
-> +		F(FXSR),
-> +		F(XMM),
-> +		F(XMM2),
-> +		F(SELFSNOOP),
-> +		/* HTT, TM, Reserved, PBE */
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_7_0_EBX,
-> -		F(FSGSBASE) |
-> -		EMULATED_F(TSC_ADJUST) |
-> -		F(SGX) |
-> -		F(BMI1) |
-> -		F(HLE) |
-> -		F(AVX2) |
-> -		F(FDP_EXCPTN_ONLY) |
-> -		F(SMEP) |
-> -		F(BMI2) |
-> -		F(ERMS) |
-> -		F(INVPCID) |
-> -		F(RTM) |
-> -		F(ZERO_FCS_FDS) |
-> -		VENDOR_F(MPX) |
-> -		F(AVX512F) |
-> -		F(AVX512DQ) |
-> -		F(RDSEED) |
-> -		F(ADX) |
-> -		F(SMAP) |
-> -		F(AVX512IFMA) |
-> -		F(CLFLUSHOPT) |
-> -		F(CLWB) |
-> -		VENDOR_F(INTEL_PT) |
-> -		F(AVX512PF) |
-> -		F(AVX512ER) |
-> -		F(AVX512CD) |
-> -		F(SHA_NI) |
-> -		F(AVX512BW) |
-> -		F(AVX512VL));
-> +		F(FSGSBASE),
-> +		EMULATED_F(TSC_ADJUST),
-> +		F(SGX),
-> +		F(BMI1),
-> +		F(HLE),
-> +		F(AVX2),
-> +		F(FDP_EXCPTN_ONLY),
-> +		F(SMEP),
-> +		F(BMI2),
-> +		F(ERMS),
-> +		F(INVPCID),
-> +		F(RTM),
-> +		F(ZERO_FCS_FDS),
-> +		VENDOR_F(MPX),
-> +		F(AVX512F),
-> +		F(AVX512DQ),
-> +		F(RDSEED),
-> +		F(ADX),
-> +		F(SMAP),
-> +		F(AVX512IFMA),
-> +		F(CLFLUSHOPT),
-> +		F(CLWB),
-> +		VENDOR_F(INTEL_PT),
-> +		F(AVX512PF),
-> +		F(AVX512ER),
-> +		F(AVX512CD),
-> +		F(SHA_NI),
-> +		F(AVX512BW),
-> +		F(AVX512VL),
-> +	);
->  
->  	kvm_cpu_cap_init(CPUID_7_ECX,
-> -		F(AVX512VBMI) |
-> -		PASSTHROUGH_F(LA57) |
-> -		F(PKU) |
-> -		RUNTIME_F(OSPKE) |
-> -		F(RDPID) |
-> -		F(AVX512_VPOPCNTDQ) |
-> -		F(UMIP) |
-> -		F(AVX512_VBMI2) |
-> -		F(GFNI) |
-> -		F(VAES) |
-> -		F(VPCLMULQDQ) |
-> -		F(AVX512_VNNI) |
-> -		F(AVX512_BITALG) |
-> -		F(CLDEMOTE) |
-> -		F(MOVDIRI) |
-> -		F(MOVDIR64B) |
-> -		VENDOR_F(WAITPKG) |
-> -		F(SGX_LC) |
-> -		F(BUS_LOCK_DETECT)
-> +		F(AVX512VBMI),
-> +		PASSTHROUGH_F(LA57),
-> +		F(PKU),
-> +		RUNTIME_F(OSPKE),
-> +		F(RDPID),
-> +		F(AVX512_VPOPCNTDQ),
-> +		F(UMIP),
-> +		F(AVX512_VBMI2),
-> +		F(GFNI),
-> +		F(VAES),
-> +		F(VPCLMULQDQ),
-> +		F(AVX512_VNNI),
-> +		F(AVX512_BITALG),
-> +		F(CLDEMOTE),
-> +		F(MOVDIRI),
-> +		F(MOVDIR64B),
-> +		VENDOR_F(WAITPKG),
-> +		F(SGX_LC),
-> +		F(BUS_LOCK_DETECT),
->  	);
->  
->  	/*
-> @@ -925,22 +930,22 @@ void kvm_set_cpu_caps(void)
->  		kvm_cpu_cap_clear(X86_FEATURE_PKU);
->  
->  	kvm_cpu_cap_init(CPUID_7_EDX,
-> -		F(AVX512_4VNNIW) |
-> -		F(AVX512_4FMAPS) |
-> -		F(SPEC_CTRL) |
-> -		F(SPEC_CTRL_SSBD) |
-> -		EMULATED_F(ARCH_CAPABILITIES) |
-> -		F(INTEL_STIBP) |
-> -		F(MD_CLEAR) |
-> -		F(AVX512_VP2INTERSECT) |
-> -		F(FSRM) |
-> -		F(SERIALIZE) |
-> -		F(TSXLDTRK) |
-> -		F(AVX512_FP16) |
-> -		F(AMX_TILE) |
-> -		F(AMX_INT8) |
-> -		F(AMX_BF16) |
-> -		F(FLUSH_L1D)
-> +		F(AVX512_4VNNIW),
-> +		F(AVX512_4FMAPS),
-> +		F(SPEC_CTRL),
-> +		F(SPEC_CTRL_SSBD),
-> +		EMULATED_F(ARCH_CAPABILITIES),
-> +		F(INTEL_STIBP),
-> +		F(MD_CLEAR),
-> +		F(AVX512_VP2INTERSECT),
-> +		F(FSRM),
-> +		F(SERIALIZE),
-> +		F(TSXLDTRK),
-> +		F(AVX512_FP16),
-> +		F(AMX_TILE),
-> +		F(AMX_INT8),
-> +		F(AMX_BF16),
-> +		F(FLUSH_L1D),
->  	);
->  
->  	if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
-> @@ -953,132 +958,132 @@ void kvm_set_cpu_caps(void)
->  		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL_SSBD);
->  
->  	kvm_cpu_cap_init(CPUID_7_1_EAX,
-> -		F(SHA512) |
-> -		F(SM3) |
-> -		F(SM4) |
-> -		F(AVX_VNNI) |
-> -		F(AVX512_BF16) |
-> -		F(CMPCCXADD) |
-> -		F(FZRM) |
-> -		F(FSRS) |
-> -		F(FSRC) |
-> -		F(AMX_FP16) |
-> -		F(AVX_IFMA) |
-> -		F(LAM)
-> +		F(SHA512),
-> +		F(SM3),
-> +		F(SM4),
-> +		F(AVX_VNNI),
-> +		F(AVX512_BF16),
-> +		F(CMPCCXADD),
-> +		F(FZRM),
-> +		F(FSRS),
-> +		F(FSRC),
-> +		F(AMX_FP16),
-> +		F(AVX_IFMA),
-> +		F(LAM),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_7_1_EDX,
-> -		F(AVX_VNNI_INT8) |
-> -		F(AVX_NE_CONVERT) |
-> -		F(AMX_COMPLEX) |
-> -		F(AVX_VNNI_INT16) |
-> -		F(PREFETCHITI) |
-> -		F(AVX10)
-> +		F(AVX_VNNI_INT8),
-> +		F(AVX_NE_CONVERT),
-> +		F(AMX_COMPLEX),
-> +		F(AVX_VNNI_INT16),
-> +		F(PREFETCHITI),
-> +		F(AVX10),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_7_2_EDX,
-> -		F(INTEL_PSFD) |
-> -		F(IPRED_CTRL) |
-> -		F(RRSBA_CTRL) |
-> -		F(DDPD_U) |
-> -		F(BHI_CTRL) |
-> -		F(MCDT_NO)
-> +		F(INTEL_PSFD),
-> +		F(IPRED_CTRL),
-> +		F(RRSBA_CTRL),
-> +		F(DDPD_U),
-> +		F(BHI_CTRL),
-> +		F(MCDT_NO),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_D_1_EAX,
-> -		F(XSAVEOPT) |
-> -		F(XSAVEC) |
-> -		F(XGETBV1) |
-> -		F(XSAVES) |
-> -		X86_64_F(XFD)
-> +		F(XSAVEOPT),
-> +		F(XSAVEC),
-> +		F(XGETBV1),
-> +		F(XSAVES),
-> +		X86_64_F(XFD),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_12_EAX,
-> -		SCATTERED_F(SGX1) |
-> -		SCATTERED_F(SGX2) |
-> -		SCATTERED_F(SGX_EDECCSSA)
-> +		SCATTERED_F(SGX1),
-> +		SCATTERED_F(SGX2),
-> +		SCATTERED_F(SGX_EDECCSSA),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_24_0_EBX,
-> -		F(AVX10_128) |
-> -		F(AVX10_256) |
-> -		F(AVX10_512)
-> +		F(AVX10_128),
-> +		F(AVX10_256),
-> +		F(AVX10_512),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_8000_0001_ECX,
-> -		F(LAHF_LM) |
-> -		F(CMP_LEGACY) |
-> -		VENDOR_F(SVM) |
-> -		0 /* ExtApicSpace */ |
-> -		F(CR8_LEGACY) |
-> -		F(ABM) |
-> -		F(SSE4A) |
-> -		F(MISALIGNSSE) |
-> -		F(3DNOWPREFETCH) |
-> -		F(OSVW) |
-> -		0 /* IBS */ |
-> -		F(XOP) |
-> -		0 /* SKINIT, WDT, LWP */ |
-> -		F(FMA4) |
-> -		F(TBM) |
-> -		F(TOPOEXT) |
-> -		VENDOR_F(PERFCTR_CORE)
-> +		F(LAHF_LM),
-> +		F(CMP_LEGACY),
-> +		VENDOR_F(SVM),
-> +		/* ExtApicSpace */
-> +		F(CR8_LEGACY),
-> +		F(ABM),
-> +		F(SSE4A),
-> +		F(MISALIGNSSE),
-> +		F(3DNOWPREFETCH),
-> +		F(OSVW),
-> +		/* IBS */
-> +		F(XOP),
-> +		/* SKINIT, WDT, LWP */
-> +		F(FMA4),
-> +		F(TBM),
-> +		F(TOPOEXT),
-> +		VENDOR_F(PERFCTR_CORE),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_8000_0001_EDX,
-> -		ALIASED_1_EDX_F(FPU) |
-> -		ALIASED_1_EDX_F(VME) |
-> -		ALIASED_1_EDX_F(DE) |
-> -		ALIASED_1_EDX_F(PSE) |
-> -		ALIASED_1_EDX_F(TSC) |
-> -		ALIASED_1_EDX_F(MSR) |
-> -		ALIASED_1_EDX_F(PAE) |
-> -		ALIASED_1_EDX_F(MCE) |
-> -		ALIASED_1_EDX_F(CX8) |
-> -		ALIASED_1_EDX_F(APIC) |
-> -		0 /* Reserved */ |
-> -		F(SYSCALL) |
-> -		ALIASED_1_EDX_F(MTRR) |
-> -		ALIASED_1_EDX_F(PGE) |
-> -		ALIASED_1_EDX_F(MCA) |
-> -		ALIASED_1_EDX_F(CMOV) |
-> -		ALIASED_1_EDX_F(PAT) |
-> -		ALIASED_1_EDX_F(PSE36) |
-> -		0 /* Reserved */ |
-> -		F(NX) |
-> -		0 /* Reserved */ |
-> -		F(MMXEXT) |
-> -		ALIASED_1_EDX_F(MMX) |
-> -		ALIASED_1_EDX_F(FXSR) |
-> -		F(FXSR_OPT) |
-> -		X86_64_F(GBPAGES) |
-> -		F(RDTSCP) |
-> -		0 /* Reserved */ |
-> -		X86_64_F(LM) |
-> -		F(3DNOWEXT) |
-> -		F(3DNOW)
-> +		ALIASED_1_EDX_F(FPU),
-> +		ALIASED_1_EDX_F(VME),
-> +		ALIASED_1_EDX_F(DE),
-> +		ALIASED_1_EDX_F(PSE),
-> +		ALIASED_1_EDX_F(TSC),
-> +		ALIASED_1_EDX_F(MSR),
-> +		ALIASED_1_EDX_F(PAE),
-> +		ALIASED_1_EDX_F(MCE),
-> +		ALIASED_1_EDX_F(CX8),
-> +		ALIASED_1_EDX_F(APIC),
-> +		/* Reserved */
-> +		F(SYSCALL),
-> +		ALIASED_1_EDX_F(MTRR),
-> +		ALIASED_1_EDX_F(PGE),
-> +		ALIASED_1_EDX_F(MCA),
-> +		ALIASED_1_EDX_F(CMOV),
-> +		ALIASED_1_EDX_F(PAT),
-> +		ALIASED_1_EDX_F(PSE36),
-> +		/* Reserved */
-> +		F(NX),
-> +		/* Reserved */
-> +		F(MMXEXT),
-> +		ALIASED_1_EDX_F(MMX),
-> +		ALIASED_1_EDX_F(FXSR),
-> +		F(FXSR_OPT),
-> +		X86_64_F(GBPAGES),
-> +		F(RDTSCP),
-> +		/* Reserved */
-> +		X86_64_F(LM),
-> +		F(3DNOWEXT),
-> +		F(3DNOW),
->  	);
->  
->  	if (!tdp_enabled && IS_ENABLED(CONFIG_X86_64))
->  		kvm_cpu_cap_set(X86_FEATURE_GBPAGES);
->  
->  	kvm_cpu_cap_init(CPUID_8000_0007_EDX,
-> -		SCATTERED_F(CONSTANT_TSC)
-> +		SCATTERED_F(CONSTANT_TSC),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_8000_0008_EBX,
-> -		F(CLZERO) |
-> -		F(XSAVEERPTR) |
-> -		F(WBNOINVD) |
-> -		F(AMD_IBPB) |
-> -		F(AMD_IBRS) |
-> -		F(AMD_SSBD) |
-> -		F(VIRT_SSBD) |
-> -		F(AMD_SSB_NO) |
-> -		F(AMD_STIBP) |
-> -		F(AMD_STIBP_ALWAYS_ON) |
-> -		F(AMD_PSFD) |
-> -		F(AMD_IBPB_RET)
-> +		F(CLZERO),
-> +		F(XSAVEERPTR),
-> +		F(WBNOINVD),
-> +		F(AMD_IBPB),
-> +		F(AMD_IBRS),
-> +		F(AMD_SSBD),
-> +		F(VIRT_SSBD),
-> +		F(AMD_SSB_NO),
-> +		F(AMD_STIBP),
-> +		F(AMD_STIBP_ALWAYS_ON),
-> +		F(AMD_PSFD),
-> +		F(AMD_IBPB_RET),
->  	);
->  
->  	/*
-> @@ -1110,30 +1115,30 @@ void kvm_set_cpu_caps(void)
->  
->  	/* All SVM features required additional vendor module enabling. */
->  	kvm_cpu_cap_init(CPUID_8000_000A_EDX,
-> -		VENDOR_F(NPT) |
-> -		VENDOR_F(VMCBCLEAN) |
-> -		VENDOR_F(FLUSHBYASID) |
-> -		VENDOR_F(NRIPS) |
-> -		VENDOR_F(TSCRATEMSR) |
-> -		VENDOR_F(V_VMSAVE_VMLOAD) |
-> -		VENDOR_F(LBRV) |
-> -		VENDOR_F(PAUSEFILTER) |
-> -		VENDOR_F(PFTHRESHOLD) |
-> -		VENDOR_F(VGIF) |
-> -		VENDOR_F(VNMI) |
-> -		VENDOR_F(SVME_ADDR_CHK)
-> +		VENDOR_F(NPT),
-> +		VENDOR_F(VMCBCLEAN),
-> +		VENDOR_F(FLUSHBYASID),
-> +		VENDOR_F(NRIPS),
-> +		VENDOR_F(TSCRATEMSR),
-> +		VENDOR_F(V_VMSAVE_VMLOAD),
-> +		VENDOR_F(LBRV),
-> +		VENDOR_F(PAUSEFILTER),
-> +		VENDOR_F(PFTHRESHOLD),
-> +		VENDOR_F(VGIF),
-> +		VENDOR_F(VNMI),
-> +		VENDOR_F(SVME_ADDR_CHK),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_8000_001F_EAX,
-> -		VENDOR_F(SME) |
-> -		VENDOR_F(SEV) |
-> -		0 /* VM_PAGE_FLUSH */ |
-> -		VENDOR_F(SEV_ES) |
-> -		F(SME_COHERENT)
-> +		VENDOR_F(SME),
-> +		VENDOR_F(SEV),
-> +		/* VM_PAGE_FLUSH */
-> +		VENDOR_F(SEV_ES),
-> +		F(SME_COHERENT),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_8000_0021_EAX,
-> -		F(NO_NESTED_DATA_BP) |
-> +		F(NO_NESTED_DATA_BP),
->  		/*
->  		 * Synthesize "LFENCE is serializing" into the AMD-defined entry
->  		 * in KVM's supported CPUID, i.e. if the feature is reported as
-> @@ -1144,36 +1149,36 @@ void kvm_set_cpu_caps(void)
->  		 * CPUID will drop the flags, and reporting support in AMD's
->  		 * leaf can make it easier for userspace to detect the feature.
->  		 */
-> -		SYNTHESIZED_F(LFENCE_RDTSC) |
-> -		0 /* SmmPgCfgLock */ |
-> -		F(NULL_SEL_CLR_BASE) |
-> -		F(AUTOIBRS) |
-> -		EMULATED_F(NO_SMM_CTL_MSR) |
-> -		0 /* PrefetchCtlMsr */ |
-> -		F(WRMSR_XX_BASE_NS) |
-> -		SYNTHESIZED_F(SBPB) |
-> -		SYNTHESIZED_F(IBPB_BRTYPE) |
-> -		SYNTHESIZED_F(SRSO_NO)
-> +		SYNTHESIZED_F(LFENCE_RDTSC),
-> +		/* SmmPgCfgLock */
-> +		F(NULL_SEL_CLR_BASE),
-> +		F(AUTOIBRS),
-> +		EMULATED_F(NO_SMM_CTL_MSR),
-> +		/* PrefetchCtlMsr */
-> +		F(WRMSR_XX_BASE_NS),
-> +		SYNTHESIZED_F(SBPB),
-> +		SYNTHESIZED_F(IBPB_BRTYPE),
-> +		SYNTHESIZED_F(SRSO_NO),
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_8000_0022_EAX,
-> -		F(PERFMON_V2)
-> +		F(PERFMON_V2),
->  	);
->  
->  	if (!static_cpu_has_bug(X86_BUG_NULL_SEG))
->  		kvm_cpu_cap_set(X86_FEATURE_NULL_SEL_CLR_BASE);
->  
->  	kvm_cpu_cap_init(CPUID_C000_0001_EDX,
-> -		F(XSTORE) |
-> -		F(XSTORE_EN) |
-> -		F(XCRYPT) |
-> -		F(XCRYPT_EN) |
-> -		F(ACE2) |
-> -		F(ACE2_EN) |
-> -		F(PHE) |
-> -		F(PHE_EN) |
-> -		F(PMM) |
-> -		F(PMM_EN)
-> +		F(XSTORE),
-> +		F(XSTORE_EN),
-> +		F(XCRYPT),
-> +		F(XCRYPT_EN),
-> +		F(ACE2),
-> +		F(ACE2_EN),
-> +		F(PHE),
-> +		F(PHE_EN),
-> +		F(PMM),
-> +		F(PMM_EN),
->  	);
->  
->  	/*
+> [...]
 
+Applied to kvm-x86 misc, thanks!
 
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+[01/57] KVM: x86: Use feature_bit() to clear CONSTANT_TSC when emulating CPUID
+        https://github.com/kvm-x86/linux/commit/ccf4c1d15d5a
+[02/57] KVM: x86: Limit use of F() and SF() to kvm_cpu_cap_{mask,init_kvm_defined}()
+        https://github.com/kvm-x86/linux/commit/4b027f5af907
+[03/57] KVM: x86: Do all post-set CPUID processing during vCPU creation
+        https://github.com/kvm-x86/linux/commit/85e5ba83c016
+[04/57] KVM: x86: Explicitly do runtime CPUID updates "after" initial setup
+        https://github.com/kvm-x86/linux/commit/ec3d4440b2c8
+[05/57] KVM: x86: Account for KVM-reserved CR4 bits when passing through CR4 on VMX
+        https://github.com/kvm-x86/linux/commit/7520a53b8e0a
+[06/57] KVM: selftests: Update x86's set_sregs_test to match KVM's CPUID enforcement
+        https://github.com/kvm-x86/linux/commit/bf4dfc3aa875
+[07/57] KVM: selftests: Assert that vcpu->cpuid is non-NULL when getting CPUID entries
+        https://github.com/kvm-x86/linux/commit/08833719e770
+[08/57] KVM: selftests: Refresh vCPU CPUID cache in __vcpu_get_cpuid_entry()
+        https://github.com/kvm-x86/linux/commit/a2a791e82086
+[09/57] KVM: selftests: Verify KVM stuffs runtime CPUID OS bits on CR4 writes
+        https://github.com/kvm-x86/linux/commit/01bcd829c63f
+[10/57] KVM: x86: Move __kvm_is_valid_cr4() definition to x86.h
+        https://github.com/kvm-x86/linux/commit/b0c3d6871778
+[11/57] KVM: x86/pmu: Drop now-redundant refresh() during init()
+        https://github.com/kvm-x86/linux/commit/ac32cbd4dfc6
+[12/57] KVM: x86: Drop now-redundant MAXPHYADDR and GPA rsvd bits from vCPU creation
+        https://github.com/kvm-x86/linux/commit/21d7f06d1a83
+[13/57] KVM: x86: Disallow KVM_CAP_X86_DISABLE_EXITS after vCPU creation
+        https://github.com/kvm-x86/linux/commit/04cd8f8628d8
+[14/57] KVM: x86: Reject disabling of MWAIT/HLT interception when not allowed
+        https://github.com/kvm-x86/linux/commit/c829ccd4d9dc
+[15/57] KVM: x86: Drop the now unused KVM_X86_DISABLE_VALID_EXITS
+        https://github.com/kvm-x86/linux/commit/af5366bea2cb
+[16/57] KVM: selftests: Fix a bad TEST_REQUIRE() in x86's KVM PV test
+        https://github.com/kvm-x86/linux/commit/7b2658cb33c7
+[17/57] KVM: selftests: Update x86's KVM PV test to match KVM's disabling exits behavior
+        https://github.com/kvm-x86/linux/commit/59cb3acdb316
+[18/57] KVM: x86: Zero out PV features cache when the CPUID leaf is not present
+        https://github.com/kvm-x86/linux/commit/01d1059d635a
+[19/57] KVM: x86: Don't update PV features caches when enabling enforcement capability
+        https://github.com/kvm-x86/linux/commit/f21958e328a9
+[20/57] KVM: x86: Do reverse CPUID sanity checks in __feature_leaf()
+        https://github.com/kvm-x86/linux/commit/6416b0fb1660
+[21/57] KVM: x86: Account for max supported CPUID leaf when getting raw host CPUID
+        https://github.com/kvm-x86/linux/commit/96cbc766baf0
+[22/57] KVM: x86: Unpack F() CPUID feature flag macros to one flag per line of code
+        https://github.com/kvm-x86/linux/commit/ccf93de484a3
+[23/57] KVM: x86: Rename kvm_cpu_cap_mask() to kvm_cpu_cap_init()
+        https://github.com/kvm-x86/linux/commit/3cc359ca29ad
+[24/57] KVM: x86: Add a macro to init CPUID features that are 64-bit only
+        https://github.com/kvm-x86/linux/commit/6eac4d99a967
+[25/57] KVM: x86: Add a macro to precisely handle aliased 0x1.EDX CPUID features
+        https://github.com/kvm-x86/linux/commit/264969b48a29
+[26/57] KVM: x86: Handle kernel- and KVM-defined CPUID words in a single helper
+        https://github.com/kvm-x86/linux/commit/46505c0f69f9
+[27/57] KVM: x86: #undef SPEC_CTRL_SSBD in cpuid.c to avoid macro collisions
+        https://github.com/kvm-x86/linux/commit/8d862c270bf1
+[28/57] KVM: x86: Harden CPU capabilities processing against out-of-scope features
+        https://github.com/kvm-x86/linux/commit/3d142340d717
+[29/57] KVM: x86: Add a macro to init CPUID features that ignore host kernel support
+        https://github.com/kvm-x86/linux/commit/5c8de4b3a5bc
+[30/57] KVM: x86: Add a macro to init CPUID features that KVM emulates in software
+        https://github.com/kvm-x86/linux/commit/6174004ebd25
+[31/57] KVM: x86: Swap incoming guest CPUID into vCPU before massaging in KVM_SET_CPUID2
+        https://github.com/kvm-x86/linux/commit/8c01290bda1a
+[32/57] KVM: x86: Clear PV_UNHALT for !HLT-exiting only when userspace sets CPUID
+        https://github.com/kvm-x86/linux/commit/63d8c702c2d4
+[33/57] KVM: x86: Remove unnecessary caching of KVM's PV CPUID base
+        https://github.com/kvm-x86/linux/commit/a5b32718081e
+[34/57] KVM: x86: Always operate on kvm_vcpu data in cpuid_entry2_find()
+        https://github.com/kvm-x86/linux/commit/285185f8e479
+[35/57] KVM: x86: Move kvm_find_cpuid_entry{,_index}() up near cpuid_entry2_find()
+        https://github.com/kvm-x86/linux/commit/8b30cb367c46
+[36/57] KVM: x86: Remove all direct usage of cpuid_entry2_find()
+        https://github.com/kvm-x86/linux/commit/136d605b4365
+[37/57] KVM: x86: Advertise TSC_DEADLINE_TIMER in KVM_GET_SUPPORTED_CPUID
+        https://github.com/kvm-x86/linux/commit/9be4ec35d668
+[38/57] KVM: x86: Advertise HYPERVISOR in KVM_GET_SUPPORTED_CPUID
+        https://github.com/kvm-x86/linux/commit/9aa470f5ddb2
+[39/57] KVM: x86: Rename "governed features" helpers to use "guest_cpu_cap"
+        https://github.com/kvm-x86/linux/commit/2c5e168e5ce1
+[40/57] KVM: x86: Replace guts of "governed" features with comprehensive cpu_caps
+        https://github.com/kvm-x86/linux/commit/7ea34578aea7
+[41/57] KVM: x86: Initialize guest cpu_caps based on guest CPUID
+        https://github.com/kvm-x86/linux/commit/a7a308f863a1
+[42/57] KVM: x86: Extract code for generating per-entry emulated CPUID information
+        https://github.com/kvm-x86/linux/commit/ff402f56e8eb
+[43/57] KVM: x86: Treat MONTIOR/MWAIT as a "partially emulated" feature
+        https://github.com/kvm-x86/linux/commit/d4b9ff3d55de
+[44/57] KVM: x86: Initialize guest cpu_caps based on KVM support
+        https://github.com/kvm-x86/linux/commit/e592ec657d84
+[45/57] KVM: x86: Avoid double CPUID lookup when updating MWAIT at runtime
+        https://github.com/kvm-x86/linux/commit/963180ae0637
+[46/57] KVM: x86: Drop unnecessary check that cpuid_entry2_find() returns right leaf
+        https://github.com/kvm-x86/linux/commit/cfd157452609
+[47/57] KVM: x86: Update OS{XSAVE,PKE} bits in guest CPUID irrespective of host support
+        https://github.com/kvm-x86/linux/commit/1f66590d7ff0
+[48/57] KVM: x86: Update guest cpu_caps at runtime for dynamic CPUID-based features
+        https://github.com/kvm-x86/linux/commit/75d4642fce01
+[49/57] KVM: x86: Shuffle code to prepare for dropping guest_cpuid_has()
+        https://github.com/kvm-x86/linux/commit/820545bdfeb0
+[50/57] KVM: x86: Replace (almost) all guest CPUID feature queries with cpu_caps
+        https://github.com/kvm-x86/linux/commit/8f2a27752e80
+[51/57] KVM: x86: Drop superfluous host XSAVE check when adjusting guest XSAVES caps
+        https://github.com/kvm-x86/linux/commit/cbdeea032bfe
+[52/57] KVM: x86: Add a macro for features that are synthesized into boot_cpu_data
+        https://github.com/kvm-x86/linux/commit/75c489e12d4b
+[53/57] KVM: x86: Pull CPUID capabilities from boot_cpu_data only as needed
+        https://github.com/kvm-x86/linux/commit/3fd55b522795
+[54/57] KVM: x86: Rename "SF" macro to "SCATTERED_F"
+        https://github.com/kvm-x86/linux/commit/9b2776c7cf2b
+[55/57] KVM: x86: Explicitly track feature flags that require vendor enabling
+        https://github.com/kvm-x86/linux/commit/0fea7aa2dc6a
+[56/57] KVM: x86: Explicitly track feature flags that are enabled at runtime
+        https://github.com/kvm-x86/linux/commit/ac9d1b7591a2
+[57/57] KVM: x86: Use only local variables (no bitmask) to init kvm_cpu_caps
+        https://github.com/kvm-x86/linux/commit/871ac338ef55
 
-
-
+--
+https://github.com/kvm-x86/linux/tree/next
