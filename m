@@ -1,113 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A350727CB34;
-	Tue,  4 Mar 2025 22:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54049BA2E;
+	Tue,  4 Mar 2025 23:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741129017; cv=none; b=lHo5FLrJ9c+hpN/cIMzmoBEhrwvl7727kQ0w13o4LWgCAt6o5TTC0+Bdx2zBH4FAiEwjKTWM8abhhanwz5C2RRHLqEHavacf/gZOB84UBF3ynvOtfEMNMdqVuydmyqr1E70Zu7ZkLU6Yh3vma7oCja/S0i4mFV4hDQCWbPPnxSE=
+	t=1741131038; cv=none; b=LCd5hsq/vNi82rxFEQqL3jlgO58VV9215VCJre5Nbr6Y7k81eRv2+IVUw50nAtIeuSbS1x7Y94ogp/G6tk3YYgFkOdHwFZz1yzyHcE2PLskur0L546rxiUGoojhwJrlzuY2DOO3npEkep4G/F4uXyqBMDWql7082asm315ruBLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741129017; c=relaxed/simple;
-	bh=bRlqhB0230mfIlVKHsoerEPbZx5Lz7IFjEzcjkiGTDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MKpDPAv0q7KqZHq2AmZFo97nAvrdv/YNPgdqDx3QGaICVSIY6qE1ZKV88gcbgQ76V7aEcOzcSyMB3C0wswrWVsyJ9iq74b7pHU5XLCAvWZXnPBhj24bo5y+94ylQ0Ia+uXA16oAFUSS6FjJhNU9krY03Or195V8PKX2SVBwwMwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WATPFRNH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741131038; c=relaxed/simple;
+	bh=66xO2KNkoOKmXI7R8RN6T+SxVz/Z036lUMFPhXh5hB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P5Qb8S+tmtKJzIPdO2MTfUwRWgXJosgtQdYOSObk7s8KR65HerfQwGmJkprTM05/JPibgtRas25rWVnXTYL/+ZMATv/MGPhOlSIioxBq5CSdfIrTerK1cAkv1dPQLONzMRjT4dP2fXDi/JFODdpvSfDkI1dDSjqG2/TOU8aqGWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mdr9hqsp; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WATPFRNH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADC80C4CEE5;
-	Tue,  4 Mar 2025 22:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741129017;
-	bh=bRlqhB0230mfIlVKHsoerEPbZx5Lz7IFjEzcjkiGTDM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WATPFRNHk9OktpR86T6h1w1vH7JknKhosipN69B+b6OnQpozabdcWTz0KQqSceTR8
-	 Ll0qUTEGHIhJfiJgDKq/xEj1ZrrhRkbJtLdB4H9QPcknoLLLJg9XiRWcZHZmyr3dXP
-	 zYSv9YCakg3gMbhTF/qSaS2G1+qHOVyUt0miMoiWh0npADn0u4ax6MgtbQOO4xhf7y
-	 FZdkAKfnXJbgb6SYlXsp8ZZTN1G5NfGKOpWHlmlF3HlTFp7esgzKDmq3k+zcNU0iS1
-	 6BDQ/wCWzMQsZbG4O3YNA/4IQcIvi3ynq8d0JJbE1VEbRfLdaAdLpxWkQlGG/+mVmM
-	 MvN5dCetOVUmg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-sgx@vger.kernel.org,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arch/x86: Fix size overflows in sgx_encl_create()
-Date: Wed,  5 Mar 2025 00:56:48 +0200
-Message-ID: <20250304225648.116440-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mdr9hqsp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741131036; x=1772667036;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=66xO2KNkoOKmXI7R8RN6T+SxVz/Z036lUMFPhXh5hB0=;
+  b=Mdr9hqspT0MnXbd8PTZs9N3Tt15xgLDJ/aobw1evGGl0d6JwmnLyQoWL
+   0vqPV6uUPMOyN8XIYvkTzutzGNlsa8M243PpU5jN3s5+OGhSifxTxJYo6
+   m09hff83Bx1iBHBvIUs++QW67a1Dj7dsvv2vo2UesDj30c0sGKtDnSVUh
+   Zpbw1An0KX12uzDoIuxMj7CHTlO/aCcAbGm375yH3i96B+LIjaL8vPFEa
+   +WFHnwFiYRLgmJLlgXF9ZPiKBLeTwdyJ0BISPF+G3BjD1+a6xsnFzWDM7
+   RkrKtlNWd1VVWL2IvPQvMZH4N2zPH0HrAB9QD4iyxjUf5T5fEj+rr0r22
+   g==;
+X-CSE-ConnectionGUID: omuZTlH/TdGwuUltoUKS1A==
+X-CSE-MsgGUID: pFYJvcXIQdGt2+E4FBKNEQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="41254388"
+X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
+   d="scan'208";a="41254388"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 15:30:36 -0800
+X-CSE-ConnectionGUID: N22ihQCjS52J/CwJic1a1g==
+X-CSE-MsgGUID: yQcFizZaQDi2azgpOqo/hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119414525"
+Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.109.165]) ([10.125.109.165])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 15:30:35 -0800
+Message-ID: <45e68dea-af6a-4b2a-8249-420f14de3424@intel.com>
+Date: Tue, 4 Mar 2025 15:30:54 -0800
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arch/x86: Fix size overflows in sgx_encl_create()
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, linux-kernel@vger.kernel.org
+References: <20250304225648.116440-1-jarkko@kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20250304225648.116440-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The total size calculated for EPC can overflow u64 given the added up page
-for SECS.  Further, the total size calculated for shmem can overflow even
-when the EPC size stays within limits of u64, given that it adds the extra
-space for 128 byte PCMD structures (one for each page).
+On 3/4/25 14:56, Jarkko Sakkinen wrote:
+> The total size calculated for EPC can overflow u64 given the added up page
+> for SECS.  Further, the total size calculated for shmem can overflow even
+> when the EPC size stays within limits of u64, given that it adds the extra
+> space for 128 byte PCMD structures (one for each page).
+> 
+> Address this by adding the necessary validation for each partial results
+> before going forward. Return -E2BIG when an overflow is detected.
 
-Address this by adding the necessary validation for each partial results
-before going forward. Return -E2BIG when an overflow is detected.
-
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-sgx/c87e01a0-e7dd-4749-a348-0980d3444f04@stanley.mountain/
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- arch/x86/kernel/cpu/sgx/ioctl.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index b65ab214bdf5..176c2d8d9b60 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -56,14 +56,26 @@ void sgx_encl_shrink(struct sgx_encl *encl, struct sgx_va_page *va_page)
- 
- static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
- {
-+	u64 epc_size, pcmd_size, shmem_size;
- 	struct sgx_epc_page *secs_epc;
- 	struct sgx_va_page *va_page;
- 	struct sgx_pageinfo pginfo;
- 	struct sgx_secinfo secinfo;
--	unsigned long encl_size;
- 	struct file *backing;
- 	long ret;
- 
-+	if ((u64)PAGE_SIZE > ~secs->size)
-+		return -E2BIG;
-+
-+	/* The extra page is for SECS: */
-+	epc_size = secs->size + PAGE_SIZE;
-+	pcmd_size = epc_size >> 5;
-+
-+	if (pcmd_size > ~epc_size)
-+		return -E2BIG;
-+
-+	shmem_size = epc_size + pcmd_size;
-+
- 	va_page = sgx_encl_grow(encl, true);
- 	if (IS_ERR(va_page))
- 		return PTR_ERR(va_page);
-@@ -71,11 +83,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
- 		list_add(&va_page->list, &encl->va_pages);
- 	/* else the tail page of the VA page list had free slots. */
- 
--	/* The extra page goes to SECS. */
--	encl_size = secs->size + PAGE_SIZE;
--
--	backing = shmem_file_setup("SGX backing", encl_size + (encl_size >> 5),
--				   VM_NORESERVE);
-+	backing = shmem_file_setup("SGX backing", shmem_size, VM_NORESERVE);
- 	if (IS_ERR(backing)) {
- 		ret = PTR_ERR(backing);
- 		goto err_out_shrink;
--- 
-2.48.1
+Wouldn't this be a lot simpler if we just had some sane limit that's
+*FAR* below where u64 will overflow?
 
