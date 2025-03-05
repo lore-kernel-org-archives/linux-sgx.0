@@ -1,68 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C461FDA;
-	Wed,  5 Mar 2025 00:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972D01078F;
+	Wed,  5 Mar 2025 00:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741132918; cv=none; b=r8TrW+1JdZVLWf/649xWNCAcOCu5gmc/86QR4XCbr+OkKQGqrSP9jIfIx7+RuIamGBoCXDlEf9SWSBg1+ycsC+BRQMc2qI2ViCB245ezI2gUogGFQgAeAUvRMguq9gEXl0zjWiVBDxxC/g261Yc+bPgqDP+zD0RMT3VOQtpfouU=
+	t=1741133171; cv=none; b=kycKkJ9Lc8is/i/1DAGf+up10Te1jbgd32/GiHv7YZCPqpzhTJ9YLHEFLYo/Myg2qjee68sixAyJnY+KeIy8fuBussRdKYLKjNqegQDozok8rHBQjTcQtMVYlhOFImhVByglygq88xs02a5fxK8mRnvohQp5j92vkvNz+uhjRnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741132918; c=relaxed/simple;
-	bh=kuUVjqvDQ2nlQ/tWv11clt7d+84RweKrOf4HgXk44p0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5Vf2U0H0SyZTjmjTK6ASRygfGMWSGAHwxZVz7ZKor1UKc4NabYLZMvd/FQV3R6rAwsMJtMAJ2GiZ/ovmUCv7ySr7nowBzdFbS0m0mY12oljJUCZkoc0eloVPdCakLHLiqEfdlU+uff/Xnlv1mSZ3E3k2wGPCjqWQtY9feQ5hLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jlYx1ebn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741133171; c=relaxed/simple;
+	bh=4d0t/Os2/GGQ6qNG/OGV8T4IdUwA2m6Stm5czZf5DrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aanS/xVNUxEV4TAgyWd/PNFL3h9dTAB0QYy3fymjeo0nnyECZdxiSi8xI0rkc51ctLUkLLl5TgIzHTe/tx+sCmqoNwLItRO/1q5KD5XionqaVM4CPb7AiUeA0XT4fm26vyt20RzLjfI8IFVIkANNyChOTslJa4butjS9Pc3UzTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GsBfEBZa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jlYx1ebn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB51C4CEE5;
-	Wed,  5 Mar 2025 00:01:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GsBfEBZa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85AA5C4CEE5;
+	Wed,  5 Mar 2025 00:06:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741132917;
-	bh=kuUVjqvDQ2nlQ/tWv11clt7d+84RweKrOf4HgXk44p0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jlYx1ebntuTvqNdBjwyctRhn2g8rbJWY0omlCtjeMrLIrY5McXNUtc5c/bY+1RSoI
-	 pO2XBNOPw/fuAn422p7nJAuYr+dUrwlvSj5tL+gdtSChOzCKIwBZGFeLAPbXN0Dkud
-	 Wbo17BBdPE9y3cUtbyzq+i4JtvUgzRQJi5vXNYShQi1L/BZupSn+rbUmRp6IQudfwK
-	 wJj5c9hQ7/zQjGU/cSsMyfh98BhpvxKI9hB7UW2qh9GTnLkqlNQxkNB0tFl8vTeznN
-	 TIkg6gWBJ67PcfGeUSO3Ds5z7FduH1U9I5onUVRj8gvS0P4b9D55G3BhmcvePa4aG1
-	 hrEE5R7pf6WhA==
-Date: Wed, 5 Mar 2025 02:01:52 +0200
+	s=k20201202; t=1741133171;
+	bh=4d0t/Os2/GGQ6qNG/OGV8T4IdUwA2m6Stm5czZf5DrI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GsBfEBZaVxGKwilAHG/ScWxdCIBsmwK+XJmLfPUQYAgZNfCubB5pFME5Zfqoc4Bo8
+	 3fSXhWZLKm0Y7o8eYVO1JEPxeigdAPGzeW0xB9btJQZsjW54JsAnwpBsWxAAS5uSTM
+	 qobkLvRs0UodevrZiMOE7NGtG8Axqc/DrFNAgaLIyzQdv9nhMnmdor5bBh4hrgOP5L
+	 vte5FDi2uYnk7iIMbMV6PTHrltF7uoyC6HDApKDSpFK44jPyuxSp/SioVa9dpU85nH
+	 F1UmI0H9V3eGl8LjkunhbS1EWIlGyf99QxGSg3dYJDURv3hsHk0i0XS0qzXYdAOb+M
+	 cK60uxx6JIieA==
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+To: linux-integrity@vger.kernel.org,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-sgx@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arch/x86: Fix size overflows in sgx_encl_create()
-Message-ID: <Z8eUcELiMdcM5IJq@kernel.org>
-References: <20250304225648.116440-1-jarkko@kernel.org>
- <45e68dea-af6a-4b2a-8249-420f14de3424@intel.com>
+Subject: [PATCH v2] arch/x86: Fix size overflows in sgx_encl_create()
+Date: Wed,  5 Mar 2025 02:06:02 +0200
+Message-ID: <20250305000602.127665-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45e68dea-af6a-4b2a-8249-420f14de3424@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 03:30:54PM -0800, Dave Hansen wrote:
-> On 3/4/25 14:56, Jarkko Sakkinen wrote:
-> > The total size calculated for EPC can overflow u64 given the added up page
-> > for SECS.  Further, the total size calculated for shmem can overflow even
-> > when the EPC size stays within limits of u64, given that it adds the extra
-> > space for 128 byte PCMD structures (one for each page).
-> > 
-> > Address this by adding the necessary validation for each partial results
-> > before going forward. Return -E2BIG when an overflow is detected.
-> 
-> Wouldn't this be a lot simpler if we just had some sane limit that's
-> *FAR* below where u64 will overflow?
+The total size calculated for EPC can overflow u64 given the added up page
+for SECS.  Further, the total size calculated for shmem can overflow even
+when the EPC size stays within limits of u64, given that it adds the extra
+space for 128 byte PCMD structures (one for each page).
 
-Yes, we can simply check right at the get go that the uarch requirement
-of SGX is satisfied: secs->size is power of two.
+Address this by pre-evaluating the micro-architectural requirement of
+SGX: the address space size must be power of two. This is eventually
+checked up by ECREATE but the pre-check has the additional benefit of
+making sure that there is some space for additional data.
 
-BR, Jarkko
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-sgx/c87e01a0-e7dd-4749-a348-0980d3444f04@stanley.mountain/
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v2: Simply check the micro-architetural requirement in order to address
+    Dave's comment:
+    https://lore.kernel.org/linux-sgx/45e68dea-af6a-4b2a-8249-420f14de3424@intel.com/
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index b65ab214bdf5..fedd5f666b5e 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -64,6 +64,14 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	struct file *backing;
+ 	long ret;
+ 
++	/*
++	 * This is a micro-architectural requirement. ECREATE would detect this
++	 * too without mentionable overhead but this check guarantees also that
++	 * the space calculations for EPC and shmem allocations never overflow.
++	 */
++	if (!is_power_of_2(secs->size))
++		return -EINVAL;
++
+ 	va_page = sgx_encl_grow(encl, true);
+ 	if (IS_ERR(va_page))
+ 		return PTR_ERR(va_page);
+-- 
+2.48.1
+
