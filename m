@@ -1,132 +1,63 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD461DE4EC
-	for <linux-sgx@vger.kernel.org>; Wed,  5 Mar 2025 07:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149D125A65F
+	for <linux-sgx@vger.kernel.org>; Thu,  6 Mar 2025 18:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741160649; cv=none; b=W6cCxb0t5Bi6rbNpfZSmFedAFn+vEPTsDtA78SVQXFWCb+BVP8cys8qV2SkUcw682eIFJPb6B2DHpPr51p3dnF+JSqT+cPhXfQEoqpk+f8KeP2D4DkJ6lpCJYx2wpxlsSq40Y7JDvfz1o8eizVpIBrwnxwP8foxyDwWITPnyYNg=
+	t=1741285736; cv=none; b=OmHiOV1jT8KEwy5UZ+mhX3iglrAQbwOCX/I2QowAtJoFKpXQbDXhI05UlsoT9zGMOkrQ9/RgWv6A/qIYtaHLKNKun7hHc86F1QKwbpcl1VlAEmGFuCl+uWsp/rxF5nWTu97RspFe9Ff/0KEmQF7Xy8FFnqmSDeIJh0qtWke4gkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741160649; c=relaxed/simple;
-	bh=+kINQXm2pVEBWlPxRwvpeqOlQM01zV3AXy2u/inTjz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evmD1X0Mh/I1kQ9bY7qmayM6U6BcsvtCmddZsFRMtQRFcjSyyP4SXFYrYqA6MJxh5Ws/EecaDCBaXw9isAmTVT4+D7KsYLpyN8tXBe8MJi+djXxS4YlG3r0gW1TFct7NGYjcKdRTikYkzcImZ9KIomh2+9QaRU8uB54hLUW25vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cVrzKo4A; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741285736; c=relaxed/simple;
+	bh=r0IMHC/yoRfQ2HR2/H4b/9WctwCr6+o1h47RZVBW/3I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fZ5ruY47YAW6SlqVJQbvP1j8Dh+6R0WPKx/biQoUzaFw83fAZGXsfoN7ZmuGnUFONlLNcBotei46W/kHpZJmfiFrRmgU5y+yBPpGZysmBSRrDCc17aUJMBFK7W/6gl/ULgbLvUEh+dEQyrvEYGZ2ilOqELweOk55bFIU+vKbaPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6ZNwWq+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cVrzKo4A"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-390cf7458f5so5959756f8f.2
-        for <linux-sgx@vger.kernel.org>; Tue, 04 Mar 2025 23:44:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741160646; x=1741765446; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nd2HP1Muw3tuVA3Upra6dWW9/n6xW7AV0YgtwAM6x4c=;
-        b=cVrzKo4AeEcmUjhO+q1OJlFjBPnkxq3UOgpklWmG657I8ztUe4dKTEFPjjFXUc/Qap
-         N6qYtEqs9Q4Yf6gqGpi3QE72Hm0M3pUhldlngSUkASXQtrSK3RLrhX32SwlM5wxf/JFk
-         FLgOyIWKOp9YvUwaZug6BOAea0W+XswScVQugT3Tt/GX6X6WUB5+8iM7nZWhBzyjakjI
-         8U83ho7/f9y2tvo+ldZraIrewmzXvoUdftxprijkGPnWNAJMRmXTKENHaMQwYTp9WkbX
-         VACELC8tDtdYcLVVBrj4cM3mVbYz21REGMCoOSMOOp3Qq59V2XlUuZgBCCkToWlq1isn
-         QfUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741160646; x=1741765446;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nd2HP1Muw3tuVA3Upra6dWW9/n6xW7AV0YgtwAM6x4c=;
-        b=KBJH+X/aL0nzuVck5/u8cA51z6BeshVtIjRLswhXJ+W11EKCrWz/hcWc3u/KHsisPL
-         0ZIdx/qdmQdj48kOSVXa21UHD32bDGH040ceVJArkvt0mWfJN5u/odmG26nFAnOJIObM
-         xpldNkL77ltZLtZsmp7kg64Wo5yU/hLzccwiQcaI+6pFUVHO8gbvGz0KGPr3rhgNR66c
-         Vo+1tmwmN8LVraWGCMJmxPUcqKkKkGIWJ6ldxLiK6eRb5LlDZ46aQrJ/j0BScm+lqLL0
-         Hq3tkvRO/icHKOQpr+UWQeMAdwEt9BT41PauqvJyNfI9ocW7WRJwEB82/VXZlJxCYML+
-         Y6zg==
-X-Gm-Message-State: AOJu0YzkXbOJ66rfMsgzRD3xDIKJDERc5KvFnUyRIgs1nBLNpo0GIIs+
-	yca12YFHBBZr+IsbVFBsbUbpWPGjmIYPjoX9wRKiwAaAck1jNofLhDYlr09F4OkbCOv2XmtLimc
-	V
-X-Gm-Gg: ASbGncvvHBK+RKPQKgFJlqGJoLq/U8lKgyIpgLtiR7u3o7MRTpzxD/x4dNoRu/6IYiQ
-	DbaJIFL3AgzMKbTEhLbOcivF93fLUal4q4Ep903i0bRp9jIMYMsHRbODkdW8qtr/hshWag5xxsM
-	GASDRRFFVPlbBxncwUeIKDQqxr9InamDPqN0Mo22WHxXmfDWQo1kQQBqBX2Au480uAzeOP57ti+
-	jLYzjlAXWwPVup1GfApcBJB+MjIae3Tq4dP0gMvg3uK95I2ql4F/Or6olr3YYHuoVEacgmmkV9L
-	Cz9biVcwAMLkI5+jvVHKY+tGbzEz6iYUfgkJphFnmcSFfhZmFQ==
-X-Google-Smtp-Source: AGHT+IHKueX4ZSJGjt9icbOH5/FszuZxkJpFEdCR8bMw+KsILplWoPWQuNCvFB0zgfYt6ZgIa/nLzg==
-X-Received: by 2002:a05:6000:1885:b0:390:e2a3:cb5b with SMTP id ffacd0b85a97d-3911f7aee05mr1556444f8f.41.1741160645880;
-        Tue, 04 Mar 2025 23:44:05 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e484489esm20527762f8f.68.2025.03.04.23.44.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 23:44:05 -0800 (PST)
-Date: Wed, 5 Mar 2025 10:44:00 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-sgx@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6ZNwWq+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D08C4CEE4;
+	Thu,  6 Mar 2025 18:28:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741285735;
+	bh=r0IMHC/yoRfQ2HR2/H4b/9WctwCr6+o1h47RZVBW/3I=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=n6ZNwWq+xhWsk1oT8wOk6PUFOk+zyGx1EsYvC5Lz9XLEEXbROZqStAGH5unAyaR/7
+	 5xFtZYG2MJuKJavWdZyHMuz5r0f3u2bby/uz1NIrfg1LxAi4maDBGwIbBNiHVF8E5I
+	 cZk+G4uz0y28OjZ91KYyFc8gbShDM/rtMN68+JJsSZ0bwwREd+0WEgNfGv9f43qH8m
+	 TIUA3WsaKQIkogJYJ9X/I+y8F8nTycQOIG1aOb36L+zFMuZt8PNLq5Kow9dchPT4B3
+	 sDVKYky/tEU17WzvRlddf2LOpAwhhhhTt2z09F2SyHaNwjNjc7QHKX747RXjNI5K+W
+	 MDwxdndUvHXVg==
+Message-ID: <fdbd04be53e434df57125893b5eb43b2c91ffe0e.camel@kernel.org>
 Subject: Re: [bug report] x86/sgx: Add SGX_IOC_ENCLAVE_CREATE
-Message-ID: <25ff0eb0-2730-4cc3-89f5-0e5be68e02e6@stanley.mountain>
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-sgx@vger.kernel.org
+Date: Thu, 06 Mar 2025 20:28:50 +0200
+In-Reply-To: <25ff0eb0-2730-4cc3-89f5-0e5be68e02e6@stanley.mountain>
 References: <c87e01a0-e7dd-4749-a348-0980d3444f04@stanley.mountain>
- <Z8d5n9e4tBZo892q@kernel.org>
+	 <Z8d5n9e4tBZo892q@kernel.org>
+	 <25ff0eb0-2730-4cc3-89f5-0e5be68e02e6@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8d5n9e4tBZo892q@kernel.org>
 
-On Wed, Mar 05, 2025 at 12:07:27AM +0200, Jarkko Sakkinen wrote:
-> On Tue, Mar 04, 2025 at 04:05:45PM +0300, Dan Carpenter wrote:
-> > Hello Jarkko Sakkinen,
-> 
-> Hi Dan, thanks for the report, it is very well put together with all the
-> detail it has :-)
-> 
-> > 
-> > Commit 888d24911787 ("x86/sgx: Add SGX_IOC_ENCLAVE_CREATE") from Nov
-> > 13, 2020 (linux-next), leads to the following Smatch static checker
-> > warning:
-> > 
-> > 	arch/x86/kernel/cpu/sgx/ioctl.c:75 sgx_encl_create()
-> > 	warn: potential user controlled sizeof overflow 'secs->size + ((1) << 12)' '0-u64max + 4096'
-> 
-> 
-> What I tried:
-> 
-> 1. Installed smatch package to Fedora.
-> 2. Cloned git clone git://repo.or.cz/smatch.git
-> 
-> I get:
-> 
-> $ O=.clangd ~/work/staging/smatch/smatch_scripts/kchecker arch/x86/kernel/cpu/sgx/ioctl.c
-> make[1]: Entering directory '/home/jarkko/work/kernel.org/jarkko/linux-tpmdd/.clangd'
->   SYNC    include/config/auto.conf
->   GEN     Makefile
->   GEN     Makefile
->   CHECK   ../scripts/mod/empty.c
->   CALL    ../scripts/checksyscalls.sh
->   DESCEND objtool
->   INSTALL libsubcmd_headers
->   CHECK   ../arch/x86/kernel/cpu/sgx/ioctl.c
-> make[7]: *** [../scripts/Makefile.build:208: arch/x86/kernel/cpu/sgx/ioctl.o] Error 139
-> make[6]: *** [../scripts/Makefile.build:465: arch/x86/kernel/cpu/sgx] Error 2
-> make[5]: *** [../scripts/Makefile.build:465: arch/x86/kernel/cpu] Error 2
-> make[4]: *** [../scripts/Makefile.build:465: arch/x86/kernel] Error 2
-> make[3]: *** [../scripts/Makefile.build:465: arch/x86] Error 2
-> make[2]: *** [/home/jarkko/work/kernel.org/jarkko/linux-tpmdd/Makefile:1989: .] Error 2
-> make[1]: *** [/home/jarkko/work/kernel.org/jarkko/linux-tpmdd/Makefile:251: __sub-make] Error 2
-> make[1]: Leaving directory '/home/jarkko/work/kernel.org/jarkko/linux-tpmdd/.clangd'
-> make: *** [Makefile:251: __sub-make] Error 2
-> 
-> Am I using smatch incorrectly?
+On Wed, 2025-03-05 at 10:44 +0300, Dan Carpenter wrote:
+> > I'd just love to learn how to use it in
+> > order to make sure that my fix will address the bug.
+>=20
+> This is something I'm still working on so it's not published yet.
 
-You're doing it correctly.  I don't know what "Error 139" means...  I'm not
-able reproduce this.
+OK, if you put out anything related to the this tool to LKML, please
+CC me. And thanks again for reporting the bug!
 
-> I'd just love to learn how to use it in
-> order to make sure that my fix will address the bug.
+>=20
+> regards,
+> dan carpenter
+>=20
 
-This is something I'm still working on so it's not published yet.
-
-regards,
-dan carpenter
-
+BR, Jarkko
