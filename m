@@ -1,145 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA7B208974;
-	Mon, 17 Mar 2025 16:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA86226D1E;
+	Fri, 21 Mar 2025 12:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742229595; cv=none; b=hf5lTeApDM7XbuQcKr+00A/NdCVURnkZ3bLBt/lYRsGMleaF4FJo/iW8wT/mLec+CWv3gNNE181KrkS45BiK2nuUaOLaRe66svxlKuu9YIJ1R6iWEQh5QQR8t3YzT3s1uGfvOX/GfUVqfdZA/qluP0aAtjkolPSLe7zQInCjm08=
+	t=1742560809; cv=none; b=VZr8YQHS3GTaPKaifmF/J/LRkpm21/Vsoe9tCrH7TJ4briRePYYKU4a6p1s4lFUtf7ZqbFMiLccuTZhFOGLnhzka+gsLT15hVM0f+gpMwHbkbb8TtaMnAz0P2xtSL0SAKjudsBaMYWGtIBr4WPludorZHA3USn24fKDj0zMBQlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742229595; c=relaxed/simple;
-	bh=1dC+jme/+qxpetUYUsM4Cnjcc/do5xD9p0M+53s6y2A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RGl+Xq0YmTIX4PQHVmDDQTZXJKsOJTbsvIQjbP0djvj5NgCMEU4izyWE2hVb/XCOlRO6pndbhLV5z54C+rkaSNtn9wCE4AytPldQmNRDzebKXW3JG9bEM3o2YgntzdAOwrTwXO1FD68h/ZgoJvBTOdxT3cylOiQK4kRbK550sas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vy3lgEfM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742560809; c=relaxed/simple;
+	bh=hcWvFi80BBGrynZntG4NGp0zz+211rv5V7sFIsl5teA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l8LpFc4RwYY0rTHE3MZX0yBKqRZZ5Uuo5bboHGEUpsZfdCda0uAzxmEQs8irRiJ5v4bZHvblF3covRc15H9Tjht7DxlVyKZqN1aJzvKCtzt0zRPSh9Yt8YtKVk878SuQiBZHj8ON31ffOGXeSlT/VSlyCOI+9IEYMqMnnOgkvYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N2UgelIG; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vy3lgEfM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FBD7C4CEED;
-	Mon, 17 Mar 2025 16:39:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742229595;
-	bh=1dC+jme/+qxpetUYUsM4Cnjcc/do5xD9p0M+53s6y2A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Vy3lgEfMq5joCY30BohY+8Ogt5Dg1mJjITqCqtacQlu6EneyuG7jFCCFMXTdbdYcK
-	 2sIO/HDa8Ip94StoBirlIp6klbDQigv34EMbldv5OACounxZ/nSCvAC9lX7maNIAQ4
-	 KAV8STDR+zrHeowKe8HQZguwhNAJdZuCE/AXlEIXT0lL+QSwAeno0Ps0eN/bBR+QNG
-	 mq2OeI26YJKYNRPjlsJxyLuiTxwUc1Z/VToa1wVt7QhuXALaTOCgZzHUUl8J02DSDj
-	 MVmqpzStTgv7/M/9WiSZWdgyt6TCPgna8wgsmaITcyC84eTthwPSN9ippgpGqJpIL+
-	 QZydZgNbGyogw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Vladis Dronov <vdronov@redhat.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Kai Huang <kai.huang@intel.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Sean Christopherson <sean.j.christopherson@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sasha Levin <sashal@kernel.org>,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N2UgelIG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742560807; x=1774096807;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hcWvFi80BBGrynZntG4NGp0zz+211rv5V7sFIsl5teA=;
+  b=N2UgelIGJWW3TvgiBod7VASx/pz40X2KnALRRVLrlH3BJae9OnIP+40w
+   Q42ZBa2Xh+k4Yprzh3mxPzLngQTqXEocjVsIMDjJf98zFLNxxbCwLuWoL
+   b8rLOkOvh7bfpahOla9pJsvhyZpxVM9rqbiqr2MXOEpnX4pptvQwbmu/y
+   hU5B/y2QCu8S0Ro/oEsjRb0RQZ8zncoqP6pvujwXR6NQE8OcF84vSBgBm
+   VZwrKs0ZCdJXDYwJjASK2NYfiDF/Ry5V0n+RGBsT7YJ51GOQyrbkbvJAX
+   c7G9DihePJ56AWFzRpjlznCZcBxgLXF9j98PhXACDPRiFzoXR+GnVhuuz
+   Q==;
+X-CSE-ConnectionGUID: M2VJARcxQt2XVdpnHJawxQ==
+X-CSE-MsgGUID: A5WWiM+lRQOIBi8CmjVVIQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="54493348"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="54493348"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:40:06 -0700
+X-CSE-ConnectionGUID: nKVePy+AT/iY4z00Ld0faw==
+X-CSE-MsgGUID: hATTo9ZCTtyBori9ECO+tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="154399873"
+Received: from mwiniars-desk2.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.246.189])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:39:52 -0700
+From: Elena Reshetova <elena.reshetova@intel.com>
+To: dave.hansen@intel.com
+Cc: jarkko@kernel.org,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	x86@kernel.org,
-	linux-sgx@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 2/4] x86/sgx: Warn explicitly if X86_FEATURE_SGX_LC is not enabled
-Date: Mon, 17 Mar 2025 12:39:47 -0400
-Message-Id: <20250317163949.1893632-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250317163949.1893632-1-sashal@kernel.org>
-References: <20250317163949.1893632-1-sashal@kernel.org>
+	asit.k.mallick@intel.com,
+	vincent.r.scarlata@intel.com,
+	chongc@google.com,
+	erdemaktas@google.com,
+	vannapurve@google.com,
+	dionnaglaze@google.com,
+	bondarn@google.com,
+	scott.raynor@intel.com,
+	Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH 0/4] Enable automatic SVN updates for SGX enclaves
+Date: Fri, 21 Mar 2025 14:34:39 +0200
+Message-ID: <20250321123938.802763-1-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.179
 Content-Transfer-Encoding: 8bit
 
-From: Vladis Dronov <vdronov@redhat.com>
+Background
+----------
 
-[ Upstream commit 65be5c95d08eedda570a6c888a12384c77fe7614 ]
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
 
-The kernel requires X86_FEATURE_SGX_LC to be able to create SGX enclaves,
-not just X86_FEATURE_SGX.
 
-There is quite a number of hardware which has X86_FEATURE_SGX but not
-X86_FEATURE_SGX_LC. A kernel running on such hardware does not create
-the /dev/sgx_enclave file and does so silently.
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
 
-Explicitly warn if X86_FEATURE_SGX_LC is not enabled to properly notify
-users that the kernel disabled the SGX driver.
 
-The X86_FEATURE_SGX_LC, a.k.a. SGX Launch Control, is a CPU feature
-that enables LE (Launch Enclave) hash MSRs to be writable (with
-additional opt-in required in the 'feature control' MSR) when running
-enclaves, i.e. using a custom root key rather than the Intel proprietary
-key for enclave signing.
+Proposed solution
+-----------------
 
-I've hit this issue myself and have spent some time researching where
-my /dev/sgx_enclave file went on SGX-enabled hardware.
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
+to Ice Lake. It allows updating security SVN version, given that EPC
+is completely empty. The latter is required for security reasons
+in order to reason that enclave security posture is as secure as the
+security SVN version of the TCB that created it.
 
-Related links:
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
 
-  https://github.com/intel/linux-sgx/issues/837
-  https://patchwork.kernel.org/project/platform-driver-x86/patch/20180827185507.17087-3-jarkko.sakkinen@linux.intel.com/
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
 
-[ mingo: Made the error message a bit more verbose, and added other cases
-         where the kernel fails to create the /dev/sgx_enclave device node. ]
+Testing
+-------
 
-Signed-off-by: Vladis Dronov <vdronov@redhat.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250309172215.21777-2-vdronov@redhat.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/kernel/cpu/sgx/driver.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Tested on EMR machine using kernel-6.14.0_rc7 & sgx selftests.
+If Google folks in CC can test on their side, it would be greatly appreciated.
 
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index aa9b8b8688676..afccb69cd9a2c 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -150,13 +150,15 @@ int __init sgx_drv_init(void)
- 	u64 xfrm_mask;
- 	int ret;
- 
--	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
-+	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC)) {
-+		pr_info("SGX disabled: SGX launch control CPU feature is not available, /dev/sgx_enclave disabled.\n");
- 		return -ENODEV;
-+	}
- 
- 	cpuid_count(SGX_CPUID, 0, &eax, &ebx, &ecx, &edx);
- 
- 	if (!(eax & 1))  {
--		pr_err("SGX disabled: SGX1 instruction support not available.\n");
-+		pr_info("SGX disabled: SGX1 instruction support not available, /dev/sgx_enclave disabled.\n");
- 		return -ENODEV;
- 	}
- 
-@@ -173,8 +175,10 @@ int __init sgx_drv_init(void)
- 	}
- 
- 	ret = misc_register(&sgx_dev_enclave);
--	if (ret)
-+	if (ret) {
-+		pr_info("SGX disabled: Unable to register the /dev/sgx_enclave driver (%d).\n", ret);
- 		return ret;
-+	}
- 
- 	return 0;
- }
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/T/#r2399940e5b10465162529c05e9579b30883849f1
+
+Elena Reshetova (4):
+  x86/sgx: Add total number of EPC pages
+  x86/sgx: Change counter sgx_nr_free_pages -> sgx_nr_used_pages
+  x86/sgx: Define error codes for ENCLS[EUPDATESVN]
+  x86/sgx: Implement ENCLS[EUPDATESVN] and opportunistically call it
+    during first EPC page alloc
+
+ arch/x86/include/asm/sgx.h      | 41 ++++++++++-------
+ arch/x86/kernel/cpu/sgx/encls.h |  6 +++
+ arch/x86/kernel/cpu/sgx/main.c  | 78 ++++++++++++++++++++++++++++++---
+ arch/x86/kernel/cpu/sgx/sgx.h   |  2 +
+ 4 files changed, 107 insertions(+), 20 deletions(-)
+
 -- 
-2.39.5
+2.45.2
 
