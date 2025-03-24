@@ -1,282 +1,224 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225512D023;
-	Sat, 22 Mar 2025 22:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742681964; cv=none; b=SyBh6GxYG/KZn6LBoQYFPLeZ3LZiW9qT+Ir3Ec/kKkGyr9enpcuwX71HRGJyJXBBX0H5m15QURJqSV3qPgT7Y207BYDR/HWm3BG+VHIk07bsDJ+H+6VqDgZG1ZgaK+yvvs0xbVML9XC3eXHF+Gg29j53nSAQpZtFS+3N8FxMds8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742681964; c=relaxed/simple;
-	bh=iynpC1DDLxYyv3InM2Zrq3j21FUJht27MG23dxh7TFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UUhImPe0SBfg/ls2omY/HOONU8u80y3Gkf5fKdt0o5AAADbPeZEj/T26hbwyybYHurOT9zNhvUgHFNoe3aqerevaExsvXl067EvQOtWlIfsNayycXbeVBUAGUeBgsO7YrZuiGQgHOtKAyzPm1kQToabAx4LYGnesvyKKROTBsp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mw5hVkXP; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586FE2C80;
+	Mon, 24 Mar 2025 12:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742818367; cv=fail; b=SbKWwUIOCg8+MVruiwyZJZu8mNtuhyG0nFBhizs8ydBuYKF5EkjlvOrL+4cJCIMDQljlINTCQZw6Ejjba+L0hqH2yShh0t5+40zuSV/MVGgePpqLxWfGGFAioMSLZOaN2MXPwSAqg3r+g8Vcz0RFY1mAsHCqNU9CuU/o2Yozga0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742818367; c=relaxed/simple;
+	bh=C7KXBcdcEmeBDRgt6jf/qE9QXsNthM7i+3+1+u2TZWQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=irKcjMBdmwu4Zssy0oW8fHcCYwU2We3RQ26b+bjgaN0v5St3ejNvu1RobXNknzN/JitLtFghALe6NArGqTyQKqZ3V44AcRaZXcH8m9rrR0wzDfx2S+AMtUieUsVSAD3ZcSg/jlXHfW6R1ANyvGaFnhef6iW0NPcxrKcGkd4i1VI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JZgKY52U; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mw5hVkXP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AFE3C4CEDD;
-	Sat, 22 Mar 2025 22:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742681963;
-	bh=iynpC1DDLxYyv3InM2Zrq3j21FUJht27MG23dxh7TFY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mw5hVkXPCpgmcpVMLcKdZRG/KdkJmmlp3IcKrC80MkVgVeCbAszqu8nTL2Nt8kj+z
-	 cd1ueE4N1KkwoHgUtxW+Uwpti1DW9HN1k3Dsoic5XJOQOj8ukui6tJbB5Bgc37NRdx
-	 1seTHbJLhxffUF9HbDzcRoTPkYZGnyHQ/TFjZJranpL5J8KqWWO+z2vVIWZav6ArDg
-	 O2vQEMT+nnPkLLHWZGMZ3+srOaZ6n5PWm4Myk0BN/Pir1tDwS7Wf2biZhD+eyPq6ud
-	 mmWx7Mpalap+o+QGxzQ5P5t8E6m4JfnkbDqAlLf36XubbCiVLGQoGvZqntsOIOYUTN
-	 X8p/m4Np+wkpw==
-Date: Sun, 23 Mar 2025 00:19:17 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Elena Reshetova <elena.reshetova@intel.com>
-Cc: dave.hansen@intel.com, linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
-	chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
-	dionnaglaze@google.com, bondarn@google.com, scott.raynor@intel.com,
-	Cathy Zhang <cathy.zhang@intel.com>
-Subject: Re: [PATCH 4/4] x86/sgx: Implement ENCLS[EUPDATESVN] and
- opportunistically call it during first EPC page alloc
-Message-ID: <Z983ZaTaWNqFUpYS@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JZgKY52U"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742818366; x=1774354366;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=C7KXBcdcEmeBDRgt6jf/qE9QXsNthM7i+3+1+u2TZWQ=;
+  b=JZgKY52UwP2mqSDBRZrZrvLY8zwiXZMQdLsSTE5mtROJMykHJi3Ii2lz
+   DjGavrC0T0EB05CiPE+BxDiEZ2yGYUsG+G27Rc7LQR7wgvskRvcJ7f3L5
+   8Sol5kCucOJKSBPC5RTe9nOAHb65dEW3qclEUYZmT5UPp6XpNv2BV6r5B
+   5FWe5jsCo+Pve2uio+6MzXRzUNRbkg7fTQHXdbPv95SkaPKgcxLoKbsWC
+   rYE7XTgGzhZNXG6zDk4hT/qYCcQMzibUJvtWamuDen5701KKiMSMbzage
+   noic+uHN2oMEIyZes1QmVsDW7AGd7CxyfQJ3Oc3zwqmyb3n7iLrTKzVxn
+   Q==;
+X-CSE-ConnectionGUID: cTU14kV7SeKIlR+pNbvn+g==
+X-CSE-MsgGUID: IFXAq/alSxihf8Lne7K80g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="61541371"
+X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
+   d="scan'208";a="61541371"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 05:12:45 -0700
+X-CSE-ConnectionGUID: yhvgg0aDQ8+Tlgcth5nGIw==
+X-CSE-MsgGUID: u6jUR4Y8RaKZ5M8n5zU+EQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
+   d="scan'208";a="147235037"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 05:12:44 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 24 Mar 2025 05:12:44 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Mon, 24 Mar 2025 05:12:44 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.176)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Mon, 24 Mar 2025 05:12:43 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o4C5jWlLwRjWiR5frVzXPrPYQZDLit9kmt6yP4+1PbTrC7y5CTRdWfkN1sSe0Y/BAaBELmPAWWBTiDuektokK42ei5YPTUyR+oEAEPDKXDcT74RvCI2oYSBgwd94z5Kn0Kc5odJMTrYfxGDvb4+H4UOJ7tLluFm1vy2d/R3Qaylf0lHr5N7C3DrshfJ3hCmY6KsdNlr69E4nCPIIEGDJsCJ8KHA6+bP+gShBno5jryVK1jINGZmG87yZb49bkLHdmrt9e89Wa3jKOBf9zGoC1zDZI9Rw9tL1Wsr5ECegO6rHQ3DYcx3idwRBqIx8W5jQmepiWLwT1fcwJtVK/EYTeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=C7KXBcdcEmeBDRgt6jf/qE9QXsNthM7i+3+1+u2TZWQ=;
+ b=mAvqam0kv96dJz4clUnhNZaa2QbccUwBtsWqdQ+VLRSTVwcpLw8gLVaHVxu0fYHKCAEIOU5JWqRH2ap/5aPG6FsrKYFJcx1mY92ztkobeJBWKKtaBc1N0GA1SjRGrVxNSNWxFiGINdfNS2H8bhiBhA7GIbmhzcPVxCrkXRcUBOctkbZEmKWGW6vJ2omj3K/jI3DUpAwIOr4XMqM6y222rmFazUUFlYr3oAtmhgxbqn2gTc4EINYjpCoEEj4LBkROjvbp5ZwUHS7x9xRAR/4sSs2Q707qX1kxV1bC4wEReiyBbNmjpPC5hNJIZKAK6CQIJty7OaKeha601t3pEXS9yg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM8PR11MB5750.namprd11.prod.outlook.com (2603:10b6:8:11::17) by
+ CY8PR11MB7194.namprd11.prod.outlook.com (2603:10b6:930:92::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.42; Mon, 24 Mar 2025 12:12:41 +0000
+Received: from DM8PR11MB5750.namprd11.prod.outlook.com
+ ([fe80::4df9:c236:8b64:403a]) by DM8PR11MB5750.namprd11.prod.outlook.com
+ ([fe80::4df9:c236:8b64:403a%4]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
+ 12:12:41 +0000
+From: "Reshetova, Elena" <elena.reshetova@intel.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+CC: "Hansen, Dave" <dave.hansen@intel.com>, "linux-sgx@vger.kernel.org"
+	<linux-sgx@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, "Mallick,
+ Asit K" <asit.k.mallick@intel.com>, "Scarlata, Vincent R"
+	<vincent.r.scarlata@intel.com>, "Cai, Chong" <chongc@google.com>, "Aktas,
+ Erdem" <erdemaktas@google.com>, "Annapurve, Vishal" <vannapurve@google.com>,
+	"dionnaglaze@google.com" <dionnaglaze@google.com>, "bondarn@google.com"
+	<bondarn@google.com>, "Raynor, Scott" <scott.raynor@intel.com>, "Shutemov,
+ Kirill" <kirill.shutemov@intel.com>
+Subject: RE: [PATCH 1/4] x86/sgx: Add total number of EPC pages
+Thread-Topic: [PATCH 1/4] x86/sgx: Add total number of EPC pages
+Thread-Index: AQHbml52rO5WRn4U4UWiUGJJakHgYrN/tmkAgAJ/A3A=
+Date: Mon, 24 Mar 2025 12:12:41 +0000
+Message-ID: <DM8PR11MB57508A3681C614C9B185B04EE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
 References: <20250321123938.802763-1-elena.reshetova@intel.com>
- <20250321123938.802763-5-elena.reshetova@intel.com>
+ <20250321123938.802763-2-elena.reshetova@intel.com>
+ <Z98yki-gH4ewlpbP@kernel.org>
+In-Reply-To: <Z98yki-gH4ewlpbP@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM8PR11MB5750:EE_|CY8PR11MB7194:EE_
+x-ms-office365-filtering-correlation-id: 542f5f17-4ec5-4eb4-9acb-08dd6acd2d1e
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?ZDhpZHJZeUtvMHVHbHY4REFFeDlwU1ROR1V1dTRLcmh1QmowN0dhaHlSMjdu?=
+ =?utf-8?B?ZWtKSXJOM0t0dWhDeUgvZUZhNHkwNmo3bU5pTExhQjg3bkJUMHJsb3ErRlIw?=
+ =?utf-8?B?S0hRMzA2YzZQemhCTm4yRlF2b3NFOUk0YWNMQ2NaR01CdFlWWm5xaFE3U3NR?=
+ =?utf-8?B?RzU2MVFrUUV3K1hwMDlzL0xKdDdkOTBrOGgvNW0yTnFlNmZ2UUtWWFRxNGIy?=
+ =?utf-8?B?ajdKcUFpMHVta05DZ1E5d1F5TnpEc1BaVmNYbGlicWZoYW1qZE9PL2dwcGYv?=
+ =?utf-8?B?NFcvVE1mVzIwaTcrb1Fpd3Nwc2ZTaUJTMFpwbHlQZEFwTndVdHBhejl4UjQr?=
+ =?utf-8?B?aGp0NXlHS0ZzSU5BQldUNzROdXkrSUhnNDZTekRkM3RacnVLQ3l6MjZiQTk4?=
+ =?utf-8?B?a1lOdDY2eVRLeStnM3BSZ2ZVUURVNnk3RGNBaXZZTUc4elZXTjFCdUtSNTVG?=
+ =?utf-8?B?MGZOWE1hejg1UGx3elJKRGNYMU5LZEx0a1IvczlFbmQ0cDRBNWN0SGY0YWpq?=
+ =?utf-8?B?Zm1HeGxqbEpJMSttOVRORWtMS1g3OFo0NVZiQVdMendVQTRGY2JrcFZHVTUv?=
+ =?utf-8?B?VTJiQ0tNM2lWbGxRcGNHRzhQL3RmMTFxQkJLT3V1am5rTVRzOVdVOFBmY2dG?=
+ =?utf-8?B?OUxZQTNqOFlZYTh1Q3k2S3ZBT3pFWGZzc1R6Q2lhVno0SUVkSDNGampDR0dH?=
+ =?utf-8?B?L0VrcmFiMCtmMlRzK21mKzVDNWpIaTRmandpRTRJVXJ5RWplSmtMTUZuMGx2?=
+ =?utf-8?B?cStrOWtUSC9QV2F6UjJuQ3Uvcy90bFBYSUd1UEU4NXpDVkVOdU9oOHQ0azll?=
+ =?utf-8?B?WFpkRitNdG5jRUJ1WXNHN05kbDZUUXJqR1F3UFNoQnhmbTV3dEkyeTZiSFF1?=
+ =?utf-8?B?RWRkakMzd3RjSjVlNVV3UG9pYVZoTExLRVFRQU5mUGNTNXFkVkpUSFU4MGdj?=
+ =?utf-8?B?ZC91czBGSVRkcUkxNWprQW85WmFJekxxbW9QQnFiZkE5YXE3OGdzQVFrOWNV?=
+ =?utf-8?B?Nm5mN1ZsYWRsUUkrdEFwQUNpS2tYZjgxenc2S0hYTEp1V05Wdm9HeTNnUmdS?=
+ =?utf-8?B?dGQ4NjVXSHhBUVR3Y2FKNmZaUUc2Q3pDZ0NyazB6QUUvenhxRlhpcFQzVzMw?=
+ =?utf-8?B?WE1rKzd3c29QRzBpQkNBYU1GVVVsblF5YTd0K2gvSGxmOUI5RC93cDBlbkkr?=
+ =?utf-8?B?RjE3RkFTRnpSM09kazUvY3N6ZlBFam5BZXJGQTkzeDAzQkR4S1NKTFh5K0JB?=
+ =?utf-8?B?cUg4MTkyUHR0ekNMZFNzMUFDaTdWS1k0ZDJhdHFJbkl1MCtSOVJxcGxKWlVv?=
+ =?utf-8?B?N0piOE9wQ0lFY1haVVlVSTNlOU9xK2dNK1BQNWdDbFcvQmg2Z0JTWm9KY2Uy?=
+ =?utf-8?B?KzFIYWE5TUcrdG5DYktWbDBzeWhtQWZ2NW5zWVNwbmRlZ3p1bFpPNUJLN05t?=
+ =?utf-8?B?K0did3Z0Ui96YVJrdHhvUVByWnAydXEvY1RFRUhteml6cWVUTTJmeUN6Q2dk?=
+ =?utf-8?B?N040bDFkbU5ueWFYWGFYOEs0QVhjVFdmUTVvWlEvRVNRN2lKWjhPajI5S0FP?=
+ =?utf-8?B?OHRBdWJIbDI3VFRHSFhucFVadVZ3NUdyenNoQlBwdm0vNnU2NWlNV3dUb3BJ?=
+ =?utf-8?B?VG8zcDNlYjBlTitVMTk1SVRvWDZqTklERm1FWmgyT3hvanBjVEw5Tys1V0di?=
+ =?utf-8?B?aW1qTGlUUitNQnRTV0NnU0xpQ2R2eWdhb2JGYlNibDhCSUxGOFVWZjJ4KzFj?=
+ =?utf-8?B?Sk44Tm5PRStZclVuY2QvUzFqc2JBNnRTWnd5NnVnU2YyMkZYZnFsU2tINWRl?=
+ =?utf-8?B?T256eUxlWmJ0MHkyVlR2eFRHby9lejJVZXE2dDIvRjNhSi9mTnBvTTllbFRr?=
+ =?utf-8?B?eFplSEdUcGlyMklJMkNabnYzZHlLbFR4SVlKRVVJb2ZKd3ZwLzlBVXJZRHpV?=
+ =?utf-8?Q?xSKQNYmAepKpVqtxN7Ew+/CW8nONGmN+?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR11MB5750.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZTdwKzZEeFdTcXdrc1A1RFdKNVVaMGNuaW51N1J3bmRUc2JvQnBsRktCcU9v?=
+ =?utf-8?B?T0FRemF6b2pHU003cWRRSGFIejhSK252SE1wVkR2V0pzdlFBcEtPMWk2aHNT?=
+ =?utf-8?B?YzFGNEVKaGJMMjh2L2dkSWxZUXBvMVp5Qy9LNXdtK1dFTUl0VXdWUXlVaWtO?=
+ =?utf-8?B?Z041SjhBWm04L21yUlVUTnlpQTBkOHFhbHJ5ZHVXWUQ2NEdoeWo5c0FpN0Mr?=
+ =?utf-8?B?bCszYVNodXFMaVhKQWlIWlMrUUc5aTFPU2V1RmNBSDFheHF4aGRUQk1IS1lQ?=
+ =?utf-8?B?MXljSHM0endaRjlmSXNzL2xJRWtyL01HQWFIZDNaOFlZdkplclVxQ0xjYVpO?=
+ =?utf-8?B?K3BoSU1VbEx5YVl0YTNGS1RHSXRsYWFOQ2VaV2FzNHB0ZmFqMkdWL05JV2FW?=
+ =?utf-8?B?S2hmQU1ra2VBL3pCQ3RUWlJwcGhmOW16emFSVTB1YlNyQUxVcEhYaFV5ZEtx?=
+ =?utf-8?B?VnIrSmQ5ZWhaTGdrblphVU42ZHFCeWhLV1NNVnN2UStsOGpIVnhwL0doN3Jh?=
+ =?utf-8?B?U1VOVzU4bjZ2MHhRUjdLQ2RhdTZJaWpGQ0t4UC9nSzVmRW9PbWZIZHVTQzNQ?=
+ =?utf-8?B?cUpFWE5hZE9Ra3c3aTV1bS9MSFprV2owU1hpbGJNUHBzdXR6bHR2dTdCeDNt?=
+ =?utf-8?B?eTJNb3ZBcXRNdkU3RWFXSWpCNU43NThnb0l6UTdDTzkzdkM2QjN1eDk3Znpu?=
+ =?utf-8?B?OHl5NEpDd3Fkc0NETHlFTGJMQ2lCUk5nS1ZyaFBiaURkZXltMitMa29pOVRV?=
+ =?utf-8?B?TmJlV1R3K3I0MGV6S1FZL0F1aW5PeGxiTC9KSHVJRDYvYlpVZlFIYkd2YWVZ?=
+ =?utf-8?B?SVN6cUpTbDdGL29aYUpVS3pUZE0zcXZpNVo3YzBPNk9YTkc1eFpSUzdRNEYw?=
+ =?utf-8?B?eDMxOFplSXhDWDZTbnpQY0drZXU0NGpzM3BVdHU0b0RoeUF1ZU1GMllYejFB?=
+ =?utf-8?B?aEYyVkNNb1h3VlFqS0JiMVRIamdya1lHeFZxbXorVXdVQVplNTBoanJGeDJM?=
+ =?utf-8?B?cUZBVTB1ZWNtWGxCM2E4MDkxaThHWEtEN0tnY0IrZ2xuaDQyVFoyYmxUVWhR?=
+ =?utf-8?B?Y3BFdXhVU2xXcE03SjdPTzNZVUNFN3FGL0FqYnFqV2liaWduN1U0eWRtYXdh?=
+ =?utf-8?B?RUNva05oN0pKM0lhZFFPODFSYjM0aDJ4NFRPQzFhcUMybC9XcWNDbDhOMEdo?=
+ =?utf-8?B?dFZTQnc0SzFGU1UxVDUvUFc3UmcxUmJDWk1TZWFjKzVId1JieFZ1TkxKYUFF?=
+ =?utf-8?B?Vm1vUkRLL2JQeXNaQ0IwV2QveDk0bnQ0eVpQQlNQUGhEN2lKUkJ3azJrVnNX?=
+ =?utf-8?B?UjFWNmVyNkxJNjljNGNlMkNRVmkrQ0MvYmIyZzh4SVNoaTBRS201QlZrQkR1?=
+ =?utf-8?B?Z3E1aUxFcThwR0RxMXZ6b2h2QWtIWU85dmVYNDQyNzRKdzBYaklmSHBWeER2?=
+ =?utf-8?B?SDdnWVZlZzEvS3VtMVNHMGxYRjhGcTUwTU15bjBwcWp2eng5ZWMxVXZCTG1N?=
+ =?utf-8?B?MU1oNDVHRklobWEwQXhnMVVxazFtS0pPbHdkc2xOUllIcmRnV2pTVHowejFw?=
+ =?utf-8?B?L0VUVnpCRWt1OHpCams2dUZBQ0MvMWRtNzY3aXdXcGt3QkNFVU9UbmpQNW50?=
+ =?utf-8?B?amJNQVlEMWRGL0R0a3c3RHJJZEkwOWRrNEIyNW9qdncxNEpDRjRXbkRJS1lU?=
+ =?utf-8?B?SkJOQ1FIMVZkUjZwRDdUdEtTSTJ5VVhSUUlvUjRFV2VoeTFUazhraEVJQ0xB?=
+ =?utf-8?B?RVN4TUEwYmZOR3lQRnJwWjVqWmVnZDB6NXE5Z056Z2FEZGpDZ0p2MkZjWmNN?=
+ =?utf-8?B?UjYyNldmZ2FjUkE4NFFpZGFDcFdYQ2M4WUovZ2VDbXZmbXgzK012Z2lRTmZw?=
+ =?utf-8?B?R3pZenhjaGRDYVVOSDZKa2xmM0Y3Um5pejZlaE5IZm1zekhTRnp6M1JXRXlG?=
+ =?utf-8?B?bDBqWUdYdmZySzhoR1JsN1puUjBwNGxNMExXaEcyYkxlbHRBTmprb0oydlA0?=
+ =?utf-8?B?TmdzaE8vL0N2TGgzdGc5aFRCNWUvY0V3cm5KRFZvamZwRE52OE5ueTBzZWVG?=
+ =?utf-8?B?aUZxVVdaaXZlVERGNFAwQmM5dkh5Qmc3M2FjdG1hNXZubzM4MlZ0UkxzekRr?=
+ =?utf-8?Q?+tvt70ypwAFG5moTSzlgq6Vly?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321123938.802763-5-elena.reshetova@intel.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5750.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 542f5f17-4ec5-4eb4-9acb-08dd6acd2d1e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2025 12:12:41.4209
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7KUEQG3tZS6hBBN6XLwpbdtIf7O3fecpeZNUM7usoHStAizOudYKQ51FtcS3/rC1lvrj7y7yeCvFE/0vEfp17HKG3RVMNVGSHA8YdcKQw58=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7194
+X-OriginatorOrg: intel.com
 
-On Fri, Mar 21, 2025 at 02:34:43PM +0200, Elena Reshetova wrote:
-> SGX architecture introduced  a new instruction called EUPDATESVN [1]
-> to Ice Lake. It allows updating security SVN version, given that EPC
-> is completely empty. The latter is required for security reasons
-> in order to reason that enclave security posture is as secure as the
-> security SVN version of the TCB that created it.
-> 
-> Additionally it is important to ensure that while ENCLS[EUPDATESVN]
-> runs, no concurrent page creation happens in EPC, because it might
-> result in #GP delivered to the creator. Legacy SW might not be prepared
-> to handle such unexpected #GPs and therefore this patch introduces
-> a locking mechanism to ensure no concurrent EPC allocations can happen.
-> 
-> It is also ensured that ENCLS[EUPDATESVN] is not called when running
-> in a VM since it does not have a meaning in this context (microcode
-> updates application is limited to the host OS) and will create
-> unnecessary load.
-> 
-> The implementation of ENCLS[EUPDATESVN] is based on previous submision in [2]
-> 
-> [1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
-
-I don't think for Intel opcodes a link is needed. We know where to look
-them up.
-
-> [2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/T/#medb89e6a916337b4f9e68c736a295ba0ae99ac90
-
-Link:
-
-> 
-> Co-developed-by: Cathy Zhang <cathy.zhang@intel.com>
-> Signed-off-by: Cathy Zhang <cathy.zhang@intel.com>
-> Co-developed-by: Elena Reshetova <elena.reshetova@intel.com>
-> Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
-> ---
->  arch/x86/include/asm/sgx.h      | 33 +++++++++--------
->  arch/x86/kernel/cpu/sgx/encls.h |  6 +++
->  arch/x86/kernel/cpu/sgx/main.c  | 65 ++++++++++++++++++++++++++++++++-
->  arch/x86/kernel/cpu/sgx/sgx.h   |  2 +
->  4 files changed, 90 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-> index 8ba39bbf4e91..5caf5c31ebc6 100644
-> --- a/arch/x86/include/asm/sgx.h
-> +++ b/arch/x86/include/asm/sgx.h
-> @@ -26,23 +26,26 @@
->  #define SGX_CPUID_EPC_SECTION	0x1
->  /* The bitmask for the EPC section type. */
->  #define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
-> +/* EUPDATESVN presence indication */
-> +#define SGX_CPUID_EUPDATESVN	BIT(10)
->  
->  enum sgx_encls_function {
-> -	ECREATE	= 0x00,
-> -	EADD	= 0x01,
-> -	EINIT	= 0x02,
-> -	EREMOVE	= 0x03,
-> -	EDGBRD	= 0x04,
-> -	EDGBWR	= 0x05,
-> -	EEXTEND	= 0x06,
-> -	ELDU	= 0x08,
-> -	EBLOCK	= 0x09,
-> -	EPA	= 0x0A,
-> -	EWB	= 0x0B,
-> -	ETRACK	= 0x0C,
-> -	EAUG	= 0x0D,
-> -	EMODPR	= 0x0E,
-> -	EMODT	= 0x0F,
-> +	ECREATE		= 0x00,
-> +	EADD		= 0x01,
-> +	EINIT		= 0x02,
-> +	EREMOVE		= 0x03,
-> +	EDGBRD		= 0x04,
-> +	EDGBWR		= 0x05,
-> +	EEXTEND		= 0x06,
-> +	ELDU		= 0x08,
-> +	EBLOCK		= 0x09,
-> +	EPA		= 0x0A,
-> +	EWB		= 0x0B,
-> +	ETRACK		= 0x0C,
-> +	EAUG		= 0x0D,
-> +	EMODPR		= 0x0E,
-> +	EMODT		= 0x0F,
-> +	EUPDATESVN	= 0x18,
->  };
->  
->  /**
-> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-> index 99004b02e2ed..3d83c76dc91f 100644
-> --- a/arch/x86/kernel/cpu/sgx/encls.h
-> +++ b/arch/x86/kernel/cpu/sgx/encls.h
-> @@ -233,4 +233,10 @@ static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
->  	return __encls_2(EAUG, pginfo, addr);
->  }
->  
-> +/* Update CPUSVN at runtime. */
-> +static inline int __eupdatesvn(void)
-> +{
-> +	return __encls_ret_1(EUPDATESVN, "");
-> +}
-> +
->  #endif /* _X86_ENCLS_H */
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index b61d3bad0446..698921229094 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -32,6 +32,11 @@ static DEFINE_XARRAY(sgx_epc_address_space);
->  static LIST_HEAD(sgx_active_page_list);
->  static DEFINE_SPINLOCK(sgx_reclaimer_lock);
->  
-> +/* This lock is held to prevent new EPC pages from being created
-> + * during the execution of ENCLS[EUPDATESVN].
-> + */
-> +static DEFINE_SPINLOCK(sgx_epc_eupdatesvn_lock);
-> +
->  static atomic_long_t sgx_nr_used_pages = ATOMIC_LONG_INIT(0);
->  static unsigned long sgx_nr_total_pages;
->  
-> @@ -457,7 +462,17 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
->  	page->flags = 0;
->  
->  	spin_unlock(&node->lock);
-> -	atomic_long_inc(&sgx_nr_used_pages);
-> +
-> +	if (!atomic_long_inc_not_zero(&sgx_nr_used_pages)) {
-> +		spin_lock(&sgx_epc_eupdatesvn_lock);
-> +		/* Only call sgx_updatesvn() once the first enclave's
-> +		 * page is allocated from EPC
-> +		 */
-> +		if (atomic_long_read(&sgx_nr_used_pages) == 0)
-> +			sgx_updatesvn();
-> +		atomic_long_inc(&sgx_nr_used_pages);
-> +		spin_unlock(&sgx_epc_eupdatesvn_lock);
-> +	}
->  
->  	return page;
->  }
-> @@ -970,3 +985,51 @@ static int __init sgx_init(void)
->  }
->  
->  device_initcall(sgx_init);
-> +
-> +/**
-> + * sgx_updatesvn() - Issue ENCLS[EUPDATESVN]
-> + * If EPC is ready, this instruction will update CPUSVN to the currently
-> + * loaded microcode update SVN and generate new cryptographic assets.
-> + */
-> +void sgx_updatesvn(void)
-> +{
-> +	int ret;
-> +	int retry = 10;
-
-Reverse declaration order.
-
-> +
-> +	lockdep_assert_held(&sgx_epc_eupdatesvn_lock);
-> +
-> +	/* Do not execute EUPDATESVN if instruction is unavalible or running in a VM */
-> +	if (!(cpuid_eax(SGX_CPUID) & SGX_CPUID_EUPDATESVN) ||
-> +		    boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> +		return;
-
-
-	if (!(cpuid_eax(SGX_CPUID) & SGX_CPUID_EUPDATESVN))
-		return;
-
-	/* ... */
-	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-		return;
-
-The first check really does not need a comment. The second would benefit
-from explaining why bail out inside a VM.
-		
-		
-
-
-
-> +
-> +	do {
-> +		ret = __eupdatesvn();
-> +		if (ret != SGX_INSUFFICIENT_ENTROPY)
-> +			break;
-> +
-> +	} while (--retry);
-> +
-> +	switch (ret) {
-> +	case 0:
-> +		pr_debug("EUPDATESVN was successful!\n");
-> +		break;
-> +	case SGX_NO_UPDATE:
-> +		pr_debug("EUPDATESVN was successful, but CPUSVN was not updated, "
-> +			"because current SVN was not newer than CPUSVN.\n");
-> +		break;
-> +	case SGX_EPC_NOT_READY:
-> +		pr_debug("EPC is not ready for SVN update.");
-> +		break;
-> +	case SGX_INSUFFICIENT_ENTROPY:
-> +		pr_debug("CPUSVN update is failed due to Insufficient entropy in RNG, "
-> +			"please try it later.\n");
-> +		break;
-> +	case SGX_EPC_PAGE_CONFLICT:
-> +		pr_debug("CPUSVN update is failed due to concurrency violation, please "
-> +			"stop running any other ENCLS leaf and try it later.\n");
-> +		break;
-> +	default:
-> +		break;
-
-Remove pr_debug() statements.
-
-> +	}
-> +}
-> diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-> index d2dad21259a8..92c9e226f1b5 100644
-> --- a/arch/x86/kernel/cpu/sgx/sgx.h
-> +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-> @@ -104,4 +104,6 @@ static inline int __init sgx_vepc_init(void)
->  
->  void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
->  
-
-I don't think we need a newline in-between.
-
-> +void sgx_updatesvn(void);
-> +
->  #endif /* _X86_SGX_H */
-> -- 
-> 2.45.2
-> 
-
-BR, Jarkko
+PiBPbiBGcmksIE1hciAyMSwgMjAyNSBhdCAwMjozNDo0MFBNICswMjAwLCBFbGVuYSBSZXNoZXRv
+dmEgd3JvdGU6DQo+ID4gSW4gb3JkZXIgdG8gc3VjY2Vzc2Z1bGx5IGV4ZWN1dGUgRU5DTFNbRVVQ
+REFURVNWTl0sIEVQQyBtdXN0IGJlIGVtcHR5Lg0KPiA+IFNHWCBhbHJlYWR5IGhhcyBhIHZhcmlh
+YmxlIHNneF9ucl9mcmVlX3BhZ2VzIHRoYXQgdHJhY2tzIGZyZWUNCj4gPiBFUEMgcGFnZXMuIEFk
+ZCBhIG5ldyB2YXJpYWJsZSwgc2d4X25yX3RvdGFsX3BhZ2VzLCB0aGF0IHdpbGwga2VlcA0KPiA+
+IHRyYWNrIG9mIHRvdGFsIG51bWJlciBvZiBFUEMgcGFnZXMuIEl0IHdpbGwgYmUgdXNlZCBpbiBz
+dWJzZXF1ZW50DQo+ID4gcGF0Y2ggdG8gY2hhbmdlIHRoZSBzZ3hfbnJfZnJlZV9wYWdlcyBpbnRv
+IHNneF9ucl91c2VkX3BhZ2VzIGFuZA0KPiA+IGFsbG93IGFuIGVhc3kgY2hlY2sgZm9yIGFuIGVt
+cHR5IEVQQy4NCj4gDQo+IEZpcnN0IG9mZiwgcmVtb3ZlICJpbiBzdWJzZXF1ZW50IHBhdGNoIi4N
+Cg0KT2sNCg0KPiANCj4gV2hhdCBkb2VzICJjaGFuZ2Ugc2d4X25yX2ZyZWVfcGFnZXMgaW50byBz
+Z3hfbnJfdXNlZF9wYWdlcyIgbWVhbj8NCg0KQXMgeW91IGNhbiBzZWUgZnJvbSBwYXRjaCAyLzQs
+IEkgaGFkIHRvIHR1cm4gYXJvdW5kIHRoZSBtZWFuaW5nIG9mIHRoZQ0KZXhpc3Rpbmcgc2d4X25y
+X2ZyZWVfcGFnZXMgYXRvbWljIGNvdW50ZXIgbm90IHRvIGNvdW50IHRoZSAjIG9mIGZyZWUgcGFn
+ZXMNCmluIEVQQywgYnV0IHRvIGNvdW50IHRoZSAjIG9mIHVzZWQgRVBDIHBhZ2VzIChoZW5jZSB0
+aGUgY2hhbmdlIG9mIG5hbWUNCnRvIHNneF9ucl91c2VkX3BhZ2VzKS4gVGhlIHJlYXNvbiBmb3Ig
+ZG9pbmcgdGhpcyBpcyBvbmx5IGFwcGFyZW50IGluIHBhdGNoDQo0LzQgYmVjYXVzZSBieSBoYXZp
+bmcgYSBjb3VudGVyIHNneF9ucl91c2VkX3BhZ2VzICBpbmNyZW1lbnRlZCBpbiB0aGUNCmF0b21p
+Y19sb25nX2luY19ub3RfemVybywgdGhlcmUgaXMgYSBmYXN0IHBhdGggdGhhdCBhdm9pZHMgdGFr
+aW5nIGFueSBsb2Nrcw0KaW4gY2FzZXMgd2hlbiB0aGUgRVBDIHBhZ2UgaXMgbm90IHRoZSBmaXJz
+dCBvbmUgdG8gYmUgY3JlYXRlZCAobW9zdCBvZiBjYXNlcykuDQpJIG9yaWdpbmFsbHkgY3JlYXRl
+ZCBhIHZlcnNpb24gd2l0aCBqdXN0IHVzaW5nIHNneF9ucl9mcmVlX3BhZ2VzLCBidXQgY291bGQN
+Cm5vdCBhdm9pZGVkIHRha2luZyBhIGxvY2sgaW4gZWFjaCBjYXNlIGFuZCBpdCBkaWQgbG9vayBt
+dWNoIGxlc3MgcHJldHR5IHRoYW4NCnRoaXMgdmVyc2lvbi4gVGhlIGNyZWRpdCBmb3IgdGhlIGlk
+ZWEgYnR3IGdvZXMgdG8gS2lyaWxsIHdobyBraW5kbHkgcmV2aWV3ZWQNCm15ICBwYXRjaGVzIGJl
+Zm9yZS4gDQoNCkJlc3QgUmVnYXJkcywNCkVsZW5hLg0KDQo=
