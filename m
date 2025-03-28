@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C7E2F3B;
-	Fri, 28 Mar 2025 08:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014B32F3B;
+	Fri, 28 Mar 2025 08:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743151339; cv=none; b=pvNnANbK4Bn7AkzcFLZz/t3BadWhSKmo7QihtdZ4QXp7ihHzeV5Gdq7HlQhlZPPrBpBAc1dq9ZU4c8mD24YoPEo3zKxb269DElEfENd+pSD6HNKVEXHDI3hIMII0DRpHJIpuz9vTUfWivSnZX2Hzbbo6GiKdJwZ3u3dsI7QbWOg=
+	t=1743151471; cv=none; b=noMjuZtUJ0ueMneFM0TK3VOOaHsKkEeFI5E7tVCSxcUeGCc7T+l+pb0xof6lx8faEOa2mbNruhTx+k7WM42RvQX88PU767aZLanECyuC8TCcnj/jOEiZAhxmOvxxRJh98UDVeO4RtRtCK/t1dRXVEvZT2Q2kP219eBQlsoJYBcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743151339; c=relaxed/simple;
-	bh=k0qzpOEDNHHwkiakQUtLiR7PFcSlBuDqKJEADqMx+Mw=;
+	s=arc-20240116; t=1743151471; c=relaxed/simple;
+	bh=7wWpNyqwEltt65jw58fWm4t4+DezGpJMXEf4es9UZBc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qpc3zPjhBYnaEIClJeeq1dSIGhFvbwayMlLkAJHG/+F1JdYTm9/dEMExY/ie62ZSOGlTm7HdzhKztC6j0k+xd/72reyUNDSQvkI1GdhYEfiTY3R1OmKkA7Ud9YbVoGiK+wiNswMnVCbtX2XAINcHKkZiuhMVDlANjnTKHxtRsg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SHQqwWQt; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=EGRXHX85iBOtapWOuynHkRUPQdovIEPFQ0XcrIgNZWs/kz6zSUQE2daCHPjhurKTMldyhTo9rMBKEMCPZEyAbYXXEkfilAY2q0Uht6QYQu3B7SHrs0vqLWDsd7kWSjS9qmc7VnqEhdTJcx1ljukHT6NF2aTkUiKUGRVjDKNMKZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tvTNG3yn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SHQqwWQt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9381CC4CEE4;
-	Fri, 28 Mar 2025 08:42:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tvTNG3yn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A74C4CEE4;
+	Fri, 28 Mar 2025 08:44:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743151338;
-	bh=k0qzpOEDNHHwkiakQUtLiR7PFcSlBuDqKJEADqMx+Mw=;
+	s=k20201202; t=1743151470;
+	bh=7wWpNyqwEltt65jw58fWm4t4+DezGpJMXEf4es9UZBc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SHQqwWQtMX/vawGvLyoSFHNFAD8Yvio6oTDQ27k2bZ32UxRCp84jHfOmThT/3lmQ/
-	 U+bVct+L0EhZcCUJtEnb/v+78V6ME2Yff88fMXdID7NxVwa3SgFA9xNqVIdHwaQ2b4
-	 OLY2nBjmmcBXnXMsUBw2zpoLDbipwUC4oZ02Pwn+o8oUlKrRbJ2cfMMSkA78Jx3F4z
-	 I5yPVPEFbKQ1QUPCJFT5vKPZ7ivH51nUhZ9y00TA/AA87fQbSadjUxH7nuqDUV5E8z
-	 jrQOXJ1+ufsRObAT1ZH7fOEZxpZ1ejvbjuXm/PlHtyKJFFgqnskO3/FjL+BINuFKmp
-	 GYIDPX/fK+mVg==
-Date: Fri, 28 Mar 2025 10:42:13 +0200
+	b=tvTNG3ynFho3DH3Rp+RztQH5CP6x6aaH8VICHj0go9wqjxsHobhsynnpkpPy9WyRt
+	 brtW0jv8aWTkISaBem9nA3B/VxeLrGW5BlfjCgFfnIhHgf4A+rixw8/VAqAaiJYIUG
+	 bzbgSggRp6XRxuKKNjxcHr1yA9g837AW05R3Wk+aQDZMhZ0DMVSkfPqyLKjoUfeiQs
+	 2QzqwyxmTqVMDkqKK/bKpKaouPi0kjmhc3UFv0yzvso7Euz8c+4HpSyCik9ZxYvAYc
+	 /zDcn4l75GL5HD13etXK4nh5tWqove7kr5dMUTXUr78SVy3OTLIVON43SjScQZYX+W
+	 pevz5T/lNZMHw==
+Date: Fri, 28 Mar 2025 10:44:25 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: "Reshetova, Elena" <elena.reshetova@intel.com>
 Cc: "Hansen, Dave" <dave.hansen@intel.com>,
@@ -41,17 +41,18 @@ Cc: "Hansen, Dave" <dave.hansen@intel.com>,
 	"dionnaglaze@google.com" <dionnaglaze@google.com>,
 	"bondarn@google.com" <bondarn@google.com>,
 	"Raynor, Scott" <scott.raynor@intel.com>,
-	"Shutemov, Kirill" <kirill.shutemov@intel.com>
-Subject: Re: [PATCH 1/4] x86/sgx: Add total number of EPC pages
-Message-ID: <Z-Zg5elc0xTwoxat@kernel.org>
+	"Zhang, Cathy" <cathy.zhang@intel.com>
+Subject: Re: [PATCH 4/4] x86/sgx: Implement ENCLS[EUPDATESVN] and
+ opportunistically call it during first EPC page alloc
+Message-ID: <Z-ZhaagOPj8bhCCo@kernel.org>
 References: <20250321123938.802763-1-elena.reshetova@intel.com>
- <20250321123938.802763-2-elena.reshetova@intel.com>
- <Z98yki-gH4ewlpbP@kernel.org>
- <DM8PR11MB57508A3681C614C9B185B04EE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
- <Z-RY8-bL2snpRKTB@kernel.org>
- <DM8PR11MB575029FAC2C833553CE422CFE7A12@DM8PR11MB5750.namprd11.prod.outlook.com>
- <Z-XDFDj8Tc5i-GBg@kernel.org>
- <DM8PR11MB57503621B1D7674404A62004E7A02@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <20250321123938.802763-5-elena.reshetova@intel.com>
+ <Z983ZaTaWNqFUpYS@kernel.org>
+ <DM8PR11MB575000AEB9CC3A318651AAABE7A42@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <Z-RfcpSBAybk-KjG@kernel.org>
+ <DM8PR11MB5750FE25D4C8EC2297952845E7A12@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <Z-XA0oy_r9VBJPHI@kernel.org>
+ <DM8PR11MB57501BCC966906CB02946986E7A02@DM8PR11MB5750.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -60,43 +61,111 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM8PR11MB57503621B1D7674404A62004E7A02@DM8PR11MB5750.namprd11.prod.outlook.com>
+In-Reply-To: <DM8PR11MB57501BCC966906CB02946986E7A02@DM8PR11MB5750.namprd11.prod.outlook.com>
 
-On Fri, Mar 28, 2025 at 08:07:24AM +0000, Reshetova, Elena wrote:
-> > Yes but obviously I cannot promise that I'll accept this as it is
-> > until I see the final version
+On Fri, Mar 28, 2025 at 08:27:51AM +0000, Reshetova, Elena wrote:
 > 
-> Are you saying you prefer *this version with spinlock* vs. 
-> simpler version that utilizes the fact that sgx_nr_free_pages is changed
-> into tracking of number of used pages? 
-
-I don't know really what I do prefer.
-
-Maybe +1 version would make sense where you keep with the approach
-you've chosen (used pages) and better rationalize why it is mandatory,
-and why free pages would be worse?
-
-> 
+> > On Thu, Mar 27, 2025 at 03:42:30PM +0000, Reshetova, Elena wrote:
+> > > > > > > +	case SGX_NO_UPDATE:
+> > > > > > > +		pr_debug("EUPDATESVN was successful, but CPUSVN
+> > was not
+> > > > > > updated, "
+> > > > > > > +			"because current SVN was not newer than
+> > > > > > CPUSVN.\n");
+> > > > > > > +		break;
+> > > > > > > +	case SGX_EPC_NOT_READY:
+> > > > > > > +		pr_debug("EPC is not ready for SVN update.");
+> > > > > > > +		break;
+> > > > > > > +	case SGX_INSUFFICIENT_ENTROPY:
+> > > > > > > +		pr_debug("CPUSVN update is failed due to Insufficient
+> > > > > > entropy in RNG, "
+> > > > > > > +			"please try it later.\n");
+> > > > > > > +		break;
+> > > > > > > +	case SGX_EPC_PAGE_CONFLICT:
+> > > > > > > +		pr_debug("CPUSVN update is failed due to
+> > concurrency
+> > > > > > violation, please "
+> > > > > > > +			"stop running any other ENCLS leaf and try it
+> > > > > > later.\n");
+> > > > > > > +		break;
+> > > > > > > +	default:
+> > > > > > > +		break;
+> > > > > >
+> > > > > > Remove pr_debug() statements.
+> > > > >
+> > > > > This I am not sure it is good idea. I think it would be useful for system
+> > > > > admins to have a way to see that update either happened or not.
+> > > > > It is true that you can find this out by requesting a new SGX attestation
+> > > > > quote (and see if newer SVN is used), but it is not the faster way.
+> > > >
+> > > > Maybe pr_debug() is them wrong level if they are meant for sysadmins?
+> > > >
+> > > > I mean these should not happen in normal behavior like ever? As
+> > > > pr_debug() I don't really grab this.
+> > >
+> > > SGX_NO_UPDATE will absolutely happen normally all the time.
+> > > Since EUPDATESVN is executed every time EPC is empty, this is the
+> > > most common code you will get back (because microcode updates are rare).
+> > > Others yes, that would indicate some error condition.
+> > > So, what is the pr_level that you would suggest?
 > > 
-> > Also you probably should use mutex given the loop where we cannot
-> > temporarily exit the lock (like e.g. in keyrings gc we can).
+> > Right, got it. That changes my conclusions:
+> > 
+> > So I'd reformulate it like:
+> > 
+> > 	switch (ret) {
+> > 	case 0:
+> > 		pr_info("EUPDATESVN: success\n);
+> > 		break;
+> > 	case SGX_EPC_NOT_READY:
+> > 	case SGX_INSUFFICIENT_ENTROPY:
+> > 	case SGX_EPC_PAGE_CONFLICT:
+> > 		pr_err("EUPDATESVN: error %d\n", ret);
+> > 		/* TODO: block/teardown driver? */
+> > 		break;
+> > 	case SGX_NO_UPDATE:
+> > 		break;
+> > 	default:
+> > 		pr_err("EUPDATESVN: unknown error %d\n", ret);
+> > 		/* TODO: block/teardown driver? */
+> > 		break;
+> > 	}
+> > 
+> > Since when this is executed EPC usage is zero error cases should block
+> > or teardown SGX driver, presuming that they are because of either
+> > incorrect driver state or spurious error code.
 > 
-> Not sure I understand this, could you please elaborate why do I need an
-> additional mutex here? Or are you suggesting switching spinlock to mutex? 
+> I agree with the above, but not sure at all about the blocking/teardown the
+> driver. They are all potentially temporal things and  SGX_INSUFFICIENT_ENTROPY
+> is even outside of SGX driver control and *does not* indicate any error
+> condition on the driver side itself. SGX_EPC_NOT_READY and SGX_EPC_PAGE_CONFLICT
+> would mean we have a bug somewhere because we thought we could go
+> do EUDPATESVN on empty EPC and prevented anyone from creating
+> pages in meanwhile but looks like we missed smth. That said, I dont know if we
+> want to fail the whole system in case we have such a code bug, this is very 
+> aggressive (in case it is some rare edge condition that no one knew about or
+> guessed). So, I would propose to print the pr_err() as you have above but
+> avoid destroying the driver. 
+> Would this work? 
 
-In your code example you had a loop inside spinlock, which was based on
-a return code of an opcode, i.e. potentially infinite loop.
+I think now is the time that you should really roll out a new version in
+the way you see fit and we will revisit that.
 
-I'd like to remind you that the hardware I have is NUC7 from 2018 so
-you really have to nail how things will work semantically as I can
-only think these things only in theoretical level ;-) [1]
-
+I already grabbed from your example that I got some of the error codes
+horribly wrong :-) Still I think the draft of error planning I put is
+at least towards right direction.
 
 > 
 > Best Regards,
 > Elena.
 > 
-
-[1] https://social.kernel.org/notice/AsUbsYH0T4bTcUSdUW
+> 
+> > 
+> > If this happens, we definitely do not want service, right?
+> > 
+> > I'm not sure of all error codes how serious they are, or are all of them
+> > consequence of incorrectly working driver.
+> > 
+> > BR, Jarkko
 
 BR, Jarkko
