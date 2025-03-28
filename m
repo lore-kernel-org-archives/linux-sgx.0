@@ -1,47 +1,48 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3191DE4C7;
-	Fri, 28 Mar 2025 12:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EE01B5EA4;
+	Fri, 28 Mar 2025 12:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743166761; cv=none; b=J8y2IsfcTzYvkyYAAI1h34E1qiTdpu2AQMJyRSd+BkAQPclA6360tGjSfdrjduVSiNtv2/xA5rC31JCzDWvf3Ywsp3vFBcNENOJJqYgN78sqoxeWzUlhXUtkjCeH8xS3zqix1KriSAuSG4a+Gz8+bMAoHZEYRQHsg4g7Scn+uJ4=
+	t=1743166766; cv=none; b=KEGbIseqmNY8K8o1aKVLfy82JGJwtvDLpfIbvwbYv3aTug0SI9XfKc64kmaXo/8b/oVieJ/a92o5SfhmVXyy/AU+gbiEUabl+s/g+WYqV+ZjmbF+tWE0kOrdxkogVHZckLV4E+Dqkj13Md1MXz6YXIKvW2qeil2mjhq6LO6gbIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743166761; c=relaxed/simple;
-	bh=wih2ilrATlQIKSO34GAvANb28/Na5qATEonTK3ldWBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qSC1La4s4+iVul2+29bgZO+EX/4cOY5ccuVtI67i9VMam+7SWMi0sfHdwqCkU0LUDfjXqP4eYGp48ZT4MZRae6DDt6OxY5Q9/A6FbovwPNq094GhTW+3s1LixBT3SsI9AndJTd23gcuSwoFGbBlKw/Cxi+hdoMBZhn8d6D30NJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qv6lsn2g; arc=none smtp.client-ip=198.175.65.19
+	s=arc-20240116; t=1743166766; c=relaxed/simple;
+	bh=R5kGg1zx/kMXvSooMDzD+NGpVHcFbXL2ru+kAlccJJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZK/fEbG/kE3UqkGs9hP12guuBuEDFxVmagK0Zkx9eV4WdIoh1F8rMz8jIheqTvnJIeKQL2zGfeTDMOZfx6fmdZGoK2b3rsLeyU4zhjWmONlH8Y7ShT15jMHdzWm+uTsK6k882lkzcFec8666EYlkD7lGJsLPiJv3jGd9KrHDqEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NtugThKU; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qv6lsn2g"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NtugThKU"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743166760; x=1774702760;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=wih2ilrATlQIKSO34GAvANb28/Na5qATEonTK3ldWBo=;
-  b=Qv6lsn2gj7g6upWhMIbmEu8BLU2j78r1kKLVO2znd8MPo3doZm+5Y7RQ
-   47uXJqsRuqs7jUZYsQsMRChRiuvu9b+JaT6qjOa82f4y6PQ/eTC3Fm7xc
-   l/qGRK/6V8rPfx0kAFLv6V8h7wDdBZBFJ7/h1XXKhg7VrQl3X2sv1Px/p
-   +8h9m6aX4ju7sY+2EKcCT4eV8f8SPMmMNAb4WGwCiOBwxPZH6MqXYHID9
-   Eyf03PQyPuZEPSA3VrY2cQ5LopC33F8j/IaTrav3Yk9hIXA8ZzL+ljg/n
-   0EpJdfRRkOctXiHbyxGYZmWm1iO1HWkOZb323EVQMxT6U70D+sHXkydsr
-   A==;
-X-CSE-ConnectionGUID: Zpvu2Jx4QMydaPuXA9Q/mA==
-X-CSE-MsgGUID: PR6vxF4VRSORGp/Wf76FhQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11387"; a="44420671"
+  t=1743166765; x=1774702765;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=R5kGg1zx/kMXvSooMDzD+NGpVHcFbXL2ru+kAlccJJY=;
+  b=NtugThKUwTd2kYh2hhH7+F0LYC+vRkdaYAaC9dU23PQ8Majd9ZcXDMp9
+   3H0LUrniKw0lLPqIeoXJWfAMmeFiHl/7KLN229nIDUGGps63YTH0ogRdP
+   iTuOSyFvAn1SOjtpeLf2Ox9r2LyhKaBR4wX4oBjJo/7/l4qDxlTgm5/5j
+   9azjhHVnwK6foItCSeKNjvnIKPkqRq8IAPyQ+FeRhI6V1Whg4iezbE4bN
+   fs0WjAL4+XIZFXpWupJ+9amzLdAenbvHO5YjUjkWDwJ79T9virjfg0HsZ
+   D0t5zlY+TZxmJybsAJ0zbGlFKyRk4dyLb1psMYj6LJ8d0925DMM9RPTmT
+   w==;
+X-CSE-ConnectionGUID: XMEitTzES7e6QFlr4q+X1A==
+X-CSE-MsgGUID: 3np81NNaTmaJd+mFJxeeeQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11387"; a="44420676"
 X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
-   d="scan'208";a="44420671"
+   d="scan'208";a="44420676"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 05:59:18 -0700
-X-CSE-ConnectionGUID: NtBeb7CyRhm5L9y6zWGUtg==
-X-CSE-MsgGUID: 65ngfoncQaWkK0/tNiIpfA==
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 05:59:25 -0700
+X-CSE-ConnectionGUID: 40Zt4KclRNm6O5M98zDi9A==
+X-CSE-MsgGUID: WgqlVSYLTyO3dw8QMLzTTw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
-   d="scan'208";a="125341378"
+   d="scan'208";a="125341398"
 Received: from lfiedoro-mobl.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.246.104])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 05:59:12 -0700
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 05:59:19 -0700
 From: Elena Reshetova <elena.reshetova@intel.com>
 To: dave.hansen@intel.com
 Cc: jarkko@kernel.org,
@@ -57,10 +58,12 @@ Cc: jarkko@kernel.org,
 	bondarn@google.com,
 	scott.raynor@intel.com,
 	Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH v2 0/2] Enable automatic SVN updates for SGX enclaves
-Date: Fri, 28 Mar 2025 14:57:39 +0200
-Message-ID: <20250328125859.73803-1-elena.reshetova@intel.com>
+Subject: [PATCH v2 1/2] x86/sgx: Use sgx_nr_used_pages for EPC page count instead of sgx_nr_free_pages
+Date: Fri, 28 Mar 2025 14:57:40 +0200
+Message-ID: <20250328125859.73803-2-elena.reshetova@intel.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250328125859.73803-1-elena.reshetova@intel.com>
+References: <20250328125859.73803-1-elena.reshetova@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -69,92 +72,95 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Changes since v1 following review by Jarkko:
+sgx_nr_free_pages is an atomic that is used to keep track of
+free EPC pages and detect whenever page reclaiming should start.
+Since successful execution of ENCLS[EUPDATESVN] requires empty
+EPC and preferably a fast lockless way of checking for this
+condition in all code paths where EPC is already used, change the
+reclaiming code to track the number of used pages via
+sgx_nr_used_pages instead of sgx_nr_free_pages.
+For this change to work in the page reclamation code, add a new
+variable, sgx_nr_total_pages, that will keep track of total
+number of EPC pages.
 
- - first and second patch are squashed together and a better
-   explanation of the change is added into the commit message
- - third and fourth patch are also combined for better understanding
-   of error code purposes used in 4th patch
- - implementation of sgx_updatesvn adjusted following Jarkko's
-   suggestions
- - minor fixes in both commit messages and code from the review
- - dropping co-developed-by tag since the code now differs enough
-   from the original submission. However, the reference where the
-   original code came from and credits to original author is kept
+It would have been possible to implement ENCLS[EUPDATESVN] using
+existing sgx_nr_free_pages counter and a new sgx_nr_total_pages
+counter, but it won't be possible to avoid taking a lock *every time*
+a new EPC page is being allocated. The conversion of sgx_nr_free_pages
+into sgx_nr_used_pages allows avoiding the lock in all cases except
+when it is the first EPC page being allocated via a quick
+atomic_long_inc_not_zero check.
 
-Background
-----------
+Note: The serialization for sgx_nr_total_pages is not needed because
+the variable is only updated during the initialization and there's no
+concurrent access.
 
-In case an SGX vulnerability is discovered and TCB recovery
-for SGX is triggered, Intel specifies a process that must be
-followed for a given vulnerability. Steps to mitigate can vary
-based on vulnerability type, affected components, etc.
-In some cases, a vulnerability can be mitigated via a runtime
-recovery flow by shutting down all running SGX enclaves,
-clearing enclave page cache (EPC), applying a microcode patch
-that does not require a reboot (via late microcode loading) and
-restarting all SGX enclaves.
+Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/main.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-
-Problem statement
--------------------------
-Even when the above-described runtime recovery flow to mitigate the
-SGX vulnerability is followed, the SGX attestation evidence will
-still reflect the security SVN version being equal to the previous
-state of security SVN (containing vulnerability) that created
-and managed the enclave until the runtime recovery event. This
-limitation currently can be only overcome via a platform reboot,
-which negates all the benefits from the rebootless late microcode
-loading and not required in this case for functional or security
-purposes.
-
-
-Proposed solution
------------------
-
-SGX architecture introduced  a new instruction called EUPDATESVN [1]
-to Ice Lake. It allows updating security SVN version, given that EPC
-is completely empty. The latter is required for security reasons
-in order to reason that enclave security posture is as secure as the
-security SVN version of the TCB that created it.
-
-This series enables opportunistic execution of EUPDATESVN upon first
-EPC page allocation for a first enclave to be run on the platform.
-
-This series is partly based on the previous work done by Cathy Zhang
-[2], which attempted to enable forceful destruction of all SGX
-enclaves and execution of EUPDATESVN upon successful application of
-any microcode patch. This approach is determined as being too
-intrusive for the running SGX enclaves, especially taking into account
-that it would be performed upon *every* microcode patch application
-regardless if it changes the security SVN version or not (change to the
-security SVN version is a rare event).
-
-Testing
--------
-
-Tested on EMR machine using kernel-6.14.0_rc7 & sgx selftests.
-If Google folks in CC can test on their side, it would be greatly appreciated.
-
-
-References
-----------
-
-[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
-[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
-
-Elena Reshetova (2):
-  x86/sgx: Use sgx_nr_used_pages for EPC page count instead of
-    sgx_nr_free_pages
-  x86/sgx: Implement EUPDATESVN and opportunistically call it during
-    first EPC page alloc
-
- arch/x86/include/asm/sgx.h      | 41 +++++++++++-------
- arch/x86/kernel/cpu/sgx/encls.h |  6 +++
- arch/x86/kernel/cpu/sgx/main.c  | 76 ++++++++++++++++++++++++++++++---
- arch/x86/kernel/cpu/sgx/sgx.h   |  1 +
- 4 files changed, 104 insertions(+), 20 deletions(-)
-
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 8ce352fc72ac..b61d3bad0446 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -32,7 +32,8 @@ static DEFINE_XARRAY(sgx_epc_address_space);
+ static LIST_HEAD(sgx_active_page_list);
+ static DEFINE_SPINLOCK(sgx_reclaimer_lock);
+ 
+-static atomic_long_t sgx_nr_free_pages = ATOMIC_LONG_INIT(0);
++static atomic_long_t sgx_nr_used_pages = ATOMIC_LONG_INIT(0);
++static unsigned long sgx_nr_total_pages;
+ 
+ /* Nodes with one or more EPC sections. */
+ static nodemask_t sgx_numa_mask;
+@@ -378,8 +379,8 @@ static void sgx_reclaim_pages(void)
+ 
+ static bool sgx_should_reclaim(unsigned long watermark)
+ {
+-	return atomic_long_read(&sgx_nr_free_pages) < watermark &&
+-	       !list_empty(&sgx_active_page_list);
++	return (sgx_nr_total_pages - atomic_long_read(&sgx_nr_used_pages))
++	       < watermark && !list_empty(&sgx_active_page_list);
+ }
+ 
+ /*
+@@ -456,7 +457,7 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
+ 	page->flags = 0;
+ 
+ 	spin_unlock(&node->lock);
+-	atomic_long_dec(&sgx_nr_free_pages);
++	atomic_long_inc(&sgx_nr_used_pages);
+ 
+ 	return page;
+ }
+@@ -616,7 +617,7 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+ 	page->flags = SGX_EPC_PAGE_IS_FREE;
+ 
+ 	spin_unlock(&node->lock);
+-	atomic_long_inc(&sgx_nr_free_pages);
++	atomic_long_dec(&sgx_nr_used_pages);
+ }
+ 
+ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+@@ -648,6 +649,8 @@ static bool __init sgx_setup_epc_section(u64 phys_addr, u64 size,
+ 		list_add_tail(&section->pages[i].list, &sgx_dirty_page_list);
+ 	}
+ 
++	sgx_nr_total_pages += nr_pages;
++
+ 	return true;
+ }
+ 
+@@ -848,6 +851,8 @@ static bool __init sgx_page_cache_init(void)
+ 		return false;
+ 	}
+ 
++	atomic_long_set(&sgx_nr_used_pages, sgx_nr_total_pages);
++
+ 	for_each_online_node(nid) {
+ 		if (!node_isset(nid, sgx_numa_mask) &&
+ 		    node_state(nid, N_MEMORY) && node_state(nid, N_CPU))
 -- 
 2.45.2
 
