@@ -1,178 +1,154 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D841A8407;
-	Tue,  8 Apr 2025 15:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B471A315A
+	for <linux-sgx@vger.kernel.org>; Wed,  9 Apr 2025 16:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744126075; cv=none; b=M/rYf1c2t4rNcCmqdylzaqgXzYMnkS8pdMIZTI/VDDUfpx/R27vrmn8TyyszN0HqOfp5srjoQ1xKcFb34O6CB+rREHt8e3gGRyYtYqTeUtsoWhlzKbYq5i1YLCS3+XZudXi2P1u629K/jROOQALuHkLXZkU/AZdUT4YTDdfRruE=
+	t=1744217741; cv=none; b=ZWsf5fkserzGIKmll8kAXaRopJFapJ0G0DNYDxhpUOW2HOTdQfkrteVLjfXuChJeBYk3OMm7U81QGmMEP5KbNgSixM9stbcqlidKkYTHgZBDXJ6E/bo76AfiF+xccPSwLjJ+izV7v1wosPDYiP/+ZZ/iWXOCuK5+y1SGyN+pEqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744126075; c=relaxed/simple;
-	bh=apOTnBEYnp+4vpAZRy392z3LTawzOMEtmvA5es8uilk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oEV8F/tqRKGtWbVjdicUHFWKiGME6SREhtTr3VJj1gfdCg+0cDK60Qv8QJU8bYKDYm7RcKFaD86bqBKpZrumAtbo2a3TicARqUYQnkLVp0vxDjEl632gmWh2VcyCV2UUFuF/He05ZiMlA0H9Hy+6EVY6jGqBwYuObr78xJ6LAnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMzn1SAC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744217741; c=relaxed/simple;
+	bh=4gBqLRCjG5WlF4pc12HR6xav3S0nBYhW+3KH2xBP+Ds=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=TnFFo1qcS5sWSQBuB14fagtcEoIIefCb+NEESRyYLsMNRFNKwycgGqWqN0MRWNfaoJB9d0s94AkaxGS06zNZr001zFBQLCceFo81pHkjFqp9aUsjLLfGsY3ojqHm9J9FEhWJw/FVnvWOxQq/fbVbm9y0FvEK6I55+DxXRJktd/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rfom1+Ro; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OMzn1SAC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B9DC4CEE5;
-	Tue,  8 Apr 2025 15:27:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744126074;
-	bh=apOTnBEYnp+4vpAZRy392z3LTawzOMEtmvA5es8uilk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OMzn1SACfFAvrXiTZAzvCqhJGoA7hyhiDo7mBzfTkR8LkWxVKo+bmCizYohdXapie
-	 ZQd9o4Nqkji2MMyd9lEF3pP42n7dTC7RcMjKiuYRj98djJBrSPW/KMbLlk97uuCJax
-	 YncWAwtdb+VpE+x5GA1x//XInot/4FXFfmMYwuh3pADIqm7BgVB37QiBZGvtog/stg
-	 KtO0iOF71pA91i6mLFxqHjBkhZG7JGUV6YMcXJ3gx/sEray6ZcBYu5qM7YSYZYTkoo
-	 8vbjsKVcbHW8hI6EJQY9ivu6fU0q2yRuEPr9wkONgA22mYrFVBQ4R4bM4goW4KoFsx
-	 V8fp9Lfncy/JQ==
-Date: Tue, 8 Apr 2025 18:27:50 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc: "Huang, Kai" <kai.huang@intel.com>,
-	"Hansen, Dave" <dave.hansen@intel.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"Annapurve, Vishal" <vannapurve@google.com>,
-	"bondarn@google.com" <bondarn@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Mallick, Asit K" <asit.k.mallick@intel.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>,
-	"Cai, Chong" <chongc@google.com>,
-	"Raynor, Scott" <scott.raynor@intel.com>,
-	"dionnaglaze@google.com" <dionnaglaze@google.com>
-Subject: Re: [PATCH v2 2/2] x86/sgx: Implement EUPDATESVN and
- opportunistically call it during first EPC page alloc
-Message-ID: <Z_VAdvT305Rt2h9x@kernel.org>
-References: <Z-v4WfcLhmXbYvaa@kernel.org>
- <DM8PR11MB575087BDAFA223EDCE9EC69EE7AF2@DM8PR11MB5750.namprd11.prod.outlook.com>
- <Z-7dqQCiu5fWZ9a9@kernel.org>
- <DM8PR11MB5750131ED71BFF175E3E329CE7A92@DM8PR11MB5750.namprd11.prod.outlook.com>
- <Z--OuMuWx8jUdSU1@kernel.org>
- <DM8PR11MB575046992BEACCD83164043CE7AA2@DM8PR11MB5750.namprd11.prod.outlook.com>
- <a0a803275d317f88afdd757afa30e84a26b05656.camel@intel.com>
- <Z_TEzsYnCxXoEhi0@kernel.org>
- <Z_TFW_0D90wK8BdM@kernel.org>
- <DM8PR11MB5750D5848DC0B3AC0EF00C30E7B52@DM8PR11MB5750.namprd11.prod.outlook.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rfom1+Ro"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744217738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=erfq7737JXLCXKwNvQFnodKJdhZsFHJKAqncod7mqSE=;
+	b=Rfom1+RobeBbtXG3OGcJWXXxQuV/oPNhM6E/lIvXrNVgKfNmE9nzCCfCeIwM+rXeluErUG
+	dOJTaIWcciCq7BHD3S1/4pI4FCjWM2iWXRn1VtfiO0PncjBy/ioW6lIG+M3W1wIayuP8WT
+	B42pwfv6WYdoo5vI+j+mFeOYj4IX8Qs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-623-J8L3kIAyMeu2u__Y5JiTBA-1; Wed,
+ 09 Apr 2025 12:55:37 -0400
+X-MC-Unique: J8L3kIAyMeu2u__Y5JiTBA-1
+X-Mimecast-MFC-AGG-ID: J8L3kIAyMeu2u__Y5JiTBA_1744217736
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A9FCA180035E;
+	Wed,  9 Apr 2025 16:55:35 +0000 (UTC)
+Received: from rules.brq.redhat.com (unknown [10.44.22.33])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5BE5618009BC;
+	Wed,  9 Apr 2025 16:55:31 +0000 (UTC)
+From: Vladis Dronov <vdronov@redhat.com>
+To: linux-sgx@vger.kernel.org,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org,
+	Vladis Dronov <vdronov@redhat.com>
+Subject: [PATCH] selftests/sgx: Fix an enclave built with extended instructions
+Date: Wed,  9 Apr 2025 18:55:10 +0200
+Message-ID: <20250409165510.23066-1-vdronov@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-type: text/plain
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <DM8PR11MB5750D5848DC0B3AC0EF00C30E7B52@DM8PR11MB5750.namprd11.prod.outlook.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Apr 08, 2025 at 06:54:14AM +0000, Reshetova, Elena wrote:
-> > 
-> > On Tue, Apr 08, 2025 at 09:40:14AM +0300, Jarkko Sakkinen wrote:
-> > > On Tue, Apr 08, 2025 at 12:06:32AM +0000, Huang, Kai wrote:
-> > > > On Mon, 2025-04-07 at 08:23 +0000, Reshetova, Elena wrote:
-> > > > > > On Fri, Apr 04, 2025 at 06:53:17AM +0000, Reshetova, Elena wrote:
-> > > > > > > > On Wed, Apr 02, 2025 at 01:11:25PM +0000, Reshetova, Elena
-> > wrote:
-> > > > > > > > > > > current SGX kernel code does not handle such errors in any
-> > other
-> > > > > > way
-> > > > > > > > > > > than notifying that operation failed for other ENCLS leaves. So,
-> > I don't
-> > > > > > > > > > > see why ENCLS[EUPDATESVN] should be different from
-> > existing
-> > > > > > > > behaviour?
-> > > > > > > > > >
-> > > > > > > > > > While not disagreeing fully (it depends on call site), in some
-> > > > > > > > > > situations it is more difficult to take more preventive actions.
-> > > > > > > > > >
-> > > > > > > > > > This is a situation where we know that there are *zero* EPC
-> > pages in
-> > > > > > > > > > traffic so it is relatively easy to stop the madness, isn't it?
-> > > > > > > > > >
-> > > > > > > > > > I guess the best action would be make sgx_alloc_epc_page()
-> > return
-> > > > > > > > > > consistently -ENOMEM, if the unexpected happens.
-> > > > > > > > >
-> > > > > > > > > But this would be very misleading imo. We do have memory,
-> > even page
-> > > > > > > > > allocation might function as normal in EPC, the only thing that is
-> > broken
-> > > > > > > > > can be EUPDATESVN functionality. Returning -ENOMEM in this
-> > case
-> > > > > > seems
-> > > > > > > > > wrong.
-> > > > > > > >
-> > > > > > > > This makes it not misleading at all:
-> > > > > > > >
-> > > > > > > > 	pr_err("EUPDATESVN: unknown error %d\n", ret);
-> > > > > > > >
-> > > > > > > > Since hardware should never return this, it indicates a kernel bug.
-> > > > > > >
-> > > > > > > OK, so you propose in this case to print the above message,
-> > sgx_updatesvn
-> > > > > > > returning an error, and then NULL from
-> > __sgx_alloc_epc_page_from_node
-> > > > > > and
-> > > > > > > the __sgx_alloc_epc_page returning -ENOMEM after an iteration
-> > over
-> > > > > > > a whole set of numa nodes given that we will keep getting the
-> > unknown
-> > > > > > error
-> > > > > > > on each node upon trying to do an allocation from each one?
-> > > > > >
-> > > > > > I'd disable ioctl's in this case and return -ENOMEM. It's a cheap sanity
-> > > > > > check. Should not ever happen, but if e.g., a new kernel patch breaks
-> > > > > > anything, it could help catching issues.
-> > > > > >
-> > > > > > We are talking here about situation that is never expected to happen
-> > so I
-> > > > > > don't think it is too heavy hammer here. Here it makes sense because
-> > not
-> > > > > > much effort is required to implement the counter-measures.
-> > > > >
-> > > > > OK, but does it really make sense to explicitly disable ioctls?
-> > > > > Note that everything *in practice* will be disabled simply because not a
-> > single page
-> > > > > anymore can be allocated from EPC since we are getting -ENOMEM on
-> > EPC
-> > > > > page allocation. Also, note that any approach we chose should be
-> > symmetrical
-> > > > > to SGX virtualization side also, which doesn´t use ioctls at all. Simply
-> > returning
-> > > > > -ENOMEM for page allocation in EPC seems like a correct symmetrical
-> > solution
-> > > > > that would work for both nativel enclaves and EPC pages allocated for
-> > VMs.
-> > > > > And nothing would  be able to proceed creating/managing enclaves at
-> > this point.
-> > > > >
-> > > >
-> > > > Right, failing ioctls() doesn't cover SGX virtualization.  If we ever want to
-> > > > fail, we should fail the EPC allocation.
-> > >
-> > > "I guess the best action would be make sgx_alloc_epc_page() return
-> > >  consistently -ENOMEM, if the unexpected happens." -me
-> > >
-> > > >
-> > > > Btw, for the unknown error, and any other errors which should not
-> > happen,
-> > > > couldn't we use the ENCLS_WARN()?  AFAICT there are already cases that
-> > we are
-> > > > using ENCLS_WARN() for those "impossible-to-happen-errors".
-> 
-> Ok, so to summarise the approach I will be sending in the next version:
-> 
-> In case unknown error returns, issue ENCLS_WARN (uses WARN_ON underneath)
-> and return -ENOMEM from EPC page allocation. No other explicit ioctl disabling needed
-> since nothing can proceed anyhow if we cannot allocate a page from EPC.
-> 
-> Does this sound right? 
+Creating an enclave with xfrm == 3 disables extended CPU states and instruction
+sets, like AVX2 and AVX512 inside the enclave. Thus the enclave code has to be
+built with a compiler which does not produce instructions from the extended
+instruction sets. Nevertheless certain Linux distributions confgure a compiler
+so it produces extended instructions by default ("--with-arch_64=x86-64-v3" for
+gcc). Thus an enclave code from test_encl.c is built with extended instructions
+and an enclave execution hits the #UD exception (note exception_vector == 6):
 
-I think it should be sufficient (not a review tho).
+    # ./test_sgx
+    ...
+    #  RUN           enclave.unclobbered_vdso_oversubscribed_remove ...
+    # main.c:481:unclobbered_vdso_oversubscribed_remove:Expected self->run.exception_vector (6) == 0 (0)
+    # main.c:485:unclobbered_vdso_oversubscribed_remove:Expected self->run.function (3) == EEXIT (4)
+    # unclobbered_vdso_oversubscribed_remove: Test terminated by assertion
+    #          FAIL  enclave.unclobbered_vdso_oversubscribed_remove
+    not ok 3 enclave.unclobbered_vdso_oversubscribed_remove
 
-> 
-> Best Regards,
-> Elena.
+Fix this by adding "-mno-avx" to ENCL_CFLAGS in Makefile. Add some comments
+about this to code locations where enclave's xfrm field is set.
 
-BR, Jarkko
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+---
+an out-of-commit-message note:
+
+I would greatly appreciate if someone reviews and possibly fixes my wording
+of the commit message and the code comments.
+
+ tools/testing/selftests/sgx/Makefile    | 2 +-
+ tools/testing/selftests/sgx/load.c      | 8 +++++++-
+ tools/testing/selftests/sgx/sigstruct.c | 6 ++++++
+ 3 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
+index 03b5e13b872b..ab2561b4456d 100644
+--- a/tools/testing/selftests/sgx/Makefile
++++ b/tools/testing/selftests/sgx/Makefile
+@@ -15,7 +15,7 @@ INCLUDES := -I$(top_srcdir)/tools/include
+ HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC $(CFLAGS)
+ HOST_LDFLAGS := -z noexecstack -lcrypto
+ ENCL_CFLAGS += -Wall -Werror -static-pie -nostdlib -ffreestanding -fPIE \
+-	       -fno-stack-protector -mrdrnd $(INCLUDES)
++	       -fno-stack-protector -mrdrnd -mno-avx $(INCLUDES)
+ ENCL_LDFLAGS := -Wl,-T,test_encl.lds,--build-id=none
+ 
+ ifeq ($(CAN_BUILD_X86_64), 1)
+diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
+index c9f658e44de6..79946ca8f1a5 100644
+--- a/tools/testing/selftests/sgx/load.c
++++ b/tools/testing/selftests/sgx/load.c
+@@ -88,10 +88,16 @@ static bool encl_ioc_create(struct encl *encl)
+ 	memset(secs, 0, sizeof(*secs));
+ 	secs->ssa_frame_size = 1;
+ 	secs->attributes = SGX_ATTR_MODE64BIT;
+-	secs->xfrm = 3;
+ 	secs->base = encl->encl_base;
+ 	secs->size = encl->encl_size;
+ 
++	/*
++	 * Setting xfrm to 3 disables extended CPU states and instruction sets
++	 * like AVX2 inside the enclave. Thus the enclave code has to be built
++	 * without instructions from extended instruction sets (-mno-avx).
++	 */
++	secs->xfrm = 3;
++
+ 	ioc.src = (unsigned long)secs;
+ 	rc = ioctl(encl->fd, SGX_IOC_ENCLAVE_CREATE, &ioc);
+ 	if (rc) {
+diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
+index d73b29becf5b..f548392a2fee 100644
+--- a/tools/testing/selftests/sgx/sigstruct.c
++++ b/tools/testing/selftests/sgx/sigstruct.c
+@@ -331,6 +331,12 @@ bool encl_measure(struct encl *encl)
+ 	sigstruct->header.header2[1] = header2[1];
+ 	sigstruct->exponent = 3;
+ 	sigstruct->body.attributes = SGX_ATTR_MODE64BIT;
++
++	/*
++	 * Setting xfrm to 3 disables extended CPU states and instruction sets
++	 * like AVX2 inside the enclave. Thus the enclave code has to be built
++	 * without instructions from extended instruction sets (-mno-avx).
++	 */
+ 	sigstruct->body.xfrm = 3;
+ 
+ 	/* sanity check */
+-- 
+2.49.0
+
