@@ -1,48 +1,47 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C470292911;
-	Tue, 15 Apr 2025 11:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BDA8633F;
+	Tue, 15 Apr 2025 11:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744717979; cv=none; b=h5n5DVfORpCFpa4zax2IpGRzYE5M+XgtO4K6rzEdXh1bAWNnNrBSO6wIlUmowjBadOZ/Fdof2I2DZX1fGTx3LTDSSr73HQWsPWMTq3LBwC+KEYmsa/138Ij2e+iaV4iZp6gMe9Zzqc/svtYlkQ/sAqws4CeWkZ2tztj3U0gHIF8=
+	t=1744718022; cv=none; b=S7dgq71Mo14LXvW+e2iQesCFV/ErQ1yZNdQfIoJiL7kY1R3ApTna7wj9bGuHWIKAh8elBFZ7nhxFFsGoTHGVOD6OMEv7kQwJ8vI32G4vFrAR3i9dcZT2NWQSLju4egZ/LH7ZzcE1akfIndxrxzDuH5k1kXSwROOecfdGNncRvbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744717979; c=relaxed/simple;
-	bh=vJqrNyF2WzLTIckMUxvQxoO3APERPiaclcqQBCmM+HQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r6RRgQ+Uayx/KqzhagZKbd5QG187Sn0IT/LWsUpMBllaUGQt6UYSdM/bFGHB2sgkN+YuKCHXl8/NQ8JDORFPYSaAxZUA1M/bu2nKqkcmJ9OIVFoUYD/Svb7Nhm13YbZL1tSB94XL/n6tsfxzZXMBSxTlW7EQwh8XAhHt7h4gXn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aVkgvTPC; arc=none smtp.client-ip=198.175.65.17
+	s=arc-20240116; t=1744718022; c=relaxed/simple;
+	bh=94q2RCnuvgKPMAhQQ247fmAbMzm7oWd9X6frjs1q7vA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C4heewH4UFPKcnlJdVnaHJXyec7i7CoAL4EhIQFsEPEZEGuh7MCmuzwMUcX9rf7oOjNxEmKXSEInOl+nS/iMDYfhUdj65bwCpKz3alg2mYmIiMt+UwVmQUBf3JTUOTGK5IavuiYgtdPHEwemccAV0oDfXC95YDDDJ9o6lnp5PSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DmXIOOFJ; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aVkgvTPC"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DmXIOOFJ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744717978; x=1776253978;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vJqrNyF2WzLTIckMUxvQxoO3APERPiaclcqQBCmM+HQ=;
-  b=aVkgvTPCaMuOq8H7xfjUYwHQTy2QDt2rVFGTzOFawF2Mj4MyvA3lyebJ
-   ThJUU4JCmgDuVfv6MfmXIPLn2Nm6ml46fBBdEofZrfXZhqpENa+pPytvD
-   mIfiuzi5We1qISjgeYpuVyUl4ft0/1XhSTe/n9lwHsiSiG9OUyhCjnUkn
-   9FF5U/zylKcMUic5BP/o2mlTJUeSSZG4ZF5p/ZG6mdhKwoiNPDRG0+Wv+
-   0BTNB0EMYAOl0PKgl2piYq/KC6wtbm3Gr1+1OxPNYUaZcg/93FzD8U0jF
-   sFtKZULOgCc3vKQslVDT/kyyzUkL0ORChpSjxn8T4nxvOiLxT4xBahM94
-   g==;
-X-CSE-ConnectionGUID: 8d+l9xudRSiXy7NIHPcAkw==
-X-CSE-MsgGUID: 7xaTst4zQCmNalxbTTt1UA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46235134"
+  t=1744718021; x=1776254021;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=94q2RCnuvgKPMAhQQ247fmAbMzm7oWd9X6frjs1q7vA=;
+  b=DmXIOOFJfBhkZW7qFUfy1iqMmclRJ7W8eDuXnjQUgzzWt+eivp0lBpYd
+   KdvHF/dJLPcr7iCicb9dWyUcPlW7Zc96Yaxg0V/Al/2lX48cwkbLgY7g2
+   olIzpn1gE5E8jTXZcY7uo2DnSyWrEm5ij9xqZbZ7srnZspa2e0qNkuBV0
+   ow/10xggRqWo/J80ZR1y7MCEBDKm0PoY/zaz10Bo0aTyeDAokfd6WD1t/
+   +sjMjA1IiJ/WgyRDqW9q56qeMq5oHof3k0m0NOrAHug3LajbtvD3A94ZV
+   SjdhhOvj6cEx6yQNyMPDb0jnd29+fjYBdgu8JrfXYIgJFyLOqw7fReuA2
+   Q==;
+X-CSE-ConnectionGUID: gyCIpobASaurhb0EW/jMng==
+X-CSE-MsgGUID: we+VG6dSQzuKHHwgpXyBhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="46235088"
 X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="46235134"
+   d="scan'208";a="46235088"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 04:52:43 -0700
-X-CSE-ConnectionGUID: eJKl4/d2SDyqiVaqcNZDIg==
-X-CSE-MsgGUID: 9HfFFuWqTSGN2oOCZ7tJMw==
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 04:52:33 -0700
+X-CSE-ConnectionGUID: T4qn1hVqSNyUbl4NE4bLDA==
+X-CSE-MsgGUID: lwjj83WQQLi3TC8nr8RMqg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
-   d="scan'208";a="130997587"
+   d="scan'208";a="130997566"
 Received: from bergbenj-mobl1.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.246.46])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 04:52:37 -0700
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 04:52:27 -0700
 From: Elena Reshetova <elena.reshetova@intel.com>
 To: dave.hansen@intel.com
 Cc: jarkko@kernel.org,
@@ -58,12 +57,10 @@ Cc: jarkko@kernel.org,
 	bondarn@google.com,
 	scott.raynor@intel.com,
 	Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH v3 2/2] x86/sgx: Implement EUPDATESVN and opportunistically call it during first EPC page alloc
-Date: Tue, 15 Apr 2025 14:51:22 +0300
-Message-ID: <20250415115213.291449-3-elena.reshetova@intel.com>
+Subject: [PATCH v3 0/2] Enable automatic SVN updates for SGX enclaves
+Date: Tue, 15 Apr 2025 14:51:20 +0300
+Message-ID: <20250415115213.291449-1-elena.reshetova@intel.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250415115213.291449-1-elena.reshetova@intel.com>
-References: <20250415115213.291449-1-elena.reshetova@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -72,244 +69,100 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-SGX architecture introduced a new instruction called EUPDATESVN
+Changes since v2 following review by Jarkko:
+
+ - formatting of comments is fixed
+ - change from pr_error to ENCLS_WARN to communicate errors from
+ EUPDATESVN
+ - In case an unknown error is detected (must not happen per spec),
+ make page allocation from EPC fail in order to prevent EPC usage
+
+Changes since v1 following review by Jarkko:
+
+ - first and second patch are squashed together and a better
+   explanation of the change is added into the commit message
+ - third and fourth patch are also combined for better understanding
+   of error code purposes used in 4th patch
+ - implementation of sgx_updatesvn adjusted following Jarkko's 
+   suggestions
+ - minor fixes in both commit messages and code from the review
+ - dropping co-developed-by tag since the code now differs enough
+   from the original submission. However, the reference where the
+   original code came from and credits to original author is kept
+
+Background
+----------
+
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
+
+
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
+
+
+Proposed solution
+-----------------
+
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
 to Ice Lake. It allows updating security SVN version, given that EPC
 is completely empty. The latter is required for security reasons
 in order to reason that enclave security posture is as secure as the
 security SVN version of the TCB that created it.
 
-Additionally it is important to ensure that while ENCLS[EUPDATESVN]
-runs, no concurrent page creation happens in EPC, because it might
-result in #GP delivered to the creator. Legacy SW might not be prepared
-to handle such unexpected #GPs and therefore this patch introduces
-a locking mechanism to ensure no concurrent EPC allocations can happen.
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
 
-It is also ensured that ENCLS[EUPDATESVN] is not called when running
-in a VM since it does not have a meaning in this context (microcode
-updates application is limited to the host OS) and will create
-unnecessary load.
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
 
-This patch is based on previous submision by Cathy Zhang
-https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+Testing
+-------
 
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
----
- arch/x86/include/asm/sgx.h      | 41 +++++++++++------
+Tested on EMR machine using kernel-6.14.0_rc7 & sgx selftests.
+If Google folks in CC can test on their side, it would be greatly appreciated.
+
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+
+Elena Reshetova (2):
+  x86/sgx: Use sgx_nr_used_pages for EPC page count instead of
+    sgx_nr_free_pages
+  x86/sgx: Implement EUPDATESVN and opportunistically call it during
+    first EPC page alloc
+
+ arch/x86/include/asm/sgx.h      | 41 ++++++++------
  arch/x86/kernel/cpu/sgx/encls.h |  6 +++
- arch/x86/kernel/cpu/sgx/main.c  | 82 ++++++++++++++++++++++++++++++++-
+ arch/x86/kernel/cpu/sgx/main.c  | 95 +++++++++++++++++++++++++++++++--
  arch/x86/kernel/cpu/sgx/sgx.h   |  1 +
- 4 files changed, 114 insertions(+), 16 deletions(-)
+ 4 files changed, 123 insertions(+), 20 deletions(-)
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 6a0069761508..5caf5c31ebc6 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -26,23 +26,26 @@
- #define SGX_CPUID_EPC_SECTION	0x1
- /* The bitmask for the EPC section type. */
- #define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
-+/* EUPDATESVN presence indication */
-+#define SGX_CPUID_EUPDATESVN	BIT(10)
- 
- enum sgx_encls_function {
--	ECREATE	= 0x00,
--	EADD	= 0x01,
--	EINIT	= 0x02,
--	EREMOVE	= 0x03,
--	EDGBRD	= 0x04,
--	EDGBWR	= 0x05,
--	EEXTEND	= 0x06,
--	ELDU	= 0x08,
--	EBLOCK	= 0x09,
--	EPA	= 0x0A,
--	EWB	= 0x0B,
--	ETRACK	= 0x0C,
--	EAUG	= 0x0D,
--	EMODPR	= 0x0E,
--	EMODT	= 0x0F,
-+	ECREATE		= 0x00,
-+	EADD		= 0x01,
-+	EINIT		= 0x02,
-+	EREMOVE		= 0x03,
-+	EDGBRD		= 0x04,
-+	EDGBWR		= 0x05,
-+	EEXTEND		= 0x06,
-+	ELDU		= 0x08,
-+	EBLOCK		= 0x09,
-+	EPA		= 0x0A,
-+	EWB		= 0x0B,
-+	ETRACK		= 0x0C,
-+	EAUG		= 0x0D,
-+	EMODPR		= 0x0E,
-+	EMODT		= 0x0F,
-+	EUPDATESVN	= 0x18,
- };
- 
- /**
-@@ -73,6 +76,11 @@ enum sgx_encls_function {
-  *				public key does not match IA32_SGXLEPUBKEYHASH.
-  * %SGX_PAGE_NOT_MODIFIABLE:	The EPC page cannot be modified because it
-  *				is in the PENDING or MODIFIED state.
-+ * %SGX_INSUFFICIENT_ENTROPY:	Insufficient entropy in RNG.
-+ * %SGX_EPC_NOT_READY:		EPC is not ready for SVN update.
-+ * %SGX_NO_UPDATE:		EUPDATESVN was successful, but CPUSVN was not
-+ *				updated because current SVN was not newer than
-+ *				CPUSVN.
-  * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
-  */
- enum sgx_return_code {
-@@ -81,6 +89,9 @@ enum sgx_return_code {
- 	SGX_CHILD_PRESENT		= 13,
- 	SGX_INVALID_EINITTOKEN		= 16,
- 	SGX_PAGE_NOT_MODIFIABLE		= 20,
-+	SGX_INSUFFICIENT_ENTROPY	= 29,
-+	SGX_EPC_NOT_READY		= 30,
-+	SGX_NO_UPDATE			= 31,
- 	SGX_UNMASKED_EVENT		= 128,
- };
- 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 99004b02e2ed..3d83c76dc91f 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -233,4 +233,10 @@ static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
- 	return __encls_2(EAUG, pginfo, addr);
- }
- 
-+/* Update CPUSVN at runtime. */
-+static inline int __eupdatesvn(void)
-+{
-+	return __encls_ret_1(EUPDATESVN, "");
-+}
-+
- #endif /* _X86_ENCLS_H */
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index b61d3bad0446..c21f4f6226b0 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -32,6 +32,11 @@ static DEFINE_XARRAY(sgx_epc_address_space);
- static LIST_HEAD(sgx_active_page_list);
- static DEFINE_SPINLOCK(sgx_reclaimer_lock);
- 
-+/* This lock is held to prevent new EPC pages from being created
-+ * during the execution of ENCLS[EUPDATESVN].
-+ */
-+static DEFINE_SPINLOCK(sgx_epc_eupdatesvn_lock);
-+
- static atomic_long_t sgx_nr_used_pages = ATOMIC_LONG_INIT(0);
- static unsigned long sgx_nr_total_pages;
- 
-@@ -444,6 +449,7 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
- {
- 	struct sgx_numa_node *node = &sgx_numa_nodes[nid];
- 	struct sgx_epc_page *page = NULL;
-+	bool ret;
- 
- 	spin_lock(&node->lock);
- 
-@@ -452,12 +458,33 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
- 		return NULL;
- 	}
- 
-+	if (!atomic_long_inc_not_zero(&sgx_nr_used_pages)) {
-+		spin_lock(&sgx_epc_eupdatesvn_lock);
-+		/*
-+		 * Only call sgx_updatesvn() once the first enclave's
-+		 * page is allocated from EPC
-+		 */
-+		if (atomic_long_read(&sgx_nr_used_pages) == 0) {
-+			ret = sgx_updatesvn();
-+			if (!ret) {
-+				/*
-+				 * sgx_updatesvn() returned unknown error, smth
-+				 * must be broken, do not allocate a page from EPC
-+				 */
-+				spin_unlock(&sgx_epc_eupdatesvn_lock);
-+				spin_unlock(&node->lock);
-+				return NULL;
-+			}
-+		}
-+		atomic_long_inc(&sgx_nr_used_pages);
-+		spin_unlock(&sgx_epc_eupdatesvn_lock);
-+	}
-+
- 	page = list_first_entry(&node->free_page_list, struct sgx_epc_page, list);
- 	list_del_init(&page->list);
- 	page->flags = 0;
- 
- 	spin_unlock(&node->lock);
--	atomic_long_inc(&sgx_nr_used_pages);
- 
- 	return page;
- }
-@@ -970,3 +997,56 @@ static int __init sgx_init(void)
- }
- 
- device_initcall(sgx_init);
-+
-+/**
-+ * sgx_updatesvn() - Issue ENCLS[EUPDATESVN]
-+ * If EPC is ready, this instruction will update CPUSVN to the currently
-+ * loaded microcode update SVN and generate new cryptographic assets.
-+ *
-+ * Return:
-+ * True: success or EUPDATESVN can be safely retried next time
-+ * False: Unexpected error occurred
-+ */
-+bool sgx_updatesvn(void)
-+{
-+	int retry = 10;
-+	int ret;
-+
-+	lockdep_assert_held(&sgx_epc_eupdatesvn_lock);
-+
-+	if (!(cpuid_eax(SGX_CPUID) & SGX_CPUID_EUPDATESVN))
-+		return true;
-+
-+	/*
-+	 * Do not execute ENCLS[EUPDATESVN] if running in a VM since
-+	 * microcode updates are only meaningful to be applied on the host.
-+	 */
-+	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-+		return true;
-+
-+	do {
-+		ret = __eupdatesvn();
-+		if (ret != SGX_INSUFFICIENT_ENTROPY)
-+			break;
-+
-+	} while (--retry);
-+
-+	switch (ret) {
-+	case 0:
-+		pr_info("EUPDATESVN: success\n");
-+		break;
-+	case SGX_EPC_NOT_READY:
-+	case SGX_INSUFFICIENT_ENTROPY:
-+	case SGX_EPC_PAGE_CONFLICT:
-+		ENCLS_WARN(ret, "EUPDATESVN");
-+		break;
-+	case SGX_NO_UPDATE:
-+		break;
-+	default:
-+		ENCLS_WARN(ret, "EUPDATESVN");
-+		return false;
-+	}
-+
-+	return true;
-+
-+}
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index d2dad21259a8..d7d631c973d0 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -103,5 +103,6 @@ static inline int __init sgx_vepc_init(void)
- #endif
- 
- void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
-+bool sgx_updatesvn(void);
- 
- #endif /* _X86_SGX_H */
 -- 
 2.45.2
 
