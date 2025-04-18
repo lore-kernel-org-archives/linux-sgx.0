@@ -1,184 +1,147 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A34E1552EB
-	for <linux-sgx@vger.kernel.org>; Fri, 18 Apr 2025 14:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3809B1DF247
+	for <linux-sgx@vger.kernel.org>; Fri, 18 Apr 2025 14:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744985931; cv=none; b=odpi5n61itEwFbLxuWVwkZxg5JSnZ8mH2O+dqVTLMX8I2IH8dnR+dohxb0A/3sh7ds0SQvHjcFShaS15Ws3S+fp7s/TofHj630L/YgXFpQHMXd63PEazV1ODOvpfMY0znaz7f7kv7YFKykU5Np8k4sNCPSXYzBDKI1eFzFpg4UU=
+	t=1744988150; cv=none; b=eT6gf+dpI9Qpy5JDjzfMF/AkCGw/ILu8hcuiVIJCNb/tqVENErOpMm2zbEwR8j++kHqi2eWsrcBv8XhwwZ5kCTmonRESo8z/pA9LWh5Apa8an6OUCtFP7cTBUez6EjJ4natatAnzn9WEz2FB18z+re4Slj4qyn+ZIaTJMcls6ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744985931; c=relaxed/simple;
-	bh=pUkjD1FghkHBdydJuYX2OPu84OoLeZjhEfD2QWq8NWM=;
+	s=arc-20240116; t=1744988150; c=relaxed/simple;
+	bh=v5jeM6IdRu5kwslLRf/1pwaSpnFjQBP54ymXQRkSwpw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pRsH88b3iVOIk/o1D0vo+/z3aMI1EsDK2nj46vC0BSbCUNgMECvDJB61oxYoKHVyCGn4PYWfeUcgfwl0CMbTp6/EDhTXcvAlFO7WsrBYfK6MesDRCmvY5TP7sGV1eXWm2gYYGBdgnH4HxYNWdRXvnvkWT7lkrOOi6GEllHKCYCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aGJprITQ; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=EiDyhVnan7S5IDd+50RprOPb0ja1eFiM9pYGe4Ty0LkaDKQA0wBntVI2kow1NKc11/2Ob9q8d73RROtk54jJiLY7gdktvJ5SF41rmNpA5+EuYq3I5eS3SXVZefC0SaCkpAj4cbQNbup0HJkHRXtjtpzdetl0JemOSAidaX/k0yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ocG5Sf41; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aGJprITQ"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3087a703066so788203a91.0
-        for <linux-sgx@vger.kernel.org>; Fri, 18 Apr 2025 07:18:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ocG5Sf41"
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-73c09e99069so2258218b3a.0
+        for <linux-sgx@vger.kernel.org>; Fri, 18 Apr 2025 07:55:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744985929; x=1745590729; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1744988148; x=1745592948; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VyKpHdHCd98xvNXzYgyo/Cil2h2Uc+7axnGj8AZOXY4=;
-        b=aGJprITQa2ufvXyvemQemmkUfiF1cSKvZhW7W6oezHhDN4M00c4vO2/Smy1Kcn5Oex
-         DCHBgor+5I/kBqpdCdkClhrDkwF6TSgK7e9/vwIjJU1DBnuQSi/lJq5bUQ/86mwxqK6W
-         ITNdKqIEyG0NIFwJIskhQEpUdVVVtYI3Ga0EDvMjcfK7JXHUrFq8Ct6BTTmnBamm5Bpj
-         hUS2lUD5pE7xKg454RLY5UT3pNkzZJBNyE2SGL7//BpyNnJOaQry1YHBZd4o8P9sPGgo
-         1V3wTJVjMVHLjiVq6SokPsDtSvC1vE0bg/jyAq+0tatx9dDQU6PslsDvvDdZX2cRJ3qJ
-         joJg==
+        bh=ly7clhQPsm7lTpvVytdc3NPdGM80PwA051TLRXYT/cY=;
+        b=ocG5Sf41eGPgS3AK8gOmcdyRI7rLiJ8lmppJOHau1T99Xoxo9n2K/6bWV/sw0GALI4
+         JSPxKBOuhNtRy0Pp2KoViM6hLLb8tuEcByFd0qIZRSvJQUi1y/kYW5MY3ohtngNmeeg7
+         OsndDyhDCM/DygQuPsxMWIpjWXpgJ8h7CqSz6eLNEo7f8WCxdrv6Qt7AoZVFr1qipTjf
+         2sFd/ZdYoDlrX0rb56g9FW6uKv73yn1tsGf3qPHM38uqh0e8N0R6aoMsoQCgWlXieLa/
+         QIIJAtCPjpaUPdkiIx0lg+1Z28ngdZ/Qdffz/7y3hJ15fNM7ugLLbviLLJHtd80l3Wyt
+         c8yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744985929; x=1745590729;
+        d=1e100.net; s=20230601; t=1744988148; x=1745592948;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VyKpHdHCd98xvNXzYgyo/Cil2h2Uc+7axnGj8AZOXY4=;
-        b=asz+RV2fP836X27Tp3uxyXINaCf7rQ1n8kXSqjm4bbL2m8sE/C3+iAT4q2sq1rUKiO
-         lEkxgnuyEHobX/pLdo39K2L0XGwo+dzKKkhDPBmhEQW6y1DkbnGFUMKgx+KXUHR7HOEy
-         B2S4rbkmgy70ZOAWl8eSzofd7SaORsl+MYch6LiJcWXg1IQ2e7uTTpv9WLRh/nuC9503
-         BnGZa1pTNUwm+rgrRmamwLKbicq7Bc20tox0ENsk+8WvbC9Q/BIUAowCxv5KT/PNIr4N
-         EsdfIpOhBQWjFAqKwmvzrrJk/Z6n5NJ2UTBu+IRQcVSRRz2OjDVMZJktmjzEK9y0unbr
-         75EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYtvc96xGHr/5VWlQYGJgO1HtINqKPMwH/+PLL9xbLcnL0xmiOut+4uvydIkZBGwMvxYDy25Sb5SE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/VTUJmU2+fNMydsgiyQjD5W6EYOAgfwiuvdHLEzx218i3r09L
-	q63FypoGzZM2fnHqH8gOi4iC+ZIsiNgILqvUpYVNKp2R9549faGBv/M2WIAtpliDHXqyqkxpyZ5
-	Zvw==
-X-Google-Smtp-Source: AGHT+IEiGSslixzn2GvqhbUzQFd3uzt4D4erY5NFbgr7oLyfFseBn9Ti3SeLm9HiYvGrGLgi01kpDWgv72s=
-X-Received: from pjbsz11.prod.google.com ([2002:a17:90b:2d4b:b0:2f9:c349:2f84])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2703:b0:2ff:7b28:a51a
- with SMTP id 98e67ed59e1d1-3087bb6960amr4998384a91.17.1744985929401; Fri, 18
- Apr 2025 07:18:49 -0700 (PDT)
-Date: Fri, 18 Apr 2025 07:18:46 -0700
-In-Reply-To: <6bbfb38a0cd66af3d3562a82adac835316b1f4e5.camel@intel.com>
+        bh=ly7clhQPsm7lTpvVytdc3NPdGM80PwA051TLRXYT/cY=;
+        b=XHuxle7KJkjjuYOvjqBUFJMTb7SXsNKT0z+fC+c98foelf9caizTLTX/BFZvx30/ey
+         v6iOtAgRHueqK0skRUwhKyGeN0CE9OcHh3xx695Qo6vSGG6eoRgv/3+Pzr4//taMnvEV
+         LTSqlP0g69sNRMKBUGRH4pODfg44u7K6gn1y+Pffp3vZ9B1DNwqdBDsCTaK4ZiW7FAPl
+         rkFrstMe+eJptjUaJN2KkqJeEgMefdXY/XpJdO05IsEMc9cnIuTpLSBbXH6RDmWYLouM
+         nrmasWEISn233yogfgu7CJKdX4UiM9mrWH32AJhslgC2jcST+OZhkMwmEwNx7sCIFcDB
+         XgwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBAaftOXRH3N154qaxioXfkwCj5+ddwCMLgg5djARB9f1SFysqTuhmBUdMbA6fbjHlS22EvugIA7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhc7mmh33+U5zWxRNXmVkUfnUkFyaaxfc4xxsyOtCneo7PUTPz
+	4NWOlfSzqYPZUsuDElvGcXnYDo9uJWgXocm9lLbwee6iJkzfnnoqv2O+02dj4/ln0nSIjAzDaCM
+	bow==
+X-Google-Smtp-Source: AGHT+IEVtSnImt1uf60rTKZKdHb8P2zBptukIMnlrusgZprIRtXC6rcwSPuw7Yi56KLFkRT360oLGEeGGXE=
+X-Received: from pfbhm15.prod.google.com ([2002:a05:6a00:670f:b0:730:8e17:ed13])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1811:b0:736:692e:129
+ with SMTP id d2e1a72fcca58-73dc15d0c0fmr4386968b3a.24.1744988148457; Fri, 18
+ Apr 2025 07:55:48 -0700 (PDT)
+Date: Fri, 18 Apr 2025 07:55:46 -0700
+In-Reply-To: <20250415115213.291449-3-elena.reshetova@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250415115213.291449-1-elena.reshetova@intel.com>
- <20250415115213.291449-3-elena.reshetova@intel.com> <11f7e006073d2a4fa8fd6c609024a69ed40af9d6.camel@intel.com>
- <DM8PR11MB5750C80ED4AB80C696F581EFE7BD2@DM8PR11MB5750.namprd11.prod.outlook.com>
- <6bbfb38a0cd66af3d3562a82adac835316b1f4e5.camel@intel.com>
-Message-ID: <aAJfJ38wt2bnguhg@google.com>
+References: <20250415115213.291449-1-elena.reshetova@intel.com> <20250415115213.291449-3-elena.reshetova@intel.com>
+Message-ID: <aAJn8tgubjT5t7DB@google.com>
 Subject: Re: [PATCH v3 2/2] x86/sgx: Implement EUPDATESVN and
  opportunistically call it during first EPC page alloc
 From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: Elena Reshetova <elena.reshetova@intel.com>, Dave Hansen <dave.hansen@intel.com>, 
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, Vincent Scarlata <vincent.r.scarlata@intel.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "jarkko@kernel.org" <jarkko@kernel.org>, 
-	Vishal Annapurve <vannapurve@google.com>, Chong Cai <chongc@google.com>, 
-	Asit K Mallick <asit.k.mallick@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "bondarn@google.com" <bondarn@google.com>, 
-	"dionnaglaze@google.com" <dionnaglaze@google.com>, Scott Raynor <scott.raynor@intel.com>
+To: Elena Reshetova <elena.reshetova@intel.com>
+Cc: dave.hansen@intel.com, jarkko@kernel.org, linux-sgx@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, asit.k.mallick@intel.com, 
+	vincent.r.scarlata@intel.com, chongc@google.com, erdemaktas@google.com, 
+	vannapurve@google.com, dionnaglaze@google.com, bondarn@google.com, 
+	scott.raynor@intel.com
 Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Apr 17, 2025, Kai Huang wrote:
-> I think the sgx_updatesvn() should just return true when EUPDATESVN returns 0 or
-> SGX_NO_UPDATE, and return false for all other error codes.  And it should
-> ENCLS_WARN() for all other error codes, except SGX_INSUFFICIENT_ENTROPY because
-> it can still legally happen.
-> 
-> Something like:
-> 
-> 	do {
-> 		ret = __eupdatesvn();
-> 		if (ret != SGX_INSUFFICIENT_ENTROPY)
-> 			break;
-> 	} while (--retry);
+On Tue, Apr 15, 2025, Elena Reshetova wrote:
+> +/* This lock is held to prevent new EPC pages from being created
+> + * during the execution of ENCLS[EUPDATESVN].
+> + */
+> +static DEFINE_SPINLOCK(sgx_epc_eupdatesvn_lock);
+> +
+>  static atomic_long_t sgx_nr_used_pages = ATOMIC_LONG_INIT(0);
+>  static unsigned long sgx_nr_total_pages;
+>  
+> @@ -444,6 +449,7 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
+>  {
+>  	struct sgx_numa_node *node = &sgx_numa_nodes[nid];
+>  	struct sgx_epc_page *page = NULL;
+> +	bool ret;
+>  
+>  	spin_lock(&node->lock);
+>  
+> @@ -452,12 +458,33 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
+>  		return NULL;
+>  	}
+>  
+> +	if (!atomic_long_inc_not_zero(&sgx_nr_used_pages)) {
 
-This can be:
+FWIW, the entire automatic scheme has terrible behavior when KVM is running SGX
+capable guests.  KVM will allocate EPC when the virtual EPC is first touched by
+the guest, and won't free the EPC pages until the VM is terminated.  And IIRC,
+userspace (QEMU) typically preallocates the virtual EPC to ensure the VM doesn't
+need to be killed later on due to lack of EPC.
 
-	do {
-		ret = __eupdatesvn();
-	} while (ret == SGX_INSUFFICIENT_ENTROPY && --retry)
+I.e. running an SGX capable VM, even if there are no active enclaves in said VM,
+will prevent SVN updates.
 
-To make it super obvious that retry is only relevant to lack of entropy.
+Unfortunately, I can't think of a sane way around that, because while it would
+be easy enough to force interception of ECREATE, there's no definitive ENCLS leaf
+that KVM can intercept to detect when an enclave is destroyed (interception
+EREMOVE would have terrible performance implications).
 
-> 	if (!ret || ret == SGX_NO_UPDATE) {
-> 		/*
-> 		 * SVN successfully updated, or it was already up-to-date.
-> 		 * Let users know when the update was successful.
-> 		 */
-> 		if (!ret)
-> 			pr_info("SVN updated successfully\n");
-> 		return true;
+That said, handling this deep in the bowels of EPC page allocation seems
+unnecessary.  The only way for there to be no active EPC pages is if there are
+no enclaves.  As above, virtual EPC usage is already all but guaranteed to hit
+false positives, so I don't think there's anything gained by trying to update
+the SVN based on EPC allocations.
 
-Returning true/false is confusing since the vast majority of the SGX code uses
-'0' for success.  A lot of cleverness went into splicing SGX's error codes into
-the kernel's -ernno; it would be a shame to ignore that :-)
+So rather than react to EPC allocations, why not hook sgx_open() and sgx_vepc_open()?
+Then you're hooking a relative slow path (I assume EUPDATESVN is not fast), error
+codes can be returned to userspace (if you really want the kernel to freak out if
+EUPDATESVN unexpected fails), and you don't _have_ to use a spinlock, e.g. if
+EUPDATESVN takes a long time, using a mutex might be desirable.
 
-E.g. this looks wrong at first (and second glance)
+> +bool sgx_updatesvn(void)
+> +{
+> +	int retry = 10;
+> +	int ret;
+> +
+> +	lockdep_assert_held(&sgx_epc_eupdatesvn_lock);
+> +
+> +	if (!(cpuid_eax(SGX_CPUID) & SGX_CPUID_EUPDATESVN))
+> +		return true;
 
-			ret = sgx_updatesvn();
-			if (!ret) {
-				/*
-				 * sgx_updatesvn() returned unknown error, smth
-				 * must be broken, do not allocate a page from EPC
-				 */
-				spin_unlock(&sgx_epc_eupdatesvn_lock);
-				spin_unlock(&node->lock);
-				return NULL;
-			}
+Checking CPUID features inside the spinlock is asinine.  They can't change, barring
+a misbehaving hypervisor.  This should be a "cache once during boot" sorta thing.
 
-> 	}
-> 
-> 	/*
-> 	 * EUPDATESVN was called when EPC is empty, all other error
-> 	 * codes are unexcepted except running out of entropy.
-> 	 */
-> 	if (ret != SGX_INSUFFICIENT_ENTROPY)
-> 		ENCLS_WARN(ret, "EUPDATESVN");
-> 
-> 	return false;
-> 		
-> 
-> In __sgx_alloc_epc_page_from_node(), it should fail to allocate EPC page and
-> return -ENOMEM when sgx_updatesvn() returns false.  We should only allow EPC to
+> +
+> +	/*
+> +	 * Do not execute ENCLS[EUPDATESVN] if running in a VM since
+> +	 * microcode updates are only meaningful to be applied on the host.
 
-No, it should return a meaningful error code, not -ENOMEM.  And if that's the
-behavior you want, then __sgx_alloc_epc_page() should be updated to bail immediately.
-The current code assuming -ENOMEM is the only failure scenario:
+I don't think the kernel should check HYPERVISOR.  The SDM doesn't actually
+say anything about EUPDATESVN, but unless it's explicitly special cased, I doubt
+XuCode cares whether ENCLS was executed in Root vs. Non-Root.
 
-	do {
-		page = __sgx_alloc_epc_page_from_node(nid);
-		if (page)
-			return page;
-
-		nid = next_node_in(nid, sgx_numa_mask);
-	} while (nid != nid_start);
-
-That should be something like:
-
-	do {
-		page = __sgx_alloc_epc_page_from_node(nid);
-		if (!IS_ERR(page) || PTR_ERR(page) != -ENOMEM)
-			return page;
-
-		nid = next_node_in(nid, sgx_numa_mask);
-	} while (nid != nid_start);
-
-> be allocated when we know the SVN is already up-to-date.
-> 
-> Any further call of EPC allocation will trigger sgx_updatesvn() again.  If it
-> was failed due to unexpected error, then it should continue to fail,
-> guaranteeing "sgx_alloc_epc_page() return consistently -ENOMEM, if the
-> unexpected happens".  If it was failed due to running out of entropy, it then
-> may fail again, or it will just succeed and then SGX can continue to work.
-
-
-Side topic, the function comment for __sgx_alloc_epc_page() is stale/wrong.  It
-returns ERR_PTR(-ENOMEM), not NULL, on failure.
-
-/**
- * __sgx_alloc_epc_page() - Allocate an EPC page
- *
- * Iterate through NUMA nodes and reserve ia free EPC page to the caller. Start
- * from the NUMA node, where the caller is executing.
- *
- * Return:
- * - an EPC page:	A borrowed EPC pages were available.
- * - NULL:		Out of EPC pages.
- */
+It's the hypervisor's responsibility to enumerate SGX_CPUID_EUPDATESVN or not.
+E.g. if the kernel is running in a "passthrough" type setup, it would be perfectly
+fine to do EUPDATESVN from a guest kernel.  EUPDATESVN could even be proxied,
+e.g. by intercepting ECREATE to track EPC usage
