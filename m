@@ -1,195 +1,140 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7971211A3D
-	for <linux-sgx@vger.kernel.org>; Fri, 25 Apr 2025 17:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE2D4437C;
+	Fri, 25 Apr 2025 18:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745602844; cv=none; b=AmkMdv9wC9jLOufS7T3CfcDlpvqeLLMgLD8k1FchZchD2laFqvqG7qz7EnspBPlRYiVozE1zo/Ljd9u3e8U0UbFmIO1L79xvIblv27216O9qmoJgkROqlpPe4ncfMTdfWtSOdGaH1QLpOkBjnUrTleyRf+MzlRdmtHvsi7LLkDk=
+	t=1745604302; cv=none; b=NRW14L9jm7RvPmBUuDR2Ami8ZNBVwt7ibmnSrZR+7yfVbHwW2gyJPUUSklb4VKP4GT2b/5FrWt257dQY2Lnrr6GaIcwbYUNX47i/4dVeCXarDKGoycZ+jTEngBmszsTnq/dQB0p/VFovV2w/XQHqSSoa9vl+4Imb3iwMDJo5r5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745602844; c=relaxed/simple;
-	bh=mBL+AxcF1xFwBIeV0kOlIFmh5j2V+v6TYuiEqLBkMG8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UxyCKPr5rjlgiAzXiTfkvQxAno6VvGbzqVd9KaRn998x8Y+GjXoIpoK4kZDVDL9IoU65T5V3rfhaozIIMuyiOVqhPpnCCLNAno9Ik+JH0m0PjR03Mckwav3LWEQ2u+vP2e82NxqwcyBaN8VcFtkXdVmYHCgDckr77R3nVDYlrrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BViOfMcB; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1745604302; c=relaxed/simple;
+	bh=Bw4FYf1Ve1oqC7aTOq2sae1c3haMBreDWrr629hX/vA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gUri3/XJKQSpKIShdEtBKuTGEedHnA0gBmAZO7uvO4PIRGch8NFoJfwUSHgtbBOLvRn9s3JIssRzprNQI7J0YTjKgAZmWvm2dEh2KtORz1fXyPQv8nxVjJhm/vASvByhyvUs1tkHDNT7dmRDmVUjAwAhjMSbQ+PLg0Apfw+AnJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m9nTqtfi; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BViOfMcB"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-306b590faaeso2030332a91.3
-        for <linux-sgx@vger.kernel.org>; Fri, 25 Apr 2025 10:40:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745602841; x=1746207641; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DhG8eNK9TC64LN5c+PcqHDBAibvAi/qupep9hLzGVvg=;
-        b=BViOfMcBeTYfSebp5b/2E6e00SUmpH8AhvAZabpaV1TTtTyVRRAk06GH5sLq5sgRu0
-         wsIZTX/hwaQxvWp1jPeiKKqw+BxCIp6nNZ26+aS/cMBbp7O9oIf45s1BOKbbekBTW/2m
-         L/Kd0aQgecujMhsUJXe5kFiivTNahkMd3eT9a7hM4d2uEkWPc3tD6UCp1Q9CRfNn0Mn+
-         N2NGTGxRShKKztWN0zhpA7zzEE4he78nU7OuC9UGQL/cN4YrNTqj9mpTNHXhqpuwJ9Hu
-         nxxm8xjaHz8MPBFNUNpUGQ7glZMWVuhN9movtkpyJyATJdVKkHPJ3Wi/X4KlWqFB5cNo
-         IIiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745602841; x=1746207641;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DhG8eNK9TC64LN5c+PcqHDBAibvAi/qupep9hLzGVvg=;
-        b=K9+0f+zdAx0X7RcyCOgRK433NJ4TrPPC+pS6Y1vRLcQb0WOQxx1Q65MyNiNOwb2HRe
-         47e8YtKBLMhHhDgTSu1/NLBkHoaLil07yXVK5B0l/Bhwq0Ir1d/yxcPxb63xU50YJ++t
-         V/gd6UAz/WyZDa3scGugOOHUCMp/nzAOb9Pw/qDoHGDMK65MBPghGITH003bdJiEF217
-         bVKOKpG0YAWEfYalLiRu/yuFQeVuVFjveof+RiXFcZEg+XbkfBEn66RL3VFdfv/nigN0
-         Qqffz1EzrRELnds9HMTA6qOkj28VV7X6k5RvNeOQPlgwp1SWf1PQT2QgkX7WbDTogOFW
-         PQnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpbDywEcu5dt+8aPibbigqbTMaCOIGeRhCc15SW+HcT0HDWtsD9/DVRBhY8qJfIfO1fpjeVPjwG28=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5PdpwtP51+08mj8lEB7v48qOD0xtJYbYLY26oTDxMOMABFm4T
-	KIr+/ewL4DNqWQUDmjI5gPW+J3zA4hMiBpxdxSwzo/wmW9v5l7iFCk9JIVBDLCwD2iL0sZBtrlj
-	AqQ==
-X-Google-Smtp-Source: AGHT+IFC30qTPGBsqU8uN7Kv++uJDjQV8EX1lJacsyhIimEuVAg/AiMZRK7iyZUVZpVSoZ48Rc/R1PHMSDI=
-X-Received: from pjbsi3.prod.google.com ([2002:a17:90b:5283:b0:308:670e:aa2c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2f10:b0:2fe:b937:2a51
- with SMTP id 98e67ed59e1d1-309f7e8eefbmr5438839a91.33.1745602840904; Fri, 25
- Apr 2025 10:40:40 -0700 (PDT)
-Date: Fri, 25 Apr 2025 10:40:39 -0700
-In-Reply-To: <DM8PR11MB5750AB0E790096AFF9AFD3AFE7842@DM8PR11MB5750.namprd11.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m9nTqtfi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745604300; x=1777140300;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Bw4FYf1Ve1oqC7aTOq2sae1c3haMBreDWrr629hX/vA=;
+  b=m9nTqtfi9PwEkBWf8TzuluJEGqU4UXKFXwEvxOClYP9UWYFODn3KC4r2
+   Y2oqC9TseCrn7aDn41pySJmI/wjDiZ83re8VaiKKbXREOUBHgiI8oFJg9
+   HySDYeap/0I4HMMGIF7c7hfJnHju4pGQS+ispqbEz3xzRaxEodCsK1hBI
+   dWO4dwlZlo1XdM6VX/quDNKAgUjL17EN6KgRh757eKZcDia5eO1bhnZNo
+   wrh8rrlNRGenWd8zW65uofMlVDqnihwBCembSeKYnOU8YFVAGaPn5zDj2
+   KMInd1V5fk1E8ZWX3QWofIwibVK593gQeLc6ukeO+TvK8pRCYh1kAmYg3
+   Q==;
+X-CSE-ConnectionGUID: hqKqNdtGS8WVZt9HXjCdvw==
+X-CSE-MsgGUID: DYz9T3lhRnCPWj+k7+SFAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11414"; a="47363969"
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="47363969"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 11:04:59 -0700
+X-CSE-ConnectionGUID: pHmo2QjvRJu4Mo68JdEEIQ==
+X-CSE-MsgGUID: SULpJ2zHScmrAwn52PZxdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="138063280"
+Received: from uaeoff-desk2.amr.corp.intel.com (HELO [10.124.222.49]) ([10.124.222.49])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 11:04:58 -0700
+Message-ID: <0d7d6b9a-e7bd-4225-8f08-05bd9473a894@intel.com>
+Date: Fri, 25 Apr 2025 11:04:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250415115213.291449-1-elena.reshetova@intel.com>
- <20250415115213.291449-3-elena.reshetova@intel.com> <aAJn8tgubjT5t7DB@google.com>
- <f5cb3c37589791b2004a100ca3ea3deb9e1ae708.camel@intel.com>
- <aAefmNVRFc3me6QQ@google.com> <DM8PR11MB5750B37305B3B1FAE4F42D3AE7852@DM8PR11MB5750.namprd11.prod.outlook.com>
- <aAo_2MPGOkOciNuM@google.com> <DM8PR11MB5750D373790399E324B98A18E7852@DM8PR11MB5750.namprd11.prod.outlook.com>
- <aApgOqHvsYNd-yht@google.com> <DM8PR11MB5750AB0E790096AFF9AFD3AFE7842@DM8PR11MB5750.namprd11.prod.outlook.com>
-Message-ID: <aAutUaQvgEliXPUs@google.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 2/2] x86/sgx: Implement EUPDATESVN and
  opportunistically call it during first EPC page alloc
-From: Sean Christopherson <seanjc@google.com>
-To: Elena Reshetova <elena.reshetova@intel.com>
-Cc: "jarkko@kernel.org" <jarkko@kernel.org>, Kai Huang <kai.huang@intel.com>, 
-	Dave Hansen <dave.hansen@intel.com>, 
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, Vincent Scarlata <vincent.r.scarlata@intel.com>, 
-	"x86@kernel.org" <x86@kernel.org>, Vishal Annapurve <vannapurve@google.com>, Chong Cai <chongc@google.com>, 
-	Asit K Mallick <asit.k.mallick@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "bondarn@google.com" <bondarn@google.com>, 
-	"dionnaglaze@google.com" <dionnaglaze@google.com>, Scott Raynor <scott.raynor@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+To: Sean Christopherson <seanjc@google.com>,
+ Elena Reshetova <elena.reshetova@intel.com>
+Cc: "jarkko@kernel.org" <jarkko@kernel.org>, Kai Huang <kai.huang@intel.com>,
+ "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+ Vincent Scarlata <vincent.r.scarlata@intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, Vishal Annapurve <vannapurve@google.com>,
+ Chong Cai <chongc@google.com>, Asit K Mallick <asit.k.mallick@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "bondarn@google.com" <bondarn@google.com>,
+ "dionnaglaze@google.com" <dionnaglaze@google.com>,
+ Scott Raynor <scott.raynor@intel.com>
+References: <20250415115213.291449-1-elena.reshetova@intel.com>
+ <20250415115213.291449-3-elena.reshetova@intel.com>
+ <aAJn8tgubjT5t7DB@google.com>
+ <f5cb3c37589791b2004a100ca3ea3deb9e1ae708.camel@intel.com>
+ <aAefmNVRFc3me6QQ@google.com>
+ <DM8PR11MB5750B37305B3B1FAE4F42D3AE7852@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <aAo_2MPGOkOciNuM@google.com>
+ <DM8PR11MB5750D373790399E324B98A18E7852@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <aApgOqHvsYNd-yht@google.com>
+ <DM8PR11MB5750AB0E790096AFF9AFD3AFE7842@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <aAutUaQvgEliXPUs@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <aAutUaQvgEliXPUs@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 25, 2025, Elena Reshetova wrote:
-> > On Thu, Apr 24, 2025, Elena Reshetova wrote:
-> > Userspace generally won't care about a 10us delay when destroying a
-> > process, but a 10us delay to launch an enclave could be quite problemat=
-ic,
-> > e.g. in the TDX use case where enclaves may be launched on-demand in
-> > response to a guest attestation request.
->=20
-> Ok, but in this case, you are hooking both: create and release.=20
-> I guess your line of thinking is that in most of the cases it will be han=
-dled by
-> a release flow when destroying enclaves, but in cases we happen to need
-> to update a machine which doesn=E2=80=99t have a single enclave yet, the =
-create flow
-> will be used. The problem is that if you look at the instruction definiti=
-on,=20
-> we won't save too much when executing this in release flow (Kai I think a=
-lready pointed
-> this out):
->=20
-> IF (Other instruction is accessing EPC) THEN
->  RFLAGS.ZF :=3D 1
->  RAX :=3D SGX_LOCKFAIL;
->  GOTO ERROR_EXIT;
-> FI
-> (* Verify EPC is ready *)
-> IF (the EPC contains any valid pages) THEN
->  RFLAGS.ZF :=3D 1;
->  RAX :=3D SGX_EPC_NOT_READY;
->  GOTO ERROR_EXIT;
-> FI
-> (* Refresh paging key *) =20
-> IF (NOT RDSEED(&TMP_KEY, 16)) THEN
->  RFLAGS.ZF :=3D 1;
->  RAX :=3D SGX_INSUFFICIENT_ENTROPY;
-> GOTO ERROR_EXIT;
-> FI
-> (* Commit *)
-> CR_BASE_KEY :=3D TMP_KEY;
-> TMP_CPUSVN :=3D CR_CPUSVN;
-> (* Update CPUSVN to current minimum patch even if locked *)
-> (* Determine if info status is needed *)
->=20
-> ----------------------------
-> All above would be done anyhow on create even if we successfully
-> executed it on release previously (( And then finally we go into:
+On 4/25/25 10:40, Sean Christopherson wrote:
+> So then why on earth is the kernel implementing automatic updates?
 
-Ah, so the slow part happens no matter what.
+Because it's literally the least amount of code and doesn't create any
+new ABI.
 
-> IF (TMP_CPUSVN =3D CR_CPUSVN) THEN
->  RFLAGS.CF :=3D 1;
->  RAX :=3D SGX_NO_UPDATE;
-> FI
-> ERROR_EXIT:
->=20
-> >=20
-> > If the update time is tiny, then I agree that hooking release would pro=
-bably do
-> > more harm than good.
->=20
-> So, it is not that the time is tiny, it is like we will do it twice,
-> unnecessary and potentially quite long in both cases (taking RDSEED step =
-into
-> account).
->=20
-> The reason why the instruction is defined this way is that it was not
-> intended originally to be inserted into some existing SGX flows, but was
-> envisioned to be standalone cmd for the host orchestrator to execute once=
- it
-> thinks system is ready.=20
-
-So then why on earth is the kernel implementing automatic updates?  I read =
-back
-through most of the cover letters, and IIUC, we went straight from "destroy=
- all
-enclaves and force an update" to "blindly try to do EUPDATESVN every time t=
-he
-number of enclaves goes from 0=3D>1".  Those are essentially the two most e=
-xtreme
-options.
-
-Even worse, rejecting enclave creation on EUPDATESVN failure represents an =
-ABI
-change, i.e. could break existing setups.
-
-Why not simply add an ioctl() or sysfs knob to let userspace trigger EUPDAT=
-ESVN?
-If there are pages in the EPC, return -EBUSY.  That would give userspace fu=
-ll
-control of the update policy, and would allow for a super simple implementa=
-tion
-in the kernel.  Userspace should darn well know when it's an appropriate ti=
-me to
-do an SVN update, e.g. after userspace has initiated a ucode update, period=
-ically
-if it wants to, after the last TDX VM is destroyed, etc.
-
-Assuming TDX module updates are coming down the pipe, with my KVM maintaine=
-r hat
-on, that is exactly how I will "request" the module be updated.  Userspace =
-initiates
-the update and is therefore responsible for knowing when to do (or not do) =
-an update.
-The kernel's job is purely to do the actual update and ensure correctness/s=
-afety,
-e.g. reject the module update if there are active TDX VMs.
-
-That is also how SEV firmware updates are being implemented.  Userspace is
-responsible for stopping any VM types that aren't compatible with conccuren=
-t
-updates.
-
-I see no reason to do something different for SGX.
+> I read back through most of the cover letters, and IIUC, we went
+> straight from "destroy all enclaves and force an update" to "blindly
+> try to do EUPDATESVN every time the number of enclaves goes from
+> 0=>1".  Those are essentially the two most extreme options.
+I'm sure we can think of a bunch more extreme things. How about after
+every ENCLS? ;)
