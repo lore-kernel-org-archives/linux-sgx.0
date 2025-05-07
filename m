@@ -1,127 +1,199 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231D01388
-	for <linux-sgx@vger.kernel.org>; Tue,  6 May 2025 20:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2383F1EB2F;
+	Wed,  7 May 2025 11:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746563540; cv=none; b=E6XXUaFlJS2feKWjcGZWpYND8yjRJSOnDKHjjfAjBlTCQzP31S2qI7fvSx8owaoULHQQlGzC1hntSJ21aYXyjHYe4+WZA1uLl8zn8wGHgQlXmrTUzhD3/63oQ2khCFFCb8CehnocGEACaZZ0VstyczPcjuhpCJo9PIWBB5QUSWY=
+	t=1746616563; cv=none; b=UUGSfQu70PWM6yLPEAot9VVvDAQ3SH6xGMn+TI8vSQ52yqpBAFZ+CKY4GCzmHBm/sr87BAFeMtMuF3Fu6DumZ7ALrCuTlhxL1MLR/MKsL30Kcm4m5MUbil+iM4YVgKVcKYYxBHDZTt4z0wUnHDmdOTyd/kU7NZ3BtFtCXWEO22g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746563540; c=relaxed/simple;
-	bh=tUwZYD4lRH6VdaApuK/2dwXWp/zrHR11uMrefDN0O3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eiqIMg/TlZhADGGRAWnOk+5duUuNqcRm9vfUGP4gWuVIucQw6bbKatwH4nnl8MKj2kKlE56RSFmn+mvPlUVe63mVKUF2uDZ7bn2ULN/Guevyd8NJc4AcUt1MSGp/Vu9sL12k5AQZilo+Zu+AhzSuvh6mO5o2xIUghQtAXP1IPxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SfBrWKc9; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1746616563; c=relaxed/simple;
+	bh=uKAfoPLDuGlN4at1uYbGy/g18rTTTiv8PLKPzZpemCo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ijwQIc3duh5uWO/HzlBucKe2hUxYcGhJEtazkm31W4H+q8vuucd0EAgBNhbw2WvV8/hRomVSeJbrrnDO+2tm2RN1HLcUyMMh1zXIjnfbPU1NJueXQgfK8f3ZPCuZHM5Ym6wvDHd11N87eRzBAr319vehFQgGgVNmQQ2VkOhPxvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n70XQHlY; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SfBrWKc9"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf3192d8bso2035e9.1
-        for <linux-sgx@vger.kernel.org>; Tue, 06 May 2025 13:32:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746563536; x=1747168336; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tUwZYD4lRH6VdaApuK/2dwXWp/zrHR11uMrefDN0O3Y=;
-        b=SfBrWKc9iPmKY6XP1L8ogUg33N64Koqp5Py1cxrP6bOlBSz/ZADRxnBtC51elFdc0W
-         0EX8si1V/sQtgawv8y36UxJTYSdMBJxqBqV7U0Jk+JpaFQs79iKU0fidSe/umS/dpSCd
-         On3szway9QXpiRR5nri+T6ilYxpwfDlM3TbRPMtqRK6RL0tSPkFKA/+gMrsYQ0eT+IrI
-         zf6Wgyd90BkaulD/ZQKEKnb06sS6VseyHOQh1M6iVC0r4m2MArlXLQeF/+jiqSgeOJTg
-         8olsa8UT2L9qUyKiYJqF1IjnBtaAR8fkgR+4iTTYlVHCmYroRdhh24YQ9OTgeN/zfcA+
-         2hfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746563536; x=1747168336;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tUwZYD4lRH6VdaApuK/2dwXWp/zrHR11uMrefDN0O3Y=;
-        b=rD8tndZm2eA7N050nJEOl7pvvGt7kpqV6Rx04K5sQ8pe8nwGZcvF/RUpTQLo1M9syo
-         SAVU3mNEwK/J4DjTzBukqbOiwBK66vCx8g430znYTaiHoxZCyKfcQJI1KfRtYq9EBGEL
-         iZLLwcs7D8odCbWI6JKdEtLUEUxgxmsQVA35cS4EQKyWi/vBMOPALBKB8CinfTsQMCJF
-         F8p/S7UoblyhVebtGZoFdw4mnixB/EfnZANHxwPd6HNFLwHnSp11kVhzV7tmSbGSxUNp
-         bLAdgCuS674px3SGbKtj6foxal2muziJqDKRM2fMF2tLUKgfIMkot0pMFwc7KBIksSGv
-         VpXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcthx9cfcumIrbZsJQLxa9oB29BKr08rwbVTFTVQfl16k5Om7iMIGW2vrluO6TXGdkGeSHgKbnGSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycnTCpevZQdl6SBPNLHfCflyvTMsbqi5uaUBuXWLQ6rcjRqCfO
-	z0UvjA6a5VlrFXQhW0KhYhJstmeAjeCXEXTaxFXiipP04nnGH8LZhuEwyx7Q96EuleFrzwuthp6
-	cx8zEFlctv7/FhH6MWukkK1N2V/MJPTV+Rke0
-X-Gm-Gg: ASbGncvRreDrHss/qQYlu3k/y4KnLMnWO9P1xWm90GAYtL3gOZr+6LP0qeYmOq6I/AJ
-	Km+bCmiOEPHjrmdMDB812YeA85VvoyDacVIcHOWlKesZjPCA/LxB+gJAvqB0vjqxQMx7zGytqE8
-	A8Py9r6YH6fJF7TyVQnVKa1pouQlVbrDId
-X-Google-Smtp-Source: AGHT+IEViL4DDYdA9BRkFbLcDJrhDyd8AMVyi7Ajmkopmwi+B3g8ozJx81yXwm52KwpCCBwGQVYxLaUMmnJgtUMdspA=
-X-Received: by 2002:a05:600c:5249:b0:43d:5b3a:18cc with SMTP id
- 5b1f17b1804b1-441d446ece1mr211865e9.2.1746563536279; Tue, 06 May 2025
- 13:32:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n70XQHlY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746616562; x=1778152562;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=uKAfoPLDuGlN4at1uYbGy/g18rTTTiv8PLKPzZpemCo=;
+  b=n70XQHlYPJuq/v9hlhisw23Km7glEPIv0kd82N8RP43/2qVascFja0xP
+   LKfYfNRwpXI4rg+iY4qh0kvt6TY6q16FR1ISjxTjQ5up/+aKCcNXe8PDe
+   0D5i77tdPgYc9Rf5+JezLxTGAN2sTn8nV9XDG+gpNQd/Ok5IrDneqI0Le
+   YVtzrGpdo7eWKG4SwHhWYTyiC4HfMYEVsw3QQ6IOMQuhfXhg/8DsFr1ck
+   GrUtmLR0POdXRYKOPrchCN2CgASzleQH0fjxT7TuQYbrdVUdsqWcX1+Q2
+   Q1VLoZvTX0g8gxzvVCx4cwU485BeyK3pbHPjeJMLD1BMYCGid8R/QIEqC
+   g==;
+X-CSE-ConnectionGUID: +jt3RxQcTVm9eAcstZYCyw==
+X-CSE-MsgGUID: wvpS6tEpTMOhWhFSdjl6EQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="59327506"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="59327506"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 04:16:01 -0700
+X-CSE-ConnectionGUID: ZdVTAdx1RauabBD5cCMUCQ==
+X-CSE-MsgGUID: ZeojCG1eT7Gc47ujLQ/Niw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
+   d="scan'208";a="135637604"
+Received: from smoticic-mobl1.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.245.23])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 04:15:56 -0700
+From: Elena Reshetova <elena.reshetova@intel.com>
+To: dave.hansen@intel.com
+Cc: jarkko@kernel.org,
+	seanjc@google.com,
+	kai.huang@intel.com,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	asit.k.mallick@intel.com,
+	vincent.r.scarlata@intel.com,
+	chongc@google.com,
+	erdemaktas@google.com,
+	vannapurve@google.com,
+	dionnaglaze@google.com,
+	bondarn@google.com,
+	scott.raynor@intel.com,
+	Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH v4 0/1] Enable automatic SVN updates for SGX enclaves
+Date: Wed,  7 May 2025 14:13:59 +0300
+Message-ID: <20250507111542.709858-1-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0d7d6b9a-e7bd-4225-8f08-05bd9473a894@intel.com>
- <aAviqeAdGn-w1GpK@google.com> <fbd2acdb-35dc-4e8c-9bd9-e84264f88648@intel.com>
- <aAv445Sr71NUJP1X@google.com> <db1fd062-5a66-4942-82e2-c889dd645a7b@intel.com>
- <aAwFhaqQDLXoqbmv@google.com> <4b4ecaa1-2ace-43bf-b71b-0de78bcf113c@intel.com>
- <DM8PR11MB5750B39557F5062038D0E551E7802@DM8PR11MB5750.namprd11.prod.outlook.com>
- <8db47bc1-445b-49db-b932-96aff0eb58a9@intel.com> <DM8PR11MB5750200DFF8CF40E3539B688E7832@DM8PR11MB5750.namprd11.prod.outlook.com>
- <aBI-xQzatja2Y9dh@kernel.org> <DM8PR11MB575014811E4007EA00F5B3E6E78D2@DM8PR11MB5750.namprd11.prod.outlook.com>
- <d16ecae1c1b4b6f06565dfe9c47849dcaeb0782c.camel@kernel.org>
-In-Reply-To: <d16ecae1c1b4b6f06565dfe9c47849dcaeb0782c.camel@kernel.org>
-From: Nataliia Bondarevska <bondarn@google.com>
-Date: Tue, 6 May 2025 13:32:03 -0700
-X-Gm-Features: ATxdqUE61e7i1k-WDCodhkqZGzBoZRAAXfLn7Q4KHv08wJ97xsX3tgACyJjBU2g
-Message-ID: <CAFbLv2cEgABB3jmL7_6_ZyA8-q+8u7C5f-fcoQf8acYytiB3mA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] x86/sgx: Implement EUPDATESVN and
- opportunistically call it during first EPC page alloc
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: "Reshetova, Elena" <elena.reshetova@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
-	Sean Christopherson <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>, 
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, 
-	"Scarlata, Vincent R" <vincent.r.scarlata@intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"Annapurve, Vishal" <vannapurve@google.com>, "Cai, Chong" <chongc@google.com>, 
-	"Mallick, Asit K" <asit.k.mallick@intel.com>, "Aktas, Erdem" <erdemaktas@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"dionnaglaze@google.com" <dionnaglaze@google.com>, "Raynor, Scott" <scott.raynor@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Tested-by: Nataliia Bondarevska <bondarn@google.com>
+Changes since v3 following reviews by Kai and Sean:
+
+ - Change the overall approach to the one suggested
+  by Sean and do the EUPDATESVN execution during
+  sgx_open() and sgx_vepc_open().
+  Note, I do not try to do EUPDATESVN during the release()
+  flows since it doesnt save any noticable amount
+  of time during next open flow per underlying EUPDATESVN
+  microcode logic.
+ - In sgx_update_svn() remove the check that we are
+  running under VMM and expect the VMM to instead
+  expose correct CPUID
+ - Move the actual CPUID leaf check out of
+  sgx_update_svn() into sgx_init()
+ - Use existing RDRAND_RETRY_LOOPS define instead of 10
+ - Change the sgx_update_svn() to return 0 only in
+ success cases (or if unsupported)
+ - Various smaller cosmetic fixes
+
+The still to be discussed question is what sgx_update_svn()
+should return in case of various failures. The current version
+follows suggestion by Kai and would return an error (and block
+sgx_(vepc_)open() in all cases, including running out of entropy.
+I think this might be the correct approach for SGX_INSUFFICIENT_ENTROPY
+since in such cases userspace can retry the open() and also
+will get an info about what is actually blocking the EUPDATEVSN
+(and can act on this). However, this is a change in existing API
+and therefore debatable and I would like to hear people's feedback.
+
+Changes since v2 following review by Jarkko:
+
+ - formatting of comments is fixed
+ - change from pr_error to ENCLS_WARN to communicate errors from
+ EUPDATESVN
+ - In case an unknown error is detected (must not happen per spec),
+ make page allocation from EPC fail in order to prevent EPC usage
+
+Changes since v1 following review by Jarkko:
+
+ - first and second patch are squashed together and a better
+   explanation of the change is added into the commit message
+ - third and fourth patch are also combined for better understanding
+   of error code purposes used in 4th patch
+ - implementation of sgx_updatesvn adjusted following Jarkko's 
+   suggestions
+ - minor fixes in both commit messages and code from the review
+ - dropping co-developed-by tag since the code now differs enough
+   from the original submission. However, the reference where the
+   original code came from and credits to original author is kept
+
+Background
+----------
+
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
 
 
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
 
 
-On Fri, May 2, 2025 at 1:56=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org> =
-wrote:
->
-> On Fri, 2025-05-02 at 07:22 +0000, Reshetova, Elena wrote:
-> >
-> > >
-> > > On Wed, Apr 30, 2025 at 06:53:32AM +0000, Reshetova, Elena wrote:
-> > > > 2. Switch to Sean's approach to execute EUPDATESVN during the
-> > > sgx_open().
-> > > > Btw, Sean do you agree that we don't gain much doing it second
-> > > > time during
-> > > > release() given the microcode flow?
-> > > > I would rather leave only one invocation of eupdatesvn during
-> > > sgx_inc_usage_count().
-> > > >
-> > > > Proc: No new uABI. More predictable on svn change compared to
-> > > > option 1.
-> > >
-> > > > Cons: Two explicit paths to hook: sgx_open() and sgx_vepc_open().
-> > >
-> > > Why this is a con?
-> >
-> > Well, just from the pov of not having a single path to enable.
-> > Are you ok with option 2?
-> >
->
-> Yep, as SGX is anyway very much run-time managed feature and these
-> hooks fit better on how it is used.
->
-> > Best Regards,
-> > Elena.
->
-> BR, Jarkko
->
+Proposed solution
+-----------------
+
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
+to Ice Lake. It allows updating security SVN version, given that EPC
+is completely empty. The latter is required for security reasons
+in order to reason that enclave security posture is as secure as the
+security SVN version of the TCB that created it.
+
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
+
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
+
+Testing
+-------
+
+Tested on EMR machine using kernel-6.15.0_rc5 & sgx selftests.
+If Google folks in CC can test on their side, it would be greatly appreciated.
+
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+
+Elena Reshetova (1):
+  x86/sgx: Enable automatic SVN updates for SGX enclaves
+
+ arch/x86/include/asm/sgx.h       | 42 ++++++++++++-------
+ arch/x86/kernel/cpu/sgx/driver.c |  4 ++
+ arch/x86/kernel/cpu/sgx/encl.c   |  1 +
+ arch/x86/kernel/cpu/sgx/encls.h  |  5 +++
+ arch/x86/kernel/cpu/sgx/main.c   | 70 ++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h    |  3 ++
+ arch/x86/kernel/cpu/sgx/virt.c   |  6 +++
+ 7 files changed, 116 insertions(+), 15 deletions(-)
+
+-- 
+2.45.2
+
