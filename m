@@ -1,155 +1,222 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6656D41C63;
-	Thu, 15 May 2025 17:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56E563B9;
+	Mon, 19 May 2025 07:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747329491; cv=none; b=CGfM6JI6rrpd5DaexyEs0j95AYw66UM4XF+bARDZ5+mokMVQ0Xd0D0tvL9GuXxmzXxuOjShEgK1/vfkWmX5orX664/ksItWRCdH7iyIg9m6U5II4TVBfqbqHPfpwSzPgfQ6ZC7ol5Jo2AzXJoXiWkR/s0dfRvYq4vcb2ieYeCEo=
+	t=1747639589; cv=none; b=l1JUUo2OuFdXuNAdK3+nWAlMj6dEhdzdq2BzDhw10A15o0T+TEsMwgyp/kRp+C+cJ/Jh6hVSOP3BYJPtMx/l2ljayz+fH4uGCSXAoL5ZKDcF+6cItv35rKGiYIL/UiyaLpXtyeLrbGN7ZRDSfw8ZQnqJXYJgr58HqcOJykUEpiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747329491; c=relaxed/simple;
-	bh=a4Qne7EUq3njwu3tN8seiT1B8K9bvCdm/3W2UzwVpPA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=tn9FGO28n14YPuyunBpXJsWzHO/azLxPEPTuRzOhoAZohEcCdeAW8EGOrccbhXqwsDizyu75+cZnBSLKe/W46PmPlVoinpuKnIvF5mP7zDuD62ysALeOwX/SyO6+4X5nhV/KvQMSpzED0cR3NfAVfhZMQpxZ06E2LdDEgbCp1cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tXqUVW5E; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZTufoNb5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1747639589; c=relaxed/simple;
+	bh=ykGT/4GiDmq1JcNuYgkjpZHmJ6x6SO7zNakX2hoV6sM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VAYroaqBbOLk0so6y2u75ezW0OyMyLSe8XhbbhS502RBrDs5hLqtW2z49b2UQEqWprpuvXunoVTNCRUK6oKnEAWasb3h8gJXqybGnMqpeSvCDJ7bYw2Zf3HRcZWAzIMJ8LA9wORDbJ8+Pf1FafLgzpH4vhi1YpTETnscdimhBt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eBa5tgYN; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tXqUVW5E";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZTufoNb5"
-Date: Thu, 15 May 2025 17:18:06 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747329487;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pw173M98a5WT126GMnv8GVkdic7b6WV49PZGTOyDE9I=;
-	b=tXqUVW5EqPsyP9zq59pdPZJdHXcyR1dIYgKIc9YgQ7YmxDTDiBBfetdGVL840QB/Z/vwMn
-	ljIMzXSvz5Y1TLPKZj3dDFMvJNBxbEQMIse4f28u5eJfwW7oSNcWC87z6h1CI8gFgff/jG
-	layj/5+CZ8AeONwmgLCqCwUIpOrTtHa7VqWAios/guDjGY8Ge4rEMHuwjhMOcq17q1r9QU
-	H7GuWeAHpbSAPM/cW0o6bNWA7DtD0xfTBpA6C8QiOLKzow7qkZ9vT0YkcDYUKETIui2uUn
-	c50U9ruou2w0BZXudGnSOPvH3zChwfHTCkfZTsV3UZ3dGaPYySSMW/xkSJJ+jg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747329487;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pw173M98a5WT126GMnv8GVkdic7b6WV49PZGTOyDE9I=;
-	b=ZTufoNb5S1BPHjt3pzlJPu99yOnVj9GiubnFr1iJIHX3pdbzsDhHG8pKAVQlMKNhHYq+ae
-	FRJ8pZ4ymQDXolDg==
-From: "tip-bot2 for Andrew Zaborowski" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/sgx] x86/sgx: Prevent attempts to reclaim poisoned pages
-Cc: Andrew Zaborowski <andrew.zaborowski@intel.com>,
- Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Tony Luck <tony.luck@intel.com>, balrogg@gmail.com, linux-sgx@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250508230429.456271-1-andrew.zaborowski@intel.com>
-References: <20250508230429.456271-1-andrew.zaborowski@intel.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eBa5tgYN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747639588; x=1779175588;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ykGT/4GiDmq1JcNuYgkjpZHmJ6x6SO7zNakX2hoV6sM=;
+  b=eBa5tgYNCLei0NWZssWTwauZ8qbZdE8jZavR076bBVuSRoFhJdAlrQwP
+   UUM2+gv7GfltBIuSRK1eyPsxCvK4sq+MMslmOYSbVfe64KlIXK27fAgTZ
+   hjNvvx1RT65fSH/F0KvRbygeVTVAHOkEyxglGjtEtRwr1dmvjphhUze0z
+   B3zjJTAYsnZa0mIT9s8NNs+tYRyE6InD+GU8BXFhDIMLgU86mraQAP2uX
+   dDYlODJOXh3Uenqy5knA7c7ggryHzb9uvhnqYhKOEApnT4WDvGfqvLS6e
+   UBhKwjpcYLK8j8CS09hG4VT8aQUYL06QlyEHuGcbUrnz84G2t+2JHmheK
+   g==;
+X-CSE-ConnectionGUID: fw9tn9ouQPKMePu2i6OwUg==
+X-CSE-MsgGUID: YZnjEazKQTqsvjFmQeh67A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11437"; a="49591588"
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="49591588"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 00:26:27 -0700
+X-CSE-ConnectionGUID: gojDP5mWSz2mUMkeBmywHg==
+X-CSE-MsgGUID: DGV/9cODQHmyRd3/+sS/FA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="139029698"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.244.195])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 00:26:21 -0700
+From: Elena Reshetova <elena.reshetova@intel.com>
+To: dave.hansen@intel.com
+Cc: jarkko@kernel.org,
+	seanjc@google.com,
+	kai.huang@intel.com,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	asit.k.mallick@intel.com,
+	vincent.r.scarlata@intel.com,
+	chongc@google.com,
+	erdemaktas@google.com,
+	vannapurve@google.com,
+	dionnaglaze@google.com,
+	bondarn@google.com,
+	scott.raynor@intel.com,
+	Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH v5 0/5] Enable automatic SVN updates for SGX enclaves
+Date: Mon, 19 May 2025 10:24:26 +0300
+Message-ID: <20250519072603.328429-1-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174732948660.406.520307759495972754.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/sgx branch of tip:
+Changes since v4 following reviews by Dave and Jarkko:
 
-Commit-ID:     ed16618c380c32c68c06186d0ccbb0d5e0586e59
-Gitweb:        https://git.kernel.org/tip/ed16618c380c32c68c06186d0ccbb0d5e0586e59
-Author:        Andrew Zaborowski <andrew.zaborowski@intel.com>
-AuthorDate:    Fri, 09 May 2025 01:04:29 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 15 May 2025 19:01:45 +02:00
+ - breakdown the single patch into 4 patches as
+ suggested by Dave
+ - fix error unwinding in sgx_(vepc_)open as 
+ suggested by Jarkko
+ - numerous code improvements suggested by Dave
+ - numerous additional code comments and commit
+ message improvements as suggested by Dave
+ - switch to usage of atomic64_t for sgx_usage_count
+ to ensure overflows cannot happen as suggested by Dave
+ - do not return a error case when failing with
+ SGX_INSUFFICIENT_ENTROPY, fail silently as suggested
+ by Dave
 
-x86/sgx: Prevent attempts to reclaim poisoned pages
+Changes since v3 following reviews by Kai and Sean:
 
-TL;DR: SGX page reclaim touches the page to copy its contents to
-secondary storage. SGX instructions do not gracefully handle machine
-checks. Despite this, the existing SGX code will try to reclaim pages
-that it _knows_ are poisoned. Avoid even trying to reclaim poisoned pages.
+ - Change the overall approach to the one suggested
+  by Sean and do the EUPDATESVN execution during
+  sgx_open() and sgx_vepc_open().
+  Note, I do not try to do EUPDATESVN during the release()
+  flows since it doesnt save any noticable amount
+  of time during next open flow per underlying EUPDATESVN
+  microcode logic.
+ - In sgx_update_svn() remove the check that we are
+  running under VMM and expect the VMM to instead
+  expose correct CPUID
+ - Move the actual CPUID leaf check out of
+  sgx_update_svn() into sgx_init()
+ - Use existing RDRAND_RETRY_LOOPS define instead of 10
+ - Change the sgx_update_svn() to return 0 only in
+ success cases (or if unsupported)
+ - Various smaller cosmetic fixes
 
-The longer story:
+The still to be discussed question is what sgx_update_svn()
+should return in case of various failures. The current version
+follows suggestion by Kai and would return an error (and block
+sgx_(vepc_)open() in all cases, including running out of entropy.
+I think this might be the correct approach for SGX_INSUFFICIENT_ENTROPY
+since in such cases userspace can retry the open() and also
+will get an info about what is actually blocking the EUPDATEVSN
+(and can act on this). However, this is a change in existing API
+and therefore debatable and I would like to hear people's feedback.
 
-Pages used by an enclave only get epc_page->poison set in
-arch_memory_failure() but they currently stay on sgx_active_page_list until
-sgx_encl_release(), with the SGX_EPC_PAGE_RECLAIMER_TRACKED flag untouched.
+Changes since v2 following review by Jarkko:
 
-epc_page->poison is not checked in the reclaimer logic meaning that, if other
-conditions are met, an attempt will be made to reclaim an EPC page that was
-poisoned.  This is bad because 1. we don't want that page to end up added
-to another enclave and 2. it is likely to cause one core to shut down
-and the kernel to panic.
+ - formatting of comments is fixed
+ - change from pr_error to ENCLS_WARN to communicate errors from
+ EUPDATESVN
+ - In case an unknown error is detected (must not happen per spec),
+ make page allocation from EPC fail in order to prevent EPC usage
 
-Specifically, reclaiming uses microcode operations including "EWB" which
-accesses the EPC page contents to encrypt and write them out to non-SGX
-memory.  Those operations cannot handle MCEs in their accesses other than
-by putting the executing core into a special shutdown state (affecting
-both threads with HT.)  The kernel will subsequently panic on the
-remaining cores seeing the core didn't enter MCE handler(s) in time.
+Changes since v1 following review by Jarkko:
 
-Call sgx_unmark_page_reclaimable() to remove the affected EPC page from
-sgx_active_page_list on memory error to stop it being considered for
-reclaiming.
+ - first and second patch are squashed together and a better
+   explanation of the change is added into the commit message
+ - third and fourth patch are also combined for better understanding
+   of error code purposes used in 4th patch
+ - implementation of sgx_updatesvn adjusted following Jarkko's 
+   suggestions
+ - minor fixes in both commit messages and code from the review
+ - dropping co-developed-by tag since the code now differs enough
+   from the original submission. However, the reference where the
+   original code came from and credits to original author is kept
 
-Testing epc_page->poison in sgx_reclaim_pages() would also work but I assume
-it's better to add code in the less likely paths.
+Background
+----------
 
-The affected EPC page is not added to &node->sgx_poison_page_list until
-later in sgx_encl_release()->sgx_free_epc_page() when it is EREMOVEd.
-Membership on other lists doesn't change to avoid changing any of the
-lists' semantics except for sgx_active_page_list.  There's a "TBD" comment
-in arch_memory_failure() about pre-emptive actions, the goal here is not
-to address everything that it may imply.
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
 
-This also doesn't completely close the time window when a memory error
-notification will be fatal (for a not previously poisoned EPC page) --
-the MCE can happen after sgx_reclaim_pages() has selected its candidates
-or even *inside* a microcode operation (actually easy to trigger due to
-the amount of time spent in them.)
 
-The spinlock in sgx_unmark_page_reclaimable() is safe because
-memory_failure() runs in process context and no spinlocks are held,
-explicitly noted in a mm/memory-failure.c comment.
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
 
-Signed-off-by: Andrew Zaborowski <andrew.zaborowski@intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: balrogg@gmail.com
-Cc: linux-sgx@vger.kernel.org
-Link: https://lore.kernel.org/r/20250508230429.456271-1-andrew.zaborowski@intel.com
----
- arch/x86/kernel/cpu/sgx/main.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 8ce352f..7c19977 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -719,6 +719,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
- 		goto out;
- 	}
- 
-+	sgx_unmark_page_reclaimable(page);
-+
- 	/*
- 	 * TBD: Add additional plumbing to enable pre-emptive
- 	 * action for asynchronous poison notification. Until
+Proposed solution
+-----------------
+
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
+to Ice Lake. It allows updating security SVN version, given that EPC
+is completely empty. The latter is required for security reasons
+in order to reason that enclave security posture is as secure as the
+security SVN version of the TCB that created it.
+
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
+
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
+
+Testing
+-------
+
+Tested on EMR machine using kernel-6.15.0_rc5 & sgx selftests.
+If Google folks in CC can test on their side, it would be greatly appreciated.
+
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+
+Elena Reshetova (5):
+  x86/sgx: Introduce a counter to count the sgx_(vepc_)open()
+  x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature flag
+  x86/sgx: Define error codes for use by ENCLS[EUPDATESVN]
+  x86/sgx: Implement ENCLS[EUPDATESVN]
+  x86/sgx: Enable automatic SVN updates for SGX enclaves
+
+ arch/x86/include/asm/cpufeatures.h       |   1 +
+ arch/x86/include/asm/sgx.h               |  39 +++++----
+ arch/x86/kernel/cpu/scattered.c          |   1 +
+ arch/x86/kernel/cpu/sgx/driver.c         |  22 +++--
+ arch/x86/kernel/cpu/sgx/encl.c           |   1 +
+ arch/x86/kernel/cpu/sgx/encls.h          |   5 ++
+ arch/x86/kernel/cpu/sgx/main.c           | 103 +++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h            |   3 +
+ arch/x86/kernel/cpu/sgx/virt.c           |  16 +++-
+ tools/arch/x86/include/asm/cpufeatures.h |   1 +
+ 10 files changed, 169 insertions(+), 23 deletions(-)
+
+-- 
+2.45.2
+
