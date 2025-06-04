@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F07214A93;
-	Wed,  4 Jun 2025 00:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA6525DCFF;
+	Wed,  4 Jun 2025 01:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748998603; cv=none; b=lM7VE/RnSNPh9VlBqeTiM/KcOiYTAbnfNrqVd3NM8f8uD0Yu8VDFMaLiqTPM2X93v24cOs1L4PZ8F/MwV++goGMGqO6PpX0ttGWtj1eFtJ+MnZ+MCimtw8DGS0oPXbCqtQiciE7eiz38Hgbpj0zp30VumlZjHloDmDytK7sWcXg=
+	t=1748998821; cv=none; b=F3MPM18ZvDjhqT9SFu99dGoevrQirDwc1hcnk1Mu5d6hMmcIepEMC0tKqrIZPjmXyiipQ5oFI2fVUP/SgHBqiRPyyb4OsdiK4hOHnxDCeQldAUJqgFqc4sdicZ864W7D5en39H5rG6qgsfiZxP80uYoYVov9Ni5hVezli87HFdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748998603; c=relaxed/simple;
-	bh=jSL15Pt/vMcMOj5ziyFVR8s/B7kYmbc6CK09+fXmcYU=;
+	s=arc-20240116; t=1748998821; c=relaxed/simple;
+	bh=6FjfaHVpUg3aA4xpDdbSPNvmafBksquDDLp3IMa4lPY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BVVZz+qu8ZSYhd5P06aPk0EwfNo/hoBEwu0a+59Earj9+CLKzLwI/lmHwMWMfuRfoc+oMmFAEEdqC4/BGGcRM9TLLwJbc5Lvl5YjEpcbyAd7enaWUcoww0mKmDG4Yr9KlJ1wDipWHVMSshKffpnzmSHJQuJbhPPsUKc/MYAjvY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ob2TXm+c; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=aAu3rhsPS+pTWShZdWdNR++pEmkbDDG6djTkWCQ1wJLAqRApjV8RNUkfripx4/21xqw0L4RCmKbWCcDVlmB5gQMMm8Yh9z8inlR0J+y03IgJCSJZnwW3YcvgT/MHmA7Oz/d2hpfP1+Gk808a2ZauaKc2z6UmZGlBvVtAd6NsZds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUqY2twR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ob2TXm+c"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A296C4CEEF;
-	Wed,  4 Jun 2025 00:56:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUqY2twR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C35C4CEED;
+	Wed,  4 Jun 2025 01:00:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748998603;
-	bh=jSL15Pt/vMcMOj5ziyFVR8s/B7kYmbc6CK09+fXmcYU=;
+	s=k20201202; t=1748998820;
+	bh=6FjfaHVpUg3aA4xpDdbSPNvmafBksquDDLp3IMa4lPY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ob2TXm+cklc73sZFDV6pZd378eO2xxw6WrHHT0emon489UiKTJTYfckHaAwhB8YnY
-	 Aa4Dn+9auyigIBVdU02LD56Wd3oiEhhp6JoPT7FyuyylDLs90moanuyl65VF2ophzp
-	 rcU3C3nfYfR8yHTK1MpCf/05QykCVjsnRRPsrhA0YNmX5GXa+07Ts0V5ggZqd7T2Nf
-	 ZVt8lpwEVpTY6sSc6AxT/wwv6dTyINP7wI2FllzymYjFzCmLVZCY/toz1INSVyQWFn
-	 OXsms0UqG+fAqgu6fFqyRUzi7/ChIXvXWlf/uhNApxpeVjEbArxLkadfLX09du6Wd4
-	 xxtzY0xVbGHPQ==
+	b=tUqY2twRIg7nqGQkRTSBJ1cTGM2WSbokyV8DhPfdMkZXQ6Cm9mPSc8B8r9nwJQ610
+	 5y77YqtmrwkYSJPkYWx/weG6gstx91I8rYjJTJKJLMaz0+xKqiXvFuy+sYmcH87Z6x
+	 ZFEgLndUG2YhyGMHBIyxnlRE5QYE84BwGyJgbTUu2wn7UlToopc2R7vWIFqGmOzy+H
+	 ADj+uLYoOrM4nn2ihk1G6mXXz9cRl71jOjSkp9ZJIfeqPcWDgmspOKVGC0AT+hz7tj
+	 12H5kV4/GxeM8QfF1ocVDpQ2l3XuKfInw/qxth/X+gFOHWf0Yd9EFJ0cQz1yqGhHli
+	 YmtZbH4PWKWKQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -39,12 +39,12 @@ Cc: Andrew Zaborowski <andrew.zaborowski@intel.com>,
 	linux-sgx@vger.kernel.org,
 	Sasha Levin <sashal@kernel.org>,
 	jarkko@kernel.org
-Subject: [PATCH AUTOSEL 6.14 036/108] x86/sgx: Prevent attempts to reclaim poisoned pages
-Date: Tue,  3 Jun 2025 20:54:19 -0400
-Message-Id: <20250604005531.4178547-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 32/93] x86/sgx: Prevent attempts to reclaim poisoned pages
+Date: Tue,  3 Jun 2025 20:58:18 -0400
+Message-Id: <20250604005919.4191884-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250604005531.4178547-1-sashal@kernel.org>
-References: <20250604005531.4178547-1-sashal@kernel.org>
+In-Reply-To: <20250604005919.4191884-1-sashal@kernel.org>
+References: <20250604005919.4191884-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.9
+X-stable-base: Linux 6.12.31
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
@@ -174,7 +174,7 @@ where memory errors occur.
  1 file changed, 2 insertions(+)
 
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 8ce352fc72ac3..7c199773705a7 100644
+index 9ace84486499b..147ea26dfdad6 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
 @@ -719,6 +719,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
