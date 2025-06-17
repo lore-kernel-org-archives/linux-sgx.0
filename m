@@ -1,101 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA7B2E54A3;
-	Tue, 17 Jun 2025 14:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBF22EF66C;
+	Tue, 17 Jun 2025 15:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750171479; cv=none; b=k5Joo7eq9k0h3A/3GOClDeuRAdXt9N6RGi+A/GxJgdGvVMEOnKrf19aW/doKs+A1iK05Kg14JpKFUMdaBW7kdUfBfongu9Zw5p5yl+ljcb02DvkjJgsfba+bgobzT7S9z+MDVnWj9cTWiZ+c2P9BtK1EOhvsLsdkPngXeklD1aQ=
+	t=1750172491; cv=none; b=hnHVOVgGNelHxrxe8Vji8ehjPVeu4r/+v4HkbtJnJJ+GaNS6SdKXUlFIOQ4C2vq12vVPRDN6mu1UE4B3wNuWOj9b2hcxLGtmdfqEKX3fplV2fm0xgnW7Y98RbGAm9rvBOARfqci65dIZ31MDpCVP9aFQRsqamSnNkdgrYXsq8ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750171479; c=relaxed/simple;
-	bh=r+1sIvSIxYaTR9LID7Lz+1ggjxbL3RpmshgYY0QT/Yg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YtHGo7uIGvskAK06D7MRmk7OUsjQE+nbQ4AcQAsNMR32pFzpUues+forNB6e+JjB/cFwU6yB5nBunn1D/FydKQ/D8WPJea1VnZlhA0ykRZgNgSBQY2FhKnBdzAeS3jls5CCZivV6KwvuJnJpkxliCSRDmZlk118H0m4WcqLGsRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/Oo6HDv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750172491; c=relaxed/simple;
+	bh=gh5DADUalEMP4gj0Me9Xk+6/WmVz+lvL0J727pePtE0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bpAJCgJIADpP2Q0yxWiBO9THYd2K0E88BYb4vzIffCqs0ywr0WEUzHJc14PSCyUJCikruMMLvZurQnTzPCJ8Gfg/BaiHOXUuI1R7XUnXP8AVvdGa5RnZ611OTBWpJg/HiKx+SfOQsqQ/7r+4sUoCIciXfbr4oXO+qGm+GUaW5n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nR6yuflu; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/Oo6HDv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F6C0C4CEE3;
-	Tue, 17 Jun 2025 14:44:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750171478;
-	bh=r+1sIvSIxYaTR9LID7Lz+1ggjxbL3RpmshgYY0QT/Yg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A/Oo6HDvYzO27Nuyc8XzyehNuqOvA/l80Yn5mh/xvg5wFQH6bgZVWXg3nDbKI5cIE
-	 gpjYE5m37eOqNb1gjt9ho/Xs+ouXdDbZhoZAMaz898sKyORFKPRAyq3j21UmfTOX28
-	 YHnmS+n9E0XvI68fZ2KipIpQJ6SDRqUZYfyi72+rpqsM7ORs/k2YdkxyjyUwLoaNyk
-	 QgNNbc3nwhmYfu1ishW5ZsbeoEp9aKiS7XreLlcVE1wvSZi0X2v4TqsjwslkcBkrUv
-	 SZAjlq/uwGh68kphB9DPqNg1YAS4F9b/UOhjHF8pitf+yCoGzzvaY2yDaI6ZXjrSoh
-	 xOX24kjZMdKpw==
-Date: Tue, 17 Jun 2025 17:44:35 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-sgx@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86/sgx: Use ENCLS mnemonic in <kernel/cpu/sgx/encls.h>
-Message-ID: <aFF_UwJ2XlFQSZOi@kernel.org>
-References: <20250616085716.158942-1-ubizjak@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nR6yuflu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750172490; x=1781708490;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=gh5DADUalEMP4gj0Me9Xk+6/WmVz+lvL0J727pePtE0=;
+  b=nR6yufluEt0J5CgnpqCkg1w+7NhAMtLbcmAjnlgirD8boJ0sV1bnQKxr
+   c0AvE7uX8NDU7haUODym0vnxkC2LXKQSM/3kxytsmfmHVdgNxej1KcCoe
+   4fE7RCkLH9LVyJwiW7gPMhd928SmfA7YPWoRxhuZQh3w6CxjoMNgPy55y
+   MNSxKK6V7px46RAbPjt4uXRbf+UzwvcaR6BKWiTkqDOyJgDBGtUz3EU7h
+   jI1TmCw3ulBag/373wCCEDBnpYVEprlEOhyor2tTVUiHnwW5DbNuqdDya
+   GEv/bRjcjrH6jhN1gPz8pREZyZFM6LbA1Dkr13duiZMxahe/h9SenD3Ic
+   Q==;
+X-CSE-ConnectionGUID: JfvFuZHOQyG89V1TXS6yZw==
+X-CSE-MsgGUID: owivTaBBTLqRSHHMtzFJzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="52494442"
+X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
+   d="scan'208";a="52494442"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 08:01:29 -0700
+X-CSE-ConnectionGUID: N4IVYjiXQQSYIJynd6RK+Q==
+X-CSE-MsgGUID: eclSMGLOQfKXIE06ljvoFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
+   d="scan'208";a="149698273"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.108.47]) ([10.125.108.47])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 08:01:29 -0700
+Message-ID: <26b8939e-796a-4581-a41c-42e3582326bd@intel.com>
+Date: Tue, 17 Jun 2025 08:01:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250616085716.158942-1-ubizjak@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/sgx: Use ENCLS mnemonic in <kernel/cpu/sgx/encls.h>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-sgx@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
+References: <20250616085716.158942-1-ubizjak@gmail.com>
+ <aFF_UwJ2XlFQSZOi@kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <aFF_UwJ2XlFQSZOi@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 16, 2025 at 10:56:30AM +0200, Uros Bizjak wrote:
-> Current minimum required version of binutils is 2.30,
-> which supports ENCLS instruction mnemonic.
-> 
-> Replace the byte-wise specification of ENCLS with
-> this proper mnemonic.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> ---
->  arch/x86/kernel/cpu/sgx/encls.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-> index 99004b02e2ed..42a088a337c5 100644
-> --- a/arch/x86/kernel/cpu/sgx/encls.h
-> +++ b/arch/x86/kernel/cpu/sgx/encls.h
-> @@ -68,7 +68,7 @@ static inline bool encls_failed(int ret)
->  	({							\
->  	int ret;						\
->  	asm volatile(						\
-> -	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
-> +	"1: encls\n"						\
->  	"2:\n"							\
->  	_ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_SGX)		\
->  	: "=a"(ret)						\
-> @@ -111,8 +111,8 @@ static inline bool encls_failed(int ret)
->  	({							\
->  	int ret;						\
->  	asm volatile(						\
-> -	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
-> -	"   xor %%eax,%%eax;\n"					\
-> +	"1: encls\n\t"						\
-> +	"xor %%eax,%%eax\n"					\
->  	"2:\n"							\
->  	_ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_SGX)		\
->  	: "=a"(ret), "=b"(rbx_out)				\
-> -- 
-> 2.49.0
-> 
+On 6/17/25 07:44, Jarkko Sakkinen wrote:
+> I don't really see how this is that useful. That said, f a bug fix or
+> feature used encls mnemonic, I'd had no problems with acking it.
 
-I don't really see how this is that useful. That said, f a bug fix or
-feature used encls mnemonic, I'd had no problems with acking it.
+It's not _that_ useful.
 
-BR, Jarkko
+But old assemblers that we still want to use *NEVER* have support for
+newfanlged instructions, so we always add new instructions with ".byte".
+Then, a few years down the road when we've moved to just old assemblers
+instead of super old assemblers, we move to the real instruction names.
+
+This is all business as usual.
