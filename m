@@ -1,102 +1,143 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5C9224893;
-	Mon, 23 Jun 2025 15:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA86C221299;
+	Mon, 23 Jun 2025 21:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750691891; cv=none; b=LOigFgbUWpk7OpQivC32Q/8R5uJDeTJpA3K7HzNMBwFOqquw05/wADZH6bjhdHMGhtCniBGZnJ35UtwdIHvXhaegmiE4sawW2rNGeZX2hFT+NKHeaaNOFIL/2T4toypmbbGTgWeQpaiq6jKaS9w6i7Q+OxJbolOWVxDgqKqC/B0=
+	t=1750713449; cv=none; b=Y8owHoj/7Q8WAWPAsx8xrGCm1SLlkJAOT4hQOichhuL7hYc1FZMDpgHxA5160NXeYhS37IR3xk3lJAoCCaiKXhmqXg+ZaeARr4yPheg41yC/7ZcHIa6Azd2U6DB+ZnBsErcNchEMCCW9lvIGBQy0crbw2z6rbWU5h1Nobfve76g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750691891; c=relaxed/simple;
-	bh=opP6VbacAik7kXsSXDMkWX87HGWzgD5vpekjckRrHZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oi0naSWmI1KEK+GZM4A/z7TBhUablLvahfZ/fIMZdVDzrTW0f3qawDQrvBC6LjgzO+11UIAMquvCibfQhzcETMCTGlFC3beZgcX+hs4W78/R5wQe337CIXA2HefR5Fo75pMyAaVUlLtNZL1fOUzMo9zDLcl/oEnoU3B/iNsCFpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 789171756;
-	Mon, 23 Jun 2025 08:17:50 -0700 (PDT)
-Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04FB33F58B;
-	Mon, 23 Jun 2025 08:18:00 -0700 (PDT)
-Date: Mon, 23 Jun 2025 16:17:58 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
+	s=arc-20240116; t=1750713449; c=relaxed/simple;
+	bh=txSxS7S1Tk8O5KyF8jOuzm6f9+VOYzEjmBJoorVz37A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=e8vmn/SMSWhHzELE8yq1G5YPUhRxOz5prEdPSgv4BSnocmRqux9hMeH8nbYUbqB1nQD+3QHNjPdHiprIWk5sg6nhaiuumcM4qGaHmCZqFAEOG+39t7fZmiG7wjaB1Wgo66Rr/QK9gBcayOv4xVXSpA3H9Kegfb3Rdl070fsSKcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CLggA5Rd; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CLggA5Rd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56167C4CEEA;
+	Mon, 23 Jun 2025 21:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1750713448;
+	bh=txSxS7S1Tk8O5KyF8jOuzm6f9+VOYzEjmBJoorVz37A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CLggA5RdiaAIm04pwAN6eVRFEJ2tZvkgHG1p4oxWsa3b9Yb7MS0nk76GmDfYAOLit
+	 KS+smvnroMNXh9JQCB48aav9kGiLTWpQcS8DRh3hHB4Hw85STnnnt1H5OfERYqhG/r
+	 xc/vpcrFCicT3ujujB7Ki6CHjk7uA+/89Bz8nnjM=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Andrew Zaborowski <andrew.zaborowski@intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
-	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] mm: update architecture and driver code to use
- vm_flags_t
-Message-ID: <aFlwJgMikwy41OXc@arm.com>
-References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <b6eb1894abc5555ece80bb08af5c022ef780c8bc.1750274467.git.lorenzo.stoakes@oracle.com>
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Tony Luck <tony.luck@intel.com>,
+	balrogg@gmail.com,
+	linux-sgx@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.15 348/592] x86/sgx: Prevent attempts to reclaim poisoned pages
+Date: Mon, 23 Jun 2025 15:05:06 +0200
+Message-ID: <20250623130708.726165552@linuxfoundation.org>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250623130700.210182694@linuxfoundation.org>
+References: <20250623130700.210182694@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6eb1894abc5555ece80bb08af5c022ef780c8bc.1750274467.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 18, 2025 at 08:42:54PM +0100, Lorenzo Stoakes wrote:
-> In future we intend to change the vm_flags_t type, so it isn't correct for
-> architecture and driver code to assume it is unsigned long. Correct this
-> assumption across the board.
-> 
-> Overall, this patch does not introduce any functional change.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  arch/arm/mm/fault.c                |  2 +-
->  arch/arm64/include/asm/mman.h      | 10 +++++-----
->  arch/arm64/mm/fault.c              |  2 +-
->  arch/arm64/mm/mmu.c                |  2 +-
+6.15-stable review patch.  If anyone has any objections, please let me know.
 
-For arm64:
+------------------
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+From: Andrew Zaborowski <andrew.zaborowski@intel.com>
+
+[ Upstream commit ed16618c380c32c68c06186d0ccbb0d5e0586e59 ]
+
+TL;DR: SGX page reclaim touches the page to copy its contents to
+secondary storage. SGX instructions do not gracefully handle machine
+checks. Despite this, the existing SGX code will try to reclaim pages
+that it _knows_ are poisoned. Avoid even trying to reclaim poisoned pages.
+
+The longer story:
+
+Pages used by an enclave only get epc_page->poison set in
+arch_memory_failure() but they currently stay on sgx_active_page_list until
+sgx_encl_release(), with the SGX_EPC_PAGE_RECLAIMER_TRACKED flag untouched.
+
+epc_page->poison is not checked in the reclaimer logic meaning that, if other
+conditions are met, an attempt will be made to reclaim an EPC page that was
+poisoned.  This is bad because 1. we don't want that page to end up added
+to another enclave and 2. it is likely to cause one core to shut down
+and the kernel to panic.
+
+Specifically, reclaiming uses microcode operations including "EWB" which
+accesses the EPC page contents to encrypt and write them out to non-SGX
+memory.  Those operations cannot handle MCEs in their accesses other than
+by putting the executing core into a special shutdown state (affecting
+both threads with HT.)  The kernel will subsequently panic on the
+remaining cores seeing the core didn't enter MCE handler(s) in time.
+
+Call sgx_unmark_page_reclaimable() to remove the affected EPC page from
+sgx_active_page_list on memory error to stop it being considered for
+reclaiming.
+
+Testing epc_page->poison in sgx_reclaim_pages() would also work but I assume
+it's better to add code in the less likely paths.
+
+The affected EPC page is not added to &node->sgx_poison_page_list until
+later in sgx_encl_release()->sgx_free_epc_page() when it is EREMOVEd.
+Membership on other lists doesn't change to avoid changing any of the
+lists' semantics except for sgx_active_page_list.  There's a "TBD" comment
+in arch_memory_failure() about pre-emptive actions, the goal here is not
+to address everything that it may imply.
+
+This also doesn't completely close the time window when a memory error
+notification will be fatal (for a not previously poisoned EPC page) --
+the MCE can happen after sgx_reclaim_pages() has selected its candidates
+or even *inside* a microcode operation (actually easy to trigger due to
+the amount of time spent in them.)
+
+The spinlock in sgx_unmark_page_reclaimable() is safe because
+memory_failure() runs in process context and no spinlocks are held,
+explicitly noted in a mm/memory-failure.c comment.
+
+Signed-off-by: Andrew Zaborowski <andrew.zaborowski@intel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: balrogg@gmail.com
+Cc: linux-sgx@vger.kernel.org
+Link: https://lore.kernel.org/r/20250508230429.456271-1-andrew.zaborowski@intel.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/kernel/cpu/sgx/main.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 8ce352fc72ac3..7c199773705a7 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -719,6 +719,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
+ 		goto out;
+ 	}
+ 
++	sgx_unmark_page_reclaimable(page);
++
+ 	/*
+ 	 * TBD: Add additional plumbing to enable pre-emptive
+ 	 * action for asynchronous poison notification. Until
+-- 
+2.39.5
+
+
+
