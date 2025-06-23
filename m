@@ -1,28 +1,28 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA86C221299;
-	Mon, 23 Jun 2025 21:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D73F21D3DD;
+	Mon, 23 Jun 2025 21:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750713449; cv=none; b=Y8owHoj/7Q8WAWPAsx8xrGCm1SLlkJAOT4hQOichhuL7hYc1FZMDpgHxA5160NXeYhS37IR3xk3lJAoCCaiKXhmqXg+ZaeARr4yPheg41yC/7ZcHIa6Azd2U6DB+ZnBsErcNchEMCCW9lvIGBQy0crbw2z6rbWU5h1Nobfve76g=
+	t=1750714716; cv=none; b=E9fnGqGw+buWexFfLsysoqzQCPnXvEYasWMTQN/lky3G+M3JwWKFCf3UJXH0AuYAds24dHUfry/aj9PTeWh4uxs1Q+MP8A6pgSFcxBgmkxvjStK1vzq6Qq7r5ZHYEEzO3XvfrV1UKLZVCNCEFWRr9sdhgh8xn+MPH2ZKkXFjlPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750713449; c=relaxed/simple;
-	bh=txSxS7S1Tk8O5KyF8jOuzm6f9+VOYzEjmBJoorVz37A=;
+	s=arc-20240116; t=1750714716; c=relaxed/simple;
+	bh=qSHkR1Q1CN6aB70ZnU+deOJK7evF6wa+KToqM5rLv+M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e8vmn/SMSWhHzELE8yq1G5YPUhRxOz5prEdPSgv4BSnocmRqux9hMeH8nbYUbqB1nQD+3QHNjPdHiprIWk5sg6nhaiuumcM4qGaHmCZqFAEOG+39t7fZmiG7wjaB1Wgo66Rr/QK9gBcayOv4xVXSpA3H9Kegfb3Rdl070fsSKcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CLggA5Rd; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=TmfNptEMaGpSL9bH+zwfNQsxmMg2iq5tzEaOYNpq6JFBwb0u+x4NgpYrluxOw4GetovsKwPzvzXpSL5HkC/cINZWC9j92p9uRBJyXHMw1EDbl7kGi+489BJpVS/dprxTcvCZH18fMc97gp/6uFgl3Dpm/Ese59XSvm93pSd8oDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xUTKP4Pl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CLggA5Rd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56167C4CEEA;
-	Mon, 23 Jun 2025 21:17:28 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xUTKP4Pl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0A47C4CEEA;
+	Mon, 23 Jun 2025 21:38:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750713448;
-	bh=txSxS7S1Tk8O5KyF8jOuzm6f9+VOYzEjmBJoorVz37A=;
+	s=korg; t=1750714716;
+	bh=qSHkR1Q1CN6aB70ZnU+deOJK7evF6wa+KToqM5rLv+M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CLggA5RdiaAIm04pwAN6eVRFEJ2tZvkgHG1p4oxWsa3b9Yb7MS0nk76GmDfYAOLit
-	 KS+smvnroMNXh9JQCB48aav9kGiLTWpQcS8DRh3hHB4Hw85STnnnt1H5OfERYqhG/r
-	 xc/vpcrFCicT3ujujB7Ki6CHjk7uA+/89Bz8nnjM=
+	b=xUTKP4Plipoc1CH5LiUM8/r+64HWthSe3AsTtwICsrG1RjgB4gZpzC/W4qCb/VMoL
+	 Sa8Zd/Jx0HJtQnWnIZ+6Vxs4tJNUt4BUZpvFjseLUVLFzG+AaCF4cKKhJzhGhT15Nk
+	 20pRgMt5QMhFZa+gy0oSbkNorfubJwH3EvpcFS5Y=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -36,12 +36,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	balrogg@gmail.com,
 	linux-sgx@vger.kernel.org,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.15 348/592] x86/sgx: Prevent attempts to reclaim poisoned pages
-Date: Mon, 23 Jun 2025 15:05:06 +0200
-Message-ID: <20250623130708.726165552@linuxfoundation.org>
+Subject: [PATCH 6.6 154/290] x86/sgx: Prevent attempts to reclaim poisoned pages
+Date: Mon, 23 Jun 2025 15:06:55 +0200
+Message-ID: <20250623130631.526388501@linuxfoundation.org>
 X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250623130700.210182694@linuxfoundation.org>
-References: <20250623130700.210182694@linuxfoundation.org>
+In-Reply-To: <20250623130626.910356556@linuxfoundation.org>
+References: <20250623130626.910356556@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.15-stable review patch.  If anyone has any objections, please let me know.
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -124,10 +124,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 8ce352fc72ac3..7c199773705a7 100644
+index c7f8c3200e8d7..0db6eeeeb6720 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -719,6 +719,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
+@@ -718,6 +718,8 @@ int arch_memory_failure(unsigned long pfn, int flags)
  		goto out;
  	}
  
