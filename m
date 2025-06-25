@@ -1,80 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BB92405E8;
-	Tue, 24 Jun 2025 20:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F3E16E863;
+	Wed, 25 Jun 2025 02:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750798154; cv=none; b=ALKrAxq3urEO8SJJqIo+XNZgDu43mIkiUHtS+eCA50ktRH4P4mx26vPvrOkyJk7Mr2eotqdebsQQtNt0HfxSxMjBojWC9MdeSMgkTMZuWfFb9qQM4dkV8r1c8CJNU8hFR//B7i3wQuocKdzetj+xCQnv/UCEWe7HDRwNR4FrRaQ=
+	t=1750820160; cv=none; b=idsZvv9VfQT6jpe+U3dCb2LYwavRy+hkvKJC+LCo3u5dH6DP9GbzWfcLguOjSRmS5TzQJ6RlYS6RcFAEh2D7tM5GiPvf9cDn9hlBKkHkY7O1eg3LT1+JpkkcNHe+iiO8DAZK5MXeCkF1Tllmq5BWJoWv/JPwPsKIAa3BD73D2n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750798154; c=relaxed/simple;
-	bh=/MeZzCqvNf5iCVyBWZYcYqw1EBXz30cZFHkScqGwm2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AAHDuYRMDn5D/6FrUy2VVql9aFyJOQU7KFsfydSNUHQhuc+IHuCEhMdlpwOpjMuN9iWFRQNCuYI7Xxgc54mQfzWtxfntENfS2eK53P64LNhkeg/NYuGIahROk01Ldbpz7a+MyawVsAWRfeoMEY04CtbcFKW/Fb3V2yMGa+ZXNyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KYwPpSL1; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KYwPpSL1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0454FC4CEE3;
-	Tue, 24 Jun 2025 20:49:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750798153;
-	bh=/MeZzCqvNf5iCVyBWZYcYqw1EBXz30cZFHkScqGwm2s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KYwPpSL1ZpC7Bx/J4XZHgteUt1XowcNszkyIjVTyofAamBhk/gOu9KuJpD5yiv32E
-	 GeASb6cXu0QDUzpaIHkv1iBC2y1unaErKcy09IfQEclzEZco8xEdBaBXHCdSG139Dd
-	 xjkZfHQx8aUjAOa5kJ96VJvVlRCcoWNBF7gMTLElbjrOeWRfmN6CliTEaeTrgPW1ue
-	 erAo0I0XlVniFNBsiPeULh7ZcfPJ0vtiwoGo3JFRMLnyT+AJ+/RnYrCoVw/8zqKwUI
-	 N0DukNGEy5wvpvljU29+7+qSkp4GJ3PsG/iMIab944SxoPq0PoFF2WcP/9FA+KhZw1
-	 MP0vlggaW7FTQ==
-Date: Tue, 24 Jun 2025 23:49:09 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-sgx@vger.kernel.org,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86/sgx: Use ENCLS mnemonic in <kernel/cpu/sgx/encls.h>
-Message-ID: <aFsPRSrr79t8FHtr@kernel.org>
-References: <20250616085716.158942-1-ubizjak@gmail.com>
- <aFF_UwJ2XlFQSZOi@kernel.org>
- <26b8939e-796a-4581-a41c-42e3582326bd@intel.com>
- <CAFULd4YzC1xe0mVmJhWAk=sxhsctpZUxQGyRKccW-VF7OhkjKg@mail.gmail.com>
+	s=arc-20240116; t=1750820160; c=relaxed/simple;
+	bh=UtkW3qucY6iNeZ6QdEnlpOKX0CFNUk0ZJoZv9+yY7WU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IQhIPzF2wj6dYwpA9zfs7jtqxXBYuu9e5qJ5u4eo1gw9P/LDAFnoxECdeaHFOvs84WkeR6wWXFRlyaiv1j5iUhklmorYKC/HJNOSYb5MqNzhi3jYxWjJV2kSe4GB8yo9nhzqLCQBZ/PFxyoYDNQky1B3PF06WW8Hnp6uzwvV3Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4927B12FC;
+	Tue, 24 Jun 2025 19:55:40 -0700 (PDT)
+Received: from [10.164.146.16] (J09HK2D2RT.blr.arm.com [10.164.146.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F6A63F58B;
+	Tue, 24 Jun 2025 19:55:38 -0700 (PDT)
+Message-ID: <46432a2e-1a9d-44f7-aa09-689d6e2a022a@arm.com>
+Date: Wed, 25 Jun 2025 08:25:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFULd4YzC1xe0mVmJhWAk=sxhsctpZUxQGyRKccW-VF7OhkjKg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] use vm_flags_t consistently
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "David S . Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
+ David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry.yoo@oracle.com>, Dan Williams <dan.j.williams@intel.com>,
+ Matthew Wilcox <willy@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm@vger.kernel.org, sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ linux-trace-kernel@vger.kernel.org
+References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 17, 2025 at 06:20:49PM +0200, Uros Bizjak wrote:
-> On Tue, Jun 17, 2025 at 5:01 PM Dave Hansen <dave.hansen@intel.com> wrote:
-> >
-> > On 6/17/25 07:44, Jarkko Sakkinen wrote:
-> > > I don't really see how this is that useful. That said, f a bug fix or
-> > > feature used encls mnemonic, I'd had no problems with acking it.
-> >
-> > It's not _that_ useful.
-> >
-> > But old assemblers that we still want to use *NEVER* have support for
-> > newfanlged instructions, so we always add new instructions with ".byte".
-> > Then, a few years down the road when we've moved to just old assemblers
-> > instead of super old assemblers, we move to the real instruction names.
+On 19/06/25 1:12 AM, Lorenzo Stoakes wrote:
+> The VMA flags field vma->vm_flags is of type vm_flags_t. Right now this is
+> exactly equivalent to unsigned long, but it should not be assumed to be.
 > 
-> That, and the code becomes self-documenting. You don't have to scratch
-> your head what the .byte stream represents when reading assembly.
-
-I hear you but I doubt that here looking into the code in detail and
-not being aware of ENCLS opcode would be unlikely :-)
-
-That said, I'm cool with applying the patch to tip.
-
+> Much code that references vma->vm_flags already correctly uses vm_flags_t,
+> but a fairly large chunk of code simply uses unsigned long and assumes that
+> the two are equivalent.
 > 
-> Uros.
+> This series corrects that and has us use vm_flags_t consistently.
+> 
+> This series is motivated by the desire to, in a future series, adjust
+> vm_flags_t to be a u64 regardless of whether the kernel is 32-bit or 64-bit
+> in order to deal with the VMA flag exhaustion issue and avoid all the
+> various problems that arise from it (being unable to use certain features
+> in 32-bit, being unable to add new flags except for 64-bit, etc.)
+> 
+> This is therefore a critical first step towards that goal. At any rate,
+> using the correct type is of value regardless.
+> 
+> We additionally take the opportunity to refer to VMA flags as vm_flags
+> where possible to make clear what we're referring to.
+> 
+> Overall, this series does not introduce any functional change.
+> 
+> Lorenzo Stoakes (3):
+>   mm: change vm_get_page_prot() to accept vm_flags_t argument
+>   mm: update core kernel code to use vm_flags_t consistently
+>   mm: update architecture and driver code to use vm_flags_t
 
-BR, Jarkko
+Hello Lorenzo,
+
+Just wondering which tree-branch this series applies ? Tried all the usual
+ones but could not apply the series cleanly.
+
+v6.16-rc3
+next-20250624
+mm-stable
+mm-unstable
+
+b4 am cover.1750274467.git.lorenzo.stoakes@oracle.com
+git am ./20250618_lorenzo_stoakes_use_vm_flags_t_consistently.mbx
+
+- Anshuman
