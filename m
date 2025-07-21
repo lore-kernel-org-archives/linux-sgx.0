@@ -1,50 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1052E0907;
-	Mon, 21 Jul 2025 16:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582C41A23BD;
+	Mon, 21 Jul 2025 16:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753116308; cv=none; b=TkFnOpd3gDY0Mn0u3W6X8Avn4iK23iTetnvpnY6GdBs373tSb7gQysrYGjgHt/ZtHsUVjUn8F+AbNMf4Vz7sjqprdEPRi4bCCiCt2Deoa+FLgj7az0L7eCaWm5+xIobf71M4wWlMDmCh5X4ug7O9m1yUyArdjTwbLKeuVa4yT6w=
+	t=1753116472; cv=none; b=V80UJ/Ct5P7UGsxGncPt2HIgTHT+mYRRxxl2Vp/rur6oL2y4SLrZGFaPpaqO+b12F42E+ibwzVEtz+ayqMGjvi8bUAJA7i4TqdjqzUX5IwCv1KzwYIZ5B/j2m8Sl8CB6wVpUiBJFPGQVPebhKN6BkeQyjk+5RmgVl7xLm+mj6Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753116308; c=relaxed/simple;
-	bh=usr0LdKw2cfQhzh6TWzHUm/ukLXP34IzvdrksWm+4sI=;
+	s=arc-20240116; t=1753116472; c=relaxed/simple;
+	bh=Jx9R8kSmNkKJjDT5aUlTRN3Mxeb0FIYArcq/hUSXG+I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZfIBQ+GkSy2gS1reqy1PNxrygp9JBIz59ZA4+c/WJEz/AADDg9ggmFa016auAsOUqSVQykC6PxKUy7O3uKVH1027RnkHQZSIMuT3lXQcBGNTsO/pMBa4eX1vcbJyf64fwEyCgLMpch5sZWSBE0hjnqEAPx5rarkSU4ChBny7QyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HoAWy2mp; arc=none smtp.client-ip=198.175.65.19
+	 In-Reply-To:Content-Type; b=hEENLIiSSQ4bH9FSXf7Fy+pYl8AagWEV9+ROYecNcDZiM09QMyCITumFNHTw83PIBDkYgifmFl+rzu8qwFR1H6rPZ9LIv4YgtEjjn2Dj2cIKZJ8pa/ioBwUdbd8Ya32Y20/UguX+Z8Xfq5Z3oNc6pAvaM0AN2N9fQ62lYcQnmDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ChC3Hkd2; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HoAWy2mp"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ChC3Hkd2"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753116308; x=1784652308;
+  t=1753116472; x=1784652472;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=usr0LdKw2cfQhzh6TWzHUm/ukLXP34IzvdrksWm+4sI=;
-  b=HoAWy2mpGBUuac1eRnIyg7gcUhgmRe5ImB1O0nm/DstwMFNAoDSgVQiz
-   Kc+TrBWwes+lDykbAnOs9R4qpc8IL9WAFjbF6JgizZxki9gHaqV4fpTyg
-   T1WytvH6FdFHb5e45tQJr9+MzCczjlt1BYFOr0iJSn2Bf9uXkkq6ZxZBa
-   dGWS1lK57isDEYJ6XAfnv3E6ZFoMP/012FnIINbLVr0qQ8JUO3B71NLCx
-   wTAz1qGtWzeLhbXWiseW/g8CNcX5PMIyA6tUnVOU+oF1FL+KRnLz+R3Mh
-   ggOKJ+jKb+Vqc5x2EfVcPMa216HCCDN4rtYxKVDU62/OxeQMpTXWcqATc
+  bh=Jx9R8kSmNkKJjDT5aUlTRN3Mxeb0FIYArcq/hUSXG+I=;
+  b=ChC3Hkd2B/TYN2+YiW2typwU66b944OymNSE1lZ1DLrY/tMVHKT6fjKu
+   hghK8nv7DTztVHTluIrWb1Vx5Uzm9wRi/s7ZFIjcLymTfN79is56d0ZCO
+   0MgnVrQFS6GjcoCp3kDga6UOSkH9pYzzK10FpUyJZgWkVLftFEXpU7Lvv
+   kqpYEkpXm8oCNJGX6jeBkLUsC4jp1iPc7Q9n3QVlXNCWtzrle94bJQxtI
+   laG5sXavIzXmnTCTq9p2oxQy5wV/twrkqizpc8cG82xfJoE3XUWVwT2KI
+   SJlIVnwMy0mg0TSmRy6VXPyFx2RYSb6eUyYtKNzgQ00/OBoI6oXnXX+KB
    g==;
-X-CSE-ConnectionGUID: UP5FsCdaRVyG1U7uUUQgaw==
-X-CSE-MsgGUID: P6m5mpjkQgSAhXDU7hjivQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="55189131"
+X-CSE-ConnectionGUID: D/iIc/b5RHmLCP9PyUvszQ==
+X-CSE-MsgGUID: i6YgG8HNQGSFdQ6tjHhOqA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="55218358"
 X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="55189131"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 09:45:08 -0700
-X-CSE-ConnectionGUID: qCUhClhrQ267wbJI/TrLAA==
-X-CSE-MsgGUID: usvijCELToODw8Gyi3XcGA==
+   d="scan'208";a="55218358"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 09:47:51 -0700
+X-CSE-ConnectionGUID: kv3F2Yu/SDy/GGtH6aHLkg==
+X-CSE-MsgGUID: Q2XpVz7LQImkEK1lP2OvAA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="163111381"
+   d="scan'208";a="189838714"
 Received: from jdoman-mobl3.amr.corp.intel.com (HELO [10.125.108.89]) ([10.125.108.89])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 09:45:07 -0700
-Message-ID: <8ca9f320-8e05-4232-9d78-d2326e4f6720@intel.com>
-Date: Mon, 21 Jul 2025 09:45:06 -0700
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 09:47:50 -0700
+Message-ID: <4838ad3b-af1c-481b-acb9-9c33943a018b@intel.com>
+Date: Mon, 21 Jul 2025 09:47:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -52,20 +52,18 @@ List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/5] x86/sgx: Enable automatic SVN updates for SGX
- enclaves
-To: Jarkko Sakkinen <jarkko@kernel.org>,
- Elena Reshetova <elena.reshetova@intel.com>
-Cc: seanjc@google.com, kai.huang@intel.com, mingo@kernel.org,
- linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
- asit.k.mallick@intel.com, vincent.r.scarlata@intel.com, chongc@google.com,
- erdemaktas@google.com, vannapurve@google.com, bondarn@google.com,
- scott.raynor@intel.com
+Subject: Re: [PATCH v8 1/5] x86/sgx: Introduce a counter to count the
+ sgx_(vepc_)open()
+To: Elena Reshetova <elena.reshetova@intel.com>
+Cc: jarkko@kernel.org, seanjc@google.com, kai.huang@intel.com,
+ mingo@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
+ chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
+ bondarn@google.com, scott.raynor@intel.com
 References: <20250715124109.1711717-1-elena.reshetova@intel.com>
- <20250715124109.1711717-6-elena.reshetova@intel.com>
- <aHt_4oLff2zjIuNH@kernel.org>
-Content-Language: en-US
+ <20250715124109.1711717-2-elena.reshetova@intel.com>
 From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
  oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
@@ -109,26 +107,32 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <aHt_4oLff2zjIuNH@kernel.org>
+In-Reply-To: <20250715124109.1711717-2-elena.reshetova@intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/19/25 04:22, Jarkko Sakkinen wrote:
-> On Tue, Jul 15, 2025 at 03:40:22PM +0300, Elena Reshetova wrote:
->> -static int __maybe_unused sgx_update_svn(void)
->> +static int sgx_update_svn(void)
-> I'd combine 4/5 and 5/5 because of this. Makes them so much easier to
-> backtrack changes later on if this type of stuff is avoided when
-> possible.
+On 7/15/25 05:40, Elena Reshetova wrote:
+> +int sgx_inc_usage_count(void)
+> +{
+> +	sgx_usage_count++;
+> +	return 0;
+> +}
+> +
+> +void sgx_dec_usage_count(void)
+> +{
+> +	sgx_usage_count--;
+> +}
 
-I'm not really sure what "backtracking changes" is, but I disagree on
-this one.
+Gah.
 
-Breaking up patches is about reducing the mental load to review things.
-Generally, the smaller the patch, the smaller the mental load. That
-breaks down when, for instance, a helper has a complicated argument
-handling or return codes.
+I know this gets fixed up later in the series with the mutex, but this
+code is broken and racy until that point.
 
-But, in this case, we have a function that takes no arguments and
-returns standard -ERROR codes. It's fine to break it out like this. No
-reason to do more patch gymnastics at this point to squash it.
+I'd rather this do _nothing_:
+
+	int sgx_inc_usage_count(void)
+	{
+		return 0;
+	}
+
+than a foo++ which just plain doesn't work.
