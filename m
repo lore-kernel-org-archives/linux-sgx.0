@@ -1,50 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3231D63F0;
-	Fri,  1 Aug 2025 16:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27E11D799D;
+	Fri,  1 Aug 2025 16:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754066804; cv=none; b=s88QnCUjy3Isfe01M0nvg4iUKcFBEb/ptLvbgMSXwu2as9wv2cDPj3egbkrCoPktxXsuPpuXIm2T/DeYh2lDf/iXkj86wN6Kj23Hs6h/W7ZDJC+W3lpYpWCKE1dAg5qa2vbbzSXLHHdFrSN3p0ZqfN7IUGoBTYfh2JcN1Rqs3lU=
+	t=1754067443; cv=none; b=V80jRbwCFkKuM+PjAaAi8SsYzUBoU/ytQPlEaytL3FNECi/EfsyB0dAk4S7YLA5xAkib4uKqDY5zIfmZS16tu0zDs6C0TxN6QS2u9YDlYzcmyQmrI3E+lYo2QOjqhuXYgEVAkm/ZCcBr6UEd7GhOioWKjsr+Wn5NiuyI+lrbPQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754066804; c=relaxed/simple;
-	bh=LFO9Q3Y8ziePZK6BAZO/LcZiU62sh56P34klwpNKMhA=;
+	s=arc-20240116; t=1754067443; c=relaxed/simple;
+	bh=gWrECkBQba7Mb51irv5Aubf/6htm69Ajn4uQkfCbS/c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OL4je9kRv+M0uQOq2KO8VMNf66wo3V2KQMliO50sP++uNhZkKEkv9XQv4PBDlRKkMYpBzo7PFdQJNELqsZ0ivoHWDK5eCI8ybWGFwdMX6L8j6JICVWAxw657myUfBuy6dOKh9BMEKtOzIJTtub9j/UK7zaCeDWHPs8i4mDEWLAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D7DOqc9d; arc=none smtp.client-ip=192.198.163.16
+	 In-Reply-To:Content-Type; b=JuwggjEzB8z6TQwF0+pChc9oFhmcJwz3WiwPNqb16RwD7HkGSyapyDhnKAkeyEfug7j9qy70d3Vn3mpTO1o/stXiVGnBEz/6/XthXvBvfoB/9RlJ9z4NUA4XjxGTSY3desYgdWZRF6TTVYt0/uKLRulFQGb7R0CWTJ8ZJOH5zxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OARbWuqN; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D7DOqc9d"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OARbWuqN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754066802; x=1785602802;
+  t=1754067442; x=1785603442;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=LFO9Q3Y8ziePZK6BAZO/LcZiU62sh56P34klwpNKMhA=;
-  b=D7DOqc9dx1JqDdTpyTP674PfV5aOgG+Im7BsSga33sYj9IeUMEbHF055
-   RDcDMv9B9AYyQvGltnW5nqbk0cRPezLiTvUIVqTje6mizioR8+2tYOy5p
-   3lzARxIj43KlfaZQ7abBjvl1xL0CWrzJrnRftsaWueswG9rK4ih05L48+
-   KmegSSYvT1JtqR3XFd6dllH60VXcvSdMQDlGOZP5LetyznSNCOADhO2/6
-   hDFrUTlK4sHzMetXF5khXt6Bb9jVTERcycD3XvNiY13ZdwrFCmCwWikYl
-   Uvcw5fjP3RxLw6OLWU72+DY49pC0qdVxDeo+ukRhUk+6lrKd9XaoP3rtC
-   Q==;
-X-CSE-ConnectionGUID: 0W2edupXRxCv0lAITZctRQ==
-X-CSE-MsgGUID: tkGVPreKT6azoYs43qzfAg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="44013588"
+  bh=gWrECkBQba7Mb51irv5Aubf/6htm69Ajn4uQkfCbS/c=;
+  b=OARbWuqN2tSufbHhlokTwXTqjz+1hCj6dkkdGtwZf80cK50en0fByJwD
+   MHRvcE0QCnMKoQ44wQEf8LtVBDdGqDgrb9ySqwvxAuxJKfbc3c54gtCrH
+   9B4IQCXFm3HAL8OMGXSAsC8TCaHHQiPLdKfVMv/KByuNKrEeqVmBRpOgK
+   HQH+wLcJRxJHyAzvvbhjSNyXo/A/f50kDPSMAcXqseJA0XxvsE+IQZ/pj
+   0aGBQUW772WdRAbJ6Ygv/5wi1NrDhoPP/7Pfi7WikdSGjOaC2bz+Cz0tq
+   UK1jQXSUqd1Oetilbfj3X870Aa133R4iaD9174/J4DeCYbcHM56FPD97h
+   A==;
+X-CSE-ConnectionGUID: Fa1LGqgjRc6iQM/koHe1mQ==
+X-CSE-MsgGUID: MCDNQMBMQZi+Z3NZgAvYDQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="67494526"
 X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="44013588"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 09:46:42 -0700
-X-CSE-ConnectionGUID: 8XLWxDrfQT+KaMsUFV7oGA==
-X-CSE-MsgGUID: aduuWmpvRHGnWHLQBXB5CA==
+   d="scan'208";a="67494526"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 09:57:19 -0700
+X-CSE-ConnectionGUID: wRLR/fXXTf6Mbb+XYpi/kQ==
+X-CSE-MsgGUID: KX9mFKKaTUKS6W7PWE907g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="164399567"
+   d="scan'208";a="163986187"
 Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.249]) ([10.125.109.249])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 09:46:41 -0700
-Message-ID: <4d71388b-07bc-4611-8cc6-d3d75fb6c812@intel.com>
-Date: Fri, 1 Aug 2025 09:46:40 -0700
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 09:57:19 -0700
+Message-ID: <80006246-d0c5-475d-a8c7-bdb5446d9489@intel.com>
+Date: Fri, 1 Aug 2025 09:57:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -52,8 +52,8 @@ List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 3/6] x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN
- feature flag
+Subject: Re: [PATCH v10 4/6] x86/sgx: Define error codes for use by
+ ENCLS[EUPDATESVN]
 To: Elena Reshetova <elena.reshetova@intel.com>
 Cc: jarkko@kernel.org, seanjc@google.com, kai.huang@intel.com,
  mingo@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -61,7 +61,7 @@ Cc: jarkko@kernel.org, seanjc@google.com, kai.huang@intel.com,
  chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
  bondarn@google.com, scott.raynor@intel.com
 References: <20250801112619.1117549-1-elena.reshetova@intel.com>
- <20250801112619.1117549-4-elena.reshetova@intel.com>
+ <20250801112619.1117549-5-elena.reshetova@intel.com>
 From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -107,15 +107,77 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20250801112619.1117549-4-elena.reshetova@intel.com>
+In-Reply-To: <20250801112619.1117549-5-elena.reshetova@intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 8/1/25 04:25, Elena Reshetova wrote:
-> Add a flag indicating whenever ENCLS[EUPDATESVN] SGX instruction
-> is supported. This will be used by SGX driver to perform CPU
-> SVN updates.
+> Add error codes for ENCLS[EUPDATESVN], then SGX CPUSVN update
+> process can know the execution state of EUPDATESVN and notify
+> userspace.
 > 
 > Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
+> ---
+>  arch/x86/include/asm/sgx.h | 37 ++++++++++++++++++++++---------------
+>  1 file changed, 22 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+> index 6a0069761508..1abf1461fab6 100644
+> --- a/arch/x86/include/asm/sgx.h
+> +++ b/arch/x86/include/asm/sgx.h
+> @@ -28,21 +28,22 @@
+>  #define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
+>  
+>  enum sgx_encls_function {
+> -	ECREATE	= 0x00,
+> -	EADD	= 0x01,
+> -	EINIT	= 0x02,
+> -	EREMOVE	= 0x03,
+> -	EDGBRD	= 0x04,
+> -	EDGBWR	= 0x05,
+> -	EEXTEND	= 0x06,
+> -	ELDU	= 0x08,
+> -	EBLOCK	= 0x09,
+> -	EPA	= 0x0A,
+> -	EWB	= 0x0B,
+> -	ETRACK	= 0x0C,
+> -	EAUG	= 0x0D,
+> -	EMODPR	= 0x0E,
+> -	EMODT	= 0x0F,
+> +	ECREATE		= 0x00,
+> +	EADD		= 0x01,
+> +	EINIT		= 0x02,
+> +	EREMOVE		= 0x03,
+> +	EDGBRD		= 0x04,
+> +	EDGBWR		= 0x05,
+> +	EEXTEND		= 0x06,
+> +	ELDU		= 0x08,
+> +	EBLOCK		= 0x09,
+> +	EPA		= 0x0A,
+> +	EWB		= 0x0B,
+> +	ETRACK		= 0x0C,
+> +	EAUG		= 0x0D,
+> +	EMODPR		= 0x0E,
+> +	EMODT		= 0x0F,
+> +	EUPDATESVN	= 0x18,
+>  };
 
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+This update is not consistent with the changelog nor the patch subject.
+
+>  /**
+> @@ -73,6 +74,10 @@ enum sgx_encls_function {
+>   *				public key does not match IA32_SGXLEPUBKEYHASH.
+>   * %SGX_PAGE_NOT_MODIFIABLE:	The EPC page cannot be modified because it
+>   *				is in the PENDING or MODIFIED state.
+> + * %SGX_INSUFFICIENT_ENTROPY:	Insufficient entropy in RNG.
+> + * %SGX_NO_UPDATE:		EUPDATESVN was successful, but CPUSVN was not
+> + *				updated because current SVN was not newer than
+> + *				CPUSVN.
+
+This comment bothers me. This is an *ERROR* code. It means that
+EUPDATESVN was *NOT* successful. It failed. It didn't do an update.
+
+Now, it's not a _bad_ error code. It's kinda like read() returning 0.
+It's a "no harm no foul" kind of thing. But it's *NOT* success.
+
+Ideally, we find a way to relay this in a very succinct way.
