@@ -1,206 +1,142 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4681D5CF2;
-	Mon,  4 Aug 2025 10:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14CC25D53C;
+	Mon,  4 Aug 2025 14:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754304871; cv=none; b=b5VphjqpHvKTXGlnKOp68hfAGc+NPVccUyln8omoPCg3CzYpj8kAtrCASjhxsG+nIlLFYr+crIjZiTgzb4iZGWSWitu2RHlsba3CQUEcJ+RrFJKUlHe3+PZIdnRcV6+TUQPNhtlBd2FcKmF5Qfw6Pg6we2198TP7BbilWgeyp5E=
+	t=1754317195; cv=none; b=KguLr3FwblTgEXLnxtt75cuCfKCK2wMCEzxNMxWQc519J4WBzMXcywuWJNCwvWv4ZI7Q6EMkgC4z+9g3A5/G9MmjJeitXPScIuQv8elraQFd5SCnyUh/zPQAT5ZyK5kZC9l1EPblN0CmajLnismEzINzLCbSS36c7tPyvOTFaRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754304871; c=relaxed/simple;
-	bh=LLYmh07tODzNKrSqXaL0z3ysxtPy/JmLxTic6NiwVjE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ov2B4Z+1XE7OwKefx/80lvOVxzdoz0RgshwJgXxU4+HcVH4yh+C9ZFPjK9ar1tJloWMBdZIsbuMEAqg+30p0cI8d8KsEN1ejUQztOX+wxsmXhDyoBbNI7qI79QdZGwA+FwK7Radx7o/FK/VQQHy2AYpDR2UXsuztWAmGuyh7iwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uh2Gn0q0; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1754317195; c=relaxed/simple;
+	bh=z36tZPAGXceMTSANmKcIICRcYsP2aut228maM4EwY74=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BBS/FYdrvTnmW2vq7E5BiJBm08IbNWWt5+dGLKmLCzJ3LkDiFhetHbE5a5f8ZI0mHMIZv8QtyLTBa6zKk7Nqnuvjg7S4IGQKneYS3DzNMRMqiD1BJgJKAmo5+0dTETFuZcvIvDokOFx9CrHJpJzCBQWwLMBOcXM8I9uuO9bCYWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FqMQJKyh; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uh2Gn0q0"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-33211f7f06eso35695241fa.2;
-        Mon, 04 Aug 2025 03:54:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754304868; x=1754909668; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4RxvHMamXD48DKrjLVxOGxx8Xo0bomZZqlvqy6+mMo=;
-        b=Uh2Gn0q05+FYkWk0VZulC4Q/x7+Yq8YKAgFG8Zgy0lXIKYjRxrUY01lGBijYFcWzI9
-         czAGM84crafWTALrr2y7nFIqOB8c/KLZRLDMPxzE9Ip8JouprTpkzDfmvytNaKwhNlSy
-         8rmfj5d279xMnRcDO/8XvjeC72IWIRxrE3JqhezxFdnPlBcu4zDWuwQ9xtFKMVnlHzdw
-         CtdPeXs63CMRXYKQfIeAjPhZswnmsSzE7czti+pHuGuvVkbxKHH2oL08cYUy4yPjfP/+
-         DFoXeUr7wWjwGgNAsY0zInJFA0o+0yXia5SKyKub2ckNpNc+L/aSH6fDntuTS+AOZ9zc
-         xt8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754304868; x=1754909668;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X4RxvHMamXD48DKrjLVxOGxx8Xo0bomZZqlvqy6+mMo=;
-        b=L2k0w2eopkCw+wo7lSvRcthu+P6ngN0GBh3oE8S99h7ARNfuNwcJ3sqaTSyvTBj8Ob
-         RTSXMzCFRRW2CIgn4FDiu3z2jxl8WNnd0fQc0LFxy5UoxCq7EvsihPil25VUu0CRtASJ
-         62jUrqE+AJYaIkd6EQ+QqwhBHUI+mYL59VhAMFuiBFvPp+k6fxDA5i7RHGObo59NHIUs
-         SC0liQsrwFN2jfN8OlF9NAehnRMRtktr0GMMkok+yymTk5Xh8WlKlMf+PnrLYfQRFy9s
-         Au/+ijwa3sXmZQtHcB9r0K94mTtQlI9y0fXRkO0DrRVQR+ijX+dMq4/fDNqPg6q42BUW
-         xLDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNfsY32aenR5TTYjLopQxJcJW0YI1xBB15q1f/KgaN0jxS+wet7xInMsnHq3fJNe2g0zRHDb9pHNzyXGHDLg==@vger.kernel.org, AJvYcCV/LudbpFr3ZPYbKPc3NK9XAPQg0rMwtpxN0Xty5Ekj2F1hmmn76FzkZq7PEUxB1C97ixU=@vger.kernel.org, AJvYcCVnN3c06z5ESZ1w1IyzYUF3altTy9tMBWdDjhgwvwHEYFYEeSxVI3DxnZVmWdG4ScY6m3ok3flBauiIrBMf@vger.kernel.org, AJvYcCWpsnTL3WvYW42tMrSExp3+NyfUBc6M0ldR1s7ZPBt74xruaoSI55CEUpkcyk5YF61O5Cw73UnMfoPOOw==@vger.kernel.org, AJvYcCXGCNjxKLGpTSlJtKBHuDRqI6JhZ66Ka9+FjLr4fpklNr9f+Www1vShUoVavwQWGB+SgtwBuUc2/JzksrmzBfsvV/4n@vger.kernel.org, AJvYcCXin6r0nuOsGKAL5x+yojTjbWF1YZjXeAY0ylQCgisn9tOqxyGbdNobIuDq93XJM8/l7uN90yKk/yYs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR2En5uTOoAn20N13788kkpolieOSeTRTfBgVEGUewKM2qeSwM
-	8uxeiVJ4+KMxNhIvlvpil10gu80jPi1Hvwm9tx55Pu/2bk0w0iptlU0A
-X-Gm-Gg: ASbGnctajp32N59rDl1u87AMGHhdS7VjKpeOfg6gYAkEHPsB6sAmXkESHOoaYNuibS0
-	lozIQfUJel+4HJA3JC/ruIT2LLwF1EyvefBW1TVVPGNC4dv9v2MdeagVhSCbZ2kxi6TF3WwbFMe
-	YBMTdGTBMGK3SzgfzwA4W4fiYQDRi3c/Uk4cCya9Ep4Z2vK8IlMVHbysYVH6qHwLrCG16t3N63M
-	EwlT8h0QoxNEsFfn9/RmFWrzjANfWwyV7uaeJysIG2VHjmf5g7oCIywY8Ao3GKWP19r4dVBV+8t
-	9iMLuARGEXs+h2EgkrgUrFhzVMAfweC5fXHNn8H79DEjQs/QtRm7IDFgpzFzRzML5qm6O6/H4Uo
-	2CEb5YbUZSHOAjx8FhaGn/4bhEc365o3b3Ouz9X58xwgVk7bDUW84ha/tfCy4
-X-Google-Smtp-Source: AGHT+IGJZZFcFy8qBb/9BVJvSpxogtzfM17wxVB5B1bfSxKSrolhCiqzChAu468YcmIMkpSbHFvpbA==
-X-Received: by 2002:a05:651c:20ce:20b0:332:4a77:ad9f with SMTP id 38308e7fff4ca-3325677af91mr12521651fa.24.1754304867614;
-        Mon, 04 Aug 2025 03:54:27 -0700 (PDT)
-Received: from pc636 (host-95-203-22-207.mobileonline.telia.com. [95.203.22.207])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33238271bdfsm16396311fa.6.2025.08.04.03.54.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 03:54:26 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 4 Aug 2025 12:54:21 +0200
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Harry Yoo <harry.yoo@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
-	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
- consistently
-Message-ID: <aJCRXVP-ZFEPtl1Y@pc636>
-References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
- <aIgSpAnU8EaIcqd9@hyeyoo>
- <73764aaa-2186-4c8e-8523-55705018d842@lucifer.local>
- <aIkVRTouPqhcxOes@pc636>
- <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FqMQJKyh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754317193; x=1785853193;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=z36tZPAGXceMTSANmKcIICRcYsP2aut228maM4EwY74=;
+  b=FqMQJKyhlwvifXQ6KsyuoJqItXnri/EVWcVa+rhQ8ITus7ptDrG35X7N
+   2TysdhZMmRcTkGx3tdIMGjKnb6oKETKacAAxUgv0wFPrBVwnwIH+WqTlD
+   +dc2L5uRyBDtn8m/5FiWaZYthCsZyZ57c9Orcvi/AB3kGekE3VZR2E6jV
+   lE7OOdHjCEBs/eOuhRbNhp0xXDtLq7APFaJK0DJPkZ5taFCbcKTagl0NC
+   DJgxSHobmlUI77BDha8E9c6b6mXKt5e/f4e2DsYt80bufS0kpvhGfEU8x
+   P9NOx4oy4IdCuPG5Htk0W5sHeUTC1ohmfENeMAPTFBn4pxOTPxBJLOqBy
+   g==;
+X-CSE-ConnectionGUID: HSInuYsCQQCqXX32Uzk12g==
+X-CSE-MsgGUID: vblMsacCT9SWk0omRv4z4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11512"; a="67161262"
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="67161262"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 07:19:53 -0700
+X-CSE-ConnectionGUID: ey91kLR1TkqT5d62ohWTOQ==
+X-CSE-MsgGUID: yPiU1xmGRIu3vdfxW8pl6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="163442008"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.42]) ([10.125.110.42])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 07:19:53 -0700
+Message-ID: <97a3e5f8-92d7-43f0-ab99-77e248589adc@intel.com>
+Date: Mon, 4 Aug 2025 07:19:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 4/6] x86/sgx: Define error codes for use by
+ ENCLS[EUPDATESVN]
+To: "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc: "jarkko@kernel.org" <jarkko@kernel.org>,
+ "seanjc@google.com" <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>, "Mallick, Asit K"
+ <asit.k.mallick@intel.com>,
+ "Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
+ "Cai, Chong" <chongc@google.com>, "Aktas, Erdem" <erdemaktas@google.com>,
+ "Annapurve, Vishal" <vannapurve@google.com>,
+ "Bondarevska, Nataliia" <bondarn@google.com>,
+ "Raynor, Scott" <scott.raynor@intel.com>
+References: <20250801112619.1117549-1-elena.reshetova@intel.com>
+ <20250801112619.1117549-5-elena.reshetova@intel.com>
+ <80006246-d0c5-475d-a8c7-bdb5446d9489@intel.com>
+ <DM8PR11MB5750515E878BAC6199882330E723A@DM8PR11MB5750.namprd11.prod.outlook.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <DM8PR11MB5750515E878BAC6199882330E723A@DM8PR11MB5750.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello, Lorenzo!
+On 8/4/25 00:21, Reshetova, Elena wrote:
+...
+>>> +	EUPDATESVN	= 0x18,
+>>>  };
+>>
+>> This update is not consistent with the changelog nor the patch subject.
+> 
+> I can remove the alignment fix.  
 
-> So sorry Ulad, I meant to get back to you on this sooner!
-> 
-> On Tue, Jul 29, 2025 at 08:39:01PM +0200, Uladzislau Rezki wrote:
-> > On Tue, Jul 29, 2025 at 06:25:39AM +0100, Lorenzo Stoakes wrote:
-> > > Andrew - FYI there's nothing to worry about here, the type remains
-> > > precisely the same, and I'll send a patch to fix this trivial issue so when
-> > > later this type changes vmalloc will be uaffected.
-> > >
-> > > On Tue, Jul 29, 2025 at 09:15:51AM +0900, Harry Yoo wrote:
-> > > > [Adding Uladzislau to Cc]
-> > >
-> > > Ulad - could we PLEASE get rid of 'vm_flags' in vmalloc? It's the precise
-> > > same name and (currently) type as vma->vm_flags and is already the source
-> > > of confusion.
-> > >
-> > You mean all "vm_flags" variable names? "vm_struct" has flags as a
-> > member. So you want:
-> >
-> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
-> > 29:                          pgprot_t pgprot, unsigned long vm_flags)
-> > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
-> > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
-> > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
-> > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
-> > 85:                          pgprot_t pgprot, unsigned long vm_flags)
-> > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
-> > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
-> > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
-> > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
-> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/vmalloc.c
-> > 3853: * @vm_flags:                additional vm area flags (e.g. %VM_NO_GUARD)
-> > 3875:                   pgprot_t prot, unsigned long vm_flags, int node,
-> > 3894:   if (vmap_allow_huge && (vm_flags & VM_ALLOW_HUGE_VMAP)) {
-> > 3912:                             VM_UNINITIALIZED | vm_flags, start, end, node,
-> > 3977:   if (!(vm_flags & VM_DEFER_KMEMLEAK))
-> > 4621:   vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);
-> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
-> > 29:                          pgprot_t pgprot, unsigned long vm_flags)
-> > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
-> > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
-> > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
-> > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
-> > 85:                          pgprot_t pgprot, unsigned long vm_flags)
-> > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
-> > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
-> > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
-> > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
-> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags ./include/linux/vmalloc.h
-> > 172:                    pgprot_t prot, unsigned long vm_flags, int node,
-> > urezki@pc638:~/data/backup/coding/linux-not-broken.git$
-> >
-> > to rename all those "vm_flags" to something, for example, like "flags"?
-> 
-> Yeah, sorry I know it's a churny pain, but I think it's such a silly source
-> of confusion _in general_, not only this series where I made a mistake (of
-> course entirely my fault but certainly more understandable given the
-> naming), but in the past I've certainly sat there thinking 'hmmm wait' :)
-> 
-> Really I think we should rename 'vm_struct' too, but if that causes _too
-> much_ churn fair enough.
-> 
-> I think even though it's long-winded, 'vmalloc_flags' would be good, both
-> in fields and local params as it makes things very very clear.
->
-> 
-> Equally 'vm_struct' -> 'vmalloc_struct' would be a good change.
-> 
-Uh.. This could be a pain :) I will have a look and see what we can do.
+It's not the alignment.
 
-Thanks!
+It's the definition of EUPDATESVN that goes completely unmentioned.
 
---
-Uladzislau Rezki
+...
+>> Ideally, we find a way to relay this in a very succinct way.
+> 
+> Could you please elaborate what you mean by this? 
+> Changing the description? The name or? 
+
+Relaying it in the comment next to the definition would be best.
