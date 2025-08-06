@@ -1,250 +1,293 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01F61C8603;
-	Tue,  5 Aug 2025 16:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AD61E25F2;
+	Wed,  6 Aug 2025 08:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754410445; cv=none; b=sG45V+GdoMCFbtHP7VEmUL6bBUdZbUd8hiDEKg74MKdZBpnjaKs4yu4uwGYiR6Oki7jRfXlLmomHtb53k3HabVuLHE1n1g+c/f9M0z2AziGhIYzH45Q1x7ze7HXsQ/AQg/4CbepgcYz9E6DuE71W0sZqtyuzHlZTzFq8/phv8Dw=
+	t=1754468046; cv=none; b=ZHXYitbVM/Qa72x4dGgALmktYCjMAkA6Euwg/PA0vHF7RFTCzfjnNvZUlu0MRHEquT9S4jEMU8i5UHwlav15Vn3uTgLz5cvRLNkNTSKpbBCvoSfdP/V/iu/dliY1GosM3B3t9gj3J4uQcVRLX66IvhlBoKkNb+bYlp2+sjPvLd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754410445; c=relaxed/simple;
-	bh=BglbfbCfxjDdNAl+FJxNAK3U0aRdh/ewx/iXRTko+dM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bCmNbeoNjxCiJOkQpA5AgctmWxrwYxOk64myWn6QfJKVFwLD9eZPsterRDrBgUAlXvak5oXqwn8pjfSS4/PZlT0jFZsr7WcS4ipaxi4Gn6RXxmjPGjbdu8tB+CBF96xZJ8joZ+Q+aRtuJWOa+31mDqWadGk6qdXVOy0PucI5B+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zu+U3pL5; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1754468046; c=relaxed/simple;
+	bh=beASYza5E57cVoDtIn1iRebYz8v66FZLxh1F1aHWihE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kANrW2Vu0gywgohtEdXz3jdIwedO6YW52leceNw4OhmZn/UlDN8kSp3fIygs+fLXk4pveQgs+YpVsUJwAy7+ImsrRpFF9pl7G65KY/L6EWMjhti/bf98ZfwZIrEo8d3dx556mseTA7jyIo42OdmAIZTv3fyxTmWide7VcD8GqqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EWvzrgTk; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zu+U3pL5"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-332631e47afso714441fa.0;
-        Tue, 05 Aug 2025 09:14:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754410442; x=1755015242; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ut5lsjSSswYnbLzk6rrdmu5+CeAKFhijQRi1rB1wfMg=;
-        b=Zu+U3pL5o4ZPJwIdkXISpU2dyfPB0+TNZSjkYcKaYSD+SRRfTxkyiY1CToGY5wFqXg
-         d8melksPoN+JtITTK/3buDk8xEYbfYAarJDpRVujvYiOcWyWF7oQh2Bih2TJHc50/B2G
-         9ZSAO+oT9l+ky/3GyCE1N/l6yabchtlYwVZ+jVHSjdVj6iebKyEv27RnIb7aN9pPx0JD
-         m4TSkoDO2Yc6tLTV92FnvVCzzvf4ITl6fFll+GlPKPIj/SaRddi5H5EkcddCdZcWoTAi
-         RwT2OhbFiB8+sd9j9pLdRESRxpfojA4PvSkmWNZIRK9A5+KcBdYgxbVvRXdnnlCEuZB6
-         7ptw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754410442; x=1755015242;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ut5lsjSSswYnbLzk6rrdmu5+CeAKFhijQRi1rB1wfMg=;
-        b=wx79USt3Ijrv7F9dJ5zPWyZw9psisLB0mYeorSbrDyQjqfUBf8xXKgZWmCy9+bpmEI
-         NsOQSPKcZhmj5okJHTHaeXJrCjt0+0kEDXMSSCqFF4ypECrAjg9Mqa+uoy6XQW8jMA6Z
-         HhOYGAXrHy+bCSq0JJESfwr/muam04OZYoZLFL4Mw3/dUD+hzWy5Mz70SPM/lGsPlqGR
-         FW9wV55/f5JWjawM1SacamRoVoYwv7sX5bhAWUq4WGl1su2Q/HM2Ix5r+roprpqF1sPH
-         XBRQgUBk5WMsQ6kaxNXK1ylwKYXYSl5+uX46312Actj1UgIG67sg/BcVmq97aabj5nnW
-         Y96Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUBXXl7Ln8ePOt/LelC/47AUjsVXvr3aPHOVL7QwGqVc5pFYT1j1Z2e1MNh3RiYjrnwUBQzS243SljyeA==@vger.kernel.org, AJvYcCUYCQuoHFFsYcLtOpmBwSDPF0KAghyxY5nF8FAvFG4Q+VvV2lijReZePpr67eT/bw/AFL/CTrEMmFo/KilbGE0D5wSK@vger.kernel.org, AJvYcCUa0UAeg0sZyqKo/pYjy0MGDl3e7b/NsFK1EKVj+A2xR4u5QXE9yYMF+ogf3tuqwRaXeCyw8igidhx7IYy3@vger.kernel.org, AJvYcCVRzqnQEWpS4yisO12QA03J8rA0KSLDSkQO9l6MXGLXU1kz2EuLKVXQjReyetwSbyw+eB1rw3Mmqi4WJIUyPg==@vger.kernel.org, AJvYcCVjEelcX7AjVqrAjOGe/iWWj+BaB4QwssPJxvQQRTSUxlrifa0jfXjaHVmeoKISzeZMxgcGPS4E2Om8@vger.kernel.org, AJvYcCWKdVjmu7PtpdRJn0EnQxgGH/0ush9kKfGE1O6tpN/2LAPHeGQ6MMxHWmCHE7vu6cioOgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgVvFVN1d7cyE2qfbqHEjKPXhjt7TIYRSMIjSxMUH+zl6P/8El
-	PC34RCwbFvWQEtOmGfQZuUUdqoV9xsgEsXPydgi5zNJ0+eAJ45Zjc7N8
-X-Gm-Gg: ASbGncv2m1NdzzRQhE1BgT7wneFjtgaQUh42bE1MXtBKurH6VPUQM3n7S/FFB7eujIL
-	80Sejdzh4+vE5PRMl3xJVPUWnfk8vKDcXphHC3zUk0g4FtZIcnpYCB9Hzz5XfaiLWosaEnV0fIn
-	/s/gDY+7JkzAQXU6scowMADMhEJPRb+9ZGRGtnETnNmwW5nyQOoNCDCap9+RBTO1KT90DejATDa
-	RZBXMxPEA2BqPI+TTnAEY6w8WiF7ngq+154gH+UZncedd4YGQnFPS796Fl/g3sJX5rLsaOLlBBw
-	JB9VsbWJQaM9wjqYVQ0l62+8xq1jV0UK5JDGiJcmslAc5GtEReC9yiDUOGbJep4F20AZKrEDbyg
-	lrlIOfVOliLyfdhnOD8yMSnqzpAQU0YP0g+rLanYoASb9qPS1XQ==
-X-Google-Smtp-Source: AGHT+IH0xPAx9h/e+86wx2UChAIDs8RS46jNjVMEpxxiiDlgZAALsSVVnEbgPp+pN/RR7dfa5MNCmA==
-X-Received: by 2002:a05:651c:b0f:b0:332:341d:9531 with SMTP id 38308e7fff4ca-3327b9157d5mr10915411fa.12.1754410441379;
-        Tue, 05 Aug 2025 09:14:01 -0700 (PDT)
-Received: from pc636 (host-95-203-18-142.mobileonline.telia.com. [95.203.18.142])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33238272ff7sm20616811fa.7.2025.08.05.09.13.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 09:14:00 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 5 Aug 2025 18:13:56 +0200
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
-	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
- consistently
-Message-ID: <aJItxJNfn8B2JBbn@pc636>
-References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
- <aIgSpAnU8EaIcqd9@hyeyoo>
- <73764aaa-2186-4c8e-8523-55705018d842@lucifer.local>
- <aIkVRTouPqhcxOes@pc636>
- <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
- <aJCRXVP-ZFEPtl1Y@pc636>
- <aJHQ9XCLtibFjt93@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EWvzrgTk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754468045; x=1786004045;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=beASYza5E57cVoDtIn1iRebYz8v66FZLxh1F1aHWihE=;
+  b=EWvzrgTkqMmQhNLfVbQ9zp8CHFClrb0E2YBEUTnDKUzemoigApfDQIhV
+   4F+hwPY4XLur9gOz6sYXe8JmO4WsLnKxrnYv875DkWBvWexPXBog/5Fvm
+   rj5G1tRbTYd1hm7b+lC8Z6TFY+M9Yw2GyHusiR3XN2lIz1zlnXYPuKV5u
+   o6zkU7cPiC/shYAZ9gkD+Bp0c8iGI4ueUlGRQPoWozxS1sIrJroZfd4c3
+   Zx5uDWGcUaCEPYeQaiPOaADsOGKqYxA5tqaYhVqtWh+16V8ZjLs+aj68e
+   si5YXTzHrC11l6+hMmz9jIyJkhKfSgpblLgT34fEkTtlQNdGisb59Wn9C
+   g==;
+X-CSE-ConnectionGUID: nlNgpd2fQtmdH86H46wTmQ==
+X-CSE-MsgGUID: roJne68rS0yH73/zm72uWw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="56853611"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="56853611"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 01:14:04 -0700
+X-CSE-ConnectionGUID: fag+is3GRMKbDAXBbJtGWw==
+X-CSE-MsgGUID: fOqbYjoGRn+MRt+nNosS/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="169168401"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.244.125])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 01:13:57 -0700
+From: Elena Reshetova <elena.reshetova@intel.com>
+To: dave.hansen@intel.com
+Cc: jarkko@kernel.org,
+	seanjc@google.com,
+	kai.huang@intel.com,
+	mingo@kernel.org,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	asit.k.mallick@intel.com,
+	vincent.r.scarlata@intel.com,
+	chongc@google.com,
+	erdemaktas@google.com,
+	vannapurve@google.com,
+	bondarn@google.com,
+	scott.raynor@intel.com,
+	Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH v11 0/5] Enable automatic SVN updates for SGX enclaves
+Date: Wed,  6 Aug 2025 11:11:51 +0300
+Message-ID: <20250806081344.404004-1-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJHQ9XCLtibFjt93@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 05, 2025 at 12:37:57PM +0300, Mike Rapoport wrote:
-> On Mon, Aug 04, 2025 at 12:54:21PM +0200, Uladzislau Rezki wrote:
-> > Hello, Lorenzo!
-> > 
-> > > So sorry Ulad, I meant to get back to you on this sooner!
-> > > 
-> > > On Tue, Jul 29, 2025 at 08:39:01PM +0200, Uladzislau Rezki wrote:
-> > > > On Tue, Jul 29, 2025 at 06:25:39AM +0100, Lorenzo Stoakes wrote:
-> > > > > Andrew - FYI there's nothing to worry about here, the type remains
-> > > > > precisely the same, and I'll send a patch to fix this trivial issue so when
-> > > > > later this type changes vmalloc will be uaffected.
-> > > > >
-> > > > > On Tue, Jul 29, 2025 at 09:15:51AM +0900, Harry Yoo wrote:
-> > > > > > [Adding Uladzislau to Cc]
-> > > > >
-> > > > > Ulad - could we PLEASE get rid of 'vm_flags' in vmalloc? It's the precise
-> > > > > same name and (currently) type as vma->vm_flags and is already the source
-> > > > > of confusion.
-> > > > >
-> > > > You mean all "vm_flags" variable names? "vm_struct" has flags as a
-> > > > member. So you want:
-> > > >
-> > > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
-> > > > 29:                          pgprot_t pgprot, unsigned long vm_flags)
-> > > > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
-> > > > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
-> > > > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
-> > > > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
-> > > > 85:                          pgprot_t pgprot, unsigned long vm_flags)
-> > > > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
-> > > > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
-> > > > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
-> > > > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
-> > > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/vmalloc.c
-> > > > 3853: * @vm_flags:                additional vm area flags (e.g. %VM_NO_GUARD)
-> > > > 3875:                   pgprot_t prot, unsigned long vm_flags, int node,
-> > > > 3894:   if (vmap_allow_huge && (vm_flags & VM_ALLOW_HUGE_VMAP)) {
-> > > > 3912:                             VM_UNINITIALIZED | vm_flags, start, end, node,
-> > > > 3977:   if (!(vm_flags & VM_DEFER_KMEMLEAK))
-> > > > 4621:   vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);
-> > > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags mm/execmem.c
-> > > > 29:                          pgprot_t pgprot, unsigned long vm_flags)
-> > > > 39:             vm_flags |= VM_DEFER_KMEMLEAK;
-> > > > 41:     if (vm_flags & VM_ALLOW_HUGE_VMAP)
-> > > > 45:                              pgprot, vm_flags, NUMA_NO_NODE,
-> > > > 51:                                      pgprot, vm_flags, NUMA_NO_NODE,
-> > > > 85:                          pgprot_t pgprot, unsigned long vm_flags)
-> > > > 259:    unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
-> > > > 266:    p = execmem_vmalloc(range, alloc_size, PAGE_KERNEL, vm_flags);
-> > > > 376:    unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
-> > > > 385:            p = execmem_vmalloc(range, size, pgprot, vm_flags);
-> > > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$ grep -rn vm_flags ./include/linux/vmalloc.h
-> > > > 172:                    pgprot_t prot, unsigned long vm_flags, int node,
-> > > > urezki@pc638:~/data/backup/coding/linux-not-broken.git$
-> > > >
-> > > > to rename all those "vm_flags" to something, for example, like "flags"?
-> > > 
-> > > Yeah, sorry I know it's a churny pain, but I think it's such a silly source
-> > > of confusion _in general_, not only this series where I made a mistake (of
-> > > course entirely my fault but certainly more understandable given the
-> > > naming), but in the past I've certainly sat there thinking 'hmmm wait' :)
-> > > 
-> > > Really I think we should rename 'vm_struct' too, but if that causes _too
-> > > much_ churn fair enough.
-> 
-> Well, it's not that terrible :)
-> 
-> ~/git/linux$ git grep -w vm_struct | wc -l
-> 173
-> 
-Indeed :)
+Changes since v10 following reviews by Dave:
+
+ - merge patch 1 and 2
+ - patch 1: clarify the comment about the function prototype
+ - patch 3: clarify the description of SGX_NO_UPDATE
+  error code, move the definition of EUPDATESVN enum leaf
+  to patch 4
+ - patch 4: clarify commit, adjust sgx_update_svn() function
+  according to feedback
+
+Changes since v9 following reviews by Kai:
+
+ - postpone the definition of sgx_inc_usage_count
+   until patch 6
+ - clarify the commit message in patch 6
+ - minor fixes
+
+Note: I didn't merge patch 1 and 2 since it goes against
+previous suggestion made by Jarkko.
+
+Changes since v8 following reviews by Dave and Jarkko:
+
+ - fix the sgx_inc/dec_usage_count() to not do any
+ actual counting until the later patch when adequate
+ mutex is introduced as suggested by Dave
+ - add an additional patch (patch 1) to redefine
+ existing sgx_(vepc_)open into wrappers to allow
+ the follow up patch to introduce the sgx_inc/dec_usage_count()
+ functions into sgx_(vepc_)open cleanly as suggested
+ by Jarkko. 
+
+Changes since v7 following reviews by Dave:
+
+ - change sgx_usage_count to be a normal int type
+ and greatly simplify the sgx_inc_usage_count func.
+ This results in requiring a mutex for each sgx_(vepc_)open
+ but given that the mutex is held a short amount of
+ time it should be ok perf-wise.
+
+Changes since v6 following reviews by Kai,Jarkko
+and Dave:
+
+ - fix sgx_update_svn function description
+ - add maybe_unused for sgx_update_svn in patch 4
+ to silence the warning, remove it in patch 5
+ - add note to patch 1 explaining why the prototype
+ sgx_inc_usage_count returns int and not void
+ - fix the order of return code checks in 
+ sgx_update_svn
+ - cosmetic fixes
+ 
+Note: I didn't change the sgx_inc/dec_usage_count
+to statics because they are called from a number of
+different code locations and also rely on a static
+sgx_usage_count, which lives naturally in main.c.  
+ 
+Changes since v5 following reviews by Ingo, Kai,
+Jarkko and Dave:
+
+ - rebase on x86 tip
+ - patch 1 is fixed to do correct unwinding in
+ case of errors
+ - patch 2: add feature flag to cpuid-deps.c
+ - patch 3: remove unused SGX_EPC_NOT_READY error code
+ - patch 4: fix x86 feature check, return -EAGAIN
+ on SGX_INSUFFICIENT_ENTROPY and -EIO on other non-
+ expected errors. Comments/style are also fixed.
+ - patch 5: rewrite commit message, add comments inline
+
+Changes since v4 following reviews by Dave and Jarkko:
+
+ - breakdown the single patch into 4 patches as
+ suggested by Dave
+ - fix error unwinding in sgx_(vepc_)open as 
+ suggested by Jarkko
+ - numerous code improvements suggested by Dave
+ - numerous additional code comments and commit
+ message improvements as suggested by Dave
+ - switch to usage of atomic64_t for sgx_usage_count
+ to ensure overflows cannot happen as suggested by Dave
+ - do not return a error case when failing with
+ SGX_INSUFFICIENT_ENTROPY, fail silently as suggested
+ by Dave
+
+Changes since v3 following reviews by Kai and Sean:
+
+ - Change the overall approach to the one suggested
+  by Sean and do the EUPDATESVN execution during
+  sgx_open() and sgx_vepc_open().
+  Note, I do not try to do EUPDATESVN during the release()
+  flows since it doesnt save any noticable amount
+  of time during next open flow per underlying EUPDATESVN
+  microcode logic.
+ - In sgx_update_svn() remove the check that we are
+  running under VMM and expect the VMM to instead
+  expose correct CPUID
+ - Move the actual CPUID leaf check out of
+  sgx_update_svn() into sgx_init()
+ - Use existing RDRAND_RETRY_LOOPS define instead of 10
+ - Change the sgx_update_svn() to return 0 only in
+ success cases (or if unsupported)
+ - Various smaller cosmetic fixes
+
+The still to be discussed question is what sgx_update_svn()
+should return in case of various failures. The current version
+follows suggestion by Kai and would return an error (and block
+sgx_(vepc_)open() in all cases, including running out of entropy.
+I think this might be the correct approach for SGX_INSUFFICIENT_ENTROPY
+since in such cases userspace can retry the open() and also
+will get an info about what is actually blocking the EUPDATEVSN
+(and can act on this). However, this is a change in existing API
+and therefore debatable and I would like to hear people's feedback.
+
+Changes since v2 following review by Jarkko:
+
+ - formatting of comments is fixed
+ - change from pr_error to ENCLS_WARN to communicate errors from
+ EUPDATESVN
+ - In case an unknown error is detected (must not happen per spec),
+ make page allocation from EPC fail in order to prevent EPC usage
+
+Changes since v1 following review by Jarkko:
+
+ - first and second patch are squashed together and a better
+   explanation of the change is added into the commit message
+ - third and fourth patch are also combined for better understanding
+   of error code purposes used in 4th patch
+ - implementation of sgx_updatesvn adjusted following Jarkko's 
+   suggestions
+ - minor fixes in both commit messages and code from the review
+ - dropping co-developed-by tag since the code now differs enough
+   from the original submission. However, the reference where the
+   original code came from and credits to original author is kept
+
+Background
+----------
+
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
 
 
-> > > I think even though it's long-winded, 'vmalloc_flags' would be good, both
-> > > in fields and local params as it makes things very very clear.
-> > > 
-> > > Equally 'vm_struct' -> 'vmalloc_struct' would be a good change.
-> 
-> Do we really need the _struct suffix?
-> How about vmalloc_area?
-> 
-I think, we should not use vmalloc_ prefix here, because vmalloc
-operates within its own range: VMALLOC_START:VMALLOC_END, therefore
-it might be confusing also.
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
 
-others can use another regions. vmap_mapping?
 
->
-> It also seems that struct vmap_area can be made private to mm/.
-> 
-I agree. Also it can be even moved under vmalloc.c. There is only one
-user which needs it globally, it is usercopy.c. It uses find_vmap_area()
-which is wrong. See:
+Proposed solution
+-----------------
 
-<snip>
-	if (is_vmalloc_addr(ptr) && !pagefault_disabled()) {
-		struct vmap_area *area = find_vmap_area(addr);
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
+to Ice Lake. It allows updating security SVN version, given that EPC
+is completely empty. The latter is required for security reasons
+in order to reason that enclave security posture is as secure as the
+security SVN version of the TCB that created it.
 
-		if (!area)
-			usercopy_abort("vmalloc", "no area", to_user, 0, n);
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
 
-		if (n > area->va_end - addr) {
-			offset = addr - area->va_start;
-			usercopy_abort("vmalloc", NULL, to_user, offset, n);
-		}
-		return;
-	}
-<snip>
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
 
-we can add a function which just assign va_start, va_end as input
-parameters and use them in the usercopy.c. 
+Testing
+-------
 
-Thanks!
+Tested on EMR machine using kernel-6.16.0_rc7 & sgx selftests.
+Also tested on a Kaby Lake machine without EUPDATESVN support.
+If Google folks in CC can test on their side, it would be greatly appreciated.
 
---
-Uladzislau Rezki
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+
+Elena Reshetova (5):
+  x86/sgx: Introduce functions to count the sgx_(vepc_)open()
+  x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature flag
+  x86/sgx: Define error codes for use by ENCLS[EUPDATESVN]
+  x86/sgx: Implement ENCLS[EUPDATESVN]
+  x86/sgx: Enable automatic SVN updates for SGX enclaves
+
+ arch/x86/include/asm/cpufeatures.h       |  1 +
+ arch/x86/include/asm/sgx.h               | 37 ++++++----
+ arch/x86/kernel/cpu/cpuid-deps.c         |  1 +
+ arch/x86/kernel/cpu/scattered.c          |  1 +
+ arch/x86/kernel/cpu/sgx/driver.c         | 19 ++++-
+ arch/x86/kernel/cpu/sgx/encl.c           |  1 +
+ arch/x86/kernel/cpu/sgx/encls.h          |  5 ++
+ arch/x86/kernel/cpu/sgx/main.c           | 91 ++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h            |  3 +
+ arch/x86/kernel/cpu/sgx/virt.c           | 20 +++++-
+ tools/arch/x86/include/asm/cpufeatures.h |  1 +
+ 11 files changed, 163 insertions(+), 17 deletions(-)
+
+-- 
+2.45.2
+
