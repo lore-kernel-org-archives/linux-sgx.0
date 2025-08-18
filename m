@@ -1,258 +1,322 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145491A0B0E;
-	Mon, 18 Aug 2025 05:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755495724; cv=fail; b=iSUXdJdiZeYg4GHNkQsjy5kpTNObE9GkopfmeYnzMFirp26L5yP4qJzHsXDcHIB1mXVVLMY+yd6smKUcoVlwSnaKGJls/YWtzlazQQLMzES7ZhpIkrXV1zECv5bQ0wVr10zrxA5/rniR5b1tHFPUy24Z7uaHlEBkNGLvGUAoF4E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755495724; c=relaxed/simple;
-	bh=yHNN2XvBj2Af6Gab+48tz+5jL+lKGialCu2+b/KJWXY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bW8nsGDCOvds4ffpfFUd+exNJcRgt2cAkQMyAR95zcl5CiC9JQSfWqtdAwfIuHJc8AfvoLItqZlaoIkW64kbcM56zd0y/0OuDGONHlDazB1xAKxBC+28lkfE5XW7AkWkDF5Pp33NPkfBddjvrtP1U+Df5oqQY/7k4s0PwlTcZ/0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aevvoias; arc=fail smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B3A2749CB;
+	Mon, 18 Aug 2025 07:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755501206; cv=none; b=nNDgHBXIUq7hbM9uIyn7ApgtQ1TVMphdpq4lj5Gc2qJ6SNOhN32lPEFuyCscsZ6QiWj8Wi8anh+6gb++Ih0VqXGPgEWJeSqfR3W8//lS2bib18r+ono8YTLaZm2ZKEcdFjvyvIFUd/5P7xbvtL2d9lc0Zmzm+3vB6zA7bYqOER0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755501206; c=relaxed/simple;
+	bh=xzP5oWHUYMpygfH/5xeV4jKNoEgTqRpzdaC31IWZXZc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hIq8VZK5zfiIRthqoN3jLju1RGtRYGFePQcq8GWtVSWyad8HvXJrN4tLDtI/oFDe+0fAj+WWDtvBs3gEAIychoieAdpEQOMT/vy3UPenpJNCszfoNB83bpQ1BErY28DOO1QyE9EKQiNZPupVvNqZpYVzExmG+Q23WswGnWFrZww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lO93rG/T; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aevvoias"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lO93rG/T"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755495723; x=1787031723;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=yHNN2XvBj2Af6Gab+48tz+5jL+lKGialCu2+b/KJWXY=;
-  b=aevvoiasv10CtJRfxEKSV4ddQ30AYyPsnTcITaxd81f7qmj74YiHEtNZ
-   /5JjbcvjVzafrhzYBXzArqofhU8BGiWK29enKfidUW+zcLrKIVuSG8lPM
-   ADDI47/wl3g/JuGStPh3blNF5fVxZQo+FiEJQp2jPsO+289egWuZKRNC8
-   idVqkiIhL6KQoC/fa8uzBr785cl1r20YvmHxz6jGJTM/EJF6mVx7BuHEK
-   Z7GzMJ7xPjBEDeM0DojrMH2U1pTumKxGtjB72epkaSTpRCveN1xxW7AMp
-   PzM3NBbkmvPCaUKrfUsjvBeurvukUeUNiP/Vi7vngiMt1wdK3sGoKlr/J
-   A==;
-X-CSE-ConnectionGUID: oEo0Ct9JSc6t+Hbq3aKYWA==
-X-CSE-MsgGUID: NNLf9EndQzuw2D6ThVW3/w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="56919919"
+  t=1755501205; x=1787037205;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xzP5oWHUYMpygfH/5xeV4jKNoEgTqRpzdaC31IWZXZc=;
+  b=lO93rG/ThMYFn/b9Gp/px4nYlb9Z/LW3eNMiuluP1xZj3l/0pBqQVm47
+   6Vb+W3M9m5C6LMQ7txe+JVInlq6253vj0daELIUpnE+6N9F4LPiLHhM/S
+   I7+JDBV7xaR3suzksqDBkQMnrK8IiXMWlTMCgRS9VtTboCxey0lYVu9+9
+   rdHd55ccDovWZJ37+HNOhHgAbyQViNSADNoA21NhWPR0iybo4fjp2o0/U
+   pOqEJn6P1LowKCiZIWUKkuSs7kElhYHFr1z1oKZOFiRR9sLcm2xlClRNI
+   CICdXil1+rE9EfPRJ/h/JVcVSdYmoZohjs/1VcFIGMImgYMX3JPLzqAHc
+   Q==;
+X-CSE-ConnectionGUID: E7pAtzgSSZOJcId37ErS0Q==
+X-CSE-MsgGUID: e0aqpHuLToSDsIYRPYaDNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="68809290"
 X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="56919919"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 22:42:02 -0700
-X-CSE-ConnectionGUID: Qj7IQejGT5+VF2p547ONrg==
-X-CSE-MsgGUID: jYZp3liJQmq1AjkkTZRUmw==
+   d="scan'208";a="68809290"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:13:24 -0700
+X-CSE-ConnectionGUID: y2EZ8wF4R6WNgD9IsP4nMA==
+X-CSE-MsgGUID: NjwKIWwoTA6Hwa56o/BQeQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="191185369"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 22:42:02 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 17 Aug 2025 22:42:02 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Sun, 17 Aug 2025 22:42:02 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.62)
- by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 17 Aug 2025 22:42:01 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QJV/Grp1QsBkDziO4SaxvBuSZ2KFJoqy3RxUmvJrkIMApjvle7SEv3SYHUBp6GYOG+aK9C9aGW73fWjC31/exOb7MKZ6N3EI69x6SpZXXVXRSBF/0o5fFNh7ybttPVqlNPiosUELBdc0MSEPIWn87sloY0pUAK29zbSMUEh5myTC/qrUZN0HzvouuOQy/Q23U9o6q+hUO4P9ROhPOSN40xYUoZ4VKCT9tyeNsInQCu9cp2UQ1xqP+yrDqTBqcfy/4+zVaLiqQmLVinooZQKtTxy7hhlZkR9Jl2pQrEM9YHFtwKkqSYItkVm/N5i3SIlxtEDtTzcd+rw1czjkBaq+FQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yHNN2XvBj2Af6Gab+48tz+5jL+lKGialCu2+b/KJWXY=;
- b=iTXHdPsYKZnvbLHY8fDjAMq0yerTmoFXdndJf/qXBMDfmqrlv/6G0djnnmo6V8uPj9Ie9UvlxeUJSirnkNobFkQQ/MhGz3dT9yLJhA92tKlNIkljReD14Aa3+YmUzc4hOMaTOfvaK+/lQyDJRLshfdsHUAi2i16GNhPDf+Qb0PiiJZn4bKMQ0M8HhvMfxvovi28Ry6GBh8sDc8L9C84RXevfQV1iqUz9iN4GS27a0WmbEgpRGU+jsArXy46EFeZH7370Uqkx70lsVqJM9gNrc6bn09qY+gsDacIhBKbzSxasWbtOLXZRs+hkapW1P39cIUwNGj8UsCrrVtkysNWpfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM8PR11MB5750.namprd11.prod.outlook.com (2603:10b6:8:11::17) by
- BN9PR11MB5260.namprd11.prod.outlook.com (2603:10b6:408:135::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.24; Mon, 18 Aug 2025 05:41:59 +0000
-Received: from DM8PR11MB5750.namprd11.prod.outlook.com
- ([fe80::4df9:c236:8b64:403a]) by DM8PR11MB5750.namprd11.prod.outlook.com
- ([fe80::4df9:c236:8b64:403a%3]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
- 05:41:59 +0000
-From: "Reshetova, Elena" <elena.reshetova@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>
-CC: "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"mingo@kernel.org" <mingo@kernel.org>, "Scarlata, Vincent R"
-	<vincent.r.scarlata@intel.com>, "x86@kernel.org" <x86@kernel.org>,
-	"jarkko@kernel.org" <jarkko@kernel.org>, "Annapurve, Vishal"
-	<vannapurve@google.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Mallick, Asit K" <asit.k.mallick@intel.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>, "Cai, Chong" <chongc@google.com>,
-	"Bondarevska, Nataliia" <bondarn@google.com>, "seanjc@google.com"
-	<seanjc@google.com>, "Raynor, Scott" <scott.raynor@intel.com>
-Subject: RE: [PATCH v14 5/5] x86/sgx: Enable automatic SVN updates for SGX
- enclaves
-Thread-Topic: [PATCH v14 5/5] x86/sgx: Enable automatic SVN updates for SGX
- enclaves
-Thread-Index: AQHcDO5T+cs1fW4tzkm5n6kKNVsmGrRiXVoAgABQ6YCAAJi68IAEmhIAgAAHmdA=
-Date: Mon, 18 Aug 2025 05:41:58 +0000
-Message-ID: <DM8PR11MB575076B29223DA1C70EA35E2E731A@DM8PR11MB5750.namprd11.prod.outlook.com>
-References: <20250814073640.1507050-1-elena.reshetova@intel.com>
-		 <20250814073640.1507050-6-elena.reshetova@intel.com>
-		 <4baa3bd4-cbc3-49b3-b8e6-09a2079c8363@intel.com>
-	 <31d0ac3b0b25efde64d502755e7c5f4717fb7f38.camel@intel.com>
-	 <DM8PR11MB5750EADDEFCA1160E6E75B0AE734A@DM8PR11MB5750.namprd11.prod.outlook.com>
- <c9a730751f34087bdde3ea63a8c0d3a70b8d84b5.camel@intel.com>
-In-Reply-To: <c9a730751f34087bdde3ea63a8c0d3a70b8d84b5.camel@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM8PR11MB5750:EE_|BN9PR11MB5260:EE_
-x-ms-office365-filtering-correlation-id: 3b5dff6f-daa1-4350-2ef8-08ddde19f30c
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018|7053199007;
-x-microsoft-antispam-message-info: =?utf-8?B?eHFkeGQrRnpxQmdKdDJSOUxSYzJDYy9aeTZ1d3BSZVFpZzM2QUpGY3dYOTBM?=
- =?utf-8?B?NThxYkZOZ2NLalBVNFhwdnh6Tml6dVNkUU9FeGpCNm43MTNjalQvcHZUZHVW?=
- =?utf-8?B?SW1WeUVuanAwUHl3YlE5cU4xaXQ5ZnVINFI1SUdTdjdVMHhtdkJUeTMvaW1l?=
- =?utf-8?B?YUtOa09pV0hMZ21meGNkVXVsSzN1WkZQeWpvQkh0dW9Ga0ZZZU5iK1ZRNHdJ?=
- =?utf-8?B?NjZ1eUc4SGE1ZndDNEZEeXZiU1hlVEIxK2RsOW1WK1J5aEhnZTRLVVVja3Ny?=
- =?utf-8?B?dGlINEUrZ1d4TWdLMk9SekdJcUJwRjB1dG9YeDhpcnJLU3I3cllESU43Nm9W?=
- =?utf-8?B?TXd2V3hLVVFuazFJY2tmWnZtK2NSZWx4eWhwdjFkNjRUVWhnYk9MVElCcXJX?=
- =?utf-8?B?czhyTVBtYnZnb3l4MnNZNWV1dUthLzMzR1QwYXkrZUJleU1pYlBIRkMxWVNh?=
- =?utf-8?B?bHhkZHNUM0greTRibC95RWtVdERUVzM2alFkVDFhM2VNOEl3N3ZpUmtpY2Fz?=
- =?utf-8?B?cHZFWm1oRnd6UU5rSnBxU29ybzd1aU93S2lNaWZaamk1NEo2K2NSdE5jWjFs?=
- =?utf-8?B?MU5xYjJDMUlZTWNnWmUzaG1XUXNNdUQwZ1YzeXdxS2ZWOXhYRDBwUXRRK3JN?=
- =?utf-8?B?eHJpMkIrc1VObkZQZTNHSzFiVUttcmhuRmlINHRDNVV0RGtnTVNvcWIrQzJj?=
- =?utf-8?B?T2wweHlhM0l0OXVxUlk0Y25wNVpMWDNVQzhxenMrSDl6aFVKZWg1aEh6U1B2?=
- =?utf-8?B?QzdoNDhHRzF3bmFHTjZwbFRsdnUrdFg3R0tmN05mRnA4bDg2UCt1SFA2ZHQw?=
- =?utf-8?B?aXloSk8xSnpUSkMyQmJlRUNJajVtdjZpWnRFdHowV2V6d0dmYW5kcitlTkYv?=
- =?utf-8?B?SUVsQzRXVExMSFZmbW1wU3NCRkJ0RlAxQ1VyL0dUZDZhY1pXaWN2STkyMnNx?=
- =?utf-8?B?ZlByVXBRTTMxaEVwbDF2WEpJRmEvTElSV1dwcDczM0o2TlByaVpqSDc0bkg5?=
- =?utf-8?B?V2c2WGQzS1JicnlNdDZScXE3c0FNRkdFNjJneW1VSlE0YVQvVWhjcGtLQ012?=
- =?utf-8?B?bzF4MytnWHZXR0VJVkxsZzdwaWFuZkRnVDlJcGhkck5KZmJ1QnR2NkkyNU5y?=
- =?utf-8?B?eXJibHZwNk9wVDI3VFRDSzBZQ3Q0bjl6LytrbTZWTkloYzhYQTRpRzFYL3kr?=
- =?utf-8?B?SjIrZGtnbWc4ZDByNDF6WjNxVmtieFV2eGg2eno2L09kQ3ZRdG9Takp5MlBo?=
- =?utf-8?B?ejg4c1dCaXZzZ0xhQjZ4NjRjZ1pTOHIyMzNERWIyb1U1MmdTb0paWmExSzdn?=
- =?utf-8?B?Z0NVZGY5UG9MWmtRNHNUeFQzUW1sWHdzZXVoRHJ1OTMvTGg2em1rQ3dtUVBp?=
- =?utf-8?B?c3NRTW9RTGtFR1pkcnY1Sjl6N0w5OW9SZlUrQVY5c1RhdU5odHBKUkZWd3Vn?=
- =?utf-8?B?cUlZLzBFckJmbTlCRnRTc0pObkRiZzVpSjl1U21kZFBPd2NOS0p1MXlnaEFn?=
- =?utf-8?B?RmFCUzdEdEZwWnF0TnJCeXpBS1g1ektVQmM0eE9KOGdqc1FGYXRPUjMxZG4y?=
- =?utf-8?B?R0FWTTBrSDRVemlOYU9UODgxVGZnZTFVeU92ZmQyK1RIUHQ4OFE2NGFWVmE2?=
- =?utf-8?B?WEFmdTliSjBVYjk2VDFlSlBvRjVmV1d4REZ6SVd4S2IvODlFSFVYSFlrMXpj?=
- =?utf-8?B?MjhjQXVRNjNkMW1HVGhEQ0RCZ2cvSjRaaDBkMHdCUkQwZGJ2WTNBZ0dzUEN6?=
- =?utf-8?B?VkF4STNmeitMeEc2UUQzV2wrWUkySGVZNHNKRnlJYlVPdjJPSXNHVnlaM1Zm?=
- =?utf-8?B?RXpGMEhmOFpyYUlDcDFwUmdzd2FPWkxDeGRSNTZ5NVBDZEppQzVDTWxIanFu?=
- =?utf-8?B?U1dJTVN3OGpqekM5aTFVZ0ZLL2ZqOWZOdXNQUzBJNDRkVXU0cEhPQW1ZTnZU?=
- =?utf-8?B?T3cxWS9KK3FTV1VobEN0emdhSk8xZkNrSXFSVUQ1dUc5YUxIVEVuRzFJWjlh?=
- =?utf-8?Q?iWy2+oaX0VNiKJkU21UekZWcj8s5sc=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR11MB5750.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZW1TUEYzR25jNFdoNjh4MTBmLzE0bXlZTVo4MDQ4ZkxSaURnVncrMUVGaGZU?=
- =?utf-8?B?dHgwMkRRL0RYaGk4emhoZWllVHNJK1dDZG9BeXM2OURqQXdKcWhnUzVHZ0kx?=
- =?utf-8?B?dUVWVkE1SFVXZ2FCSFFYbU5LVitBSHNERVdXS2J3ZVhURDRhL0R3S1lRV1Qw?=
- =?utf-8?B?UER3VmE2QXJqaTFNcmZ3QUkya1dMS3NxWGJnSDhyd2NLeEZjdFlIQ3ZLWU54?=
- =?utf-8?B?OWJVd0VNQVpHT0tWR0V2NzR3S1RTK1JGdStpdUJUaGJ5RXlYNzh2NTA1Y0R4?=
- =?utf-8?B?Smh4dHVvWVJsRHg4Q1hENjNPbml4bWNpL0NOUzVVRDZqOElDeS9qekM2WlBX?=
- =?utf-8?B?ZUsxTDJtQ2hWTkRMV0pMSUdlbjVka1BPZUhCK1p3cUM5NTNRdkhwVjBRSWNB?=
- =?utf-8?B?eTY0UzlFcVkwNFFUUDN6TFgyV1UzT2pwQzJhRG55ME4rbkNJVjliTUd4ZG5H?=
- =?utf-8?B?b2tpb2JxNkVZbzVpdFppTzdBNUxMSGNRdE5obHZFNGEzYUtpQWhBWHhrNjQ0?=
- =?utf-8?B?S245VE9DM09pS0V1b0FBUnUzVlBTL0tDSzlhU1B4VlgvT1lCN0VNQXBDd29w?=
- =?utf-8?B?cHBJSzg5Q2Q0V1BJSUtxVVprYjVNL1VhRm81SHArdmNGSHJaRzRUcjB0bm55?=
- =?utf-8?B?a2JtU09zQldqN1RhWFdDNkVhbjNCV1QxL1FlUWR5Qmt4TkU1WWN6OHF6UlFr?=
- =?utf-8?B?d0FFeVVwdjAySXhWZkxtVlZrdnRreHVXZ3BNaU55Yy80V25VVHhJWUdROG10?=
- =?utf-8?B?N1I2NTBGOG85ZUpXWUozMjh4TTVDMFZXQlF6WGhFbmJ0TjNNUDBFTTQ2Z3Nk?=
- =?utf-8?B?SGt3YXRLdVBsaDNWeFh6M1ZnRXpGeWNzdWFhR0hTeHZWVmV3eUwvTGQ0bkVS?=
- =?utf-8?B?K24rUk5wdFRpSzIvOS9Nbk1KbXdLa0NzdVk4aVBoRThZS2hYTlZaWHZLQzVv?=
- =?utf-8?B?LzlZUHMveTlBTnF2ekZLNVlHTXg4YkRRZyttdEZ4akVRa2ZSOUhiWitOQVVZ?=
- =?utf-8?B?UDZvUzZmQXV3YUZIcHYrUzBYd3lFTUNCSFNvaWtQdVJNWHAwajhtZ2xIcmdV?=
- =?utf-8?B?OUxZTlZiTm96MHFLTVZzTHF2VjB0eEhZYjE1OG44UUU4YmdJeHBQN1Nwa2RL?=
- =?utf-8?B?TkU2K2tIUVZKZUI1cllIcW1ON0FLWWluUmtwTE55dGVudEMxb2JGVjdiMldW?=
- =?utf-8?B?Q1ZwQXJkMXp6dE43Rk5pQ1pXOFRCcXZjZzVBdkpjRTlsVy9JdEpFOVQva0xo?=
- =?utf-8?B?ZmM1SFBGSlRIaklMZmcycE5jMVFtU3dqcEJzRmUyd1Yva2p3aVBkbjVNZ2pL?=
- =?utf-8?B?di95WmZaYlMvN3RIWFpHY01aSFdiNmxTLzVZY3ZjVlUyYm5RQ01KLzg5a2Fw?=
- =?utf-8?B?aGJWRkZiaWQxSEcvRm02MGVPQ1M4S1JIb3JoZFBjMDZ3UXFDWFBVcFlnTUcz?=
- =?utf-8?B?bmtvM09NVlhWNWtxYmxwNGZKK0xrSDZwWmxrY3RqdkhUd3J4TmZ3WVQvNWlP?=
- =?utf-8?B?QWNMcEFqTnNuUk52a3RYaFUrTGNMUThWd1NacnU3dGdDekNac3FlY0hnYXFV?=
- =?utf-8?B?WWxoZmJxenduMEg1alVabEppcDZnbEJQMFNYYW5LN3E5VWdQSFI4dDkwWlph?=
- =?utf-8?B?dS93cHBWTEUxdDZXUXc5WGR0MUFDb3kyeFVqWjdNeTF2RVpEOS9FdHdOVGxp?=
- =?utf-8?B?Rm43SHlYRDN1NTZ6LzFuWUJmQ2lWUHh3MzhzcWI1UXBQNjkvQ1ZhVDJpV0JF?=
- =?utf-8?B?dVRaT0FqVzd2dTduaXZXK09lcVN2NkF6RVFjZU02ZzBVODJ1QVhiUHhaR1Rr?=
- =?utf-8?B?TTV3U2NBSmYvVFdnWVZvWWpQZUQ4YXlObkJJK2JvOEIwdlNSTHVYZVlkcjJJ?=
- =?utf-8?B?OU9zQXZoa0ZWWXRxY0xpNjJBZ21sNk5QSEpvMG5JK0IwTzFoNXhWYlpWZjBL?=
- =?utf-8?B?Qnhhd3ZUU1hHNDRZbkVuWmkxUHp3SDMvekFzSFNXMlZZeDQxOEVka1lqM2Fk?=
- =?utf-8?B?MXhwNkJob01IbU1hcGQ1MTJ1UWw0MlB3blh6MmNkc1Bpc0hja053MGNCMjhZ?=
- =?utf-8?B?SkZzQVZ3bkN0WE5CcFl2MnJYYUpwajliNWt4QTFiRExvMnVLWHVocmJ0VHl4?=
- =?utf-8?B?bEJidmRLUEEzcWZubnRvaHRnajhHQUpFUHpLbE5qb3NzVFZIUnMwNjdtV0RD?=
- =?utf-8?B?cnc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+   d="scan'208";a="167421398"
+Received: from opintica-mobl1 (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.245.174])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:13:18 -0700
+From: Elena Reshetova <elena.reshetova@intel.com>
+To: dave.hansen@intel.com
+Cc: jarkko@kernel.org,
+	seanjc@google.com,
+	kai.huang@intel.com,
+	mingo@kernel.org,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	asit.k.mallick@intel.com,
+	vincent.r.scarlata@intel.com,
+	chongc@google.com,
+	erdemaktas@google.com,
+	vannapurve@google.com,
+	bondarn@google.com,
+	scott.raynor@intel.com,
+	Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH v15 0/5] Enable automatic SVN updates for SGX enclaves
+Date: Mon, 18 Aug 2025 10:11:18 +0300
+Message-ID: <20250818071304.1717183-1-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5750.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b5dff6f-daa1-4350-2ef8-08ddde19f30c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Aug 2025 05:41:58.9275
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ytwnv8SbHw3RpXFfyjwW6aiTIE2Dl4UcqeSOIA2kIQDTUYHRcHGVdqM+9S5IKZ6NvyS8OBAaOaN24IMnv0tuIlVMo3f150vk0D4eJkU8P5o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5260
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSHVhbmcsIEthaSA8a2Fp
-Lmh1YW5nQGludGVsLmNvbT4NCj4gU2VudDogTW9uZGF5LCBBdWd1c3QgMTgsIDIwMjUgODowNCBB
-TQ0KPiBUbzogUmVzaGV0b3ZhLCBFbGVuYSA8ZWxlbmEucmVzaGV0b3ZhQGludGVsLmNvbT47IEhh
-bnNlbiwgRGF2ZQ0KPiA8ZGF2ZS5oYW5zZW5AaW50ZWwuY29tPg0KPiBDYzogbGludXgtc2d4QHZn
-ZXIua2VybmVsLm9yZzsgbWluZ29Aa2VybmVsLm9yZzsgU2NhcmxhdGEsIFZpbmNlbnQgUg0KPiA8
-dmluY2VudC5yLnNjYXJsYXRhQGludGVsLmNvbT47IHg4NkBrZXJuZWwub3JnOyBqYXJra29Aa2Vy
-bmVsLm9yZzsNCj4gQW5uYXB1cnZlLCBWaXNoYWwgPHZhbm5hcHVydmVAZ29vZ2xlLmNvbT47IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IE1hbGxpY2ssIEFzaXQgSyA8YXNpdC5rLm1h
-bGxpY2tAaW50ZWwuY29tPjsgQWt0YXMsIEVyZGVtDQo+IDxlcmRlbWFrdGFzQGdvb2dsZS5jb20+
-OyBDYWksIENob25nIDxjaG9uZ2NAZ29vZ2xlLmNvbT47IEJvbmRhcmV2c2thLA0KPiBOYXRhbGlp
-YSA8Ym9uZGFybkBnb29nbGUuY29tPjsgc2VhbmpjQGdvb2dsZS5jb207IFJheW5vciwgU2NvdHQN
-Cj4gPHNjb3R0LnJheW5vckBpbnRlbC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjE0IDUv
-NV0geDg2L3NneDogRW5hYmxlIGF1dG9tYXRpYyBTVk4gdXBkYXRlcyBmb3IgU0dYDQo+IGVuY2xh
-dmVzDQo+IA0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gIHZvaWQgc2d4X2RlY191c2FnZV9jb3VudCh2
-b2lkKQ0KPiA+ID4gPiA+ICB7DQo+ID4gPiA+ID4gLQlyZXR1cm47DQo+ID4gPiA+ID4gKwlzZ3hf
-dXNhZ2VfY291bnQtLTsNCj4gPiA+ID4gPiAgfQ0KPiA+ID4gPg0KPiA+ID4gPiBIb3cgaXMgYSBw
-bGFpbiBpbnQtLSBzYWZlPw0KPiA+ID4gPg0KPiA+ID4gPiBXaGVyZSdzIHRoZSBsb2NraW5nPw0K
-PiA+ID4NCj4gPiA+IFNvcnJ5IEkgbWlzc2VkIHRoaXMgZHVyaW5nIHJldmlldyB0b28uDQo+ID4N
-Cj4gPiBNeSBsaW5lIG9mIHRoaW5raW5nIHdlbnQgdGhhdCB3ZSBkb24ndCBhY3R1YWxseQ0KPiA+
-IGNhcmUgb3IgYWN0IG9uIGRlY3JlbWVudCAoaXQgaXMgbm90IGEgdHJ1ZSByZWYgY291bnRlcikN
-Cj4gPiBhbmQgdGhlcmVmb3JlLCByYWNlcyBoZXJlIGFyZSBvay4gV2hhdCBJIGZvcmdvdCBpcyB0
-aGF0DQo+ID4gd2UgbG9vc2UgYmFzaWMgYXRvbWljaXR5IGFsc28gd2l0aCBwbGFpbiBpbnQgKCgN
-Cj4gPg0KPiA+IEkgd291bGQgcGVyc29uYWxseSBsaWtlIHRvIGdvIGJhY2sgdG8gYXRvbWljICh0
-aGlzIGlzDQo+ID4gd2hhdCBpdCBpcyBleGFjdGx5IGZvciksIGJ1dCBJIGNhbiBhbHNvIGp1c3Qg
-YWRkIGFub3RoZXINCj4gPiBtdXRleCBoZXJlLiBQcmVmZXJlbmNlcz8NCj4gDQo+IFlvdSBkb24n
-dCBuZWVkIGFub3RoZXIgbXV0ZXggQUZBSUNULCBqdXN0IHVzZSB0aGUgb25lIHlvdSBhbHJlYWR5
-IGhhdmUuDQo+IA0KPiBUaGUgcHJvYmxlbSBvZiB0aGUgcmF3ICdjb3VudC0tJyBpcyBpdCBpcyBu
-b3QgbXVsdGlwbGUgdGhyZWFkcyBzYWZlLCBlLmcuLA0KPiBJSVVDLCB5b3UgY291bGQgZWZmZWN0
-aXZlbHkgbG9zZSBvbmUgb3IgbW9yZSBzdWJ0cmFjdGlvbnMgaGVyZSwgbGVhZGluZyB0bw0KPiBj
-b3VudGVyIG5ldmVyIHJlYWNoaW5nIHRvIDAuDQoNClllcywgdGhpcyBpcyB3aGF0IEkgY2FsbCBh
-dG9taWNpdHkuIA0KDQo+IA0KPiBGcm9tIHRoZSBwZXJzcGVjdGl2ZSBvZiBmdW5jdGlvbmFsaXR5
-LCB0byBtZSB0aGVyZSdzIG5vIGRpZmZlcmVuY2UgYmV0d2Vlbg0KPiBtdXRleCB2cyBhdG9taWNf
-dCwgc28gZWl0aGVyIHdvdWxkIGJlIGZpbmUuICBCdXQgYXMgc2hvd24gaW4geW91ciB2NyBbKl0s
-DQo+IGl0IGFwcGVhcnMgYXRvbWljX3QgdmVyc2lvbiBpcyBzdGlsbCBzbGlnaHRseSBtb3JlIGNv
-bXBsaWNhdGVkIHRoYW4gdGhlDQo+IG11dGV4Lg0KDQpZZXMsIGJ1dCBpdCB3YXMgYmVjYXVzZSBv
-cmlnaW5hbGx5IHdlIHRyaWVkIHRvIGF2b2lkIG11dGV4L2xvY2sgaW4NCmZhc3QgKG5vbi16ZXJv
-IGluY3JlbWVudCBwYXJ0KS4gSWYgd2UgZHJvcCB0aGlzIHJlcXVpcmVtZW50IGFuZCBjb25kaXRp
-b24NCmV2ZXJ5dGhpbmcgd2l0aCB0aGUgbXV0ZXggKGFzIG5vdyksIHRoZW4gd2UgY2FuIGdvIGJh
-Y2sgdG8gc2ltcGxlciBoYW5kbGluZw0KdmlhIGF0b21pYyBpbiBpbmMoKSBhbmQgaW4gZGVjKCkg
-aXQgd291bGQgYmUgc2ltcGxlIGF0b21pY19kZWMoKS4gU210aCBsaWtlIHRoaXM6DQoNCmludCBz
-Z3hfaW5jX3VzYWdlX2NvdW50KHZvaWQpDQp7DQoJaW50IHJldDsNCg0KCWd1YXJkKG11dGV4KSgm
-c2d4X3N2bl9sb2NrKTsNCg0KCWlmIChhdG9taWM2NF9yZWFkKCZzZ3hfdXNhZ2VfY291bnQpPT0w
-KSB7DQoJCXJldCA9IHNneF91cGRhdGVfc3ZuKCk7DQoJCWlmIChyZXQpDQoJCQlyZXR1cm4gcmV0
-Ow0KCX0NCg0KCWF0b21pYzY0X2luYygmc2d4X3VzYWdlX2NvdW50KTsNCg0KIAlyZXR1cm4gMDsN
-Cn0NCg0Kdm9pZCBzZ3hfZGVjX3VzYWdlX2NvdW50KHZvaWQpDQp7DQoJYXRvbWljNjRfZGVjKCZz
-Z3hfdXNhZ2VfY291bnQpOw0KfQ0KDQo+IFNvIHNpbmNlIHdlIGFyZSBhbHJlYWR5IGhlcmUsIEkg
-d291bGQgc2F5IGp1c3QgdXNlIHRoZSBtdXRleDoNCj4gDQo+IHZvaWQgc2d4X2RlY191c2FnZV9j
-b3VudCh2b2lkKQ0KPiB7DQo+IAlndWFyZChtdXRleCkoJnNneF9zdm5fbG9jayk7DQo+IAlzZ3hf
-dXNhZ2VfY291bnQtLTsNCj4gfQ0KPiANCj4gQW0gSSBtaXNzaW5nIGFueXRoaW5nPw0KDQpUaGUg
-bXV0ZXgganVzdCBzZWVtcyBzdWNoIGFuIG92ZXJraWxsIGZvciBwbGFpbiBhdG9taWNpdHkgcmVx
-dWlyZW1lbnQgaGVyZQ0KaW4gZGVjKCkuIEJ1dCBzdXJlLCBJIGNhbiBzZW5kIHRoZSBuZXh0IHZl
-cnNpb24gd2l0aCBtdXRleC4gDQoNCkJlc3QgUmVnYXJkcywNCkVsZW5hLiAgDQo=
+Changes since v14 following reviews by Dave ad Kai:
+
+ - added mutex to sgx_dec_usage_count()
+ - fixed a formatting issue pointed by Kai
+ - added review-by from Kai on patches 4-5
+
+Changes since v13 following reviews by Kai:
+
+ - changed implementation of sgx_inc_usage_count() to 
+ only increment the sgx_usage_count at the end of
+ function and adjusted the counter check inside sgx_update_svn().
+ No functional changes here. 
+ - fixed two more formatting/comments issues pointed by Kai
+
+Changes since v12 following reviews by Kai:
+
+ - added review-by from Kai on patches 1 & 3
+ - fixed sgx_inc_usage_count() to decrement the sgx_usage_count
+ in a rare case when sgx_update_svn() fails. The latter
+ is really an exceptional scenario (hw failure or
+ explicit attack/heavy load on RNG) and that's why the
+ fast path (increment by default) is left as it is. 
+
+Changes since v11 following reviews by Kai and Jarkko:
+
+ - added review-by from Jarkko on the whole series
+ - fixed all format and commit issues pointed out by Kai
+
+Changes since v10 following reviews by Dave:
+
+ - merge patch 1 and 2
+ - patch 1: clarify the comment about the function prototype
+ - patch 3: clarify the description of SGX_NO_UPDATE
+  error code, move the definition of EUPDATESVN enum leaf
+  to patch 4
+ - patch 4: clarify commit, adjust sgx_update_svn() function
+  according to feedback
+
+Changes since v9 following reviews by Kai:
+
+ - postpone the definition of sgx_inc_usage_count
+   until patch 6
+ - clarify the commit message in patch 6
+ - minor fixes
+
+Note: I didn't merge patch 1 and 2 since it goes against
+previous suggestion made by Jarkko.
+
+Changes since v8 following reviews by Dave and Jarkko:
+
+ - fix the sgx_inc/dec_usage_count() to not do any
+ actual counting until the later patch when adequate
+ mutex is introduced as suggested by Dave
+ - add an additional patch (patch 1) to redefine
+ existing sgx_(vepc_)open into wrappers to allow
+ the follow up patch to introduce the sgx_inc/dec_usage_count()
+ functions into sgx_(vepc_)open cleanly as suggested
+ by Jarkko. 
+
+Changes since v7 following reviews by Dave:
+
+ - change sgx_usage_count to be a normal int type
+ and greatly simplify the sgx_inc_usage_count func.
+ This results in requiring a mutex for each sgx_(vepc_)open
+ but given that the mutex is held a short amount of
+ time it should be ok perf-wise.
+
+Changes since v6 following reviews by Kai,Jarkko
+and Dave:
+
+ - fix sgx_update_svn function description
+ - add maybe_unused for sgx_update_svn in patch 4
+ to silence the warning, remove it in patch 5
+ - add note to patch 1 explaining why the prototype
+ sgx_inc_usage_count returns int and not void
+ - fix the order of return code checks in 
+ sgx_update_svn
+ - cosmetic fixes
+ 
+Note: I didn't change the sgx_inc/dec_usage_count
+to statics because they are called from a number of
+different code locations and also rely on a static
+sgx_usage_count, which lives naturally in main.c.  
+ 
+Changes since v5 following reviews by Ingo, Kai,
+Jarkko and Dave:
+
+ - rebase on x86 tip
+ - patch 1 is fixed to do correct unwinding in
+ case of errors
+ - patch 2: add feature flag to cpuid-deps.c
+ - patch 3: remove unused SGX_EPC_NOT_READY error code
+ - patch 4: fix x86 feature check, return -EAGAIN
+ on SGX_INSUFFICIENT_ENTROPY and -EIO on other non-
+ expected errors. Comments/style are also fixed.
+ - patch 5: rewrite commit message, add comments inline
+
+Changes since v4 following reviews by Dave and Jarkko:
+
+ - breakdown the single patch into 4 patches as
+ suggested by Dave
+ - fix error unwinding in sgx_(vepc_)open as 
+ suggested by Jarkko
+ - numerous code improvements suggested by Dave
+ - numerous additional code comments and commit
+ message improvements as suggested by Dave
+ - switch to usage of atomic64_t for sgx_usage_count
+ to ensure overflows cannot happen as suggested by Dave
+ - do not return a error case when failing with
+ SGX_INSUFFICIENT_ENTROPY, fail silently as suggested
+ by Dave
+
+Changes since v3 following reviews by Kai and Sean:
+
+ - Change the overall approach to the one suggested
+  by Sean and do the EUPDATESVN execution during
+  sgx_open() and sgx_vepc_open().
+  Note, I do not try to do EUPDATESVN during the release()
+  flows since it doesnt save any noticable amount
+  of time during next open flow per underlying EUPDATESVN
+  microcode logic.
+ - In sgx_update_svn() remove the check that we are
+  running under VMM and expect the VMM to instead
+  expose correct CPUID
+ - Move the actual CPUID leaf check out of
+  sgx_update_svn() into sgx_init()
+ - Use existing RDRAND_RETRY_LOOPS define instead of 10
+ - Change the sgx_update_svn() to return 0 only in
+ success cases (or if unsupported)
+ - Various smaller cosmetic fixes
+
+The still to be discussed question is what sgx_update_svn()
+should return in case of various failures. The current version
+follows suggestion by Kai and would return an error (and block
+sgx_(vepc_)open() in all cases, including running out of entropy.
+I think this might be the correct approach for SGX_INSUFFICIENT_ENTROPY
+since in such cases userspace can retry the open() and also
+will get an info about what is actually blocking the EUPDATEVSN
+(and can act on this). However, this is a change in existing API
+and therefore debatable and I would like to hear people's feedback.
+
+Changes since v2 following review by Jarkko:
+
+ - formatting of comments is fixed
+ - change from pr_error to ENCLS_WARN to communicate errors from
+ EUPDATESVN
+ - In case an unknown error is detected (must not happen per spec),
+ make page allocation from EPC fail in order to prevent EPC usage
+
+Changes since v1 following review by Jarkko:
+
+ - first and second patch are squashed together and a better
+   explanation of the change is added into the commit message
+ - third and fourth patch are also combined for better understanding
+   of error code purposes used in 4th patch
+ - implementation of sgx_updatesvn adjusted following Jarkko's 
+   suggestions
+ - minor fixes in both commit messages and code from the review
+ - dropping co-developed-by tag since the code now differs enough
+   from the original submission. However, the reference where the
+   original code came from and credits to original author is kept
+
+Background
+----------
+
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
+
+
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
+
+
+Proposed solution
+-----------------
+
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
+to Ice Lake. It allows updating security SVN version, given that EPC
+is completely empty. The latter is required for security reasons
+in order to reason that enclave security posture is as secure as the
+security SVN version of the TCB that created it.
+
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
+
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
+
+Testing
+-------
+
+Tested on EMR machine using kernel 6.17.0_rc1 & sgx selftests.
+Also tested on a Kaby Lake machine without EUPDATESVN support.
+If Google folks in CC can test on their side, it would be greatly
+appreciated.
+
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+
+Elena Reshetova (5):
+  x86/sgx: Introduce functions to count the sgx_(vepc_)open()
+  x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature flag
+  x86/sgx: Define error codes for use by ENCLS[EUPDATESVN]
+  x86/sgx: Implement ENCLS[EUPDATESVN]
+  x86/sgx: Enable automatic SVN updates for SGX enclaves
+
+ arch/x86/include/asm/cpufeatures.h       |   1 +
+ arch/x86/include/asm/sgx.h               |  37 +++++----
+ arch/x86/kernel/cpu/cpuid-deps.c         |   1 +
+ arch/x86/kernel/cpu/scattered.c          |   1 +
+ arch/x86/kernel/cpu/sgx/driver.c         |  19 ++++-
+ arch/x86/kernel/cpu/sgx/encl.c           |   1 +
+ arch/x86/kernel/cpu/sgx/encls.h          |   5 ++
+ arch/x86/kernel/cpu/sgx/main.c           | 101 +++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h            |   3 +
+ arch/x86/kernel/cpu/sgx/virt.c           |  20 ++++-
+ tools/arch/x86/include/asm/cpufeatures.h |   1 +
+ 11 files changed, 173 insertions(+), 17 deletions(-)
+
+-- 
+2.45.2
+
