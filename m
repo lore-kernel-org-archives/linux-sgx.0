@@ -1,48 +1,48 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D57279782;
-	Mon, 18 Aug 2025 07:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543F527876A;
+	Mon, 18 Aug 2025 07:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755501211; cv=none; b=ofww3uMrX+Gt3hXi6uUMBhNLICur4cEbUGbaa30GKVH7meyHtxz5MR4JB5Iqf9XSZglxK+e2o2pSPOGzzyhqL/WM2xRR3MfD99tr4hfeyxc/pRFsukhQbORhNs7UqkkyJVnw+jIYWSZv6DT4sPtvR8ekpcIglgOL5+e0xqGJqRM=
+	t=1755501216; cv=none; b=odXRjcT7+g0q6hYo/M47cE87i72D6OlQFOIEGforXaQaBCgZBFmZR0pnDG/H8/8lJMZec50zeP/cLOpzMkxBj48QvB9ZclWBYav6HsRme2UVx56/Hx3q2OaZOAtpSRPJLEQJuhgJtxK+kMXR1Rm1r9Hju78gzBJveM0R4pAoEj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755501211; c=relaxed/simple;
-	bh=sx6hlBHBeNHTb6+Vae9NAlYaBET/EXtzzpTp0PmsiCU=;
+	s=arc-20240116; t=1755501216; c=relaxed/simple;
+	bh=cX5A+CNwKi9QHAUjvAxuyixnSiBYkXnaPIzlYfdju7A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dGjq1GT4x3Wnz6XN57IdVR5WPxz3hdLDjE+FgA3Wj8fh0h4lJMdV8t5KoaMQzKcI9p55hWTJZqr4FhtOOGDtzloiFaAHnmLjkqQft6ErVwAbH0k88iesR2vkX0666FGalzVW7eA/TQSQ24NKd83khE697D6PBPKBSJ6BAQpCuWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zs+l9XPh; arc=none smtp.client-ip=198.175.65.13
+	 MIME-Version; b=rYjqjUV8S2WriFBFpfxVH4q/oN5agKjdoEN+krJNvWjLNgE4LILHisOJR9WoF1GQzULeGclLdYi9uXR0SwtelwPSYLEc3KZxh/u5a/xSoFDLpVbTnpl0JGD6rWpZDwliS7vw6+mxQb1yneKBqc4RTJMoA8LuHb2l39i9g3Q9190=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QfpH+YeN; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zs+l9XPh"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QfpH+YeN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755501209; x=1787037209;
+  t=1755501216; x=1787037216;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=sx6hlBHBeNHTb6+Vae9NAlYaBET/EXtzzpTp0PmsiCU=;
-  b=Zs+l9XPhNyW2ikADZhGcXD1KuGOuRZ3vgGYbf55ADpu7HW/B85g2WYQI
-   j4Ckaa0qfRcwS3Egd9yZaj1Z7iGVXvx0kgfn57XphIlByetMNOda75nqk
-   QZLoR6TL0zhv5WL6CtMxNzmDmj09tHtthIxqwkIsyHt3VoMxW1KNeqb5N
-   GJG6X7IKX6NPcj1TrZybqRVcq/jN9nrQxQgm8QrdEYcFrDq9pqzg0GIer
-   uMCTZ9n6dUQm0cvKxliHft9gYnKTezRyfSybuDa0XNABaRXuqblmHH4vk
-   4DhIG9rvqA7qk1U4POg7PimWruudmQTkpz0BJPbcjNr1nPjl4+kAUkv8o
+  bh=cX5A+CNwKi9QHAUjvAxuyixnSiBYkXnaPIzlYfdju7A=;
+  b=QfpH+YeNxm5f1HitT3aR8U7ZGz5CVSpf0fispJOQOgcnjD7UnBS4jRZA
+   on68VEcatEE8xn7GfODU7ZTlT9kwQXEZ10PDTi8n7kmomhcc748d05YPV
+   sU+z/5/HUwpfXcyeCzqxFf/R0sWBlDfCbAkZyLMFq5oGfUT1L9L6zaBPn
+   FsQ48lGq1CQSXQye7MPZt/n4S5J16IxqGunhc5d5n2f9wN/tzdRkTpVsx
+   8i5qgvryHoVJrgQOfTX06sEP/KolGaFrD/ZHLs2GuaMW1z0Y24fp2dV73
+   KvP7dkF3XEC9S7f5lQV8R+PMqw2VOAYuimbblNQxxbOH4vSIKajFHhWmF
    g==;
-X-CSE-ConnectionGUID: gYJSM+8LQjmGdeNxFjIyUg==
-X-CSE-MsgGUID: k+Qo4xxmRiucdyLUboAUoQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="68809299"
+X-CSE-ConnectionGUID: 81BHrdTGQQ2jh0wlS/pR7A==
+X-CSE-MsgGUID: Ws4lsvPwRoq+Xr6bURZBBA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="68809325"
 X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="68809299"
+   d="scan'208";a="68809325"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:13:29 -0700
-X-CSE-ConnectionGUID: 0KEK78AkQrmW1CmlBCob0A==
-X-CSE-MsgGUID: x+xFw4DsTY2N/i2fFIJCvQ==
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:13:35 -0700
+X-CSE-ConnectionGUID: UeKv2F29RCOWIItFyjm1pA==
+X-CSE-MsgGUID: hvGRraArQMOsXXS6kglCmg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="167421408"
+   d="scan'208";a="167421431"
 Received: from opintica-mobl1 (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.245.174])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:13:23 -0700
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:13:29 -0700
 From: Elena Reshetova <elena.reshetova@intel.com>
 To: dave.hansen@intel.com
 Cc: jarkko@kernel.org,
@@ -59,10 +59,11 @@ Cc: jarkko@kernel.org,
 	vannapurve@google.com,
 	bondarn@google.com,
 	scott.raynor@intel.com,
-	Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH v15 1/5] x86/sgx: Introduce functions to count the sgx_(vepc_)open()
-Date: Mon, 18 Aug 2025 10:11:19 +0300
-Message-ID: <20250818071304.1717183-2-elena.reshetova@intel.com>
+	Elena Reshetova <elena.reshetova@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH v15 2/5] x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature flag
+Date: Mon, 18 Aug 2025 10:11:20 +0300
+Message-ID: <20250818071304.1717183-3-elena.reshetova@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250818071304.1717183-1-elena.reshetova@intel.com>
 References: <20250818071304.1717183-1-elena.reshetova@intel.com>
@@ -74,169 +75,68 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, when SGX is compromised and the microcode update fix is applied,
-the machine needs to be rebooted to invalidate old SGX crypto-assets and
-make SGX be in an updated safe state. It's not friendly for the cloud.
+Add a flag indicating whenever ENCLS[EUPDATESVN] SGX instruction is
+supported. This will be used by SGX driver to perform CPU SVN updates.
 
-To avoid having to reboot, a new ENCLS[EUPDATESVN] is introduced to update
-SGX environment at runtime. This process needs to be done when there's no
-SGX users to make sure no compromised enclaves can survive from the update
-and allow the system to regenerate crypto-assets.
-
-For now there's no counter to track the active SGX users of host enclave
-and virtual EPC. Introduce such counter mechanism so that the EUPDATESVN
-can be done only when there's no SGX users.
-
-Define placeholder functions sgx_inc/dec_usage_count() that are used to
-increment and decrement such a counter. Also, wire the call sites for
-these functions. Encapsulate the current sgx_(vepc_)open() to
-__sgx_(vepc_)open() to make the new sgx_(vepc_)open() easy to read.
-
-The definition of the counter itself and the actual implementation of
-sgx_inc/dec_usage_count() functions come next.
-
-Note: The EUPDATESVN, which may fail, will be done in
-sgx_inc_usage_count(). Make it return 'int' to make subsequent patches
-which implement EUPDATESVN easier to review. For now it always returns
-success.
-
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Reviewed-by: Kai Huang <kai.huang@intel.com>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/driver.c | 19 ++++++++++++++++++-
- arch/x86/kernel/cpu/sgx/encl.c   |  1 +
- arch/x86/kernel/cpu/sgx/main.c   | 10 ++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h    |  3 +++
- arch/x86/kernel/cpu/sgx/virt.c   | 20 +++++++++++++++++++-
- 5 files changed, 51 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/cpufeatures.h       | 1 +
+ arch/x86/kernel/cpu/cpuid-deps.c         | 1 +
+ arch/x86/kernel/cpu/scattered.c          | 1 +
+ tools/arch/x86/include/asm/cpufeatures.h | 1 +
+ 4 files changed, 4 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index 7f8d1e11dbee..79d6020dfe9c 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -14,7 +14,7 @@ u64 sgx_attributes_reserved_mask;
- u64 sgx_xfrm_reserved_mask = ~0x3;
- u32 sgx_misc_reserved_mask;
- 
--static int sgx_open(struct inode *inode, struct file *file)
-+static int __sgx_open(struct inode *inode, struct file *file)
- {
- 	struct sgx_encl *encl;
- 	int ret;
-@@ -41,6 +41,23 @@ static int sgx_open(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
-+static int sgx_open(struct inode *inode, struct file *file)
-+{
-+	int ret;
-+
-+	ret = sgx_inc_usage_count();
-+	if (ret)
-+		return ret;
-+
-+	ret = __sgx_open(inode, file);
-+	if (ret) {
-+		sgx_dec_usage_count();
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int sgx_release(struct inode *inode, struct file *file)
- {
- 	struct sgx_encl *encl = file->private_data;
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 308dbbae6c6e..cf149b9f4916 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -765,6 +765,7 @@ void sgx_encl_release(struct kref *ref)
- 	WARN_ON_ONCE(encl->secs.epc_page);
- 
- 	kfree(encl);
-+	sgx_dec_usage_count();
- }
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 602957dd2609..830d24ff1ada 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -494,6 +494,7 @@
+ #define X86_FEATURE_TSA_SQ_NO		(21*32+11) /* AMD CPU not vulnerable to TSA-SQ */
+ #define X86_FEATURE_TSA_L1_NO		(21*32+12) /* AMD CPU not vulnerable to TSA-L1 */
+ #define X86_FEATURE_CLEAR_CPU_BUF_VM	(21*32+13) /* Clear CPU buffers using VERW before VMRUN */
++#define X86_FEATURE_SGX_EUPDATESVN	(21*32+14) /* Support for ENCLS[EUPDATESVN] instruction */
  
  /*
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 2de01b379aa3..3a5cbd1c170e 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -917,6 +917,16 @@ int sgx_set_attribute(unsigned long *allowed_attributes,
- }
- EXPORT_SYMBOL_GPL(sgx_set_attribute);
+  * BUG word(s)
+diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+index 46efcbd6afa4..3d9f49ad0efd 100644
+--- a/arch/x86/kernel/cpu/cpuid-deps.c
++++ b/arch/x86/kernel/cpu/cpuid-deps.c
+@@ -79,6 +79,7 @@ static const struct cpuid_dep cpuid_deps[] = {
+ 	{ X86_FEATURE_SGX_LC,			X86_FEATURE_SGX	      },
+ 	{ X86_FEATURE_SGX1,			X86_FEATURE_SGX       },
+ 	{ X86_FEATURE_SGX2,			X86_FEATURE_SGX1      },
++	{ X86_FEATURE_SGX_EUPDATESVN,		X86_FEATURE_SGX1      },
+ 	{ X86_FEATURE_SGX_EDECCSSA,		X86_FEATURE_SGX1      },
+ 	{ X86_FEATURE_XFD,			X86_FEATURE_XSAVES    },
+ 	{ X86_FEATURE_XFD,			X86_FEATURE_XGETBV1   },
+diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
+index b4a1f6732a3a..d13444d11ba0 100644
+--- a/arch/x86/kernel/cpu/scattered.c
++++ b/arch/x86/kernel/cpu/scattered.c
+@@ -42,6 +42,7 @@ static const struct cpuid_bit cpuid_bits[] = {
+ 	{ X86_FEATURE_PER_THREAD_MBA,		CPUID_ECX,  0, 0x00000010, 3 },
+ 	{ X86_FEATURE_SGX1,			CPUID_EAX,  0, 0x00000012, 0 },
+ 	{ X86_FEATURE_SGX2,			CPUID_EAX,  1, 0x00000012, 0 },
++	{ X86_FEATURE_SGX_EUPDATESVN,		CPUID_EAX, 10, 0x00000012, 0 },
+ 	{ X86_FEATURE_SGX_EDECCSSA,		CPUID_EAX, 11, 0x00000012, 0 },
+ 	{ X86_FEATURE_HW_PSTATE,		CPUID_EDX,  7, 0x80000007, 0 },
+ 	{ X86_FEATURE_CPB,			CPUID_EDX,  9, 0x80000007, 0 },
+diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
+index ee176236c2be..78c3894c17c1 100644
+--- a/tools/arch/x86/include/asm/cpufeatures.h
++++ b/tools/arch/x86/include/asm/cpufeatures.h
+@@ -487,6 +487,7 @@
+ #define X86_FEATURE_PREFER_YMM		(21*32+ 8) /* Avoid ZMM registers due to downclocking */
+ #define X86_FEATURE_APX			(21*32+ 9) /* Advanced Performance Extensions */
+ #define X86_FEATURE_INDIRECT_THUNK_ITS	(21*32+10) /* Use thunk for indirect branches in lower half of cacheline */
++#define X86_FEATURE_SGX_EUPDATESVN	(21*32+14) /* Support for ENCLS[EUPDATESVN] instruction */
  
-+int sgx_inc_usage_count(void)
-+{
-+	return 0;
-+}
-+
-+void sgx_dec_usage_count(void)
-+{
-+	return;
-+}
-+
- static int __init sgx_init(void)
- {
- 	int ret;
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index d2dad21259a8..f5940393d9bd 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -102,6 +102,9 @@ static inline int __init sgx_vepc_init(void)
- }
- #endif
- 
-+int sgx_inc_usage_count(void);
-+void sgx_dec_usage_count(void);
-+
- void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
- 
- #endif /* _X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-index 7aaa3652e31d..b649c0610019 100644
---- a/arch/x86/kernel/cpu/sgx/virt.c
-+++ b/arch/x86/kernel/cpu/sgx/virt.c
-@@ -255,10 +255,11 @@ static int sgx_vepc_release(struct inode *inode, struct file *file)
- 	xa_destroy(&vepc->page_array);
- 	kfree(vepc);
- 
-+	sgx_dec_usage_count();
- 	return 0;
- }
- 
--static int sgx_vepc_open(struct inode *inode, struct file *file)
-+static int __sgx_vepc_open(struct inode *inode, struct file *file)
- {
- 	struct sgx_vepc *vepc;
- 
-@@ -273,6 +274,23 @@ static int sgx_vepc_open(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
-+static int sgx_vepc_open(struct inode *inode, struct file *file)
-+{
-+	int ret;
-+
-+	ret = sgx_inc_usage_count();
-+	if (ret)
-+		return ret;
-+
-+	ret =  __sgx_vepc_open(inode, file);
-+	if (ret) {
-+		sgx_dec_usage_count();
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static long sgx_vepc_ioctl(struct file *file,
- 			   unsigned int cmd, unsigned long arg)
- {
+ /*
+  * BUG word(s)
 -- 
 2.45.2
 
