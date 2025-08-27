@@ -1,35 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A4C27A917;
-	Mon, 25 Aug 2025 21:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ED22BE65E;
+	Wed, 27 Aug 2025 16:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756157832; cv=none; b=q3OMa9klER5kcD5hfQzcH5gEW7TqnE/VhFRTneqUwrlw9Ruy4lQnon4v6dAnVBJVeyxj47K7EVeVDBtSpzNjA3D0XmVWwws2RJuLrKb1iZuZqoyYDzXpZh+InipMXWpFSo/36P6fq4/tqnZ9SPk1Di+jP/zgFVDtia5yEbTg33M=
+	t=1756313965; cv=none; b=r2oi0gSI9irEGSQeWhPkpAZe9fVnp2ZnXRw0F4u9Ed6LQIjBnrTS0YypAMaFWjSHZiZ2si4qv1On5Gsm5cCaOs0ujI1QYztlJNYXJBMuzET6oCAQTJwNxicPCzjkNzwVs9sCJrmmozr5+k8N8/7N+a0CG0isJPmB6GIWbayVh8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756157832; c=relaxed/simple;
-	bh=R44bcAauESCYgLUnJio9oy6n01PzJ9gIprVhrTrJHrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jysYVL6zkgDrCW3NlDdD4AKsp+HbcYV1IbcdhXRmL27yEHvsChfnOoa0Eh/Sq0iLbiQTuWFctTWTUn1oA5Ht2e0dBAdZcuP7w+a0W00fpZ8DJEaQfG8LtOvNTZ4Em1HCnXspuWpMbk/plehaBPNhO5YXS/jHcvh/teyxa9FO+2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHK0J2XK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756313965; c=relaxed/simple;
+	bh=HP+oCFjbaV0ErYQHYOSOr3F3umYVDZHj90JBCgWCcms=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qIvMdXL2aP2v/bzQdVJIKI/Y9ZWXRdyNW560ii21ibwt2KTiGvfC1LcaCeEihbBDEjR120qEgvQ1n0utLobbOU2Kri7llQndnjbIM+WYRztLY+aPg9BlVUAxMeDseA9VAyr9dL5t6BqViJ9qlqWWsvcBHlHp59oUZM7WFmla+78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pf7/0Js9; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHK0J2XK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A2DC4CEED;
-	Mon, 25 Aug 2025 21:37:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756157832;
-	bh=R44bcAauESCYgLUnJio9oy6n01PzJ9gIprVhrTrJHrw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cHK0J2XKD7O53HrO4WZ8mbIIVXn1J5qjjnP+8NSiRBKE3qlSqot7fO4LiyDmh3qgE
-	 994EaQi3GxaYUTiVcTdNq2CGuy4qPwf/BZ6vvOP7yQ30A6KQwyOxLpJ4d9L/7pKqbH
-	 63qLEryMSPxlPH2YhbRhXt0pRoKURT7ELLjHiKpyDkSL4+J1AcoW5Sk8qXCImM2+ak
-	 p+lYv9xx85LoSuSqFv4ayEsXAVqjvuHqIqMi44uUedVEGuxxRKPPODQHHSRnAgIdh6
-	 6clMMLqdhTofD9UT8HCFqf2Jy7NMLg5RmykPuzN+FoKKgILHRb4q6/nyDxdavQQRRP
-	 2Gu14gyBVu0BQ==
-Date: Mon, 25 Aug 2025 14:37:11 -0700
-From: Kees Cook <kees@kernel.org>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Mike Rapoport <rppt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pf7/0Js9"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3366f66a04cso424171fa.1;
+        Wed, 27 Aug 2025 09:59:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756313962; x=1756918762; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cSz+0Jdl3rsxgIMqjiE4eLITB/Ptqi8xoIkjq9Q3i9w=;
+        b=Pf7/0Js9wTzUbA2z9j1s0We4psrMER+tLAPobYT1Uzur7QQR2hxzkJL6SIZaCkRpyr
+         w0bEYYDQXU377H4/trsEniu3lKkDLdddYLuMkZrAeA9YNihsGnmSBHkZQr+e0qI/3JIK
+         n2NZUmbXNiwzYYqAFp8DCLW22VfdO7/lh+5TgG1hIpWVlwIL9jCaCGuzk4Og1P1cjWOc
+         yamlOUyOSAxDaF0N9w4lK3tya9CAmHFBFSB1aBS8c3JeZAt0EMbsPpWGgRmT73XDCkbU
+         JKOEPG98pX1Qd89EIVAVIFHuiDZCN8bPc6Oax7u02yUihzLtuTLAstJWLM8lvS9mBbOm
+         fjhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756313962; x=1756918762;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cSz+0Jdl3rsxgIMqjiE4eLITB/Ptqi8xoIkjq9Q3i9w=;
+        b=Z2UHbZQQYFhnAjEFn+9q5xU36xXyqiRxvkk85DUNFY+N+mgdf/JU4I0pGM+4p33Rvs
+         jYN4MWYiNJxX5C+VPFfUSnu9YO6yPwruGXmRFSPtCldceTqV/OpMVX+Jkx3eCGqjBAUs
+         NuRUe5LK4/+KqDz8tLK1HKqpTv+ABxVAGvYPDgISsB7bC4sF/8jq3POJpi4PYqWbOn3c
+         qBbe8sIFvPggj4ioOb01nKICgkBSi+MENWiiyAJH/p7QPtMfgysGRJxX1GrmEf+qYJhJ
+         hqR/tGIV8HTjnN8zwXaXrU5FwK7ZE2Hfn9dTKvYjqovd+tlznLw79ANU6kHC7AANWKor
+         rQ6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUdpn0dhMcBQ+tCH0oNc5b76ZJA5+QqZuYFhZwQxrJWtX/HMpVkJsAmt5bkwseehCwj5i2yCCe0NUWr@vger.kernel.org, AJvYcCUwg6yK+H5GckWR4Vx8Sw5pBzLPHhsab2sO3wROGMNnxUcN5o/BK+BwsedAyMr7aDkY1pg=@vger.kernel.org, AJvYcCVZR65+YMzi9fFsW/8VIKYkLYkuJGcBwwRz1zQ4JA0jniHn6TEcKJO1Mx3LTa2YiWci9yGlX0dJOS9bjpNwRgMmmtmT@vger.kernel.org, AJvYcCXTFe14OJKe/TxdFgwXZVfKeTqLo5lD9SMrN4Ivwr3zxF23re/5xuXLNUMgjVlel+BTvqgTcLCLkPYultSZZw==@vger.kernel.org, AJvYcCXUL+gLHCNVWJspvaxv1bEreKzmqGXQGhGRb4u2GtYQLPc0rtj6KKXbiXCT6a/4y+cFL6drwBS3TKpL1Wnw@vger.kernel.org, AJvYcCXfTETBDKEpCzfIDz2I51gCSDpsWLBkOzxTrP+TvAUI5jopTuZPLlBcRToOIiXNNqP/mqt546XNQLzUSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/lvOZ2PAfasnZtt5sk80EN915m+AF8QkdmUrzGu9jz+3LJ63R
+	Ev+Uk9fRoTSYQb7t7Wrc/Xn+vv+QZz27g0ceezp4H5ppuFZLbWYo/5D/
+X-Gm-Gg: ASbGncu1tgUGWeXBLTJEH0ZV3nJwZLfv2iKFlZsDuU42ZmkRLSZI2ojSWEG1T1AibKq
+	pPj5cmYzaZDKXd+Pu0PMtTKVxIB4lcues6uMBMvwJMUBE7YnSIfzSDxPlVPrgIwHzfhikbEvFZL
+	ZNGOTSzBLewkzWwBH/FhsON7SunEy3joyhNS2iXwruuizfMNK5+qIuOsnlXhODMxDbg1B/rajBl
+	w2MD6uiW7igXDagOws1AX9pxJnNle1+XAIbprKNsFNy35JU99r/wX/Fd7IPj+i6Sj1HxnAs8s/J
+	csEwSWQxAajHYy+mbYl2IRFi6BRNOZdEPE1/hWnjDfGtWrXK9h8erw9o1GcFVutIRfqohp52GQ9
+	xaWAE6hoXrvDl+SJ/wFsa7dhwMQ4+P+Kvfl/xe0hDlmv/cpBJvMiJ
+X-Google-Smtp-Source: AGHT+IG4BeCx/VIPO9rnbCc0YcRdZMlua4eVbdX3PpKt/fKDdzrBfr7yiiTFTWfK/4UfPVTpR7vpyQ==
+X-Received: by 2002:a2e:be03:0:b0:336:7eed:2f8f with SMTP id 38308e7fff4ca-3367eed3c67mr29987221fa.32.1756313961794;
+        Wed, 27 Aug 2025 09:59:21 -0700 (PDT)
+Received: from pc636 (host-90-233-205-219.mobileonline.telia.com. [90.233.205.219])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3365e5da244sm27443611fa.58.2025.08.27.09.59.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 09:59:21 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 27 Aug 2025 18:59:16 +0200
+To: Kees Cook <kees@kernel.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Mike Rapoport <rppt@kernel.org>,
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
 	Harry Yoo <harry.yoo@oracle.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -81,7 +113,7 @@ Cc: Mike Rapoport <rppt@kernel.org>,
 	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
 Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
  consistently
-Message-ID: <202508251436.762035B@keescook>
+Message-ID: <aK85ZPVwBIv-sH85@pc636>
 References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
  <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
  <aIgSpAnU8EaIcqd9@hyeyoo>
@@ -91,6 +123,7 @@ References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
  <aJCRXVP-ZFEPtl1Y@pc636>
  <aJHQ9XCLtibFjt93@kernel.org>
  <aJItxJNfn8B2JBbn@pc636>
+ <202508251436.762035B@keescook>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -99,33 +132,36 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJItxJNfn8B2JBbn@pc636>
+In-Reply-To: <202508251436.762035B@keescook>
 
-On Tue, Aug 05, 2025 at 06:13:56PM +0200, Uladzislau Rezki wrote:
-> I agree. Also it can be even moved under vmalloc.c. There is only one
-> user which needs it globally, it is usercopy.c. It uses find_vmap_area()
-> which is wrong. See:
+On Mon, Aug 25, 2025 at 02:37:11PM -0700, Kees Cook wrote:
+> On Tue, Aug 05, 2025 at 06:13:56PM +0200, Uladzislau Rezki wrote:
+> > I agree. Also it can be even moved under vmalloc.c. There is only one
+> > user which needs it globally, it is usercopy.c. It uses find_vmap_area()
+> > which is wrong. See:
+> > 
+> > <snip>
+> > 	if (is_vmalloc_addr(ptr) && !pagefault_disabled()) {
+> > 		struct vmap_area *area = find_vmap_area(addr);
+> > 
+> > 		if (!area)
+> > 			usercopy_abort("vmalloc", "no area", to_user, 0, n);
+> > 
+> > 		if (n > area->va_end - addr) {
+> > 			offset = addr - area->va_start;
+> > 			usercopy_abort("vmalloc", NULL, to_user, offset, n);
+> > 		}
+> > 		return;
+> > 	}
+> > <snip>
+> > 
+> > we can add a function which just assign va_start, va_end as input
+> > parameters and use them in the usercopy.c. 
 > 
-> <snip>
-> 	if (is_vmalloc_addr(ptr) && !pagefault_disabled()) {
-> 		struct vmap_area *area = find_vmap_area(addr);
+> Yes please! I'd must rather use some exported validation routine than
+> having it hand-coded in usercopy.c. :)
 > 
-> 		if (!area)
-> 			usercopy_abort("vmalloc", "no area", to_user, 0, n);
-> 
-> 		if (n > area->va_end - addr) {
-> 			offset = addr - area->va_start;
-> 			usercopy_abort("vmalloc", NULL, to_user, offset, n);
-> 		}
-> 		return;
-> 	}
-> <snip>
-> 
-> we can add a function which just assign va_start, va_end as input
-> parameters and use them in the usercopy.c. 
+I will do it :)
 
-Yes please! I'd must rather use some exported validation routine than
-having it hand-coded in usercopy.c. :)
-
--- 
-Kees Cook
+--
+Uladzislau Rezki
