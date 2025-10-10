@@ -1,121 +1,327 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7665A23506F
-	for <linux-sgx@vger.kernel.org>; Mon, 29 Sep 2025 21:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16CB1B041A;
+	Fri, 10 Oct 2025 08:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759183137; cv=none; b=bdK36n15j/zIPM/dxBbx4n75Y1nKjVpTVVfC51Y6HUavByVKFRgI7TsZ2W8hOq7xWcyLFxZbiwuikd4zUlEMg0ux6wDvP9JK3lYyXhm+DadQPV5ruxH6A0kotddalz+pYi3N4HPNie0pE82soMwqGs5VPpeQpdwZAaOYQjDzWZo=
+	t=1760086451; cv=none; b=uOfLRNydN3dhYwY/OEx73YJe+/8MiAhzk106fvJ+BvVD2CtqYCaNHSDUlCzXEdVHOrNAtSpYJQqHfA+Sju2Q498aPINWzLBW13eqnQpAwwUPNgvOh7fhLi2a0zjc9p6y9F3mYSalWoC9nd10FYOzvySUsM8CGNatJDqc9nlrFic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759183137; c=relaxed/simple;
-	bh=q4FK/NSG9nQ8r/bpfA1CBLPqHIAI4E4vJzmK5B7ksTo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mDt5tQOSkgvek2QDatbWGLXFMSUkrQx5LXObIp5tCGK43bAOf7uLHyYWIwrldH7/tZwGmk7BAN7fHm1GPtf9a4FxNGOpWNMw8hKPgW8Hq3mPoBBBMcLM7Pt7Xzp6EVxgOCkpQJM4PlTcNFcZT+EuABA4ECcR5h1yafIbVqFMGZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jhfSN1xh; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1760086451; c=relaxed/simple;
+	bh=YhP+CtufTXhyPmgsnmJeK0jgn4wFSQk2YIPm7Udqhfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oYHqKA7kotkNH/YB+mOpNZezsngCHBeeVUihzNkAGofyph0hR4jhOtrK5XxM2CCse1VKCEHf+QheaencD8JH43MllLy9/B3pqmhB6uTYav5ja2nss9nZUIzOXr1aa2VHglP21zcQOzy1SGUGvt0E1spPvmPsscrGv6jaobAG6N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q1MmrfX3; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jhfSN1xh"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e3f213b59so24595e9.0
-        for <linux-sgx@vger.kernel.org>; Mon, 29 Sep 2025 14:58:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759183134; x=1759787934; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pdeq67xeIPmtmxBxDhYojMol52xhKKS2cbY0wrzvOac=;
-        b=jhfSN1xhRiRbqRqRZgYLE8D7zzvf8KKuSn0ZN3kFq9nQDk0R5t6zdd4NisK6prOVaT
-         Qy1U+1R1VBpO9UzzUYr+xJYmeUIESpxVHDNA91v8Hm4dcYvU7MEaExoasiN6S4DclL/Q
-         7V7F2l9bBEarhf/EmES75xWSz+xRsrihxGtduEKqo1PMlctI9BxJsxhTSOBveOkx0hZn
-         Y2a2A9Tfe6IVMhyJSYtsYpTeQ756b0xwpEFiQWDUhEK04JJ+lI2jvpAe/9QXyWheUsuM
-         /RDpkZfmOO8TSOs7i/5y6DBKCLcWmgh7POx6tfVFmkKHh5p14Ybcb45Z0xRuV29Jx4ez
-         p7bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759183134; x=1759787934;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pdeq67xeIPmtmxBxDhYojMol52xhKKS2cbY0wrzvOac=;
-        b=tHFDhU4SPHcuIcjPbVKQe8BtZsKU5QcHur6zLilGFmYsQYCBs1A1OqJHYeqT0hhGre
-         Jwo/cKXHJjvd4pPpybWhcL6P5BAy6Y0rX22q41ick07YGzdRkkuN7x7BTvYqKw18Lji6
-         maGWzmKrRotMrLnDmaOI5n7ihbSDGxvnxlaNqBQtXrKym+0F0a+svWebFrjOndeB/iMM
-         NPb6IZpwNh8FY9mBAG0OJfHT2rcLKPvh485t3A7cmPY/ONgb/If14mKiyLzHJq6MPsf+
-         uG0nrLoxSa2aIbGfVESDIOohF1+cSqFQXY3/aC9NU9/3Iv+G+fpkIoVzZkrsmlek7Kg9
-         5rtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyV0ALgfmRCgEJsDPB5UrLcJPNlBVmim8apkuknRHsIDqC+/iHGNs4FKHhngQUKJiklLPfJG0S0z4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqWmgd2QeMhIRjMrK1mKyru9qfXVVjeXplQKtDKPFUhxwN/Jq3
-	ZQJN4VGqvsbY2NqCBhQ6Bx4v+P2OkMUhTGtHWPazjBhk7p79HJJ3g6dPSEjQOFOdYBZexP6AMSd
-	+mzAG7hQL8pGjGQSrNFUclydIaUR7+iFhfbiu/u/Q
-X-Gm-Gg: ASbGncsn9fSpcjdNrIC9eofNNy/arucpK3JDnsmibz1cWXJMQhuhl5cE4yPWHCFr7SW
-	SBGwUuy9qa8Rg6HBQHZ8CuJ1KHyzpgEiucCNBmNbsQ5igaeyAC16Fpoor0XsSh+1FtnznTKK/9M
-	D8/MrQcxy+fYRrYXyp3GZo8ljI2CHPwtqawlp9PhwgIHL7S5Le2APE80oglCFkkz11niWkvB++v
-	5LOFKvu8qFcHQ5ff7+7jUIunq+QcDtnfTQN4ZjqoF3WHIX7Qv4OYmM=
-X-Google-Smtp-Source: AGHT+IFXcwzbjwILzCqwDQQB0F+JEcQeyuh0yJiu68lbqwviX44Us3z4jaFKkzhm1YHo6jcbvxvwcJCyWwoQVLfRAco=
-X-Received: by 2002:a05:600c:c051:b0:45f:2db6:5202 with SMTP id
- 5b1f17b1804b1-46e5ab15c8fmr215205e9.3.1759183133595; Mon, 29 Sep 2025
- 14:58:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q1MmrfX3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760086450; x=1791622450;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YhP+CtufTXhyPmgsnmJeK0jgn4wFSQk2YIPm7Udqhfk=;
+  b=Q1MmrfX3c8wtBzBdQrxrliP0Z5QC7DvKgp8OG6/vLnbjOqF6VL4g97RS
+   Vd2fyQUPx6/cY9CsgzolYNI4gPNhq5sxKDHiKZLPg+SKVX67oNnFdZXJ0
+   XXquv7IMf1dRjYBpc3RaOHov5qCCQivzrbvYVhMX0tHv1OdqEDuh6L5q8
+   PiOVsloBm/vMR6tTAXGMP5M7M7CDjbLiTRqMOd61t1w5I456ypda+Wgqb
+   7l6iZ7UQaeeB1C103mqZvRmetcKd5b/usziXbhqRi1uhzrm1ho9oOeJve
+   Q9gCc7bFeE9yIl9oaA/g2WbB7xDNQZSaw9rQr2TkOX+0baa6OSnDpS8ck
+   w==;
+X-CSE-ConnectionGUID: wOG9OJ6OQZ23EpXnGOQH0g==
+X-CSE-MsgGUID: NLvhXnYWRWC5TMhc7M+owQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="62187993"
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="62187993"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 01:54:09 -0700
+X-CSE-ConnectionGUID: eEzroqesQaeM4AMnGduqvw==
+X-CSE-MsgGUID: K+YBibDtTY6qefAcR8e9Ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="180181641"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.245.124])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 01:54:04 -0700
+From: Elena Reshetova <elena.reshetova@intel.com>
+To: dave.hansen@intel.com
+Cc: jarkko@kernel.org,
+	seanjc@google.com,
+	kai.huang@intel.com,
+	mingo@kernel.org,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	asit.k.mallick@intel.com,
+	vincent.r.scarlata@intel.com,
+	chongc@google.com,
+	erdemaktas@google.com,
+	vannapurve@google.com,
+	bondarn@google.com,
+	scott.raynor@intel.com,
+	Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH v16 0/5] Enable automatic SVN updates for SGX enclaves
+Date: Fri, 10 Oct 2025 11:52:06 +0300
+Message-ID: <20251010085346.292287-1-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818071304.1717183-1-elena.reshetova@intel.com>
- <287a2652-bce6-4084-b9b5-c8feb24a2940@intel.com> <CAGtprH8rPg30gsrhJ9=44uaePqf-Ay=R+O_+D8isH8TzM4uQXQ@mail.gmail.com>
- <DM8PR11MB5750C11091D7D90B60FE7853E71BA@DM8PR11MB5750.namprd11.prod.outlook.com>
- <CAFbLv2dbF4=vEvuqKFweRR5P6qtm+E7U29=f2ByM552j6fd9Vw@mail.gmail.com>
- <266dd7f9-89b3-4297-a179-9fe57345abb7@intel.com> <CAFbLv2fPwV6u8HX=zKntVLwKeBsbEu62J49uC0kL237HDRiUfQ@mail.gmail.com>
- <1881634c-7a19-4570-b7de-54ce50e76675@intel.com>
-In-Reply-To: <1881634c-7a19-4570-b7de-54ce50e76675@intel.com>
-From: Nataliia Bondarevska <bondarn@google.com>
-Date: Mon, 29 Sep 2025 14:58:41 -0700
-X-Gm-Features: AS18NWDvcpXpR1o_PsbPt2yxJqMY7S_U0YL_A6ck6-LOV6zPnOiOYmDMoEhhGGg
-Message-ID: <CAFbLv2dmUdqm-VZBi+cSEhpXUpJ=ZsnCn9k=Qfk9sZAtY82gbg@mail.gmail.com>
-Subject: Re: [PATCH v15 0/5] Enable automatic SVN updates for SGX enclaves
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Reshetova, Elena" <elena.reshetova@intel.com>, "Annapurve, Vishal" <vannapurve@google.com>, 
-	"jarkko@kernel.org" <jarkko@kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
-	"Huang, Kai" <kai.huang@intel.com>, "mingo@kernel.org" <mingo@kernel.org>, 
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	"Mallick, Asit K" <asit.k.mallick@intel.com>, 
-	"Scarlata, Vincent R" <vincent.r.scarlata@intel.com>, "Cai, Chong" <chongc@google.com>, 
-	"Aktas, Erdem" <erdemaktas@google.com>, "Raynor, Scott" <scott.raynor@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 29, 2025 at 1:50=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
- wrote:
->
-> On 9/29/25 13:33, Nataliia Bondarevska wrote:
-> >> Could someone please spend a few minutes to explain what this tag mean=
-s?
-> > My apologies; I've clarified the details of the testing below.
-> >
-> > The verification was performed on a SPR machine. The objective was to
-> > confirm the successful, runtime update of the CPUSVN using a targeted
-> > microcode package.
-> > Steps Taken:
-> >  - identified a microcode package version, designed to update CPUSVN
-> >    number on the machine;
-> >  - initiated a dynamic load of the package during OS runtime;
-> >  - confirmed the CPUSVN was upgraded post-load.
->
-> OK, so you're basically saying it managed to update the SVN on real
-> hardware. You also had to go run an enclave or at least open /dev/sgx,
-> right?
->
+Changes since v15:
 
-To confirm the CPUSVN update, I did run an enclave to retrieve the
-attestation report and compare cpusvn values generated before and
-after microcode load + the custom logs I incorporated into the
-sgx_update_svn execution helped me to confirm the expected logic.
+ - rebased on x86_tip master
+ - added tested-by tags
 
-> Also, does this tag mean, "I tested this in my company's environment and
-> this ABI is sufficient for us until the end of time?" Because there was
-> also some feedback on earlier work that this series as-is was going to
-> be insufficient.
+Changes since v14 following reviews by Dave ad Kai:
 
-The test was performed on a SPR machine using the kernel version
-deployed across Google's TDX production fleet.
-Yes, this ABI is sufficient enough for us.
+ - added mutex to sgx_dec_usage_count()
+ - fixed a formatting issue pointed by Kai
+ - added review-by from Kai on patches 4-5
+
+Changes since v13 following reviews by Kai:
+
+ - changed implementation of sgx_inc_usage_count() to 
+ only increment the sgx_usage_count at the end of
+ function and adjusted the counter check inside sgx_update_svn().
+ No functional changes here. 
+ - fixed two more formatting/comments issues pointed by Kai
+
+Changes since v12 following reviews by Kai:
+
+ - added review-by from Kai on patches 1 & 3
+ - fixed sgx_inc_usage_count() to decrement the sgx_usage_count
+ in a rare case when sgx_update_svn() fails. The latter
+ is really an exceptional scenario (hw failure or
+ explicit attack/heavy load on RNG) and that's why the
+ fast path (increment by default) is left as it is. 
+
+Changes since v11 following reviews by Kai and Jarkko:
+
+ - added review-by from Jarkko on the whole series
+ - fixed all format and commit issues pointed out by Kai
+
+Changes since v10 following reviews by Dave:
+
+ - merge patch 1 and 2
+ - patch 1: clarify the comment about the function prototype
+ - patch 3: clarify the description of SGX_NO_UPDATE
+  error code, move the definition of EUPDATESVN enum leaf
+  to patch 4
+ - patch 4: clarify commit, adjust sgx_update_svn() function
+  according to feedback
+
+Changes since v9 following reviews by Kai:
+
+ - postpone the definition of sgx_inc_usage_count
+   until patch 6
+ - clarify the commit message in patch 6
+ - minor fixes
+
+Note: I didn't merge patch 1 and 2 since it goes against
+previous suggestion made by Jarkko.
+
+Changes since v8 following reviews by Dave and Jarkko:
+
+ - fix the sgx_inc/dec_usage_count() to not do any
+ actual counting until the later patch when adequate
+ mutex is introduced as suggested by Dave
+ - add an additional patch (patch 1) to redefine
+ existing sgx_(vepc_)open into wrappers to allow
+ the follow up patch to introduce the sgx_inc/dec_usage_count()
+ functions into sgx_(vepc_)open cleanly as suggested
+ by Jarkko. 
+
+Changes since v7 following reviews by Dave:
+
+ - change sgx_usage_count to be a normal int type
+ and greatly simplify the sgx_inc_usage_count func.
+ This results in requiring a mutex for each sgx_(vepc_)open
+ but given that the mutex is held a short amount of
+ time it should be ok perf-wise.
+
+Changes since v6 following reviews by Kai,Jarkko
+and Dave:
+
+ - fix sgx_update_svn function description
+ - add maybe_unused for sgx_update_svn in patch 4
+ to silence the warning, remove it in patch 5
+ - add note to patch 1 explaining why the prototype
+ sgx_inc_usage_count returns int and not void
+ - fix the order of return code checks in 
+ sgx_update_svn
+ - cosmetic fixes
+ 
+Note: I didn't change the sgx_inc/dec_usage_count
+to statics because they are called from a number of
+different code locations and also rely on a static
+sgx_usage_count, which lives naturally in main.c.  
+ 
+Changes since v5 following reviews by Ingo, Kai,
+Jarkko and Dave:
+
+ - rebase on x86 tip
+ - patch 1 is fixed to do correct unwinding in
+ case of errors
+ - patch 2: add feature flag to cpuid-deps.c
+ - patch 3: remove unused SGX_EPC_NOT_READY error code
+ - patch 4: fix x86 feature check, return -EAGAIN
+ on SGX_INSUFFICIENT_ENTROPY and -EIO on other non-
+ expected errors. Comments/style are also fixed.
+ - patch 5: rewrite commit message, add comments inline
+
+Changes since v4 following reviews by Dave and Jarkko:
+
+ - breakdown the single patch into 4 patches as
+ suggested by Dave
+ - fix error unwinding in sgx_(vepc_)open as 
+ suggested by Jarkko
+ - numerous code improvements suggested by Dave
+ - numerous additional code comments and commit
+ message improvements as suggested by Dave
+ - switch to usage of atomic64_t for sgx_usage_count
+ to ensure overflows cannot happen as suggested by Dave
+ - do not return a error case when failing with
+ SGX_INSUFFICIENT_ENTROPY, fail silently as suggested
+ by Dave
+
+Changes since v3 following reviews by Kai and Sean:
+
+ - Change the overall approach to the one suggested
+  by Sean and do the EUPDATESVN execution during
+  sgx_open() and sgx_vepc_open().
+  Note, I do not try to do EUPDATESVN during the release()
+  flows since it doesnt save any noticable amount
+  of time during next open flow per underlying EUPDATESVN
+  microcode logic.
+ - In sgx_update_svn() remove the check that we are
+  running under VMM and expect the VMM to instead
+  expose correct CPUID
+ - Move the actual CPUID leaf check out of
+  sgx_update_svn() into sgx_init()
+ - Use existing RDRAND_RETRY_LOOPS define instead of 10
+ - Change the sgx_update_svn() to return 0 only in
+ success cases (or if unsupported)
+ - Various smaller cosmetic fixes
+
+The still to be discussed question is what sgx_update_svn()
+should return in case of various failures. The current version
+follows suggestion by Kai and would return an error (and block
+sgx_(vepc_)open() in all cases, including running out of entropy.
+I think this might be the correct approach for SGX_INSUFFICIENT_ENTROPY
+since in such cases userspace can retry the open() and also
+will get an info about what is actually blocking the EUPDATEVSN
+(and can act on this). However, this is a change in existing API
+and therefore debatable and I would like to hear people's feedback.
+
+Changes since v2 following review by Jarkko:
+
+ - formatting of comments is fixed
+ - change from pr_error to ENCLS_WARN to communicate errors from
+ EUPDATESVN
+ - In case an unknown error is detected (must not happen per spec),
+ make page allocation from EPC fail in order to prevent EPC usage
+
+Changes since v1 following review by Jarkko:
+
+ - first and second patch are squashed together and a better
+   explanation of the change is added into the commit message
+ - third and fourth patch are also combined for better understanding
+   of error code purposes used in 4th patch
+ - implementation of sgx_updatesvn adjusted following Jarkko's 
+   suggestions
+ - minor fixes in both commit messages and code from the review
+ - dropping co-developed-by tag since the code now differs enough
+   from the original submission. However, the reference where the
+   original code came from and credits to original author is kept
+
+Background
+----------
+
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
+
+
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
+
+
+Proposed solution
+-----------------
+
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
+to Ice Lake. It allows updating security SVN version, given that EPC
+is completely empty. The latter is required for security reasons
+in order to reason that enclave security posture is as secure as the
+security SVN version of the TCB that created it.
+
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
+
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
+
+Testing
+-------
+
+Tested on EMR machine using kernel 6.17.0_rc1 & sgx selftests.
+Also tested on a Kaby Lake machine without EUPDATESVN support.
+If Google folks in CC can test on their side, it would be greatly
+appreciated.
+
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+
+Elena Reshetova (5):
+  x86/sgx: Introduce functions to count the sgx_(vepc_)open()
+  x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature flag
+  x86/sgx: Define error codes for use by ENCLS[EUPDATESVN]
+  x86/sgx: Implement ENCLS[EUPDATESVN]
+  x86/sgx: Enable automatic SVN updates for SGX enclaves
+
+ arch/x86/include/asm/cpufeatures.h       |   1 +
+ arch/x86/include/asm/sgx.h               |  37 +++++----
+ arch/x86/kernel/cpu/cpuid-deps.c         |   1 +
+ arch/x86/kernel/cpu/scattered.c          |   1 +
+ arch/x86/kernel/cpu/sgx/driver.c         |  19 ++++-
+ arch/x86/kernel/cpu/sgx/encl.c           |   1 +
+ arch/x86/kernel/cpu/sgx/encls.h          |   5 ++
+ arch/x86/kernel/cpu/sgx/main.c           | 101 +++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h            |   3 +
+ arch/x86/kernel/cpu/sgx/virt.c           |  20 ++++-
+ tools/arch/x86/include/asm/cpufeatures.h |   1 +
+ 11 files changed, 173 insertions(+), 17 deletions(-)
+
+-- 
+2.45.2
+
