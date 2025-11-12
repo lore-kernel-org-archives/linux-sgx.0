@@ -1,36 +1,37 @@
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7881E27F01E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DB12C1594;
 	Wed, 12 Nov 2025 04:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762922332; cv=none; b=IAsDu8gvc4LXGsrUH3g5w6VndkICL5FmQgX9dEWhkYe0g27wkjFdOJbakRLH2dspf8fFWo0BhFxTjzn9Gpk+bQ7lvxW3deR4nqEoQgfQEaoGMU6XB6KXWlNxyTXz2uBO48alWu38fUc2Uzk1da/GUP3wqqi+X6rX5fTmH+7u6g8=
+	t=1762922332; cv=none; b=YcZKnja054X1aorK7MwDGFaOOxu7LmE2HC+OPzUAceicB+x2fC8R3s8V7JggQPbr0/N4SYSN1vVncV7ULfHgVzRRuw4h9KS4VUKctuYNvyAdYKo9w8pGXLkBxVnxrvhfNEiOIN0U0Hvasyr/57gMemEk80wSBl9/04NG1UujV5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762922332; c=relaxed/simple;
-	bh=VK/XxfzVylWo5CGD/eLNlPbuv031Jumm753/61tD/38=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=iYjmwdEFUaNFQQ7mDRbFJVDmhTD5G37q7tGEWt7goAenJ1oGDEAGF9KLSWWQODH6Lasm5czJ1tEdLh3cY4iAgvrXljbP6DSShvyNKtNsy9qDRYuigvxbNDnxZEtl/rvL6qcFVjoLUQf5cStjXR57toUvsJgLc+k6FzzN6mT1JgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=SHEkIi9i; arc=none smtp.client-ip=198.137.202.136
+	bh=Ggof8QFLQVXbbyG4CTdT5OVZw9nU3Adf0XwGidmrRO8=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OKQvnFcPp2MtKnT0YCoILNTReFQKsoU37awXtayvuxM1m9poD4CW3c6+KD81hm62p7Ub/7kXscfEZcR6A5lYP7+1eTg4dDG1jilZBkB5IqOftIgeFYDPxTymwHqy6h5xIrcIvXBnTvJFv6mkoTSQRFMXIXNHHcx/8NTLAK38MtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=s+fGZ3t4; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="SHEkIi9i"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="s+fGZ3t4"
 Received: from mail.zytor.com (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AC4bYDM542538
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AC4bYDN542538
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 11 Nov 2025 20:37:35 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AC4bYDM542538
+	Tue, 11 Nov 2025 20:37:37 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AC4bYDN542538
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762922257;
-	bh=NrZ4a9zMFdvWjyXptq7JgOSecWDqm8f6ekGuTnbG+ug=;
-	h=From:To:Subject:Date:From;
-	b=SHEkIi9i+0a9MuvHZOHtVEPv6HqcQD/luJ0tEUMKKxnunRgi6YKnnIvnwd6YAcyJm
-	 VPNDvWDGHqEsOp6kXnpxQ2egxT38JrVGljKEqedQ2f/gyOtt4Alt54N+UZcDyboJE0
-	 GeeOMPGgITGU2RRgTMvMGslqjlXgarSaVSXDjOrVCrRik+KAyYsIIwLM3Z0l2fOfNE
-	 HbgFyfGPBpCtWA+JcsMJpwbJxAxqk2b4dMv0IlwQd0Z0MyjBxyH7MGph4sUAx3Gkec
-	 hqInN9c+zuPxn8YBOicyZ1r39aQ7B9GZEznHqwKvOVNHAj2B9Zw8ZeR9C/kzRRXFIp
-	 6rK8tcfDe+3Hw==
+	s=2025102301; t=1762922258;
+	bh=6MH27EeqDLw8amuPQokZD4InT1d5GPZPkd9MxbYgWsE=;
+	h=From:To:Subject:Date:In-Reply-To:References:From;
+	b=s+fGZ3t4gki2X6Sbnya+Cx/l6bOyNBGorj6Z2ON1nO6q6VRgRkoLlPP4wZOCrLCeS
+	 0/t7y0taJIdulak/qbl9bKZr/IXA7QSiLvVe+zjLKj12HfbGxX4t9hH9JzccerkGDq
+	 U7ggsgftvstJN9z+Y7HgauhSzL3R7IUicWeDy979p58hJlEgrqLfocse7CHQzv8rEe
+	 /Lydfry1pCj4wBQST55T08MlI4CNXkIOhji1BhuhEfuZwiOc1c06MpiHI8m6JmwRKo
+	 uJkyRK+9Ed7hdnhltJFsIguT9t7eQ6pvSpiIMUrdEkZ0WwDMJJk9q+qAIFT2426Y6B
+	 OXUbliMu500EQ==
 From: "H. Peter Anvin" <hpa@zytor.com>
 To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
@@ -48,10 +49,12 @@ To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-sgx@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 0/9] x86/entry/vdso: clean up the vdso build, vdso updates
-Date: Tue, 11 Nov 2025 20:37:18 -0800
-Message-ID: <20251112043730.992152-1-hpa@zytor.com>
+Subject: [PATCH v2 1/9] x86/entry/vdso: rename vdso_image_* to vdso*_image
+Date: Tue, 11 Nov 2025 20:37:19 -0800
+Message-ID: <20251112043730.992152-2-hpa@zytor.com>
 X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251112043730.992152-1-hpa@zytor.com>
+References: <20251112043730.992152-1-hpa@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -60,89 +63,184 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patchset cleans up the vdso build by building the 32- and 64-bit
-vdsos in separate directories, moving the vdso2c tool to
-arch/x86/tools, and by merging common code and especially Makefile
-rules between the 32- and 64-bit vdsos to the greatest extent
-possible.
+The .so files for the vdso are named vdso*.so, and these structures
+are image of the corresponding vdso. Naming them accordingly is more
+consistent, very slightly more compact (by one character...) and
+simplifies the Makefile just a little bit.
 
-Be more strict about sanitizing and standardizing the vdso build
-options.
+Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+---
+ arch/x86/entry/syscall_32.c  |  2 +-
+ arch/x86/entry/vdso/Makefile |  8 ++++----
+ arch/x86/entry/vdso/vma.c    | 10 +++++-----
+ arch/x86/include/asm/elf.h   |  2 +-
+ arch/x86/include/asm/vdso.h  |  6 +++---
+ arch/x86/kernel/process_64.c |  6 +++---
+ arch/x86/kernel/signal_32.c  |  4 ++--
+ 7 files changed, 19 insertions(+), 19 deletions(-)
 
-Disable CFI for the vdso until the kernel adds user space IBT support.
+diff --git a/arch/x86/entry/syscall_32.c b/arch/x86/entry/syscall_32.c
+index 2b15ea17bb7c..eff33a4e0adc 100644
+--- a/arch/x86/entry/syscall_32.c
++++ b/arch/x86/entry/syscall_32.c
+@@ -318,7 +318,7 @@ __visible noinstr bool do_fast_syscall_32(struct pt_regs *regs)
+ 	 * convention.  Adjust regs so it looks like we entered using int80.
+ 	 */
+ 	unsigned long landing_pad = (unsigned long)current->mm->context.vdso +
+-					vdso_image_32.sym_int80_landing_pad;
++					vdso32_image.sym_int80_landing_pad;
+ 
+ 	/*
+ 	 * SYSENTER loses EIP, and even SYSCALL32 needs us to skip forward
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index f247f5f5cb44..7f833026d5b2 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -16,9 +16,9 @@ vobjs-$(CONFIG_X86_SGX)	+= vsgx.o
+ obj-y						+= vma.o extable.o
+ 
+ # vDSO images to build:
+-obj-$(CONFIG_X86_64)				+= vdso-image-64.o
+-obj-$(CONFIG_X86_X32_ABI)			+= vdso-image-x32.o
+-obj-$(CONFIG_COMPAT_32)				+= vdso-image-32.o vdso32-setup.o
++obj-$(CONFIG_X86_64)				+= vdso64-image.o
++obj-$(CONFIG_X86_X32_ABI)			+= vdsox32-image.o
++obj-$(CONFIG_COMPAT_32)				+= vdso32-image.o vdso32-setup.o
+ 
+ vobjs := $(addprefix $(obj)/, $(vobjs-y))
+ vobjs32 := $(addprefix $(obj)/, $(vobjs32-y))
+@@ -44,7 +44,7 @@ hostprogs += vdso2c
+ quiet_cmd_vdso2c = VDSO2C  $@
+       cmd_vdso2c = $(obj)/vdso2c $< $(<:%.dbg=%) $@
+ 
+-$(obj)/vdso-image-%.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(obj)/vdso2c FORCE
++$(obj)/vdso%-image.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(obj)/vdso2c FORCE
+ 	$(call if_changed,vdso2c)
+ 
+ #
+diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
+index afe105b2f907..8f98c2d7c7a9 100644
+--- a/arch/x86/entry/vdso/vma.c
++++ b/arch/x86/entry/vdso/vma.c
+@@ -65,7 +65,7 @@ static vm_fault_t vdso_fault(const struct vm_special_mapping *sm,
+ static void vdso_fix_landing(const struct vdso_image *image,
+ 		struct vm_area_struct *new_vma)
+ {
+-	if (in_ia32_syscall() && image == &vdso_image_32) {
++	if (in_ia32_syscall() && image == &vdso32_image) {
+ 		struct pt_regs *regs = current_pt_regs();
+ 		unsigned long vdso_land = image->sym_int80_landing_pad;
+ 		unsigned long old_land_addr = vdso_land +
+@@ -230,7 +230,7 @@ static int load_vdso32(void)
+ 	if (vdso32_enabled != 1)  /* Other values all mean "disabled" */
+ 		return 0;
+ 
+-	return map_vdso(&vdso_image_32, 0);
++	return map_vdso(&vdso32_image, 0);
+ }
+ 
+ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+@@ -239,7 +239,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 		if (!vdso64_enabled)
+ 			return 0;
+ 
+-		return map_vdso(&vdso_image_64, 0);
++		return map_vdso(&vdso64_image, 0);
+ 	}
+ 
+ 	return load_vdso32();
+@@ -252,7 +252,7 @@ int compat_arch_setup_additional_pages(struct linux_binprm *bprm,
+ 	if (IS_ENABLED(CONFIG_X86_X32_ABI) && x32) {
+ 		if (!vdso64_enabled)
+ 			return 0;
+-		return map_vdso(&vdso_image_x32, 0);
++		return map_vdso(&vdsox32_image, 0);
+ 	}
+ 
+ 	if (IS_ENABLED(CONFIG_IA32_EMULATION))
+@@ -267,7 +267,7 @@ bool arch_syscall_is_vdso_sigreturn(struct pt_regs *regs)
+ 	const struct vdso_image *image = current->mm->context.vdso_image;
+ 	unsigned long vdso = (unsigned long) current->mm->context.vdso;
+ 
+-	if (in_ia32_syscall() && image == &vdso_image_32) {
++	if (in_ia32_syscall() && image == &vdso32_image) {
+ 		if (regs->ip == vdso + image->sym_vdso32_sigreturn_landing_pad ||
+ 		    regs->ip == vdso + image->sym_vdso32_rt_sigreturn_landing_pad)
+ 			return true;
+diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
+index 6c8fdc96be7e..2ba5f166e58f 100644
+--- a/arch/x86/include/asm/elf.h
++++ b/arch/x86/include/asm/elf.h
+@@ -361,7 +361,7 @@ else if (IS_ENABLED(CONFIG_IA32_EMULATION))				\
+ 
+ #define VDSO_ENTRY							\
+ 	((unsigned long)current->mm->context.vdso +			\
+-	 vdso_image_32.sym___kernel_vsyscall)
++	 vdso32_image.sym___kernel_vsyscall)
+ 
+ struct linux_binprm;
+ 
+diff --git a/arch/x86/include/asm/vdso.h b/arch/x86/include/asm/vdso.h
+index b7253ef3205a..e8afbe9faa5b 100644
+--- a/arch/x86/include/asm/vdso.h
++++ b/arch/x86/include/asm/vdso.h
+@@ -27,9 +27,9 @@ struct vdso_image {
+ 	long sym_vdso32_rt_sigreturn_landing_pad;
+ };
+ 
+-extern const struct vdso_image vdso_image_64;
+-extern const struct vdso_image vdso_image_x32;
+-extern const struct vdso_image vdso_image_32;
++extern const struct vdso_image vdso64_image;
++extern const struct vdso_image vdsox32_image;
++extern const struct vdso_image vdso32_image;
+ 
+ extern int __init init_vdso_image(const struct vdso_image *image);
+ 
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 52a5c03c353c..ae00c788962a 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -942,14 +942,14 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
+ #ifdef CONFIG_CHECKPOINT_RESTORE
+ # ifdef CONFIG_X86_X32_ABI
+ 	case ARCH_MAP_VDSO_X32:
+-		return prctl_map_vdso(&vdso_image_x32, arg2);
++		return prctl_map_vdso(&vdsox32_image, arg2);
+ # endif
+ # ifdef CONFIG_IA32_EMULATION
+ 	case ARCH_MAP_VDSO_32:
+-		return prctl_map_vdso(&vdso_image_32, arg2);
++		return prctl_map_vdso(&vdso32_image, arg2);
+ # endif
+ 	case ARCH_MAP_VDSO_64:
+-		return prctl_map_vdso(&vdso_image_64, arg2);
++		return prctl_map_vdso(&vdso64_image, arg2);
+ #endif
+ #ifdef CONFIG_ADDRESS_MASKING
+ 	case ARCH_GET_UNTAG_MASK:
+diff --git a/arch/x86/kernel/signal_32.c b/arch/x86/kernel/signal_32.c
+index 42bbc42bd350..e55cf19e68fe 100644
+--- a/arch/x86/kernel/signal_32.c
++++ b/arch/x86/kernel/signal_32.c
+@@ -282,7 +282,7 @@ int ia32_setup_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 		/* Return stub is in 32bit vsyscall page */
+ 		if (current->mm->context.vdso)
+ 			restorer = current->mm->context.vdso +
+-				vdso_image_32.sym___kernel_sigreturn;
++				vdso32_image.sym___kernel_sigreturn;
+ 		else
+ 			restorer = &frame->retcode;
+ 	}
+@@ -368,7 +368,7 @@ int ia32_setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 		restorer = ksig->ka.sa.sa_restorer;
+ 	else
+ 		restorer = current->mm->context.vdso +
+-			vdso_image_32.sym___kernel_rt_sigreturn;
++			vdso32_image.sym___kernel_rt_sigreturn;
+ 	unsafe_put_user(ptr_to_compat(restorer), &frame->pretcode, Efault);
+ 
+ 	/*
+-- 
+2.51.1
 
-Modernize the DWARF generation vdso32/sigreturn.S.
-
-Add macros to cleanly call system calls from vdso source code.
-
-Add the GNU_PROPERTY and GNU_STACK PHDRs to the vdso.
-
-When using int $0x80 (old 32-bit hardware or FRED-capable 64-bit
-hardware) skip the stack stuff in the 32-bit kernel entry code and
-call int $0x80 directly when used from C code.
-
-Changes from v2:
-
-	Too many to count - much of the patchset has been reworked
-
-Patches:
-
-	x86/entry/vdso: rename vdso_image_* to vdso*_image
-	x86/entry/vdso: refactor the vdso build
-	x86/entry/vdso32: don't rely on int80_landing_pad for adjusting ip
-	x86/entry/vdso32: remove SYSCALL_ENTER_KERNEL macro in sigreturn.S
-	x86/entry/vdso32: remove open-coded DWARF in sigreturn.S
-	x86/entry/vdso: include GNU_PROPERTY and GNU_STACK PHDRs
-	x86/vdso: abstract out vdso system call internals
-	x86/cpufeature: replace X86_FEATURE_SYSENTER32 with X86_FEATURE_SYSFAST32
-	x86/entry/vdso32: when using int $0x80, use it directly
-
---- 
- arch/x86/Kconfig.cpufeatures                       |   8 +
- arch/x86/Makefile                                  |   2 +-
- arch/x86/entry/syscall_32.c                        |   2 +-
- arch/x86/entry/vdso/.gitignore                     |  11 +-
- arch/x86/entry/vdso/Makefile                       | 162 +--------------------
- arch/x86/entry/vdso/common/Makefile.include        |  89 +++++++++++
- arch/x86/entry/vdso/{vdso-note.S => common/note.S} |   5 +-
- arch/x86/entry/vdso/{ => common}/vclock_gettime.c  |   0
- arch/x86/entry/vdso/{ => common}/vdso-layout.lds.S |  51 ++++---
- arch/x86/entry/vdso/{ => common}/vgetcpu.c         |   0
- arch/x86/entry/vdso/vdso32/Makefile                |  24 +++
- arch/x86/entry/vdso/vdso32/note.S                  |  19 +--
- arch/x86/entry/vdso/vdso32/sigreturn.S             | 152 +++++--------------
- arch/x86/entry/vdso/vdso32/system_call.S           |  22 ++-
- arch/x86/entry/vdso/vdso32/vclock_gettime.c        |   5 +-
- arch/x86/entry/vdso/vdso32/vdso32.lds.S            |   2 +-
- arch/x86/entry/vdso/vdso32/vgetcpu.c               |   4 +-
- arch/x86/entry/vdso/vdso64/Makefile                |  45 ++++++
- arch/x86/entry/vdso/vdso64/note.S                  |   1 +
- arch/x86/entry/vdso/vdso64/vclock_gettime.c        |   1 +
- .../entry/vdso/{vdso.lds.S => vdso64/vdso64.lds.S} |   2 +-
- arch/x86/entry/vdso/{ => vdso64}/vdsox32.lds.S     |   2 +-
- arch/x86/entry/vdso/vdso64/vgetcpu.c               |   1 +
- .../entry/vdso/{ => vdso64}/vgetrandom-chacha.S    |   0
- arch/x86/entry/vdso/{ => vdso64}/vgetrandom.c      |   2 +-
- arch/x86/entry/vdso/{ => vdso64}/vsgx.S            |   0
- arch/x86/entry/vdso/vma.c                          |  24 ++-
- arch/x86/include/asm/cpufeatures.h                 |   2 +-
- arch/x86/include/asm/dwarf2.h                      |   1 +
- arch/x86/include/asm/elf.h                         |   2 +-
- arch/x86/include/asm/vdso.h                        |   6 +-
- arch/x86/include/asm/vdso/gettimeofday.h           | 108 +-------------
- arch/x86/include/asm/vdso/sys_call.h               | 121 +++++++++++++++
- arch/x86/kernel/asm-offsets.c                      |   6 +
- arch/x86/kernel/cpu/centaur.c                      |   3 -
- arch/x86/kernel/cpu/common.c                       |   8 +
- arch/x86/kernel/cpu/intel.c                        |   4 +-
- arch/x86/kernel/cpu/zhaoxin.c                      |   4 +-
- arch/x86/kernel/fred.c                             |   2 +-
- arch/x86/kernel/process_64.c                       |   6 +-
- arch/x86/kernel/signal_32.c                        |   4 +-
- arch/x86/tools/Makefile                            |  15 +-
- arch/x86/{entry/vdso => tools}/vdso2c.c            |   0
- arch/x86/{entry/vdso => tools}/vdso2c.h            |   0
- arch/x86/xen/setup.c                               |  28 ++--
- arch/x86/xen/smp_pv.c                              |   5 +-
- arch/x86/xen/xen-ops.h                             |   1 -
- 47 files changed, 464 insertions(+), 498 deletions(-)
