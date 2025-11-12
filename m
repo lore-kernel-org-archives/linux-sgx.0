@@ -1,36 +1,36 @@
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084DF2609CC;
-	Wed, 12 Nov 2025 20:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254EF221275;
+	Wed, 12 Nov 2025 20:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762978972; cv=none; b=gS08EWSHQuAYegQOhkDUHSMWaR+QHIjYhqkUiytlrQ+P7/NzyabNQ4ln38znvts1IsyiGrMc5fn1r5n3Kj+kVEJbxK8DyeOyA6NDAJ7VX1nzs8qsP11OpSe0cYKM1ZVY+gLr4HqyDwk0z5N+JwhrIqTW1jsvtTp39Y5xZ5jiA+Q=
+	t=1762979020; cv=none; b=Xn36rJ4C10t3OtKGAbioKhsQAV9lsZ+NIn0cUtVNyFckbDXfeQSKZIZNpClmHQ6jHuGHUvazqWH8ciH6qVl2/NyJKoxiU9q6B5/F6379QxzwBjnuYEwLL7vjWFePvGCrj6jydBdOGxvBc63J9MfAb0Q5febFpfDLNJuSBgg7cGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762978972; c=relaxed/simple;
+	s=arc-20240116; t=1762979020; c=relaxed/simple;
 	bh=Qc+ZX9T/f2W+RDw2MY8se8ehYAGsJxhh8u3/jBxkUvE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=W7IgVJOBGR7CH+c1HUxoQ14rhsduukuSjeOB4B0NAjZVHWxxFRquYqlK9lnbuzqGceunJ/Z9dKoQ/SZLEvHztazMGSj20YebU6jk323rDD3RvWU8LuKHBlINnOxIHTkzTUJ928oOIQaR66Ki0Yr6Jdq7q+2s6ezgT7m4olFE/wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=WhhQ7EuK; arc=none smtp.client-ip=198.137.202.136
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=uIm5ENnXqlYof3BMeW3m9lda4MIISyDRoP3tqWGpET+AMMwpLuO/vOrDU6/n94fovtRjytCyISiBjqk+f5Hd+7YUM2mCQwWIjvKDYTosFMmF7U5Iw2j03hNiE2C/8Bywhb7FboIhMTRsKbcCO/s9P7+gtO1SdRom+PgN+qQ4iq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=DQQX1usU; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="WhhQ7EuK"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="DQQX1usU"
 Received: from mail.zytor.com (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ACKLxgd978289
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ACKN2Lw978372
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 12 Nov 2025 12:22:00 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ACKLxgd978289
+	Wed, 12 Nov 2025 12:23:03 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ACKN2Lw978372
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762978922;
+	s=2025102301; t=1762978985;
 	bh=GacBjPJEXkeyFGvcySDne54yt1x9SXUnR3yJ7bSJhAE=;
 	h=From:To:Subject:Date:From;
-	b=WhhQ7EuKwYOXytPktFek3puY7Ka0XqBpn7jBOERZqLlcy7SfXWCNsSw4KzTyrdilv
-	 xf34DKl84eb9wbp02eojRF1Arl3k73RGpmWbST7W1aDH5jgCFvity/lWEY3JsDu/66
-	 uXn03ol/zqhoxm9wKKTvyWGhWcjKy1nt3b2wdtHuOktdHSOgmEQUbTK9TaRpNeFqna
-	 GMKGGeMijqYo3e0UVhsVSvu/vfq6aj6nsMTELnn0OwBKjCJlGdM6QBeaOwImY1fAO8
-	 BHm9EGykwgLoNslkep5UQch3jg45qyLBcV9GUZgL1RCODGmny3vbFlwxdy1QCUoeVl
-	 ei6m6DpOShsyw==
+	b=DQQX1usUIahqMjsKWNcVJ0i0dpE90Gmy5bZ05KT7Utqs4KRgS57x17OedKRlTseg5
+	 CHOzEX2rHZ9efgrpda3VtxZDwHIpPOJMo8vM8fFrfGSpc/w5wvUjHlZnWO6WDcSOlH
+	 KWW/IvjCAy4iip+hB9m/spAcgc8fVjl8Z/O+nxZx2IGvH5LBoZzzbZpQWDuknN4oNH
+	 FMpF6W9ECFEwVuPdBCRC3Gm2DiFjQ6YVLV38ux1PSao6Eh5nCpz4BhcIDVvqrkDWBx
+	 SbLBGBjNY4B6oGJgzeepV0a45I+/UNJaOWR65JJH6qIX+FMJXF2UxScZSGqvrHFv1u
+	 oL6C3vpwGfuww==
 From: "H. Peter Anvin" <hpa@zytor.com>
 To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
@@ -48,9 +48,9 @@ To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-sgx@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v3 0/3] x86/entry/vdso: clean up the vdso build, vdso updates
-Date: Wed, 12 Nov 2025 12:21:45 -0800
-Message-ID: <20251112202155.1310587-1-hpa@zytor.com>
+Subject: [PATCH v3 0/9] x86/entry/vdso: clean up the vdso build, vdso updates
+Date: Wed, 12 Nov 2025 12:22:45 -0800
+Message-ID: <20251112202258.1310754-1-hpa@zytor.com>
 X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
