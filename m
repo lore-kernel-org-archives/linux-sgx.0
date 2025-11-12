@@ -1,56 +1,56 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444B6341653
-	for <linux-sgx@vger.kernel.org>; Wed, 12 Nov 2025 16:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCA2343D75
+	for <linux-sgx@vger.kernel.org>; Wed, 12 Nov 2025 16:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762963634; cv=none; b=Z/UOSqwz5h7Sp0WnV/fTkQskvDtVq4qOSP2bH0V2u4c2h7lS9ewQvdmjyWoPH2PVbSjbnWvGrURQxYJ8w3KL1M/V1dyjo5QklBPqrlW7DYNUly4jDxH/Uv6K4H6PE2HGOCI86IlaivezH7XZ+Nmx89B9BjAT9UDtQlDeZ7Zfums=
+	t=1762963636; cv=none; b=KAx/tG/8pBFX78UREiAPX2y1HJURbai7TuzZqUBeKKW+WPCAWTi4k2RjXw9Ck9EiqjodzZy7hUIz92vXYcWqnfWIKgfFk9BOer3BVD/ibX4fq34jho8imTvAaC4CRmPQ9ycI7eNFjLlGIyzMe7fo53jP6VzXIvq59fnQzHzzdDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762963634; c=relaxed/simple;
-	bh=FWETxRtMVjkLK+WfqnbYriRIlbE+xBHWvnDlkLiYk1Y=;
+	s=arc-20240116; t=1762963636; c=relaxed/simple;
+	bh=vfPFTFts+O9/qnjhFzifocpQWwiaPjp7RusofTyF4ak=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=C42A/3uCwobNo/RkP2vjKMumrnnFvxkcgakzKyJUQj/7R7U5YXl2Sya12yvfVZwqHncDBjx4Lw1lUQAWcJrXwR3jHV+xRxQULEp4oa87Fyxd4RROe1gpokB3q2N8s1QbPPyCJzkwNXopJB45QmF48Dr8U6BhdYO3lvWIS2RRbzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WnHC4DSp; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=q/HFDQHKFqiAlnlNLCDRCaUyzohGdzY2m2yi5yK8Moc1LlJe1vQ1OGhNn9MHjd4QM1ohgSLlqBanlMwIzIdwod8N1Oj/dmvZFzJa7Yiim53+mGL7fi/FAho7vTL6odKhQx1eaVCW0M1GiocOq1D+2hu9mkhbiVTtfX62rEZsRM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0V6+CXFL; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WnHC4DSp"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3416dc5752aso2543924a91.1
-        for <linux-sgx@vger.kernel.org>; Wed, 12 Nov 2025 08:07:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0V6+CXFL"
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-295595cd102so23465455ad.3
+        for <linux-sgx@vger.kernel.org>; Wed, 12 Nov 2025 08:07:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762963632; x=1763568432; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762963634; x=1763568434; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=eTjoKHmggOYgTdGIQs6uKfwAZuQVBnxqpwF3nx2QCb8=;
-        b=WnHC4DSpUfKJhsrRGPaaQ+CzvM+A6EP8PztrnUZmOFMoK6rBZDY/JJlvVrF8CRWoyf
-         HirmaA2stDhrnK+fUM8O2l+izCeZFQDGo2Bol48Q60CVVt9J8Oiy6S/DuoFSM5JTk7FP
-         2yNUbwTWbYg96JlI+HFWqE153YaSmSVqfUI9dTdhEpaq5JKV5I/8VXalYqIZpoLVxtO0
-         KTJL4VQ2EC4i7kj/uKserRpZ1L/idhNNqARjT4GNFD5uFZ7XJ+ZaO/ZG7o1cG/rxaLlu
-         cn1SM0QGrbmvhEfVOyOgr8Xq00u0Dmwp77Pvxg6iD4XjK9gRGYVAYeKBzZZj/Ju+ZAIV
-         zQJA==
+        bh=FfunJ/ItZMKzoPtNCzcWcDET3PL8bYrh6b1GoUKPhWM=;
+        b=0V6+CXFLAGtOl4I/o8dh93du4E0qKRnFrClLo8Oz9JVvCDlZ4uEnBHyHK5vJ6Y0GFi
+         0/gy9h7YnqoDlyIkZxOHhWIofDUrzUBVffk5wokCTGLWRB1bJfhQZA07LJW7Umxg7SRk
+         DtPrr6f3vyD6EOjDgD0XQwnPUrfZnhdZzMEm3QRKWJ+B+VxNM3Rv6alCCIZs1azKtMLP
+         ZHSUlznz0MdDldyLiIemk6zrvI85fDAJpCNlDwjQmJtt0cqK0RFEvc7g7hvh2z45Acj5
+         5jaNvP22dw/OwuM6zlsI9LGV8DwLSMBpDbjrs9nZfF+DcgJYe0W+PeV4YLPbDNUvIoYC
+         hl3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762963632; x=1763568432;
+        d=1e100.net; s=20230601; t=1762963634; x=1763568434;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eTjoKHmggOYgTdGIQs6uKfwAZuQVBnxqpwF3nx2QCb8=;
-        b=kuc7L4IZhRUOjhvEQwfnxj3p1dKFN7KDqgB3K9ukaXkDiwQoV4PSk0c3JXnUIT3Sf4
-         6EisufjAIU2IxYvHGzZsb8K20LUp/KUcwTOxoUiUMRK+8uPPwSZOg7+yRx7NVN4qWYWg
-         IKJF1hEaRvW3CT1XlFDD5qqEQqe6onrVuJ4K65FCFEtP0TsLl9O4u1Q0ThuPJ43vYPUk
-         cXXNKBFSojA9N3QCjeE/uc9zi/HemGtIwQkxq+1IP6rWcrbJ8p7RSyLDTB3ewbAa29Rx
-         d+QlxriZ9knnVIt0tLHTIgoXJlP0EafvwcOsHjX4hGKpKL1Mx7UwZ17BUsUImlUkJuqE
-         5B/w==
-X-Gm-Message-State: AOJu0Yyf5FDC2xZlJjgjQWSg0Dpxpjuufcgq4v2XgfZ01g+O8dVHoLcb
-	J+DvbWFDRnIMuFjxjXIY/UlfywycadjIgchUipzXmE+8vp9jF/bGWm7f3LvLgysGtG1Avcmjzyf
-	qHdQ4Zg==
-X-Google-Smtp-Source: AGHT+IHJZKkEiToM4fKaG/NQNsxc49aGGeWBuNh03TBSSQJQx8lPhD3KWW6Av/PBLEC9yzKJDa1KrmBSRaU=
-X-Received: from pjboj14.prod.google.com ([2002:a17:90b:4d8e:b0:33b:c211:1fa9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:bc9:b0:343:e082:b327
- with SMTP id 98e67ed59e1d1-343e082b6ffmr2584900a91.31.1762963632513; Wed, 12
- Nov 2025 08:07:12 -0800 (PST)
+        bh=FfunJ/ItZMKzoPtNCzcWcDET3PL8bYrh6b1GoUKPhWM=;
+        b=i6LWmcZtmo5zwq/67YHvqVEgdzoiq9T9+BmE3MlAeeSkv7akCdEj+CRXIYdmEbVtA1
+         5mCqGONpe/pBbKyZMiQd8J/THS/IYKqROQOzmzrNzCBtGVtzT09xKu0Ah0XdsuNKwO2x
+         v6EiXgRMt6COxl7/VeluMtSVXJc4B7cLyQarL0b3kG04NnLd1XhTjuuz1oK4vvsCLA3J
+         5YjeaMtmdUu3FyqytCfKZ+dF34wMvdKdsEZDQn3kjTNJ9nCQrShxWg2y1WU8vRsqVxCd
+         w4yc9KMtbGFkOzmChYvNr2NQmfZvlglv6gbPb+aFrtHHT8GdP7HA4BWIeJmL6+f85apK
+         uyVQ==
+X-Gm-Message-State: AOJu0YwCiuUxA979OxaH94l4FR9E0SuuMEoYa8V9UVNwXoQy40l/KAF7
+	YJaomH6KBSkvfFvSCdsaFVKuLU5WlIdXWPSGwliK+Z2RHd+cv0+5j+YbgL548lglotfcWZUdjrv
+	pcZXqLA==
+X-Google-Smtp-Source: AGHT+IGPM+FL5iDTJezPnnxj3ZrI7o/h1RB9PJEV738qzsyjTKGBwTcX5RKvAm11TxhAvf6YY9dkHxnyxDY=
+X-Received: from pldo20.prod.google.com ([2002:a17:903:94:b0:297:e751:aa56])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3c4e:b0:295:5864:8009
+ with SMTP id d9443c01a7336-2984ee03287mr41328465ad.44.1762963634199; Wed, 12
+ Nov 2025 08:07:14 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 12 Nov 2025 08:07:04 -0800
+Date: Wed, 12 Nov 2025 08:07:05 -0800
 In-Reply-To: <20251112160708.1343355-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
@@ -60,9 +60,9 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251112160708.1343355-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251112160708.1343355-2-seanjc@google.com>
-Subject: [PATCH 1/5] x86/sgx: Add a missing colon in kernel-doc markup for
- "struct sgx_enclave_run"
+Message-ID: <20251112160708.1343355-3-seanjc@google.com>
+Subject: [PATCH 2/5] x86/sgx: Add kernel-doc descriptions for params passed to
+ vDSO user handler
 From: Sean Christopherson <seanjc@google.com>
 To: Jarkko Sakkinen <jarkko@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
 	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
@@ -71,32 +71,41 @@ Cc: linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Stephen Rothwell <sfr@canb.auug.org.au>, Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add a missing ':' for the description of sgx_enclave_run.reserved so that
-documentation for the member is correctly generated:
+Add kernel-doc markup for the register parameters passed by the vDSO blob
+to the user handler to suppress build warnings, e.g.
 
-  WARNING: arch/x86/include/uapi/asm/sgx.h:184 struct member 'reserved' not
-  described in 'sgx_enclave_run'
+  WARNING: arch/x86/include/uapi/asm/sgx.h:157 function parameter 'r8' not
+           described in 'sgx_enclave_user_handler_t'
+
+Call out that except for RSP, the registers are undefined on asynchronous
+exits as far as the vDSO ABI is concerned.  E.g. the vDSO's exception
+handler clobbers RDX, RDI, and RSI, and the kernel doesn't guarantee that
+R8 or R9 will be zero (the synthetic value loaded by the CPU).
 
 Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 Closes: https://lore.kernel.org/all/20251106145506.145fc620@canb.auug.org.au
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/include/uapi/asm/sgx.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/uapi/asm/sgx.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 2dd35bbdc822..a438ea43bfd1 100644
+index a438ea43bfd1..0d408f001ac6 100644
 --- a/arch/x86/include/uapi/asm/sgx.h
 +++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -166,7 +166,7 @@ typedef int (*sgx_enclave_user_handler_t)(long rdi, long rsi, long rdx,
-  * @exception_addr:		The address that triggered the exception
-  * @user_handler:		User provided callback run on exception
-  * @user_data:			Data passed to the user handler
-- * @reserved			Reserved for future extensions
-+ * @reserved:			Reserved for future extensions
+@@ -143,6 +143,12 @@ struct sgx_enclave_run;
+ /**
+  * typedef sgx_enclave_user_handler_t - Exit handler function accepted by
+  *					__vdso_sgx_enter_enclave()
++ * @rdi:	RDI at the time of EEXIT, undefined on AEX
++ * @rsi:	RSI at the time of EEXIT, undefined on AEX
++ * @rdx:	RDX at the time of EEXIT, undefined on AEX
++ * @rsp:	RSP (untrusted) at the time of EEXIT or AEX
++ * @r8:		R8 at the time of EEXIT, undefined on AEX
++ * @r9:		R9 at the time of EEXIT, undefined on AEX
+  * @run:	The run instance given by the caller
   *
-  * If @user_handler is provided, the handler will be invoked on all return paths
-  * of the normal flow.  The user handler may transfer control, e.g. via a
+  * The register parameters contain the snapshot of their values at enclave
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
