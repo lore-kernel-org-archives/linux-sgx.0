@@ -1,37 +1,37 @@
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA3529BD8C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786A22594BD;
 	Wed, 12 Nov 2025 04:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762922331; cv=none; b=dyEwItiqGGayrEsMwXdOYCkE+lpzD0XJPsTdaaKKUCm4x3JHkttUT049bMKLvEoxkFz7BIufjb56p1pdDRZojiNvqKw9XcnCHYExNWWHX215Hon4hqiaSMYZWJw1gAgJKCasxaMgUL054K8KpMdQvGBXGP4S5qQCU1v3QRBz6VU=
+	t=1762922331; cv=none; b=nNPshbnlC2gchhCunN5c3krjePovjAmkel3SzTGelRsHA9kaST408EbYP8AQVTGnpGQx3a/RrVXZuXGCFpaTCANTnEX6EDxW2E83YPkOUdLiFOd/PTbUedXT0Jjwe9QSU3h/AxTq6Nyf+3RrIyhAZvoBTPGAjWEFskn16r1hUZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762922331; c=relaxed/simple;
-	bh=G0rZoEdasFAMnWJGxc9v/qvxQWhEd/6B4FNnH7e/X3E=;
+	bh=Z2D64GuUMELOolw9cKf4hzojFFY66C+zfDABA364ROY=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FVZPNmA0AjkDh2Wh6lLQxKzCZ6LjknXxuGu0VtllvEwHTPAKlSb/za2Rjal+06u1CVroziI/7ewwwXQF25z3tLvgmWkGm5FfwyocOR60Hdk9KXDCqxEgd+YONjTaUN6s5Uzs8/kMPu/b8uTOF910W9h90CovYAEAFA31PeUpx1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=daWKesqs; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version; b=KSmhVBBgbj/v1Mt2ORJvC3vtpNEBWbJKBzEwJ/cEfAemtfS1Q6bBXveszR/bMnmZVj+T+aWvcn3jDeQqqbaQtHbqiwhK1e7MAA8tVb/s/zmWsACfIAbusCWE7iWRkQ4lRohZMUXHyULLPdJP2UvIjoJ6g9jxG1hxZc7HKHggOs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=i/IQlisW; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="daWKesqs"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="i/IQlisW"
 Received: from mail.zytor.com (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AC4bYDR542538
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AC4bYDT542538
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 11 Nov 2025 20:37:44 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AC4bYDR542538
+	Tue, 11 Nov 2025 20:37:47 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AC4bYDT542538
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762922265;
-	bh=ZWeLM+eLZ6QkLHozb4m4psR5mDIpb4RWIDkUQvFl5po=;
+	s=2025102301; t=1762922269;
+	bh=DMqdBX9HO8+AZngQ2hCIyYV6RLWAiIgEKxARiQLqOYw=;
 	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=daWKesqsgq3AjzFWfCh0PIfWBznmeeyRPV3LIZ0XLsRmblnVVsN8mnlxtcoUk1CBR
-	 uhMtyKnblwAyf+rHsXNgXlHhJz7Dp/m5NSbNVCrTFQ/oNWTO4jz0wboxIGVT3t55gS
-	 Bd1fVcZPGgQMPk4YDp/96e1WYrvtO75Vka6lyTB0D8nFfzlYN5Zq/kwvblGsnrd9IX
-	 nDBUsrVFswzy3O17m5Qv88mB/nBrgYDwahoVLlwc6CGwkedBm4/2hH9XpewH0tVmgi
-	 AVFL5pncnkfXevzqEcHvx9i1vrLVolFzurKaY+6p6HaUV45NXEm0UWCHo18PX452bC
-	 XRlq+D1R7eskw==
+	b=i/IQlisWVBkqsZ6VqZoTW83K3NVYrvQYBx0Y3VkaFX9h4lgeU4fUuaWq30rZcuIfu
+	 XxS/8UghVlWbL0SCp+tLs8Fk2bfBUHUipw/HU6f/H/nc0F2JzQYokibRdQER9Ie4hj
+	 c0RHigxm1QzqyUHYFgj3dOqwCl1+cnp4EXzXWDWsjiujzBy+V55yG8akBI7m236YLU
+	 fMMeyjFmYgfkdjPkTZMozP2KakLOnmUdmszea/IKCcggFtzUEQHAt0JRRp1xPis5og
+	 fFV3A9zysNWH0QZLfWebtuLgf82jFhrCqMVCOJX0gl+5XFk/9aL7qrfrGqvQQ201hn
+	 p7Q6pDw2hu7Sg==
 From: "H. Peter Anvin" <hpa@zytor.com>
 To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
@@ -49,9 +49,9 @@ To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-sgx@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 5/9] x86/entry/vdso32: remove open-coded DWARF in sigreturn.S
-Date: Tue, 11 Nov 2025 20:37:23 -0800
-Message-ID: <20251112043730.992152-6-hpa@zytor.com>
+Subject: [PATCH v2 7/9] x86/vdso: abstract out vdso system call internals
+Date: Tue, 11 Nov 2025 20:37:25 -0800
+Message-ID: <20251112043730.992152-8-hpa@zytor.com>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251112043730.992152-1-hpa@zytor.com>
 References: <20251112043730.992152-1-hpa@zytor.com>
@@ -63,232 +63,304 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The vdso32 sigreturn.S contains open-coded DWARF bytecode, which
-includes a hack for gdb to not try to step back to a previous call
-instruction when backtracing from a signal handler.
+Abstract out the calling of true system calls from the vdso into
+macros.
 
-Neither of those are necessary anymore: the backtracing issue is
-handled by ".cfi_entry simple" and ".cfi_signal_frame", both of which
-have been supported for a very long time now, which allows the
-remaining frame to be built using regular .cfi annotations.
+It has been a very long time since gcc did not allow %ebx or %ebp in
+inline asm in 32-bit PIC mode; remove the corresponding hacks.
 
-Add a few more register offsets to the signal frame just for good
-measure.
+Remove the use of memory output constraints in gettimeofday.h in favor
+of "memory" clobbers. The resulting code is identical for the current
+use cases, as the system call is usually a terminal fallback anyway,
+and it merely complicates the macroization.
 
-Replace the nop on fallthrough of the system call (which should never,
-ever happen) with a ud2a trap.
+This patch adds only a handful of more lines of code than it removes,
+and in fact could be made substantially smaller by removing the macros
+for the argument counts that aren't currently used, however, it seems
+better to be general from the start.
 
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 ---
- arch/x86/entry/vdso/vdso32/sigreturn.S | 146 ++++++-------------------
- arch/x86/include/asm/dwarf2.h          |   1 +
- arch/x86/kernel/asm-offsets.c          |   6 +
- 3 files changed, 39 insertions(+), 114 deletions(-)
+ arch/x86/include/asm/vdso/gettimeofday.h | 108 ++------------------
+ arch/x86/include/asm/vdso/sys_call.h     | 119 +++++++++++++++++++++++
+ 2 files changed, 127 insertions(+), 100 deletions(-)
+ create mode 100644 arch/x86/include/asm/vdso/sys_call.h
 
-diff --git a/arch/x86/entry/vdso/vdso32/sigreturn.S b/arch/x86/entry/vdso/vdso32/sigreturn.S
-index 965900c6763b..25b0ac4b4bfe 100644
---- a/arch/x86/entry/vdso/vdso32/sigreturn.S
-+++ b/arch/x86/entry/vdso/vdso32/sigreturn.S
-@@ -1,136 +1,54 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/linkage.h>
- #include <asm/unistd_32.h>
-+#include <asm/dwarf2.h>
- #include <asm/asm-offsets.h>
+diff --git a/arch/x86/include/asm/vdso/gettimeofday.h b/arch/x86/include/asm/vdso/gettimeofday.h
+index 73b2e7ee8f0f..3cf214cc4a75 100644
+--- a/arch/x86/include/asm/vdso/gettimeofday.h
++++ b/arch/x86/include/asm/vdso/gettimeofday.h
+@@ -18,6 +18,7 @@
+ #include <asm/msr.h>
+ #include <asm/pvclock.h>
+ #include <clocksource/hyperv_timer.h>
++#include <asm/vdso/sys_call.h>
  
-+.macro STARTPROC_SIGNAL_FRAME sc
-+	CFI_STARTPROC	simple
-+	CFI_SIGNAL_FRAME
-+	/* -4 as pretcode has already been popped */
-+	CFI_DEF_CFA	esp,	\sc - 4
-+	CFI_OFFSET	eip,    IA32_SIGCONTEXT_ip
-+	CFI_OFFSET	eax,    IA32_SIGCONTEXT_ax
-+	CFI_OFFSET	ebx,    IA32_SIGCONTEXT_bx
-+	CFI_OFFSET	ecx,    IA32_SIGCONTEXT_cx
-+	CFI_OFFSET	edx,    IA32_SIGCONTEXT_dx
-+	CFI_OFFSET	esp,    IA32_SIGCONTEXT_sp
-+	CFI_OFFSET	ebp,    IA32_SIGCONTEXT_bp
-+	CFI_OFFSET	esi,    IA32_SIGCONTEXT_si
-+	CFI_OFFSET	edi,    IA32_SIGCONTEXT_di
-+	CFI_OFFSET	es,     IA32_SIGCONTEXT_es
-+	CFI_OFFSET	cs,     IA32_SIGCONTEXT_cs
-+	CFI_OFFSET	ss,     IA32_SIGCONTEXT_ss
-+	CFI_OFFSET	ds,     IA32_SIGCONTEXT_ds
-+	CFI_OFFSET	eflags, IA32_SIGCONTEXT_flags
-+.endm
-+
- 	.text
- 	.globl __kernel_sigreturn
- 	.type __kernel_sigreturn,@function
--	nop /* this guy is needed for .LSTARTFDEDLSI1 below (watch for HACK) */
- 	ALIGN
- __kernel_sigreturn:
--.LSTART_sigreturn:
--	popl %eax		/* XXX does this mean it needs unwind info? */
-+	STARTPROC_SIGNAL_FRAME IA32_SIGFRAME_sigcontext
-+	popl %eax
-+	CFI_ADJUST_CFA_OFFSET -4
- 	movl $__NR_sigreturn, %eax
- 	int $0x80
--.LEND_sigreturn:
- SYM_INNER_LABEL(vdso32_sigreturn_landing_pad, SYM_L_GLOBAL)
--	nop
--	.size __kernel_sigreturn,.-.LSTART_sigreturn
-+	ud2a
-+	CFI_ENDPROC
-+	.size __kernel_sigreturn,.-__kernel_sigreturn
+ #define VDSO_HAS_TIME 1
  
- 	.globl __kernel_rt_sigreturn
- 	.type __kernel_rt_sigreturn,@function
- 	ALIGN
- __kernel_rt_sigreturn:
--.LSTART_rt_sigreturn:
-+	STARTPROC_SIGNAL_FRAME IA32_RT_SIGFRAME_sigcontext
- 	movl $__NR_rt_sigreturn, %eax
- 	int $0x80
--.LEND_rt_sigreturn:
- SYM_INNER_LABEL(vdso32_rt_sigreturn_landing_pad, SYM_L_GLOBAL)
--	nop
--	.size __kernel_rt_sigreturn,.-.LSTART_rt_sigreturn
--	.previous
--
--	.section .eh_frame,"a",@progbits
--.LSTARTFRAMEDLSI1:
--	.long .LENDCIEDLSI1-.LSTARTCIEDLSI1
--.LSTARTCIEDLSI1:
--	.long 0			/* CIE ID */
--	.byte 1			/* Version number */
--	.string "zRS"		/* NUL-terminated augmentation string */
--	.uleb128 1		/* Code alignment factor */
--	.sleb128 -4		/* Data alignment factor */
--	.byte 8			/* Return address register column */
--	.uleb128 1		/* Augmentation value length */
--	.byte 0x1b		/* DW_EH_PE_pcrel|DW_EH_PE_sdata4. */
--	.byte 0			/* DW_CFA_nop */
--	.align 4
--.LENDCIEDLSI1:
--	.long .LENDFDEDLSI1-.LSTARTFDEDLSI1 /* Length FDE */
--.LSTARTFDEDLSI1:
--	.long .LSTARTFDEDLSI1-.LSTARTFRAMEDLSI1 /* CIE pointer */
--	/* HACK: The dwarf2 unwind routines will subtract 1 from the
--	   return address to get an address in the middle of the
--	   presumed call instruction.  Since we didn't get here via
--	   a call, we need to include the nop before the real start
--	   to make up for it.  */
--	.long .LSTART_sigreturn-1-.	/* PC-relative start address */
--	.long .LEND_sigreturn-.LSTART_sigreturn+1
--	.uleb128 0			/* Augmentation */
--	/* What follows are the instructions for the table generation.
--	   We record the locations of each register saved.  This is
--	   complicated by the fact that the "CFA" is always assumed to
--	   be the value of the stack pointer in the caller.  This means
--	   that we must define the CFA of this body of code to be the
--	   saved value of the stack pointer in the sigcontext.  Which
--	   also means that there is no fixed relation to the other
--	   saved registers, which means that we must use DW_CFA_expression
--	   to compute their addresses.  It also means that when we
--	   adjust the stack with the popl, we have to do it all over again.  */
--
--#define do_cfa_expr(offset)						\
--	.byte 0x0f;			/* DW_CFA_def_cfa_expression */	\
--	.uleb128 1f-0f;			/*   length */			\
--0:	.byte 0x74;			/*     DW_OP_breg4 */		\
--	.sleb128 offset;		/*      offset */		\
--	.byte 0x06;			/*     DW_OP_deref */		\
--1:
--
--#define do_expr(regno, offset)						\
--	.byte 0x10;			/* DW_CFA_expression */		\
--	.uleb128 regno;			/*   regno */			\
--	.uleb128 1f-0f;			/*   length */			\
--0:	.byte 0x74;			/*     DW_OP_breg4 */		\
--	.sleb128 offset;		/*       offset */		\
--1:
--
--	do_cfa_expr(IA32_SIGCONTEXT_sp+4)
--	do_expr(0, IA32_SIGCONTEXT_ax+4)
--	do_expr(1, IA32_SIGCONTEXT_cx+4)
--	do_expr(2, IA32_SIGCONTEXT_dx+4)
--	do_expr(3, IA32_SIGCONTEXT_bx+4)
--	do_expr(5, IA32_SIGCONTEXT_bp+4)
--	do_expr(6, IA32_SIGCONTEXT_si+4)
--	do_expr(7, IA32_SIGCONTEXT_di+4)
--	do_expr(8, IA32_SIGCONTEXT_ip+4)
--
--	.byte 0x42	/* DW_CFA_advance_loc 2 -- nop; popl eax. */
--
--	do_cfa_expr(IA32_SIGCONTEXT_sp)
--	do_expr(0, IA32_SIGCONTEXT_ax)
--	do_expr(1, IA32_SIGCONTEXT_cx)
--	do_expr(2, IA32_SIGCONTEXT_dx)
--	do_expr(3, IA32_SIGCONTEXT_bx)
--	do_expr(5, IA32_SIGCONTEXT_bp)
--	do_expr(6, IA32_SIGCONTEXT_si)
--	do_expr(7, IA32_SIGCONTEXT_di)
--	do_expr(8, IA32_SIGCONTEXT_ip)
--
--	.align 4
--.LENDFDEDLSI1:
--
--	.long .LENDFDEDLSI2-.LSTARTFDEDLSI2 /* Length FDE */
--.LSTARTFDEDLSI2:
--	.long .LSTARTFDEDLSI2-.LSTARTFRAMEDLSI1 /* CIE pointer */
--	/* HACK: See above wrt unwind library assumptions.  */
--	.long .LSTART_rt_sigreturn-1-.	/* PC-relative start address */
--	.long .LEND_rt_sigreturn-.LSTART_rt_sigreturn+1
--	.uleb128 0			/* Augmentation */
--	/* What follows are the instructions for the table generation.
--	   We record the locations of each register saved.  This is
--	   slightly less complicated than the above, since we don't
--	   modify the stack pointer in the process.  */
--
--	do_cfa_expr(IA32_RT_SIGFRAME_sigcontext-4 + IA32_SIGCONTEXT_sp)
--	do_expr(0, IA32_RT_SIGFRAME_sigcontext-4 + IA32_SIGCONTEXT_ax)
--	do_expr(1, IA32_RT_SIGFRAME_sigcontext-4 + IA32_SIGCONTEXT_cx)
--	do_expr(2, IA32_RT_SIGFRAME_sigcontext-4 + IA32_SIGCONTEXT_dx)
--	do_expr(3, IA32_RT_SIGFRAME_sigcontext-4 + IA32_SIGCONTEXT_bx)
--	do_expr(5, IA32_RT_SIGFRAME_sigcontext-4 + IA32_SIGCONTEXT_bp)
--	do_expr(6, IA32_RT_SIGFRAME_sigcontext-4 + IA32_SIGCONTEXT_si)
--	do_expr(7, IA32_RT_SIGFRAME_sigcontext-4 + IA32_SIGCONTEXT_di)
--	do_expr(8, IA32_RT_SIGFRAME_sigcontext-4 + IA32_SIGCONTEXT_ip)
--
--	.align 4
--.LENDFDEDLSI2:
-+	ud2a
-+	CFI_ENDPROC
-+	.size __kernel_rt_sigreturn,.-__kernel_rt_sigreturn
- 	.previous
-diff --git a/arch/x86/include/asm/dwarf2.h b/arch/x86/include/asm/dwarf2.h
-index 302e11b15da8..09c9684d3ad6 100644
---- a/arch/x86/include/asm/dwarf2.h
-+++ b/arch/x86/include/asm/dwarf2.h
-@@ -20,6 +20,7 @@
- #define CFI_RESTORE_STATE	.cfi_restore_state
- #define CFI_UNDEFINED		.cfi_undefined
- #define CFI_ESCAPE		.cfi_escape
-+#define CFI_SIGNAL_FRAME	.cfi_signal_frame
- 
- #ifndef BUILD_VDSO
- 	/*
-diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
-index 32ba599a51f8..a7e7df837405 100644
---- a/arch/x86/kernel/asm-offsets.c
-+++ b/arch/x86/kernel/asm-offsets.c
-@@ -63,8 +63,14 @@ static void __used common(void)
- 	OFFSET(IA32_SIGCONTEXT_bp, sigcontext_32, bp);
- 	OFFSET(IA32_SIGCONTEXT_sp, sigcontext_32, sp);
- 	OFFSET(IA32_SIGCONTEXT_ip, sigcontext_32, ip);
-+	OFFSET(IA32_SIGCONTEXT_es, sigcontext_32, es);
-+	OFFSET(IA32_SIGCONTEXT_cs, sigcontext_32, cs);
-+	OFFSET(IA32_SIGCONTEXT_ss, sigcontext_32, ss);
-+	OFFSET(IA32_SIGCONTEXT_ds, sigcontext_32, ds);
-+	OFFSET(IA32_SIGCONTEXT_flags, sigcontext_32, flags);
- 
- 	BLANK();
-+	OFFSET(IA32_SIGFRAME_sigcontext,    sigframe_ia32,    sc);
- 	OFFSET(IA32_RT_SIGFRAME_sigcontext, rt_sigframe_ia32, uc.uc_mcontext);
+@@ -53,130 +54,37 @@ extern struct ms_hyperv_tsc_page hvclock_page
+ 	__attribute__((visibility("hidden")));
  #endif
  
+-#ifndef BUILD_VDSO32
+-
+ static __always_inline
+ long clock_gettime_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
+ {
+-	long ret;
+-
+-	asm ("syscall" : "=a" (ret), "=m" (*_ts) :
+-	     "0" (__NR_clock_gettime), "D" (_clkid), "S" (_ts) :
+-	     "rcx", "r11");
+-
+-	return ret;
++	return VDSO_SYSCALL2(clock_gettime,64,_clkid,_ts);
+ }
+ 
+ static __always_inline
+ long gettimeofday_fallback(struct __kernel_old_timeval *_tv,
+ 			   struct timezone *_tz)
+ {
+-	long ret;
+-
+-	asm("syscall" : "=a" (ret) :
+-	    "0" (__NR_gettimeofday), "D" (_tv), "S" (_tz) : "memory");
+-
+-	return ret;
++	return VDSO_SYSCALL2(gettimeofday,,_tv,_tz);
+ }
+ 
+ static __always_inline
+ long clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
+ {
+-	long ret;
+-
+-	asm ("syscall" : "=a" (ret), "=m" (*_ts) :
+-	     "0" (__NR_clock_getres), "D" (_clkid), "S" (_ts) :
+-	     "rcx", "r11");
+-
+-	return ret;
++	return VDSO_SYSCALL2(clock_getres,_time64,_clkid,_ts);
+ }
+ 
+-#else
+-
+-static __always_inline
+-long clock_gettime_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
+-{
+-	long ret;
+-
+-	asm (
+-		"mov %%ebx, %%edx \n"
+-		"mov %[clock], %%ebx \n"
+-		"call __kernel_vsyscall \n"
+-		"mov %%edx, %%ebx \n"
+-		: "=a" (ret), "=m" (*_ts)
+-		: "0" (__NR_clock_gettime64), [clock] "g" (_clkid), "c" (_ts)
+-		: "edx");
+-
+-	return ret;
+-}
++#ifndef CONFIG_X86_64
+ 
+ static __always_inline
+ long clock_gettime32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
+ {
+-	long ret;
+-
+-	asm (
+-		"mov %%ebx, %%edx \n"
+-		"mov %[clock], %%ebx \n"
+-		"call __kernel_vsyscall \n"
+-		"mov %%edx, %%ebx \n"
+-		: "=a" (ret), "=m" (*_ts)
+-		: "0" (__NR_clock_gettime), [clock] "g" (_clkid), "c" (_ts)
+-		: "edx");
+-
+-	return ret;
+-}
+-
+-static __always_inline
+-long gettimeofday_fallback(struct __kernel_old_timeval *_tv,
+-			   struct timezone *_tz)
+-{
+-	long ret;
+-
+-	asm(
+-		"mov %%ebx, %%edx \n"
+-		"mov %2, %%ebx \n"
+-		"call __kernel_vsyscall \n"
+-		"mov %%edx, %%ebx \n"
+-		: "=a" (ret)
+-		: "0" (__NR_gettimeofday), "g" (_tv), "c" (_tz)
+-		: "memory", "edx");
+-
+-	return ret;
++	return VDSO_SYSCALL2(clock_gettime,,_clkid,_ts);
+ }
+ 
+ static __always_inline long
+-clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
+-{
+-	long ret;
+-
+-	asm (
+-		"mov %%ebx, %%edx \n"
+-		"mov %[clock], %%ebx \n"
+-		"call __kernel_vsyscall \n"
+-		"mov %%edx, %%ebx \n"
+-		: "=a" (ret), "=m" (*_ts)
+-		: "0" (__NR_clock_getres_time64), [clock] "g" (_clkid), "c" (_ts)
+-		: "edx");
+-
+-	return ret;
+-}
+-
+-static __always_inline
+-long clock_getres32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
++clock_getres32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
+ {
+-	long ret;
+-
+-	asm (
+-		"mov %%ebx, %%edx \n"
+-		"mov %[clock], %%ebx \n"
+-		"call __kernel_vsyscall \n"
+-		"mov %%edx, %%ebx \n"
+-		: "=a" (ret), "=m" (*_ts)
+-		: "0" (__NR_clock_getres), [clock] "g" (_clkid), "c" (_ts)
+-		: "edx");
+-
+-	return ret;
++	return VDSO_SYSCALL2(clock_getres,,_clkid,_ts);
+ }
+ 
+ #endif
+diff --git a/arch/x86/include/asm/vdso/sys_call.h b/arch/x86/include/asm/vdso/sys_call.h
+new file mode 100644
+index 000000000000..6b1fbcdcbd5c
+--- /dev/null
++++ b/arch/x86/include/asm/vdso/sys_call.h
+@@ -0,0 +1,119 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Macros for issuing an inline system call from the vDSO.
++ */
++
++#ifndef X86_ASM_VDSO_SYS_CALL_H
++#define X86_ASM_VDSO_SYS_CALL_H
++
++#include <linux/compiler.h>
++#include <asm/cpufeatures.h>
++#include <asm/alternative.h>
++
++/*
++ * Note: only three arguments are currently supported,
++ * because there are no constraint letters for r10, r8, r9.
++ */
++#ifdef CONFIG_X86_64
++/* Using dummy output registers instead of clobbers avoids messing up
++   user-specified clobbers. */
++#define __sys_instr	"syscall"
++#define __sys_clobber	"rcx", "r11", "memory"
++#define __sys_nr(x,y)	__NR_ ## x
++#define __sys_reg1	"rdi"
++#define __sys_reg2	"rsi"
++#define __sys_reg3	"rdx"
++#define __sys_reg4	"r10"
++#define __sys_reg5	"r8"
++#define __sys_reg6	"r9"
++#else
++#define __sys_instr	"call __kernel_vsyscall"
++#define __sys_clobber	"memory"
++#define __sys_nr(x,y)	__NR_ ## x ## y
++#define __sys_reg1	"ebx"
++#define __sys_reg2	"ecx"
++#define __sys_reg3	"edx"
++#define __sys_reg4	"esi"
++#define __sys_reg5	"edi"
++#define __sys_reg6	"ebp"
++#endif
++
++/*
++ * Example usage:
++ *
++ * result = VDSO_SYSCALL3(foo,64,x,y,z);
++ *
++ * ... calls foo(x,y,z) on 64 bits, and foo64(x,y,z) on 32 bits.
++ */
++#define _VDSO_SYSCALL(name,suf32,...)					\
++	({								\
++		long _sys_num_ret = __sys_nr(name,suf32);		\
++		asm_inline volatile(					\
++			__sys_instr					\
++			: "+a" (_sys_num_ret)				\
++			: __VA_ARGS__					\
++			: __sys_clobber);				\
++		_sys_num_ret;						\
++	})
++
++#define VDSO_SYSCALL0(name,suf32)					\
++	_VDSO_SYSCALL(name,suf32)
++#define VDSO_SYSCALL1(name,suf32,a1)					\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1));				\
++	})
++#define VDSO_SYSCALL2(name,suf32,a1,a2)				\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1), "r" (_sys_arg2));	\
++	})
++#define VDSO_SYSCALL3(name,suf32,a1,a2,a3)				\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
++		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1), "r" (_sys_arg2),		\
++			      "r" (_sys_arg3));				\
++	})
++#define VDSO_SYSCALL4(name,suf32,a1,a2,a3,a4)				\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
++		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
++		register long _sys_arg4 asm(__sys_reg4) = (long)(a4);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1), "r" (_sys_arg2),		\
++			      "r" (_sys_arg3), "r" (_sys_arg4));	\
++	})
++#define VDSO_SYSCALL5(name,suf32,a1,a2,a3,a4,a5)			\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
++		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
++		register long _sys_arg4 asm(__sys_reg4) = (long)(a4);	\
++		register long _sys_arg5 asm(__sys_reg5) = (long)(a5);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1), "r" (_sys_arg2),		\
++			      "r" (_sys_arg3), "r" (_sys_arg4),		\
++			      "r" (_sys_arg5));				\
++	})
++#define VDSO_SYSCALL6(name,suf32,a1,a2,a3,a4,a5,a6)			\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
++		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
++		register long _sys_arg4 asm(__sys_reg4) = (long)(a4);	\
++		register long _sys_arg5 asm(__sys_reg5) = (long)(a5);	\
++		register long _sys_arg6 asm(__sys_reg6) = (long)(a6);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1), "r" (_sys_arg2),		\
++			      "r" (_sys_arg3), "r" (_sys_arg4),		\
++			      "r" (_sys_arg5), "r" (_sys_arg6));	\
++	})
++
++#endif /* X86_VDSO_SYS_CALL_H */
 -- 
 2.51.1
 
