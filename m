@@ -1,37 +1,37 @@
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAA829D297;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E732C11E3;
 	Wed, 12 Nov 2025 04:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762922331; cv=none; b=YmOQbYHgY496MiTwM8Dxfp09J4V9S1u+A6W2kEwHl8F1VZDnmMb1UnNVjwAXM++xz9FQJZ7I3nzIOnjGA7XQafoCG5wU8Da1kPdo+rpfb92rMbhW734Yin9xL1mEyPheo39p7kzKRf11tk4uxJPIhCCrJg5+jRXu/ZEOn/08p1E=
+	t=1762922331; cv=none; b=NZz66zOdW5Wbc7O6wB0B0ht1gBzncrvxwKWKHbbadgRCMeWOpHkhYMAt23t0ivy3R0UxO2JuXjPw1bbG0ANAXr1xEaaM7GeJNrDwcgZV7xe9WpxmahVNkP2CY9UiDsdPr/UPGWTLgLoQQuJ7s/+ht6cVV1bpiL192YzrKz9l6q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762922331; c=relaxed/simple;
-	bh=+xCGClvoQqX/XKcQzDnGoRewP4sNb929GCQrQPA0ydU=;
+	bh=W6pNYOImVPc9ZcljaYLlQUxzzHpTDnx/6KKkwpZzaXU=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H5W/AVZbNHic5ffhYwORLLry3NLEkTyrMHHUPbjnte8SaEPL5MeeOAWtNgzYAr5LJs5A+u7WKbylldHXOJwhPGV3p0lJHGXLtV4VUgE8ljVaqPw2vA5vaaqKg6Hgvkn6pYeF1lazO6yV1Fh4TW4AoqaymGDd+lGUIDOU9OEjMiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=iw/i1w/6; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version; b=cJDvLVrlLJW4nXgToOK7wScais0MQfePkwzwlNHzmOyPRz4SzhcSmsyr7981TcQr5oCj45yxS8j6jc8LbY3R9OJnj/lt7oUTPeiqKvfShroMMlJUHnqxY2VlaASOBAew5b+8L1uPTwnPSlRfUA8THV/z3ZykVZwSMP15JqlP5rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=jEcrnhOd; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="iw/i1w/6"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="jEcrnhOd"
 Received: from mail.zytor.com (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AC4bYDP542538
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AC4bYDQ542538
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 11 Nov 2025 20:37:40 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AC4bYDP542538
+	Tue, 11 Nov 2025 20:37:42 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AC4bYDQ542538
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762922262;
-	bh=ImePh3VNFlRKFA3aVONVbSvh+rUXxcMoLlx75oRDw3U=;
+	s=2025102301; t=1762922264;
+	bh=dIA/jdXg8XhpF5qFcJkcp8Nfo/i/kNxnm5Fq/ADnXoU=;
 	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=iw/i1w/648NO7TZtCXNdO62MSSpNC6K1+hE9R5NtDidCW6k9qnjNhaznD8pRuVvHl
-	 inwQvXbsqXoid94hh0p37hwVISa5fBqQ6m/LB/7GMOB/J1iM2W/w7UhmaRP2iKvv36
-	 FPseIA4s0l7kbhlvxQfDsakhZjjv/n/uH1TiXHbGO7qybMS8oxy11syPFpkVbV6RXL
-	 Hxgkana87okfNBw22VrS8kJuMDZzMp52rSp8XDw7vJlOWbUjpTJ8LBzHJ1jSElJksA
-	 GaSzSvzUTlm+gcUViJcyCi2Yk05cF3RMdv/SWx3aGtCsuukwDw9v8zFzhuBRVGTdZo
-	 GgsEyvfvOeqkw==
+	b=jEcrnhOdpe8Ixmh0q49w9KDD0kroYtcUNitFGnm9RfGXtf5qBhYZseIDzUBYHEH7x
+	 tIYuW1a/9fzwcnF80UT+skupeoK4R+vEL46PAJkVkzx7jzmq3eusoWzR7cHxJXhE6x
+	 w6+ly7WKRU0Tq67PBUlNzgqZhbBzpR6AAgAVQB7/PXAPqI0ZKZG4HiAlth2Zkz+lyc
+	 plLtmlM9V4IqVmKSFIFYNCi5VPB/WBuD5kz5T9GobknvSu0oeNVLNPczakZjatqlok
+	 xBS22IQcwDI0gxb4w0lJ5D9/jl2MvZo+NdmOIuvZYstQRKoiFf/8UPcLQoGzIT4iRr
+	 D09kaZUI4wMkQ==
 From: "H. Peter Anvin" <hpa@zytor.com>
 To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
@@ -49,9 +49,9 @@ To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-sgx@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 3/9] x86/entry/vdso32: don't rely on int80_landing_pad for adjusting ip
-Date: Tue, 11 Nov 2025 20:37:21 -0800
-Message-ID: <20251112043730.992152-4-hpa@zytor.com>
+Subject: [PATCH v2 4/9] x86/entry/vdso32: remove SYSCALL_ENTER_KERNEL macro in sigreturn.S
+Date: Tue, 11 Nov 2025 20:37:22 -0800
+Message-ID: <20251112043730.992152-5-hpa@zytor.com>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251112043730.992152-1-hpa@zytor.com>
 References: <20251112043730.992152-1-hpa@zytor.com>
@@ -63,52 +63,50 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is no fundamental reason to use the int80_landing_pad symbol to
-adjust ip when moving the vdso. If ip falls within the vdso, and the
-vdso is moved, we should change the ip accordingly, regardless of mode
-or location within the vdso. This *currently* can only happen on 32
-bits, but there isn't any reason not to do so generically.
-
-Note that if this is ever possible from a vdso-internal call, then the
-user space stack will also needed to be adjusted (as well as the
-shadow stack, if enabled.) Fortunately this is not currently the case.
-
-At the moment, we don't even consider other threads when moving the
-vdso. The assumption is that it is only used by process freeze/thaw
-for migration, where this is not an issue.
+A macro SYSCALL_ENTER_KERNEL was defined in sigreturn.S, with the
+ability of overriding it. The override capability, however, is not
+used anywhere, and the macro name is potentially confusing because it
+seems to imply that sysenter/syscall could be used here, which is NOT
+true: the sigreturn system calls MUST use int $0x80.
 
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 ---
- arch/x86/entry/vdso/vma.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ arch/x86/entry/vdso/vdso32/sigreturn.S | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 8f98c2d7c7a9..e7fd7517370f 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -65,16 +65,12 @@ static vm_fault_t vdso_fault(const struct vm_special_mapping *sm,
- static void vdso_fix_landing(const struct vdso_image *image,
- 		struct vm_area_struct *new_vma)
- {
--	if (in_ia32_syscall() && image == &vdso32_image) {
--		struct pt_regs *regs = current_pt_regs();
--		unsigned long vdso_land = image->sym_int80_landing_pad;
--		unsigned long old_land_addr = vdso_land +
--			(unsigned long)current->mm->context.vdso;
--
--		/* Fixing userspace landing - look at do_fast_syscall_32 */
--		if (regs->ip == old_land_addr)
--			regs->ip = new_vma->vm_start + vdso_land;
--	}
-+	struct pt_regs *regs = current_pt_regs();
-+	unsigned long ipoffset = regs->ip -
-+		(unsigned long)current->mm->context.vdso;
-+
-+	if (ipoffset < image->size)
-+		regs->ip = new_vma->vm_start + ipoffset;
- }
+diff --git a/arch/x86/entry/vdso/vdso32/sigreturn.S b/arch/x86/entry/vdso/vdso32/sigreturn.S
+index 1bd068f72d4c..965900c6763b 100644
+--- a/arch/x86/entry/vdso/vdso32/sigreturn.S
++++ b/arch/x86/entry/vdso/vdso32/sigreturn.S
+@@ -3,10 +3,6 @@
+ #include <asm/unistd_32.h>
+ #include <asm/asm-offsets.h>
  
- static int vdso_mremap(const struct vm_special_mapping *sm,
+-#ifndef SYSCALL_ENTER_KERNEL
+-#define	SYSCALL_ENTER_KERNEL	int $0x80
+-#endif
+-
+ 	.text
+ 	.globl __kernel_sigreturn
+ 	.type __kernel_sigreturn,@function
+@@ -16,7 +12,7 @@ __kernel_sigreturn:
+ .LSTART_sigreturn:
+ 	popl %eax		/* XXX does this mean it needs unwind info? */
+ 	movl $__NR_sigreturn, %eax
+-	SYSCALL_ENTER_KERNEL
++	int $0x80
+ .LEND_sigreturn:
+ SYM_INNER_LABEL(vdso32_sigreturn_landing_pad, SYM_L_GLOBAL)
+ 	nop
+@@ -28,7 +24,7 @@ SYM_INNER_LABEL(vdso32_sigreturn_landing_pad, SYM_L_GLOBAL)
+ __kernel_rt_sigreturn:
+ .LSTART_rt_sigreturn:
+ 	movl $__NR_rt_sigreturn, %eax
+-	SYSCALL_ENTER_KERNEL
++	int $0x80
+ .LEND_rt_sigreturn:
+ SYM_INNER_LABEL(vdso32_rt_sigreturn_landing_pad, SYM_L_GLOBAL)
+ 	nop
 -- 
 2.51.1
 
