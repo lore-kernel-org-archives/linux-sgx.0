@@ -1,89 +1,104 @@
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EF22C326F;
-	Fri, 14 Nov 2025 09:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF941E1A3D;
+	Fri, 14 Nov 2025 21:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763111019; cv=none; b=p+Qh57pJU7VZBY4GUecaIDzBJ/U8a7NqTMeE0ueTcZOQd8LOJionDAVEMh2MA/UbPAsFhPCnB3L2LLOcPLZXnG20WvsWDTIWiKLim6QfhiIYEX2Z2ApfXW8hGMoxbwDH8FOTcYQZ4iwmXbzQd4wiAja7SsyZcI+SPDHavimzAAk=
+	t=1763154606; cv=none; b=oL9IIAMd/dnWhPvnx8ZXed5DY+4gNXJ5UPqNw44hSBSiRQYTD0qYW4ZYuHIYDsfbfNEwlFiVwlm4fwZptgw4MhA+Fqb50hRQqaGQ3PfOtUSc94oLikztV8BUCCep88Z6kUArSVkbvToQ/5TOXr7EyVh0ccAi4qKMlvI+lkrbtXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763111019; c=relaxed/simple;
-	bh=CHHcVWP7+azq7U8bx2c9snKg7BzuRKMTEfKak29g+SQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZDuzLH1ndto/5IzyYhDcljKTajp/XQ56ijr5T/zW7zdQQHKiQSNtm9gczG1AK5Od++CatWVvq6E58rXvZwYYxO9N3bIFCUaj+XeU7SsEnodN1DQsCVI9S+AhI9XvIt8S7ZFC/NhurOBAl6jwPBKN7t8n79yRQPpc/z/wITMQCIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PrKyPU9e; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1763154606; c=relaxed/simple;
+	bh=QYc9Dp9s7QOHAPWLzKnON1Ede21oUaDHaYnAhovtQyM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=c90WgWRjOg3bAm3KLGfVv+YbGVX1B0LzSVjjd1zD/l0YPE8AUNPkaQrtFMYIJ/KRSxgDIsmEvoqwzXDhPdLCg2ivGxf9OX92fwISB1+ozgiP72WzIwPsEUr5zZd4VbjOuCLf80Plo8DJcF/pZNF7+Nws6HMoImYYBPsB3Tu+OkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=nIOokMcL reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PrKyPU9e"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=isqvQ2KBi8Wgtu2oWNPjHlRemcfKWwu1gUel1sa3XZk=; b=PrKyPU9eI3TivS1fIA96M3CQEy
-	l+PjKPIFDXbdHhk3I9sqEQb4IPMXJs3gVUagfrf+uBvwZzVPvWwsIJSXkmzk0ySznn+9IFhkYhu8f
-	H9RJNTzTs8hItc1d9l9MMN2it5IZi4Tw54el219kiGuTkrcyX9EtxAYAdNU7KG26qPA7+bHQq2Hpm
-	qkSUA2swvgD1DzoH2uT+0Y8DvE3A0zYn0CUn+m1w3bkaXT4bUu6Qp7Ipy7kcpFNdPjmChI2Vm0jkb
-	u1CfgsvLsYVvULFeDxQfiuNUP831SUgpz8X9JjQ08xXWwEA3mQYcAXtH6xGH2xFMjQYf+UcC91hTx
-	/V9Zw+ZA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vJoqg-000000028bs-2k1l;
-	Fri, 14 Nov 2025 08:08:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E24F530029E; Fri, 14 Nov 2025 10:03:28 +0100 (CET)
-Date: Fri, 14 Nov 2025 10:03:28 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Xin Li <xin@zytor.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"Kirill A. Shutemov" <kas@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, kvm@vger.kernel.org,
-	linux-sgx@vger.kernel.org, linux-coco@lists.linux.dev,
-	Kai Huang <kai.huang@intel.com>
-Subject: Re: [PATCH 0/4] x86: Restrict KVM-induced symbol exports to KVM
-Message-ID: <20251114090328.GS278048@noisy.programming.kicks-ass.net>
-References: <20251112173944.1380633-1-seanjc@google.com>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="nIOokMcL"
+Received: from [172.27.2.41] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AEL8xhk2436810
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 14 Nov 2025 13:08:59 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AEL8xhk2436810
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1763154542;
+	bh=n2ue0i9Kn3tpKl7Mfn0W4IHLdPAlAjgfywYY9MFn3/w=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=nIOokMcL0nZVqs1kMOROePbzmN64KK9utodHI0BbQCAJYs0XDAh9jBT2gqtFuD3zM
+	 Ai8zZ2wKaYwKWOLYjL16VqdC8RSTLXVZl1GvZ1Sc1xxHarPwcr9p3uQqa7MErjF41Z
+	 1QNxXRXMtC0j1COezcBvSwdVlckIYcz9r3JMl7q3j7knmORqgvY9X0quSsTEu5ZV7X
+	 kpVcuWxqnPVHbDK/iMNAsaSCdtmeYz0cqk0/FA+ytQzOvjMXUeeq4NP6ZLDu4PtW7K
+	 ng4DxBUJF24K/23Ny8bXMFYjE/XaVNqwJh3qgms0qVJjz8Gehbuj02WFT1AiWs9AjA
+	 u7oYTaR6IA3HA==
+Message-ID: <c0f19f86-043b-470a-9196-06323974ac54@zytor.com>
+Date: Fri, 14 Nov 2025 13:08:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112173944.1380633-1-seanjc@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/9] x86/vdso: abstract out vdso system call internals
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Uros Bizjak <ubizjak@gmail.com>,
+        Alexey Makhalov <alexey.makhalov@broadcom.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+        Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
+        Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, James Morse <james.morse@arm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>,
+        Nam Cao <namcao@linutronix.de>, Oleg Nesterov <oleg@redhat.com>,
+        Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-sgx@vger.kernel.org, x86@kernel.org
+References: <20251112043730.992152-1-hpa@zytor.com>
+ <20251112043730.992152-8-hpa@zytor.com>
+ <CAFULd4aMOueG5y3K7F57ryLtt-JUhE-yfsDODC=5+bgjF_gtSw@mail.gmail.com>
+ <d5531acf-cd79-428d-80d1-eb7562cf3922@zytor.com>
+ <CAFULd4bfxaSy0kkVjfjqgHe=3iT-QcGAhbK9WFepPmZu7=ocjw@mail.gmail.com>
+ <B00D1422-204D-4ACE-AE00-94ACEA7430F7@zytor.com>
+Content-Language: en-US, sv-SE
+In-Reply-To: <B00D1422-204D-4ACE-AE00-94ACEA7430F7@zytor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 12, 2025 at 09:39:40AM -0800, Sean Christopherson wrote:
-> Leverage and extend KVM's macro shenanigans to export symbols for KVM if
-> and only if kvm{,-amd,intel}.ko is being built as a module, and only for
-> the KVM modules that are being built.
+On 2025-11-13 20:40, H. Peter Anvin wrote:
 > 
-> Note, this approach isn't 100% precise, as exports that are only strictly
-> necessary for one of KVM's modules will get exported for all KVM modules.
-> But I don't see any value in being super precise as it's not like kvm.ko is
-> any more trustworthy tha kvm-{amd,intel}.ko (and it's easy to circumvent
-> "for module" exports by abusing module names (in out-of-tree code)).  And
-> maintaining precise exports would likely be a nightmare (as would writing
-> the macros to get the exports right).
+> For 64 bits, if you need frame pointer support *and* frob %rsp, using:
 > 
-> Patches 1-3 drop superfluous exports that I found while digging around for
-> KVM-only exports.
+> xchg %[arg],%%rbp
+> <stuff>
+> xchg %[arg],%%rbp
 > 
-> Sean Christopherson (4):
->   x86/bugs: Drop unnecessary export of "x86_spec_ctrl_base"
->   x86/mtrr: Drop unnecessary export of "mtrr_state"
->   x86/mm: Drop unnecessary export of "ptdump_walk_pgd_level_debugfs"
->   x86: Restrict KVM-induced symbol exports to KVM modules where
->     obvious/possible
+> ... is probably easiest, with %[arg] in a register.
+> 
 
-Nice!
+Incidentally, ORC is one thing, but if you need DWARF information to be
+correct for user space, it is definitely "fun".  With the xchg hack for 64
+bits it is just a matter of using .cfi_def_cfa_register to change the frame
+pointer around, but in the 32-bit case the best I could come up with was:
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+	.cfi_remember_state
+	push %ebp
+	.cfi_escape 0x0f,3,0x74,0,0x06	// CFA address in *%esp
+	mov %eax, %ebp
+	mov $syscall_no, %eax
+	int $0x80
+	pop %ebp
+	.cfi_restore_state
+
+Note that in both cases you need to *NOT* put in any of these CFI directives
+when compiling without frame pointers (in which case you need to let gcc take
+care of it if you want any hope of getting the CFI correct.)
+
+	-hpa
+
