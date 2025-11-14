@@ -1,104 +1,148 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5462E1C63
-	for <linux-sgx@vger.kernel.org>; Thu, 13 Nov 2025 22:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC43F2C1581;
+	Fri, 14 Nov 2025 04:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763073728; cv=none; b=Ufm66qXVpiRvgdVbCzh10G703k1K/jRuGZA69EBRwP9MavufPQOemmHOIzdkZpadiUcHAGk8ahWm46fcWdvBHsatSN8if9wyNpETgIsnOfCo24rsHWNybe+x2Toakj3ufIwY+o1yZG6zEC7FUaez0Q1TcJ89AnXuE8zuvdtr7Ps=
+	t=1763095301; cv=none; b=tujpEKtqbaqWzFHMBTU68bfQTA9OPrNX90DXk7ObpAQjIVC0x6akm2V97pA9BOTuCsNZ7SG5+YxFfTCOJofsEgpxYnalsOKDOx3J0MkkQGvRZCRtupw7Y3OwYC3IkVX40yczpghmNe6BoZAi6DdekPbicHU9gdRKrdh105ynOHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763073728; c=relaxed/simple;
-	bh=yC20q6O7bjBSvyd0NckYXzSL+AsZaSz6zrxXWEAGX54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hrfDIdqZbXfR1mMxmjQt+2kyfD0Z5g2I6/NiEQE8IDy0jEwhkZNMBee9ntNhlnVKI8omb/gTF/BGnNUm/OD+TY2sBt7BfQ/ZtWVZ1Q1bQxQ/x4RNHzkRSr5t0cZlmHbYFmyXo7Rch4TfeCCjeAC5Z10+hHy3AgYjFim3ZKGg08w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2r6MRhr; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763095301; c=relaxed/simple;
+	bh=g/hh8TRj9wStMKmDn34TuTPE67+b3Uf34EKuZLfVArg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=i1MnTdbHUroq/t8bc0U4EBU7GZc7sjof7H0fqnynSW3tLygwj14UmuSoksY15scN2wfOrQBWNMb8pMkmRFSms6huZjY6weBm+lPqqb2qDpNIy3pZ3MbYuYPWfXChDSe9uJ+f0ogT7d8Z2g8J9vuDfNdgKgkuaJthFP5Hp9mi24k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=K9SDNwe0 reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2r6MRhr"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-594476f218fso1049917e87.1
-        for <linux-sgx@vger.kernel.org>; Thu, 13 Nov 2025 14:42:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763073722; x=1763678522; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iORugXgswwslqtIFyyyu+POzNmV64LtVZTcIC4QKuug=;
-        b=H2r6MRhrfYlvST9JoGFwzqqemd0E5RomUgN3LQ+1Ftqs5edX9v06Iq23LDDRKRAFqK
-         TU6Ats9xRPi1nAs7xlAT18O88NhgjNYET0D5agY9ZFEFh+B0u7aAraVH5xDT+UU1SBsL
-         mtSgNUcryWA6K7EwU490ZyNOAZW0XqRejAvbNr+/siIkEiqevfhUkyfrYBYGUo6N4+py
-         Mc+gUpwfZPed+V6ySsZBm636QTPlZGDaOPwFKR3Hy5EYJthi/KpM99Fo/8SUIq6EeFPr
-         YoMj4++WvpfViYn++RzNDx3LCSP5kh43s4vypV7CDNYtvgUm4KN6GNUXFz76kNFK+KNY
-         +lZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763073722; x=1763678522;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=iORugXgswwslqtIFyyyu+POzNmV64LtVZTcIC4QKuug=;
-        b=w/7QREJvpc+83+SJKmbPUST9lJWGxKD/UzlDsHfUHefWdXPv3i7Nou9OM0GsdKDTCL
-         YKIi4qH31N3Y1WCJTir4L4+vTs+EVpXyY7tilPsGSMcagPoPtj035m2F02NgFDTg6XwD
-         EVb1QrakfWsH/8twYjRrocHHau0Bopo9ub6yCrnTUWsAxUeObt7eLkAcgRkJLq0sb+fx
-         NBl3CakAS8RV2lkRNUXtabgSCEs8uAgTGCxQnDfKtILodoBWck+tGMq5A/vr9OjLqqRh
-         FOZ9PFEksksuc7f9IAB70R+b3Ke6P+z03Cym4krp/B9aBZP2AQ1rreM/NuH7cJHuXHYW
-         0fwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7RhQ4nR2cKxW6gdNWXa2joCU1qIi2JGcBdOASNU39UkpWTAaZwGPvgDwNCsFtbnUNYdxayXBmp3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBaHDfes5URMaHzPIKTyKQIll0nvQkMJ5rpPTaHcjOvFrrg/aj
-	EbtIMGpvSRbp1Nj7dMRD9tzXh0pbg9x0HHwaBcNQ0foLI9kIiWWhJeethlc6THm25Hkip8idshR
-	UrHEHzA3QemZyz+8wtrN/9WXCxD7Bsg==
-X-Gm-Gg: ASbGnctu1oFDPvKSxEIZfLQRtMavRhHHE390RmTv1d/aVWEhtiEvoEw5QlY2kKTHxim
-	mXWaAjJgzGFm6oSZWaeZKKPQ59lBiyshJhXdFYogf35Fo471aGGv1zHgiTJK6sq3QYhnuZE9tjN
-	FK6+mOaCEd0VuUbXLQMdj6AwpYrpSi+UBQukjgsZRiu8Sc6Kkmfoz+XBSTXxTp7/ezt0AsI28oz
-	Y/wdknEpiiKyNLBakkUhN4y1Y7WvMPKoJKWffWjxGWzPnJ3rHmV5IWXnZYtYFzUCmgzZcEwb992
-	CkeROChqqg==
-X-Google-Smtp-Source: AGHT+IFCToYdqZbl71EqpS0eC8le9ob/knb9SdPrT08DySzFeHSRTMktnUkZr5EKTLoqo4bD7c+slGVSwPhPlJCTrzI=
-X-Received: by 2002:a05:6512:4028:b0:594:3340:1b77 with SMTP id
- 2adb3069b0e04-5958419572emr314261e87.1.1763073722004; Thu, 13 Nov 2025
- 14:42:02 -0800 (PST)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="K9SDNwe0"
+Received: from ehlo.thunderbird.net (sfsymphony1.static.monkeybrains.net [208.90.214.66])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AE4ed9U1921817
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 13 Nov 2025 20:40:40 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AE4ed9U1921817
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1763095241;
+	bh=97ZI1DV37mgHB4KO9c/1pz2K9royVseEBh1e0LpLLFY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=K9SDNwe0uGJQ2fMWwnT4JB22olsFwwuaIMoDVSofKYVvzJBQh0AjCIjlGAiTONRFk
+	 pjaXbCJqqa1MzalVsK/xAH0VsE7Wub3xLGOn9jhvIJ521q/yFQ+DeRPGZ2N1RbEURc
+	 /h3oMUwbjuOjC41rjTLUVMjf6P3PBtFTIr0Oc560y2SJUIyjTfJWidv3nTgPjcoU4Z
+	 5EXa5R7UPU7lV9QJq+OVRjEwSDjd93twS2BLsApC7ksEzsvw+MkWLkh5O544nTs+F7
+	 XGxUGP2jHOkcU+eSxsnHCkLkoT0ts0zBCZTZydTumVY6+rDtqLqMOoHhf9XlDIC4Za
+	 4BFNvVnh8j//Q==
+Date: Thu, 13 Nov 2025 20:40:39 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Uros Bizjak <ubizjak@gmail.com>,
+        Alexey Makhalov <alexey.makhalov@broadcom.com>
+CC: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        =?ISO-8859-1?Q?Thomas_Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+        Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
+        Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, James Morse <james.morse@arm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>,
+        Nam Cao <namcao@linutronix.de>, Oleg Nesterov <oleg@redhat.com>,
+        Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-sgx@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v2 7/9] x86/vdso: abstract out vdso system call internals
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAFULd4bfxaSy0kkVjfjqgHe=3iT-QcGAhbK9WFepPmZu7=ocjw@mail.gmail.com>
+References: <20251112043730.992152-1-hpa@zytor.com> <20251112043730.992152-8-hpa@zytor.com> <CAFULd4aMOueG5y3K7F57ryLtt-JUhE-yfsDODC=5+bgjF_gtSw@mail.gmail.com> <d5531acf-cd79-428d-80d1-eb7562cf3922@zytor.com> <CAFULd4bfxaSy0kkVjfjqgHe=3iT-QcGAhbK9WFepPmZu7=ocjw@mail.gmail.com>
+Message-ID: <B00D1422-204D-4ACE-AE00-94ACEA7430F7@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112202258.1310754-1-hpa@zytor.com> <20251112202258.1310754-3-hpa@zytor.com>
- <CAMzpN2iwrzKzhif7WXsoQi=4OdBENZMV14Hm2a5ePukywNgh1w@mail.gmail.com> <1cd27f96-9f29-4607-90d8-c98593eacfbb@zytor.com>
-In-Reply-To: <1cd27f96-9f29-4607-90d8-c98593eacfbb@zytor.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Thu, 13 Nov 2025 17:41:50 -0500
-X-Gm-Features: AWmQ_blr3u4Fuh8i0XUra4JykNFO4ZmM9cHhbLUDXWn1GELeMIldMfvLmrHMFh0
-Message-ID: <CAMzpN2gC1NWFu5XG49cCrktTUZbDBbng71RjpALMxzSOmPrQPg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/9] x86/entry/vdso: refactor the vdso build
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, "Theodore Ts'o" <tytso@mit.edu>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	James Morse <james.morse@arm.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>, Nam Cao <namcao@linutronix.de>, 
-	Oleg Nesterov <oleg@redhat.com>, Perry Yuan <perry.yuan@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-sgx@vger.kernel.org, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 13, 2025 at 4:12=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wrot=
-e:
+On November 12, 2025 11:15:08 PM PST, Uros Bizjak <ubizjak@gmail=2Ecom> wro=
+te:
+>On Wed, Nov 12, 2025 at 10:25=E2=80=AFPM H=2E Peter Anvin <hpa@zytor=2Eco=
+m> wrote:
+>>
+>> On 2025-11-12 02:31, Uros Bizjak wrote:
+>> >
+>> > Unfortunately, %ebp is still special with -fno-omit-frame-pointer, so
+>> > using "ebp" as _sys_arg6 on 32-bit targets will result in:
+>> >
+>> > error: bp cannot be used in =E2=80=98asm=E2=80=99 here
+>> >
+>> > Please see how %ebp register is handled in
+>> > arch/x86/include/asm/vmware=2Eh, vmware_hypercall_hb_out() and
+>> > vmware_hypercall_hb_in()=2E
+>> >
+>>
+>> #ifdef CONFIG_X86_64
+>> #define VMW_BP_CONSTRAINT "r"
+>> #else
+>> #define VMW_BP_CONSTRAINT "m"
+>> #endif
+>>
+>>         asm_inline volatile (
+>>                 UNWIND_HINT_SAVE
+>>                 "push %%" _ASM_BP "\n\t"
+>>                 UNWIND_HINT_UNDEFINED
+>>                 "mov %[in6], %%" _ASM_BP "\n\t"
+>>                 "rep outsb\n\t"
+>>                 "pop %%" _ASM_BP "\n\t"
+>>                 UNWIND_HINT_RESTORE
+>>                 : "=3Da" (out0), "=3Db" (*out1)
+>>                 : "a" (VMWARE_HYPERVISOR_MAGIC),
+>>                   "b" (cmd),
+>>                   "c" (in2),
+>>                   "d" (in3 | VMWARE_HYPERVISOR_PORT_HB),
+>>                   "S" (in4),
+>>                   "D" (in5),
+>>                   [in6] VMW_BP_CONSTRAINT (in6)
+>>                 : "cc", "memory");
+>>         return out0;
+>>
+>> That code is actually incorrect, in at least two ways:
+>>
+>>
+>> 1=2E It should be conditioned on frame pointers enabled, not x86-64 vs =
+i386=2E
+>> 2=2E The compiler is perfectly within its right to emit an %esp-relativ=
+e
+>>    reference for the "m"-constrained [in6]=2E This is particularly like=
+ly
+>>    when *not* compiled with frame pointers, see #1=2E
+>>
+>> A better sequence might be:
+>>
+>>         pushl %[in6]
+>>         push %ebp
+>>         mov 4(%esp),%ebp
+>>         <stuff>
+>>         pop %ebp
+>>         pop %[junk]
+>>
+>> Then %[in6] can even safely be a "g" constraint (hence pushl)=2E
 >
-> On 2025-11-13 10:38, Brian Gerst wrote:
-> >
-> > Some of these changes (like moving vdso2c) can be split out into
-> > smaller patches.
-> >
+>If we want to also handle x86_64, the above code (including push)
+>needs to be 64-bit, with "rme" constraint for the pushed value=2E
 >
-> Sure, but is it worth the extra work?
+>I have CC'd the author of the above code, he might be interested in
+>the above discussion=2E
 >
->         -hpa
+>Uros=2E
 >
 
-The vdso2c move would be a clean patch on its own.  The rest would
-probably need too many intermediate steps to be worth the effort, but
-it does make it harder to compare the new and old code.  Not a
-dealbreaker though.
+For 64 bits, if you need frame pointer support *and* frob %rsp, using:
+
+xchg %[arg],%%rbp
+<stuff>
+xchg %[arg],%%rbp
+
+=2E=2E=2E is probably easiest, with %[arg] in a register=2E
