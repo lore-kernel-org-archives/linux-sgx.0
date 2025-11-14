@@ -1,38 +1,38 @@
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC43F2C1581;
-	Fri, 14 Nov 2025 04:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E1035CBBC;
+	Fri, 14 Nov 2025 04:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763095301; cv=none; b=tujpEKtqbaqWzFHMBTU68bfQTA9OPrNX90DXk7ObpAQjIVC0x6akm2V97pA9BOTuCsNZ7SG5+YxFfTCOJofsEgpxYnalsOKDOx3J0MkkQGvRZCRtupw7Y3OwYC3IkVX40yczpghmNe6BoZAi6DdekPbicHU9gdRKrdh105ynOHc=
+	t=1763095764; cv=none; b=aRL+CEFeA5qhuRBHZds+j2SYIWT/Qu2SSBIVxqrQNKiwwGqFKShBmlgtbJTU2OSZBgrk9bImOZrADBoYCG9Tv01KDT/nbWKPw7qTYkvbo7xBTeLtFJqBAJ6DMOx+lwPWNl0Vvi/vmee3NKGd5wrX/56tj56g5ilW1bl1+SmVOjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763095301; c=relaxed/simple;
-	bh=g/hh8TRj9wStMKmDn34TuTPE67+b3Uf34EKuZLfVArg=;
+	s=arc-20240116; t=1763095764; c=relaxed/simple;
+	bh=Gyah0Z8XwRLy7PTxhhXgQEoBGaJ96p2rTq81ghjrBoQ=;
 	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=i1MnTdbHUroq/t8bc0U4EBU7GZc7sjof7H0fqnynSW3tLygwj14UmuSoksY15scN2wfOrQBWNMb8pMkmRFSms6huZjY6weBm+lPqqb2qDpNIy3pZ3MbYuYPWfXChDSe9uJ+f0ogT7d8Z2g8J9vuDfNdgKgkuaJthFP5Hp9mi24k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=K9SDNwe0 reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version:Content-Type; b=gTQl7/RdPD5LK+ZoFzTXmTPmr7JRKbvRv8wHDQjSQimZcAnAZhRUxODRGv2pSX2/rUjBtprxSsWDyJPybshpb9i9ADz21k6JKSyt5r2s5jKfqd6wIly4fShNzZ25VX8Am7nE3KJzhfSuZkdt1fCJ2s6GX73K2uB8pzoGkpZhV18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=mcKduUbP reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="K9SDNwe0"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="mcKduUbP"
 Received: from ehlo.thunderbird.net (sfsymphony1.static.monkeybrains.net [208.90.214.66])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AE4ed9U1921817
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AE4mVO61925023
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 13 Nov 2025 20:40:40 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AE4ed9U1921817
+	Thu, 13 Nov 2025 20:48:32 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AE4mVO61925023
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1763095241;
-	bh=97ZI1DV37mgHB4KO9c/1pz2K9royVseEBh1e0LpLLFY=;
+	s=2025102301; t=1763095714;
+	bh=K5YWWAVRgN8FQz6Otg8fg4nQaM9D7J06Mu/UbfQ9S4M=;
 	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=K9SDNwe0uGJQ2fMWwnT4JB22olsFwwuaIMoDVSofKYVvzJBQh0AjCIjlGAiTONRFk
-	 pjaXbCJqqa1MzalVsK/xAH0VsE7Wub3xLGOn9jhvIJ521q/yFQ+DeRPGZ2N1RbEURc
-	 /h3oMUwbjuOjC41rjTLUVMjf6P3PBtFTIr0Oc560y2SJUIyjTfJWidv3nTgPjcoU4Z
-	 5EXa5R7UPU7lV9QJq+OVRjEwSDjd93twS2BLsApC7ksEzsvw+MkWLkh5O544nTs+F7
-	 XGxUGP2jHOkcU+eSxsnHCkLkoT0ts0zBCZTZydTumVY6+rDtqLqMOoHhf9XlDIC4Za
-	 4BFNvVnh8j//Q==
-Date: Thu, 13 Nov 2025 20:40:39 -0800
+	b=mcKduUbPOrPu5vaYqEtPHe1BtcZXeJxdyIR7a9GI7ZeS8ygpDymkCX77Tj2qFAQMP
+	 6woF4ACuH/huhgocvVOu9Nz4kk9xQaHRNR8vOc1TdB/caNNuLpACwE1ELrFrInIGwm
+	 MouOk338h7AJquCSfTGQF2J5lcGIwwgYk4G881hOsnjgiQRrYGCiHruN6B3/K318IA
+	 IzBRq/67YGzpfsWpw9SbYErKwB3Ym7gA7MNVhX/wIvctECR/SjKqWpUe3rOJNFG/oI
+	 ZQ9jdQbP1gl56CMw9ysfHI9u5WtR6lzi4gFZPr1FRRN2C/4ieQUJkZdEXYyu+mNdSA
+	 tASa90L+h0omQ==
+Date: Thu, 13 Nov 2025 20:48:31 -0800
 From: "H. Peter Anvin" <hpa@zytor.com>
 To: Uros Bizjak <ubizjak@gmail.com>,
         Alexey Makhalov <alexey.makhalov@broadcom.com>
@@ -55,7 +55,7 @@ Subject: Re: [PATCH v2 7/9] x86/vdso: abstract out vdso system call internals
 User-Agent: K-9 Mail for Android
 In-Reply-To: <CAFULd4bfxaSy0kkVjfjqgHe=3iT-QcGAhbK9WFepPmZu7=ocjw@mail.gmail.com>
 References: <20251112043730.992152-1-hpa@zytor.com> <20251112043730.992152-8-hpa@zytor.com> <CAFULd4aMOueG5y3K7F57ryLtt-JUhE-yfsDODC=5+bgjF_gtSw@mail.gmail.com> <d5531acf-cd79-428d-80d1-eb7562cf3922@zytor.com> <CAFULd4bfxaSy0kkVjfjqgHe=3iT-QcGAhbK9WFepPmZu7=ocjw@mail.gmail.com>
-Message-ID: <B00D1422-204D-4ACE-AE00-94ACEA7430F7@zytor.com>
+Message-ID: <6585D209-A4D7-4201-8E4C-F28DC97AED3F@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -139,10 +139,13 @@ ly
 >Uros=2E
 >
 
-For 64 bits, if you need frame pointer support *and* frob %rsp, using:
+Note: for the specific case of VDSO_SYSCALL6 the %eax value is always a co=
+nstant, so:
 
-xchg %[arg],%%rbp
-<stuff>
-xchg %[arg],%%rbp
+push %%ebp
+mov %%eax,%%ebp
+mov %[sysnr],%%eax /* "i" constraint */
+<syscall sequence>
+pop %%ebp
 
-=2E=2E=2E is probably easiest, with %[arg] in a register=2E
+=2E=2E=2E would be easiest=2E
