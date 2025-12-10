@@ -1,83 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917D827FB0E;
-	Wed, 19 Nov 2025 02:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E03A26FA50
+	for <linux-sgx@vger.kernel.org>; Wed, 10 Dec 2025 12:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763519349; cv=none; b=p2xcpvY6GUA0pJ2YLt2uMMoHKFvol1U6keCuvhAq8FlvVgcBFQrKuPLYfUeoejJkq/6THq6l5xF18m9sOU45PB7toCGunFLu3nvniYFnrYBVMc8S9NJMruwoPvhRi/7p8Rqj9X2PRLbD4ZNrDLqd6ZQQZFVA9p8X+WFtx+y91Ss=
+	t=1765371454; cv=none; b=ruR50vLNVLdTirVhXyal3JzKeKvZf/MBN8Oj2XqkOgF0TwyQgPnS62SU7kLFBQyhGva19mp6QlKLUH730bUBIWT4yCe6TwZ3JAqLssYPqUmTLbEh8hZ3w1j4DkroINAXYZZcwTstKaNxbUjR/t+Kz4lbuZ6mWePWelAiyL4VO5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763519349; c=relaxed/simple;
-	bh=CosOw8P6OaaAcl1QWpwf5wmIFddta1H+5flgIOETLxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L60+SJHU0mVnayG9LaBmR0jkRAkLTYMRsn3rprDfVj8LFWdoJvadoeCFCyG9OwVtz49KvyTWYZSThHn522L2RDP8oGqKv5ugqm6bfygYX7CqJge65FLq1vFJgVBeOWisGPFdQetM4K8Gs4FATgyW2Frf58yQ2iyEpkn1iQC9E1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnEDjKTO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765371454; c=relaxed/simple;
+	bh=2r29At9nitiMvCeKQmx53ZdDbiUek3S9jZFryGAQszg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ke+Vtim9C+7BVzqdo3Gv8Heyf6PKckuYBxQU1mQ0jB2ERX7IAF0BEWZ/8yMWYpxFumgJNNJAqoztoh++NzNRs4U4yhsCzyoPaTOj1OKF+N/vY6TE5b7rd18LAPXZ7shdT+KP8DCMkjAWUXghqhbEtGXOfXBVQEouoT8mK9PbSPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SCgxC+TB; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnEDjKTO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B738C19421;
-	Wed, 19 Nov 2025 02:29:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763519343;
-	bh=CosOw8P6OaaAcl1QWpwf5wmIFddta1H+5flgIOETLxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rnEDjKTOYT2bB7IEgaLXTFzZbzpB8Z2dtXy/5DcdqjjrbobPfusMRQj7cG3fy0AR7
-	 2lqKFI8t+j1FtwDbJ2CjSBDZLMexOsB4vGC7cUMX+j1vTtQ8K1cHRHjMWvPBKj5UjT
-	 O61zrkSxp/htAoDiEPt0BGl47D9dM8udiOYK6hI1+Otz+a3+xoNE+yjJtrnUXKop/b
-	 5fQtADj2OgU6MBAPdlwMENE81oDlWYIHh6NL40P9q4svB2vr+cgKwjx/WLM1qqWuj+
-	 G8/fAm+Q8DW0K+Te1H3/iH3FS3UTXcvca9Z3ibPVGNv3DJ/02/cRTcFC/jzbqjHASR
-	 6cfraCgTffzDA==
-Date: Wed, 19 Nov 2025 04:28:58 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SCgxC+TB"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1765371439;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xkVpQH/4aRNdXE9IQXgb3FreHOrgcW0hY0dp2hrvymk=;
+	b=SCgxC+TBwy9/DtoYNzP+VR+dZerSPSmI4pdnIDZZAmjKO+RgV90Z3Tyh3a39HljKIOqV+s
+	MAnDaL80SOgdFjOjbn63EmyLFid8np7jaZkhS/6wjaYPQ1FeVOtJCFILocTVrUzv214pSp
+	Bu4gDEJ/fYTwM2dDJ7fIVxPkEXzsp2c=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 5/5] x86/sgx: Fix a typo in the kernel-doc comment for
- enum sgx_attribute
-Message-ID: <aR0raibotOVv9IXd@kernel.org>
-References: <20251112160708.1343355-1-seanjc@google.com>
- <20251112160708.1343355-6-seanjc@google.com>
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/sgx: Remove unmatched quote in __sgx_encl_extend function comment
+Date: Wed, 10 Dec 2025 13:56:28 +0100
+Message-ID: <20251210125628.544916-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112160708.1343355-6-seanjc@google.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Nov 12, 2025 at 08:07:08AM -0800, Sean Christopherson wrote:
-> Use the exact enum name when documenting "enum sgx_attribute" to fix a
-> warning if the file is fed into kernel-doc processing:
-> 
->   WARNING: ./arch/x86/include/asm/sgx.h:139 expecting prototype for enum
->            sgx_attributes. Prototype was for enum sgx_attribute instead
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/include/asm/sgx.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-> index 3c90cae04e1d..04958459a7ca 100644
-> --- a/arch/x86/include/asm/sgx.h
-> +++ b/arch/x86/include/asm/sgx.h
-> @@ -112,7 +112,7 @@ enum sgx_miscselect {
->  #define SGX_SSA_MISC_EXINFO_SIZE	16
->  
->  /**
-> - * enum sgx_attributes - the attributes field in &struct sgx_secs
-> + * enum sgx_attribute - the attributes field in &struct sgx_secs
->   * @SGX_ATTR_INIT:		Enclave can be entered (is initialized).
->   * @SGX_ATTR_DEBUG:		Allow ENCLS(EDBGRD) and ENCLS(EDBGWR).
->   * @SGX_ATTR_MODE64BIT:		Tell that this a 64-bit enclave.
-> -- 
-> 2.51.2.1041.gc1ab5b90ca-goog
-> 
+There is no opening quote. Remove the unmatched closing quote.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BR, Jarkko
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 66f1efa16fbb..9322a9287dc7 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -242,7 +242,7 @@ static int __sgx_encl_add_page(struct sgx_encl *encl,
+ /*
+  * If the caller requires measurement of the page as a proof for the content,
+  * use EEXTEND to add a measurement for 256 bytes of the page. Repeat this
+- * operation until the entire page is measured."
++ * operation until the entire page is measured.
+  */
+ static int __sgx_encl_extend(struct sgx_encl *encl,
+ 			     struct sgx_epc_page *epc_page)
+-- 
+Thorsten Blum <thorsten.blum@linux.dev>
+GPG: 1D60 735E 8AEF 3BE4 73B6  9D84 7336 78FD 8DFE EAD4
+
