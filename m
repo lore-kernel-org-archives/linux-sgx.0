@@ -1,660 +1,199 @@
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012049.outbound.protection.outlook.com [52.101.53.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22694301472;
-	Tue,  6 Jan 2026 21:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767734430; cv=none; b=HoVsGk42jPduRgBY2ZqIYz4DccJ761SpjnP7o7QY/Hpiiie1MW4M1wBHZU33agA/IL3A50KtFj2XsSyRd9LWk+CXwx2OeTIFMXYdOtEfXoRAm9PZ2iqdpPqjt40a3FUE2K2iugzXcmF9EiEviN+VndRPHzVuy2U6qy4bThBum98=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767734430; c=relaxed/simple;
-	bh=IFbK2Vstj6wU91JxtVxu7k/PGBg6LmOaDJDvE5IgZnE=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g+IzSUSLL3sTxLuAsukHdjVJUHvsg2NyfyrLwG4DHsSOFRMnS0AOE+FxDyfj8NLEh2wMRzDPUNL88Ux+W3P8PyA5jwwmjKVUg9FoDp3IHmbT5txvTZjjNyu9sLq0d0PngRmpmIxpu9BTSelXLaDTrQFuq73RgxXI2MJoHF6JkC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=LRjGtXUF; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CB4240604;
+	Wed,  7 Jan 2026 12:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767787864; cv=fail; b=blT/VuFBMPYY6ymiTqbcZmT7sMOr3y9fyNHtK150YOJNPIKDPxnZsIcK1Dn2G3lukxPl2Ek79sEVJnT7BX7f3K+hJ3O3FJZ7BMmjs4LR1yH08YaFaFYsQSFPjMUKQUk2+9prEm1upGVabF7QKUmPGUzsFdVXUiMh6AQ8Cxw/N6I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767787864; c=relaxed/simple;
+	bh=jMnmLy4ws50j+rhYtlqoj7KCsfnPl39S1vS1XBtCEy4=;
+	h=Message-ID:Date:Cc:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bVZL7J/hsuLd80mbIE+ac0FB1rU5Sh6oYdJ+3J2NbKIu7kcnx331t/bMMNjPjEKhnu7iLuC1w+KbwGiPHgFn5CKKftRgEsYgrZIM4BeWy+N+i3fbVIfgJmR/JcozJ0nAbfsUdzRTkP6z/xOnxEex1etfiLmUyIBVrXE1LWTSvso=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=citrix.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=YEQ40pcp; arc=fail smtp.client-ip=52.101.53.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=citrix.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="LRjGtXUF"
-Received: from mail.zytor.com ([IPv6:2601:646:8081:9483:178c:dccb:2d71:85fe])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 606LIrDr029412
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 6 Jan 2026 13:19:00 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 606LIrDr029412
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025122301; t=1767734341;
-	bh=AB+971Z2K/0s3r5t/Zl6ByNhuiR5RGHV+jj8e23dhBU=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=LRjGtXUFaMz7OYR07EEFt9odMPeBo2Vys6fhhZuHmB/89dZM80b8UkwX6Z9FELnaY
-	 zrqGgqNg/+ltY1UZWYNuwdITTIe05Wsc/iUhpNdHptIzMf7W13HvsQtnYlAp8kh6fE
-	 H0O0lC09WKihCWgAIjekrzSwEbMfGWx8NgzSer73MiserW1yJZ5uldkPjN3H1l4tbh
-	 rKhSPOONEiffQkdB6cpNvE2sRlXKFQvhRRYXq3e+MsTD7UNpE3jHmLx1qMhlGVh/bj
-	 Xqo/eF6c90sF7YlwLK9YBdV5YU09W8YKHwp3IvKbx9SyvxcWTBYJmzNrszAkd/ofsd
-	 6KLjoEyWci0kg==
-From: "H. Peter Anvin" <hpa@zytor.com>
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="YEQ40pcp"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n0SLqxYgCzdo4siE5vD6l4UcDkIN/WOWpCUu6Xo3LC5OzhWv7ngq3q/AEv47orPx3lwpDTD4CQSPKmDLa6rp57i1RdHNH5/9dJ912k7Biw6u1eoNmLRFdQRnRuv44tQtNTauIF/NKH1MFhmm6GpR8KZ8d28lyaYE++W4SJQISIY51rhAMk1h4z6nfCQGtgYF/ba27rWpzVCFaLkyv31tPIOEEoV16OJB6qblLFT2B/IejLgbChidbooy8wG7MBfuQypEJFIzgH4qBUGDQi0UY5R5bEu+QOGqWn9ZIxDb3ap9g19thWFS/nyrN/R+GeqfSgZUbiEQ4Gzc96tF/i279g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jMnmLy4ws50j+rhYtlqoj7KCsfnPl39S1vS1XBtCEy4=;
+ b=G20U5dW0wUEheWb3VeOHCIPk2dR+6T6P4WJZrYmiMwWDxhFp2AlqrCeNtkj4On/z38PvtlpEC08bbl+QzHr9frGNkvhTZjFWC66mDxtwS2JGeQ1+1bzA9SGIxxhlC0Kb/e07kSFia+IysSmRFcA5d/hmhWsJnTd6drCkqUAR+PJtS0RDiU1lQuyTuaggktHonYni0GTiIoFht1akEIvFRWDKngHd+HaNiQjjx8PYeiW9jXr2DBaCM+8N8mb/tfP+geU3l5UOucfMllce4G/+zDi26HnCj1kXtGWKSRUySSGX3ifzahK86vJpagHrSxZjruNF/KP1jlkO9dVwtgoWYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=citrix.com; dmarc=pass action=none header.from=citrix.com;
+ dkim=pass header.d=citrix.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=citrix.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jMnmLy4ws50j+rhYtlqoj7KCsfnPl39S1vS1XBtCEy4=;
+ b=YEQ40pcpL7MjGJj6Af6YAcidqno/L/FYSyXuxbT5vd8Tp52yQxvLrF34/jQp5BzAErvcIgbTp2S9RtcrZ2X04Pa0smYFL8NlfejuYKTsdVBrsYflfpIQpF1NlobJ+ofDUm1LZ48cBsc9vVzKkInIYG+Wib6s9ir3+vkZzbheISY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=citrix.com;
+Received: from CH8PR03MB8275.namprd03.prod.outlook.com (2603:10b6:610:2b9::7)
+ by SA6PR03MB8000.namprd03.prod.outlook.com (2603:10b6:806:42f::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.2; Wed, 7 Jan
+ 2026 12:10:59 +0000
+Received: from CH8PR03MB8275.namprd03.prod.outlook.com
+ ([fe80::a70d:dc32:bba8:ce37]) by CH8PR03MB8275.namprd03.prod.outlook.com
+ ([fe80::a70d:dc32:bba8:ce37%4]) with mapi id 15.20.9499.002; Wed, 7 Jan 2026
+ 12:10:58 +0000
+Message-ID: <0d53c80f-46e3-4e78-8d8b-cc36085229e4@citrix.com>
+Date: Wed, 7 Jan 2026 12:10:52 +0000
+User-Agent: Mozilla Thunderbird
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH v4.1 07/10] x86/entry/vdso: include GNU_PROPERTY and
+ GNU_STACK PHDRs
 To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-        Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
-        Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, James Morse <james.morse@arm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>,
-        Nam Cao <namcao@linutronix.de>, Oleg Nesterov <oleg@redhat.com>,
-        Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-sgx@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v4.1 03/10] x86/entry/vdso: refactor the vdso build
-Date: Tue,  6 Jan 2026 13:18:36 -0800
-Message-ID: <20260106211856.560186-3-hpa@zytor.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <vdso-cleanup-patch-4.1@zytor.com>
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Theodore Ts'o <tytso@mit.edu>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Xin Li <xin@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>,
+ Brian Gerst <brgerst@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Ingo Molnar <mingo@redhat.com>, James Morse <james.morse@arm.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Kees Cook <kees@kernel.org>, Nam Cao <namcao@linutronix.de>,
+ Oleg Nesterov <oleg@redhat.com>, Perry Yuan <perry.yuan@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Thomas Huth <thuth@redhat.com>,
+ Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-sgx@vger.kernel.org, x86@kernel.org
 References: <vdso-cleanup-patch-4.1@zytor.com>
+ <20260106211856.560186-7-hpa@zytor.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+In-Reply-To: <20260106211856.560186-7-hpa@zytor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0227.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:315::13) To CH8PR03MB8275.namprd03.prod.outlook.com
+ (2603:10b6:610:2b9::7)
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH8PR03MB8275:EE_|SA6PR03MB8000:EE_
+X-MS-Office365-Filtering-Correlation-Id: d2e61065-ae94-4655-88b0-08de4de5d108
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZmxMZlJSM0F5Z3dQdS9uOWt1Um45RFlpc0E4VFZlZjd2RkZpYW1WYlA0RzBk?=
+ =?utf-8?B?Z1BneXZTcEJ5Q1N4UlZSR1BWS0o2K212RDJLdDd3NXM1cFdQOStRWEx4YzhO?=
+ =?utf-8?B?VE5GdG9NRjFhdjU2SENPM0JLckJKdTVRdjB0Um5GZ0huUTlaUnlvcklaYUtL?=
+ =?utf-8?B?OWJnckg1WndhRWxHQWV6dE1xSUJaRHJvVmdsY2p1Ym5vVEFTV0FiZ0gra3lr?=
+ =?utf-8?B?QnovZWFjQUNoQUlxTDVvSGdyZVE5Sll0TkxhTy9tNS9EVC9FTlQ5S0dYWXpT?=
+ =?utf-8?B?ZmR6QkI2KytSa1o5WUpDQjI4cGZrTkZVYXFIM2VLYVpYTGlQSml2RWhGMGtt?=
+ =?utf-8?B?V3ZNbVlXcGZOOWxEckZnY2piMHg2a1JjN1JYMlN1WTFseWxJdTRPV3lkZFJu?=
+ =?utf-8?B?OTlqVkpORWtXTFduM0pNejU3Ty9yZzVybXpqM0FFMHZKdnd6YUtKcndLNmFD?=
+ =?utf-8?B?VkcyOHNoRWVnazBoNWdxVk5YaTRQVnREbmVxeW9SUGhGYitNSm1seWpVMTNK?=
+ =?utf-8?B?U1FSMXRxZHBQZFFGUmdaQjh6Y21mWCtCRlNEMjVRKzUxRENodHM2U2orakJh?=
+ =?utf-8?B?bmxQZzN1M0NWNkxRam1tZSsvb1kvUEcyMUhkYWNneHRramlUTytiWVV4SzF5?=
+ =?utf-8?B?SE91aFFRaXFNd1JCSGpteXBrckRVRDFzWEJtN2VwazZNQjB2V050ekpLbnJq?=
+ =?utf-8?B?S2pHM3MwNVp3R1ZJbXpKREZrcFlmMFd2OFhPRVZBdE1vQldzMVFMMDhGcUE3?=
+ =?utf-8?B?TjhwN1NWT0lqbGEveGU1bmQrb0xVd0h0UHh2OVR3UWJLVjIxdlJVb2c2S1pN?=
+ =?utf-8?B?dGNBYVpwT0R4OGxiOUVPejB5WnJsVy9HdW1NbEhIMFdpSm9yMTJzYlR3YjVl?=
+ =?utf-8?B?djY0WWVJcS9mdnI2eUJWNktJQy9xOFNtUFNNand1VVlWTFkrZ0RjZU1Na29t?=
+ =?utf-8?B?dmIwM3FaV0VDQUc0dXBERkd0RXRkQ3Q2bHVoNm13WlEreVNuMFlEL3FvZXAz?=
+ =?utf-8?B?NHcxR0FBRjBIREYxazVtTjBFS0h5SlNwWTlpajJyckpIMHNvTnM5NVJuT0Rl?=
+ =?utf-8?B?NGhpakF3enZ3VnVwN1pWaGxrR1AwWHNmSVJacjN5VnlnUXFwVXhReGR0QXpD?=
+ =?utf-8?B?bDBTUEJLQ1VZWGtxcHNsNkRsVGFEc3BGcjBsYWF2b0FzdXhhZ2tVNXg5NHUr?=
+ =?utf-8?B?WEcyVWlBUVBXbXc4TWpJTHhzcXZCRng2NWYxRW5Fd2RRdW9kOHEwV09yN2lq?=
+ =?utf-8?B?RjdiZnlOY1YvYVVNbGF2TStjV3ZldTB0TnpRMVlMU1kzS2JtdTFvQkRTUXZj?=
+ =?utf-8?B?cmluMTdYNTdvb0ZRVGdNUUdjazJnOG1VLzVqcnN2bXlPVlUzSUM0dmMxUXFC?=
+ =?utf-8?B?MEJiU0swS1E3UDNLYVErTUZLcjVVVXJoUittWmpia3o3ZDJTdkZFRmEzb1Fh?=
+ =?utf-8?B?NGw5TVFZUHU4ZGROOGlLRVhVZk5kbFUvZ0lDaW5VYTZzelppcXcvKzFBU2Zi?=
+ =?utf-8?B?NFJKVlBBa3MzV0FYSDVzSU51YkJTbXMrODJnME13OEg0clVkWmgxR1A2VVMw?=
+ =?utf-8?B?WDVIb0wwMFFwa2loTFBpS1NMamFMYWVvSUYrYk0rSmN5T1BFVzg1RkFIS2ha?=
+ =?utf-8?B?WTdoSy9zYU1PSVYzWWxPRE1nWEcyL2Q3ajJoN3dYTjBMV2NMdmJzZUEzVi9u?=
+ =?utf-8?B?V0hhazY1ZHV6a3packszbXI4aTFFYm9yYzlhRlo0ZzNuSGNUeFlaMTJzcU9t?=
+ =?utf-8?B?Uk51S1RVdVNia3FpbUVteFRtT3V2SnFEWDRERHNzN3N3WmdjeVVjYW5BTW9q?=
+ =?utf-8?B?aXdIOEMwclhQdysxd1BhbWJja0krd3k5R3hUV2NKakhsRlhIc0VyYWRiZlgv?=
+ =?utf-8?B?NjZOaVNaL0luR3FFQ1JYNjJ1Z3poTU5oTnBFQkN2d2pHRUJ3Z00venlLakdj?=
+ =?utf-8?B?eFpSSVBrU2hkQk82dHF1RjVQcy92d2xIK2NNeEVTc0g3UTdQZWJKb0k5OHR1?=
+ =?utf-8?Q?9ZuM7xC1+GehEVGLDDfuTLEjQSu+VU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH8PR03MB8275.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?LzEwSi81cHNVa293WGViOHlhTEZLTmx0bnE2dTNiZnNoRmtrdlJyOGd4QkFG?=
+ =?utf-8?B?UnYrakxoQlU3OUNUQ1Q3azlHMUZMd0JFL1c0UUxPNG9Kc3VTbnRkYWZQVzRZ?=
+ =?utf-8?B?bXQ0RzZBakZLbng2M1RmYSttazZQVzl5VkFtSlM1cGRRc1ZQbEFCYllhVDhz?=
+ =?utf-8?B?c3ZLb00rbkZJOG9oVXEvNW5UTTVHUVhDWi9PamRsMXRrU3ZSelNVRXFqcDV4?=
+ =?utf-8?B?cytzT2ZUaDZpOVgyWjN1UFV3L3FheUwrWGFkTGxyYmdmVnZiNnVaankwekk4?=
+ =?utf-8?B?MWhLTFErNG1Rc01YdjNoVU1rZGNnZmtpWnZRSUV5VHFtbXROSTBTc0lUNW5n?=
+ =?utf-8?B?aW1xWjhaQTA2Vmc1OG00WXUzSlQycHQ3aHBCVStnM3dVMGZTY0JydjhjKzlh?=
+ =?utf-8?B?MWE4Y3BsQUw5NWw4QTg0eEFoSVB4U2NPSGxPZHRzZGkrTmZGSmlEQVBOdGxx?=
+ =?utf-8?B?bG9yWUQ2ZjN1b2VHZmU0VnJSOURPVEZnWHpMUkZWT1ViNy9PMUU3aTlWUGJk?=
+ =?utf-8?B?VTMrMExXeVJ5KzJKSnRSL2YwSCtaYkVjemc3cVdBTHNIQ1pZL21OZmk5NkhD?=
+ =?utf-8?B?MGlRU241ZlBEK3U3ZEpJWEZPbHppQkVDQjB5U3d1N1JFQWlFYXc4cWJ2SWEy?=
+ =?utf-8?B?RnN0Z3EvOUVzSkEwVkpiTWtpUDRWcHU5U05OeVdmT1hrRTFUZmhiSTJ1eis1?=
+ =?utf-8?B?TkljNFdjazV5eVQ5RktZdHp4anZOSHVGZFBVVVBXRFVUVGc4SWNqejNid1NQ?=
+ =?utf-8?B?RmJNd3NmL0QyM0RzSFZoc0hLNnRoTm5ic0EvbWNRWkxNVW1vWUxKTjBUZlBE?=
+ =?utf-8?B?eXBOSUZURnZxYmc1YmpydElwNnhLSDdONEM0cHlsU2FMdFVZS0tySWRDVWFr?=
+ =?utf-8?B?Z1NzRTJuTVNDQ0xWZ0JSbkR4WXNmSmcxQnFCUFJYWlAvV0dXRFdHK3FJTjNO?=
+ =?utf-8?B?VGM0L2hpb296VzZxSmhody9WU0FuakY1Z1gzcFR1WGg0a054aDN0aXI2VVZV?=
+ =?utf-8?B?TGZmQ3E5REkzdXdIRVRxMDBiU05NeG9nNVNmT3A3b2lvR3M5T3k0ekNZcVZM?=
+ =?utf-8?B?SU1oQjlQN2FsNDdoUS9qQjJsUW9QRXlEVWJ0c1Bsby9LSjRUN29Ka0YyUi9C?=
+ =?utf-8?B?bnY3NW9IYlZ5ZFg5eHM2Q2Voalg4MWh6VGE2YVV6U1AxNUZwRTE1VVFsbEZN?=
+ =?utf-8?B?UzYvMDBQY3BEWExRYjZDVjl3ZkJNNnhZdXVhL0V5YWxPR3Y3aEVVcmJ4bFRI?=
+ =?utf-8?B?SnZDY1lHeVFqenBZOXo4eHRVL1lldnVWOEJpRmUrdG9hbGZ2OVpmcGpxZVFz?=
+ =?utf-8?B?WmpKV2NsYWttQVVjZmJxendDVVhTdVdBaXc4SmdHM1JPUllBRUkvV0pSL0lF?=
+ =?utf-8?B?Z1ZDcTExUWdBSlFmcEtidEFXWENETTJZb3EwaS9qU0k5NTlLeG1Wa2ErZi91?=
+ =?utf-8?B?MDdCcGtSeGpSTHlOcnNlc2pWWFVlTkhqUERNcHJTV3lVM1NqODlKTGZkRWtr?=
+ =?utf-8?B?OG5Ccit2KzV2UDc1VjY4VjROZ1ErcEZ1TmtRb1AzdVF0dWpadlpPaHdSZGs5?=
+ =?utf-8?B?TWJIYytYbzVSNHgvU2NMRDVhM0h1dHNZbi9KcENQNCt5bHlQaVY1UFhEeVA1?=
+ =?utf-8?B?UzQ5akVyN2xObjNRVXplZXY3YVBsRlZXcExKbXpqUGN6N2sxM08zOWRNTE4y?=
+ =?utf-8?B?UHNFK1ZKMTJZaUNpWXFVWk5iR2dnTFVGeUR6NklyVGVNdk53blpPQ0Rubi93?=
+ =?utf-8?B?SE5ldThXWjl3aVA2S2lsa2FEU3ZtNDJOaUtzY3ZZZmdXaW5ZZ255Z1h2cDdS?=
+ =?utf-8?B?MlBoc0Uwd3E3a1BhdFYwWGU1NmV2NzFkc0VKSUdJNFlQbjdzZUZ3NjRvZFRL?=
+ =?utf-8?B?L3pNSW5ZVCtIeGFMOEZib2o3Mk8vQXVPdVBjVmFiYXNOTXNEVlZ6OStCUGJi?=
+ =?utf-8?B?NGJBdzhaQ0owUEl5amFaSEthNHlkcGpFTDFjYkxHNWMwU0MyNGx4MVBoa290?=
+ =?utf-8?B?dUtRaDYyTHo0N0FDc3VJdjRwVWE0L2RrbkwzZVZwSHFmY3l6aEtmWE9CWFgv?=
+ =?utf-8?B?UWlMRDFZaGVJWE1qV1pDem1iLzhNWnErTkxOWWh1NTBvQUx3am9aTW1tTXdw?=
+ =?utf-8?B?SzRUS2krbk1Pcnk2cjdOcEVITVZYNDBIT3EySjViUlBUZEl3QVZTSXY2Y0lI?=
+ =?utf-8?B?R3ZkTjYvLzVOZjNGcm5kd2U0aVpKRDcyZDZha0FWK01vYkZGaWRnN0J0dTl0?=
+ =?utf-8?B?TnJaeXp1d0ZiNUYzK2d1M2tnWGJmTGoyQkJxMEFUZlRwYVhaSUxTZVUvd3FW?=
+ =?utf-8?B?eXEwOGRnbWtDbTdYWVNjL1JicXFoYWxVMUNoTmtabDBHa1VnSUd1Z2N3UWZ6?=
+ =?utf-8?Q?Qlm/SEEd4cG7BrG0=3D?=
+X-OriginatorOrg: citrix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2e61065-ae94-4655-88b0-08de4de5d108
+X-MS-Exchange-CrossTenant-AuthSource: CH8PR03MB8275.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2026 12:10:58.4635
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 335836de-42ef-43a2-b145-348c2ee9ca5b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rbdM9oQo8Z8u24iZVkb065zsThVBxtRZkJ+cxyqjHnVhR4wI2VXU6A5dVLhMlz6cDyqB3ZXcr/MnZ9ibeRY7++FaojIEn1ewvQXrGJlV8J8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR03MB8000
 
-- Separate out the vdso sources into common, vdso32, and vdso64
-  directories.
-- Build the 32- and 64-bit vdsos in their respective subdirectories;
-  this greatly simplifies the build flags handling.
-- Unify the mangling of Makefile flags between the 32- and 64-bit
-  vdso code as much as possible; all common rules are put in
-  arch/x86/entry/vdso/common/Makefile.include. The remaining
-  is very simple for 32 bits; the 64-bit one is only slightly more
-  complicated because it contains the x32 generation rule.
-- Define __DISABLE_EXPORTS when building the vdso. This need seems to
-  have been masked by different ordering compile flags before.
-- Change CONFIG_X86_64 to BUILD_VDSO32_64 in vdso32/system_call.S,
-  to make it compatible with including fake_32bit_build.h.
-- The -fcf-protection= option was "leaking" from the kernel build,
-  for reasons that was not clear to me. Futhermore, several
-  distributions ship with it set to a default value other than
-  "-fcf-protection=none". Make it match the configuration options
-  for *user space*.
+On 06/01/2026 9:18 pm, H. Peter Anvin wrote:
+> Currently the vdso doesn't include .note.gnu.property or a GNU noexec
+> stack annotation (the -z noexecstack in the linker script is
+> ineffective because we specify PHDRs explicitly.)
+>
+> The motivation is that the dynamic linker currently do not check
+> these.
+>
+> However, this is a weak excuse: the vdso*.so are also supposed to be
+> usable at link libraries, and there is no reason why the dynamic
+> linker might not want or need to check these in the future, so add
+> them back in -- it is trivial enough.
+>
+> Use symbolic constants for the PHDR permission flags.
+>
+> [ v4: drop unrelated formatting changes ]
+> [ v4.1: drop one last bogus formatting change (Brian Gerst) ]
+>
+> Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 
-Note that this patch may seem large, but the vast majority of it is
-simply code movement.
-
-Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
----
- arch/x86/entry/vdso/Makefile                  | 161 +-----------------
- arch/x86/entry/vdso/common/Makefile.include   |  89 ++++++++++
- .../entry/vdso/{vdso-note.S => common/note.S} |   5 +-
- .../entry/vdso/{ => common}/vclock_gettime.c  |   0
- .../entry/vdso/{ => common}/vdso-layout.lds.S |   0
- arch/x86/entry/vdso/{ => common}/vgetcpu.c    |   0
- arch/x86/entry/vdso/vdso32/Makefile           |  24 +++
- arch/x86/entry/vdso/vdso32/note.S             |  19 +--
- arch/x86/entry/vdso/vdso32/system_call.S      |   2 +-
- arch/x86/entry/vdso/vdso32/vclock_gettime.c   |   5 +-
- arch/x86/entry/vdso/vdso32/vdso32.lds.S       |   2 +-
- arch/x86/entry/vdso/vdso32/vgetcpu.c          |   4 +-
- arch/x86/entry/vdso/vdso64/Makefile           |  46 +++++
- arch/x86/entry/vdso/vdso64/note.S             |   1 +
- arch/x86/entry/vdso/vdso64/vclock_gettime.c   |   1 +
- .../vdso/{vdso.lds.S => vdso64/vdso64.lds.S}  |   2 +-
- .../x86/entry/vdso/{ => vdso64}/vdsox32.lds.S |   2 +-
- arch/x86/entry/vdso/vdso64/vgetcpu.c          |   1 +
- .../vdso/{ => vdso64}/vgetrandom-chacha.S     |   0
- arch/x86/entry/vdso/{ => vdso64}/vgetrandom.c |   2 +-
- arch/x86/entry/vdso/{ => vdso64}/vsgx.S       |   0
- 21 files changed, 180 insertions(+), 186 deletions(-)
- create mode 100644 arch/x86/entry/vdso/common/Makefile.include
- rename arch/x86/entry/vdso/{vdso-note.S => common/note.S} (62%)
- rename arch/x86/entry/vdso/{ => common}/vclock_gettime.c (100%)
- rename arch/x86/entry/vdso/{ => common}/vdso-layout.lds.S (100%)
- rename arch/x86/entry/vdso/{ => common}/vgetcpu.c (100%)
- create mode 100644 arch/x86/entry/vdso/vdso32/Makefile
- create mode 100644 arch/x86/entry/vdso/vdso64/Makefile
- create mode 100644 arch/x86/entry/vdso/vdso64/note.S
- create mode 100644 arch/x86/entry/vdso/vdso64/vclock_gettime.c
- rename arch/x86/entry/vdso/{vdso.lds.S => vdso64/vdso64.lds.S} (94%)
- rename arch/x86/entry/vdso/{ => vdso64}/vdsox32.lds.S (92%)
- create mode 100644 arch/x86/entry/vdso/vdso64/vgetcpu.c
- rename arch/x86/entry/vdso/{ => vdso64}/vgetrandom-chacha.S (100%)
- rename arch/x86/entry/vdso/{ => vdso64}/vgetrandom.c (91%)
- rename arch/x86/entry/vdso/{ => vdso64}/vsgx.S (100%)
-
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 3d9b09f00c70..987b43fd4cd3 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -3,159 +3,10 @@
- # Building vDSO images for x86.
- #
- 
--# Include the generic Makefile to check the built vDSO:
--include $(srctree)/lib/vdso/Makefile.include
-+# Regular kernel objects
-+obj-y				:= vma.o extable.o
-+obj-$(CONFIG_COMPAT_32)		+= vdso32-setup.o
- 
--# Files to link into the vDSO:
--vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o vgetrandom.o vgetrandom-chacha.o
--vobjs32-y := vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
--vobjs32-y += vdso32/vclock_gettime.o vdso32/vgetcpu.o
--vobjs-$(CONFIG_X86_SGX)	+= vsgx.o
--
--# Files to link into the kernel:
--obj-y						+= vma.o extable.o
--
--# vDSO images to build:
--obj-$(CONFIG_X86_64)				+= vdso64-image.o
--obj-$(CONFIG_X86_X32_ABI)			+= vdsox32-image.o
--obj-$(CONFIG_COMPAT_32)				+= vdso32-image.o vdso32-setup.o
--
--vobjs := $(addprefix $(obj)/, $(vobjs-y))
--vobjs32 := $(addprefix $(obj)/, $(vobjs32-y))
--
--$(obj)/vdso.o: $(obj)/vdso.so
--
--targets += vdso.lds $(vobjs-y)
--targets += vdso32/vdso32.lds $(vobjs32-y)
--
--targets += $(foreach x, 64 x32 32, vdso-image-$(x).c vdso$(x).so vdso$(x).so.dbg)
--
--CPPFLAGS_vdso.lds += -P -C
--
--VDSO_LDFLAGS_vdso.lds = -m elf_x86_64 -soname linux-vdso.so.1 \
--			-z max-page-size=4096
--
--$(obj)/vdso64.so.dbg: $(obj)/vdso.lds $(vobjs) FORCE
--	$(call if_changed,vdso_and_check)
--
--VDSO2C = $(objtree)/arch/x86/tools/vdso2c
--
--quiet_cmd_vdso2c = VDSO2C  $@
--      cmd_vdso2c = $(VDSO2C) $< $(<:%.dbg=%) $@
--
--$(obj)/vdso%-image.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(VDSO2C) FORCE
--	$(call if_changed,vdso2c)
--
--#
--# Don't omit frame pointers for ease of userspace debugging, but do
--# optimize sibling calls.
--#
--CFL := $(PROFILING) -mcmodel=small -fPIC -O2 -fasynchronous-unwind-tables -m64 \
--       $(filter -g%,$(KBUILD_CFLAGS)) -fno-stack-protector \
--       -fno-omit-frame-pointer -foptimize-sibling-calls \
--       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
--
--ifdef CONFIG_MITIGATION_RETPOLINE
--ifneq ($(RETPOLINE_VDSO_CFLAGS),)
--  CFL += $(RETPOLINE_VDSO_CFLAGS)
--endif
--endif
--
--$(vobjs): KBUILD_CFLAGS := $(filter-out $(PADDING_CFLAGS) $(CC_FLAGS_LTO) $(CC_FLAGS_CFI) $(RANDSTRUCT_CFLAGS) $(KSTACK_ERASE_CFLAGS) $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
--$(vobjs): KBUILD_AFLAGS += -DBUILD_VDSO
--
--#
--# vDSO code runs in userspace and -pg doesn't help with profiling anyway.
--#
--CFLAGS_REMOVE_vclock_gettime.o = -pg
--CFLAGS_REMOVE_vdso32/vclock_gettime.o = -pg
--CFLAGS_REMOVE_vgetcpu.o = -pg
--CFLAGS_REMOVE_vdso32/vgetcpu.o = -pg
--CFLAGS_REMOVE_vsgx.o = -pg
--CFLAGS_REMOVE_vgetrandom.o = -pg
--
--#
--# X32 processes use x32 vDSO to access 64bit kernel data.
--#
--# Build x32 vDSO image:
--# 1. Compile x32 vDSO as 64bit.
--# 2. Convert object files to x32.
--# 3. Build x32 VDSO image with x32 objects, which contains 64bit codes
--# so that it can reach 64bit address space with 64bit pointers.
--#
--
--CPPFLAGS_vdsox32.lds = $(CPPFLAGS_vdso.lds)
--VDSO_LDFLAGS_vdsox32.lds = -m elf32_x86_64 -soname linux-vdso.so.1 \
--			   -z max-page-size=4096
--
--# x32-rebranded versions
--vobjx32s-y := $(vobjs-y:.o=-x32.o)
--
--# same thing, but in the output directory
--vobjx32s := $(addprefix $(obj)/, $(vobjx32s-y))
--
--# Convert 64bit object file to x32 for x32 vDSO.
--quiet_cmd_x32 = X32     $@
--      cmd_x32 = $(OBJCOPY) -O elf32-x86-64 $< $@
--
--$(obj)/%-x32.o: $(obj)/%.o FORCE
--	$(call if_changed,x32)
--
--targets += vdsox32.lds $(vobjx32s-y)
--
--$(obj)/%.so: OBJCOPYFLAGS := -S --remove-section __ex_table
--$(obj)/%.so: $(obj)/%.so.dbg FORCE
--	$(call if_changed,objcopy)
--
--$(obj)/vdsox32.so.dbg: $(obj)/vdsox32.lds $(vobjx32s) FORCE
--	$(call if_changed,vdso_and_check)
--
--CPPFLAGS_vdso32/vdso32.lds = $(CPPFLAGS_vdso.lds)
--VDSO_LDFLAGS_vdso32.lds = -m elf_i386 -soname linux-gate.so.1
--
--KBUILD_AFLAGS_32 := $(filter-out -m64,$(KBUILD_AFLAGS)) -DBUILD_VDSO
--$(obj)/vdso32.so.dbg: KBUILD_AFLAGS = $(KBUILD_AFLAGS_32)
--$(obj)/vdso32.so.dbg: asflags-$(CONFIG_X86_64) += -m32
--
--KBUILD_CFLAGS_32 := $(filter-out -m64,$(KBUILD_CFLAGS))
--KBUILD_CFLAGS_32 := $(filter-out -mcmodel=kernel,$(KBUILD_CFLAGS_32))
--KBUILD_CFLAGS_32 := $(filter-out -fno-pic,$(KBUILD_CFLAGS_32))
--KBUILD_CFLAGS_32 := $(filter-out -mfentry,$(KBUILD_CFLAGS_32))
--KBUILD_CFLAGS_32 := $(filter-out $(RANDSTRUCT_CFLAGS),$(KBUILD_CFLAGS_32))
--KBUILD_CFLAGS_32 := $(filter-out $(KSTACK_ERASE_CFLAGS),$(KBUILD_CFLAGS_32))
--KBUILD_CFLAGS_32 := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS_32))
--KBUILD_CFLAGS_32 := $(filter-out $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS_32))
--KBUILD_CFLAGS_32 := $(filter-out $(CC_FLAGS_LTO),$(KBUILD_CFLAGS_32))
--KBUILD_CFLAGS_32 := $(filter-out $(CC_FLAGS_CFI),$(KBUILD_CFLAGS_32))
--KBUILD_CFLAGS_32 := $(filter-out $(PADDING_CFLAGS),$(KBUILD_CFLAGS_32))
--KBUILD_CFLAGS_32 += -m32 -msoft-float -mregparm=0 -fpic
--KBUILD_CFLAGS_32 += -fno-stack-protector
--KBUILD_CFLAGS_32 += $(call cc-option, -foptimize-sibling-calls)
--KBUILD_CFLAGS_32 += -fno-omit-frame-pointer
--KBUILD_CFLAGS_32 += -DDISABLE_BRANCH_PROFILING
--KBUILD_CFLAGS_32 += -DBUILD_VDSO
--
--ifdef CONFIG_MITIGATION_RETPOLINE
--ifneq ($(RETPOLINE_VDSO_CFLAGS),)
--  KBUILD_CFLAGS_32 += $(RETPOLINE_VDSO_CFLAGS)
--endif
--endif
--
--$(obj)/vdso32.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
--
--$(obj)/vdso32.so.dbg: $(obj)/vdso32/vdso32.lds $(vobjs32) FORCE
--	$(call if_changed,vdso_and_check)
--
--#
--# The DSO images are built using a special linker script.
--#
--quiet_cmd_vdso = VDSO    $@
--      cmd_vdso = $(LD) -o $@ \
--		       $(VDSO_LDFLAGS) $(VDSO_LDFLAGS_$(filter %.lds,$(^F))) \
--		       -T $(filter %.lds,$^) $(filter %.o,$^)
--
--VDSO_LDFLAGS = -shared --hash-style=both --build-id=sha1 --no-undefined \
--	$(call ld-option, --eh-frame-hdr) -Bsymbolic -z noexecstack
--
--quiet_cmd_vdso_and_check = VDSO    $@
--      cmd_vdso_and_check = $(cmd_vdso); $(cmd_vdso_check)
-+# vDSO directories
-+obj-$(CONFIG_X86_64)		+= vdso64/
-+obj-$(CONFIG_COMPAT_32)		+= vdso32/
-diff --git a/arch/x86/entry/vdso/common/Makefile.include b/arch/x86/entry/vdso/common/Makefile.include
-new file mode 100644
-index 000000000000..3514b4a6869b
---- /dev/null
-+++ b/arch/x86/entry/vdso/common/Makefile.include
-@@ -0,0 +1,89 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Building vDSO images for x86.
-+#
-+
-+# Include the generic Makefile to check the built vDSO:
-+include $(srctree)/lib/vdso/Makefile.include
-+
-+obj-y    += $(foreach x,$(vdsos-y),vdso$(x)-image.o)
-+
-+targets  += $(foreach x,$(vdsos-y),vdso$(x)-image.c vdso$(x).so vdso$(x).so.dbg vdso$(x).lds)
-+targets  += $(vobjs-y)
-+
-+# vobjs-y with $(obj)/ prepended
-+vobjs := $(addprefix $(obj)/,$(vobjs-y))
-+
-+# Options for vdso*.lds
-+CPPFLAGS_VDSO_LDS := -P -C -I$(src)/..
-+$(obj)/%.lds : KBUILD_CPPFLAGS += $(CPPFLAGS_VDSO_LDS)
-+
-+#
-+# Options from KBUILD_[AC]FLAGS that should *NOT* be kept
-+#
-+flags-remove-y += \
-+	-D__KERNEL__ -mcmodel=kernel -mregparm=3 \
-+	-fno-pic -fno-PIC -fno-pie fno-PIE \
-+	-mfentry -pg \
-+	$(RANDSTRUCT_CFLAGS) $(GCC_PLUGIN_CFLAGS) $(KSTACK_ERASE_CFLAGS) \
-+	$(RETPOLINE_CFLAGS) $(CC_FLAGS_LTO) $(CC_FLAGS_CFI) \
-+	$(PADDING_CFLAGS)
-+
-+#
-+# Don't omit frame pointers for ease of userspace debugging, but do
-+# optimize sibling calls.
-+#
-+flags-y += -D__DISABLE_EXPORTS
-+flags-y += -DDISABLE_BRANCH_PROFILING
-+flags-y += -DBUILD_VDSO
-+flags-y += -I$(src)/.. -I$(srctree)
-+flags-y += -O2 -fpic
-+flags-y += -fno-stack-protector
-+flags-y += -fno-omit-frame-pointer
-+flags-y += -foptimize-sibling-calls
-+flags-y += -fasynchronous-unwind-tables
-+
-+# Reset cf protections enabled by compiler default
-+flags-y += $(call cc-option, -fcf-protection=none)
-+flags-$(X86_USER_SHADOW_STACK) += $(call cc-option, -fcf-protection=return)
-+# When user space IBT is supported, enable this.
-+# flags-$(CONFIG_USER_IBT) += $(call cc-option, -fcf-protection=branch)
-+
-+flags-$(CONFIG_MITIGATION_RETPOLINE) += $(RETPOLINE_VDSO_CFLAGS)
-+
-+# These need to be conditional on $(vobjs) as they do not apply to
-+# the output vdso*-image.o files which are standard kernel objects.
-+$(vobjs) : KBUILD_AFLAGS := \
-+	$(filter-out $(flags-remove-y),$(KBUILD_AFLAGS)) $(flags-y)
-+$(vobjs) : KBUILD_CFLAGS := \
-+	$(filter-out $(flags-remove-y),$(KBUILD_CFLAGS)) $(flags-y)
-+
-+#
-+# The VDSO images are built using a special linker script.
-+#
-+VDSO_LDFLAGS := -shared --hash-style=both --build-id=sha1 --no-undefined \
-+	$(call ld-option, --eh-frame-hdr) -Bsymbolic -z noexecstack
-+
-+quiet_cmd_vdso = VDSO    $@
-+      cmd_vdso = $(LD) -o $@ \
-+		       $(VDSO_LDFLAGS) $(VDSO_LDFLAGS_$*) \
-+		       -T $(filter %.lds,$^) $(filter %.o,$^)
-+quiet_cmd_vdso_and_check = VDSO    $@
-+      cmd_vdso_and_check = $(cmd_vdso); $(cmd_vdso_check)
-+
-+$(obj)/vdso%.so.dbg: $(obj)/vdso%.lds FORCE
-+	$(call if_changed,vdso_and_check)
-+
-+$(obj)/%.so: OBJCOPYFLAGS := -S --remove-section __ex_table
-+$(obj)/%.so: $(obj)/%.so.dbg FORCE
-+	$(call if_changed,objcopy)
-+
-+VDSO2C = $(objtree)/arch/x86/tools/vdso2c
-+
-+quiet_cmd_vdso2c = VDSO2C  $@
-+      cmd_vdso2c = $(VDSO2C) $< $(<:%.dbg=%) $@
-+
-+$(obj)/%-image.c: $(obj)/%.so.dbg $(obj)/%.so $(VDSO2C) FORCE
-+	$(call if_changed,vdso2c)
-+
-+$(obj)/%-image.o: $(obj)/%-image.c
-diff --git a/arch/x86/entry/vdso/vdso-note.S b/arch/x86/entry/vdso/common/note.S
-similarity index 62%
-rename from arch/x86/entry/vdso/vdso-note.S
-rename to arch/x86/entry/vdso/common/note.S
-index 79423170118f..2cbd39939dc6 100644
---- a/arch/x86/entry/vdso/vdso-note.S
-+++ b/arch/x86/entry/vdso/common/note.S
-@@ -1,13 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * This supplies .note.* sections to go into the PT_NOTE inside the vDSO text.
-  * Here we can supply some information useful to userland.
-  */
- 
- #include <linux/build-salt.h>
--#include <linux/uts.h>
- #include <linux/version.h>
- #include <linux/elfnote.h>
- 
-+/* Ideally this would use UTS_NAME, but using a quoted string here
-+   doesn't work. Remember to change this when changing the
-+   kernel's name. */
- ELFNOTE_START(Linux, 0, "a")
- 	.long LINUX_VERSION_CODE
- ELFNOTE_END
-diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/common/vclock_gettime.c
-similarity index 100%
-rename from arch/x86/entry/vdso/vclock_gettime.c
-rename to arch/x86/entry/vdso/common/vclock_gettime.c
-diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/common/vdso-layout.lds.S
-similarity index 100%
-rename from arch/x86/entry/vdso/vdso-layout.lds.S
-rename to arch/x86/entry/vdso/common/vdso-layout.lds.S
-diff --git a/arch/x86/entry/vdso/vgetcpu.c b/arch/x86/entry/vdso/common/vgetcpu.c
-similarity index 100%
-rename from arch/x86/entry/vdso/vgetcpu.c
-rename to arch/x86/entry/vdso/common/vgetcpu.c
-diff --git a/arch/x86/entry/vdso/vdso32/Makefile b/arch/x86/entry/vdso/vdso32/Makefile
-new file mode 100644
-index 000000000000..add6afb484ba
---- /dev/null
-+++ b/arch/x86/entry/vdso/vdso32/Makefile
-@@ -0,0 +1,24 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# 32-bit vDSO images for x86.
-+#
-+
-+# The vDSOs built in this directory
-+vdsos-y			:= 32
-+
-+# Files to link into the vDSO:
-+vobjs-y			:= note.o vclock_gettime.o vgetcpu.o
-+vobjs-y			+= system_call.o sigreturn.o
-+
-+# Compilation flags
-+flags-y			:= -DBUILD_VDSO32 -m32 -mregparm=0
-+flags-$(CONFIG_X86_64)	+= -include $(src)/fake_32bit_build.h
-+flags-remove-y          := -m64
-+
-+# The location of this include matters!
-+include $(src)/../common/Makefile.include
-+
-+# Linker options for the vdso
-+VDSO_LDFLAGS_32		:= -m elf_i386 -soname linux-gate.so.1
-+
-+$(obj)/vdso32.so.dbg: $(vobjs)
-diff --git a/arch/x86/entry/vdso/vdso32/note.S b/arch/x86/entry/vdso/vdso32/note.S
-index 2cbd39939dc6..62d8aa51ce99 100644
---- a/arch/x86/entry/vdso/vdso32/note.S
-+++ b/arch/x86/entry/vdso/vdso32/note.S
-@@ -1,18 +1 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/*
-- * This supplies .note.* sections to go into the PT_NOTE inside the vDSO text.
-- * Here we can supply some information useful to userland.
-- */
--
--#include <linux/build-salt.h>
--#include <linux/version.h>
--#include <linux/elfnote.h>
--
--/* Ideally this would use UTS_NAME, but using a quoted string here
--   doesn't work. Remember to change this when changing the
--   kernel's name. */
--ELFNOTE_START(Linux, 0, "a")
--	.long LINUX_VERSION_CODE
--ELFNOTE_END
--
--BUILD_SALT
-+#include "common/note.S"
-diff --git a/arch/x86/entry/vdso/vdso32/system_call.S b/arch/x86/entry/vdso/vdso32/system_call.S
-index d33c6513fd2c..2a15634bbe75 100644
---- a/arch/x86/entry/vdso/vdso32/system_call.S
-+++ b/arch/x86/entry/vdso/vdso32/system_call.S
-@@ -52,7 +52,7 @@ __kernel_vsyscall:
- 	#define SYSENTER_SEQUENCE	"movl %esp, %ebp; sysenter"
- 	#define SYSCALL_SEQUENCE	"movl %ecx, %ebp; syscall"
- 
--#ifdef CONFIG_X86_64
-+#ifdef BUILD_VDSO32_64
- 	/* If SYSENTER (Intel) or SYSCALL32 (AMD) is available, use it. */
- 	ALTERNATIVE_2 "", SYSENTER_SEQUENCE, X86_FEATURE_SYSENTER32, \
- 	                  SYSCALL_SEQUENCE,  X86_FEATURE_SYSCALL32
-diff --git a/arch/x86/entry/vdso/vdso32/vclock_gettime.c b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-index 86981decfea8..1481f0021b9f 100644
---- a/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-@@ -1,4 +1 @@
--// SPDX-License-Identifier: GPL-2.0
--#define BUILD_VDSO32
--#include "fake_32bit_build.h"
--#include "../vclock_gettime.c"
-+#include "common/vclock_gettime.c"
-diff --git a/arch/x86/entry/vdso/vdso32/vdso32.lds.S b/arch/x86/entry/vdso/vdso32/vdso32.lds.S
-index 8a3be07006bb..8a853543fc0d 100644
---- a/arch/x86/entry/vdso/vdso32/vdso32.lds.S
-+++ b/arch/x86/entry/vdso/vdso32/vdso32.lds.S
-@@ -11,7 +11,7 @@
- 
- #define BUILD_VDSO32
- 
--#include "../vdso-layout.lds.S"
-+#include "common/vdso-layout.lds.S"
- 
- /* The ELF entry point can be used to set the AT_SYSINFO value.  */
- ENTRY(__kernel_vsyscall);
-diff --git a/arch/x86/entry/vdso/vdso32/vgetcpu.c b/arch/x86/entry/vdso/vdso32/vgetcpu.c
-index 3a9791f5e998..00cc8325a020 100644
---- a/arch/x86/entry/vdso/vdso32/vgetcpu.c
-+++ b/arch/x86/entry/vdso/vdso32/vgetcpu.c
-@@ -1,3 +1 @@
--// SPDX-License-Identifier: GPL-2.0
--#include "fake_32bit_build.h"
--#include "../vgetcpu.c"
-+#include "common/vgetcpu.c"
-diff --git a/arch/x86/entry/vdso/vdso64/Makefile b/arch/x86/entry/vdso/vdso64/Makefile
-new file mode 100644
-index 000000000000..bfffaf1aeecc
---- /dev/null
-+++ b/arch/x86/entry/vdso/vdso64/Makefile
-@@ -0,0 +1,46 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# 64-bit vDSO images for x86.
-+#
-+
-+# The vDSOs built in this directory
-+vdsos-y				:= 64
-+vdsos-$(CONFIG_X86_X32_ABI)	+= x32
-+
-+# Files to link into the vDSO:
-+vobjs-y				:= note.o vclock_gettime.o vgetcpu.o
-+vobjs-y				+= vgetrandom.o vgetrandom-chacha.o
-+vobjs-$(CONFIG_X86_SGX)		+= vsgx.o
-+
-+# Compilation flags
-+flags-y				:= -DBUILD_VDSO64 -m64 -mcmodel=small
-+
-+# The location of this include matters!
-+include $(src)/../common/Makefile.include
-+
-+#
-+# X32 processes use x32 vDSO to access 64bit kernel data.
-+#
-+# Build x32 vDSO image:
-+# 1. Compile x32 vDSO as 64bit.
-+# 2. Convert object files to x32.
-+# 3. Build x32 VDSO image with x32 objects, which contains 64bit codes
-+# so that it can reach 64bit address space with 64bit pointers.
-+#
-+
-+# Convert 64bit object file to x32 for x32 vDSO.
-+quiet_cmd_x32 = X32     $@
-+      cmd_x32 = $(OBJCOPY) -O elf32-x86-64 $< $@
-+
-+$(obj)/%-x32.o: $(obj)/%.o FORCE
-+	$(call if_changed,x32)
-+
-+vobjsx32 = $(patsubst %.o,%-x32.o,$(vobjs))
-+targets += $(patsubst %.o,%-x32.o,$(vobjs-y))
-+
-+# Linker options for the vdso
-+VDSO_LDFLAGS_64  := -m elf_x86_64 -soname linux-vdso.so.1 -z max-page-size=4096
-+VDSO_LDFLAGS_x32 := $(subst elf_x86_64,elf32_x86_64,$(VDSO_LDFLAGS_64))
-+
-+$(obj)/vdso64.so.dbg:	$(vobjs)
-+$(obj)/vdsox32.so.dbg:	$(vobjsx32)
-diff --git a/arch/x86/entry/vdso/vdso64/note.S b/arch/x86/entry/vdso/vdso64/note.S
-new file mode 100644
-index 000000000000..62d8aa51ce99
---- /dev/null
-+++ b/arch/x86/entry/vdso/vdso64/note.S
-@@ -0,0 +1 @@
-+#include "common/note.S"
-diff --git a/arch/x86/entry/vdso/vdso64/vclock_gettime.c b/arch/x86/entry/vdso/vdso64/vclock_gettime.c
-new file mode 100644
-index 000000000000..1481f0021b9f
---- /dev/null
-+++ b/arch/x86/entry/vdso/vdso64/vclock_gettime.c
-@@ -0,0 +1 @@
-+#include "common/vclock_gettime.c"
-diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso64/vdso64.lds.S
-similarity index 94%
-rename from arch/x86/entry/vdso/vdso.lds.S
-rename to arch/x86/entry/vdso/vdso64/vdso64.lds.S
-index 0bab5f4af6d1..5ce3f2b6373a 100644
---- a/arch/x86/entry/vdso/vdso.lds.S
-+++ b/arch/x86/entry/vdso/vdso64/vdso64.lds.S
-@@ -9,7 +9,7 @@
- 
- #define BUILD_VDSO64
- 
--#include "vdso-layout.lds.S"
-+#include "common/vdso-layout.lds.S"
- 
- /*
-  * This controls what userland symbols we export from the vDSO.
-diff --git a/arch/x86/entry/vdso/vdsox32.lds.S b/arch/x86/entry/vdso/vdso64/vdsox32.lds.S
-similarity index 92%
-rename from arch/x86/entry/vdso/vdsox32.lds.S
-rename to arch/x86/entry/vdso/vdso64/vdsox32.lds.S
-index 16a8050a4fb6..3dbd20c8dacc 100644
---- a/arch/x86/entry/vdso/vdsox32.lds.S
-+++ b/arch/x86/entry/vdso/vdso64/vdsox32.lds.S
-@@ -9,7 +9,7 @@
- 
- #define BUILD_VDSOX32
- 
--#include "vdso-layout.lds.S"
-+#include "common/vdso-layout.lds.S"
- 
- /*
-  * This controls what userland symbols we export from the vDSO.
-diff --git a/arch/x86/entry/vdso/vdso64/vgetcpu.c b/arch/x86/entry/vdso/vdso64/vgetcpu.c
-new file mode 100644
-index 000000000000..00cc8325a020
---- /dev/null
-+++ b/arch/x86/entry/vdso/vdso64/vgetcpu.c
-@@ -0,0 +1 @@
-+#include "common/vgetcpu.c"
-diff --git a/arch/x86/entry/vdso/vgetrandom-chacha.S b/arch/x86/entry/vdso/vdso64/vgetrandom-chacha.S
-similarity index 100%
-rename from arch/x86/entry/vdso/vgetrandom-chacha.S
-rename to arch/x86/entry/vdso/vdso64/vgetrandom-chacha.S
-diff --git a/arch/x86/entry/vdso/vgetrandom.c b/arch/x86/entry/vdso/vdso64/vgetrandom.c
-similarity index 91%
-rename from arch/x86/entry/vdso/vgetrandom.c
-rename to arch/x86/entry/vdso/vdso64/vgetrandom.c
-index 430862b8977c..6a95d36b12d9 100644
---- a/arch/x86/entry/vdso/vgetrandom.c
-+++ b/arch/x86/entry/vdso/vdso64/vgetrandom.c
-@@ -4,7 +4,7 @@
-  */
- #include <linux/types.h>
- 
--#include "../../../../lib/vdso/getrandom.c"
-+#include "lib/vdso/getrandom.c"
- 
- ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
- {
-diff --git a/arch/x86/entry/vdso/vsgx.S b/arch/x86/entry/vdso/vdso64/vsgx.S
-similarity index 100%
-rename from arch/x86/entry/vdso/vsgx.S
-rename to arch/x86/entry/vdso/vdso64/vsgx.S
--- 
-2.52.0
-
+The v4/v4.1 notes will presumably want dropping before committing?
