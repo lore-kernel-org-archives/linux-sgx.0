@@ -1,111 +1,183 @@
-Received: from mail-dl1-f65.google.com (mail-dl1-f65.google.com [74.125.82.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B06E2777E0
-	for <linux-sgx@vger.kernel.org>; Fri, 23 Jan 2026 06:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769149411; cv=pass; b=rddM+e+SJ0cmi+6gjTsp4eAMZKBJuA2N7sn5R0Zp/AyswkrMDYaeFAMmEvdAESF3EXua6kUJRjI1LuqF9no+3GaE0t7Msw5P17zIZ0HIrtfsU6OB0v140huoo2ECkiufns2yLmlf5YtGi8Ykbp6+RmjizkmFpLL568HneLHoerw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769149411; c=relaxed/simple;
-	bh=zhxgaciYhXpYZclEyoj76XiDHlN7ymumRTT0uPccOBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UUNvzIQ3OiqckpktNtBfCwXU4hhB5Vc0Ac5T2+jIoAHlLtTd0hwzQyrvcoPsxln33foNo3udcRB5WiibomFwHfpxDdQK/vJNHh7NShP8UExzq3CfhVnV2Hggc8IwHlieFZkSS2ZEMpxTDzBkBlsneUR1NY6o5ichMlZIAmQxQrc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LGndG7mE; arc=pass smtp.client-ip=74.125.82.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922632BDC1B;
+	Fri, 23 Jan 2026 07:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769154413; cv=none; b=gMq6OAX/FzGAJORcDzj2ejiZm7srzpD9h6CbhZBBtPqRUa10L8i9Wha8ZPu8Qk2rVtsZkRx7u/wXGTqx/grvBoCkN1IEb1t5V4YtComWr+xnrV1Cg+ytks4dhknjrhk48gWBvxiYgU/xWuFcZSw7fQ7c0C1gTSMjwzSZrH8bcBc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769154413; c=relaxed/simple;
+	bh=OAD/ygUEOD88K+ggqyDG4ngV41XfzkifYu+rUan4UmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7fe9qBPwBmgdGKDSdPzs6ixdsvDG4ucH3Z2IHUI7V0c+1EzrgoDsD0HN6RGm7YpkufLXsV6iOcxHZOOFimZduM6RkFuytE/mBGBahTJs+Xhgy8izVlPnWjXCquia1M7/yEv9yC5B/DtThqYmVJGC8BisqRfPBs2KxnP2U6rDIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gKjzE7cq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LGndG7mE"
-Received: by mail-dl1-f65.google.com with SMTP id a92af1059eb24-12460a7caa2so2645773c88.1
-        for <linux-sgx@vger.kernel.org>; Thu, 22 Jan 2026 22:23:27 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769149404; cv=none;
-        d=google.com; s=arc-20240605;
-        b=DxLZX7FuJol0F0RMr8iTeCT2CNBBMOKKrYqxe7iBG5RMmQ9Y451j3StnHuy/tWBCtj
-         xAZSa+prtlY3wiaoAnKb+x6ke73AvVJFXmxSlu9+MF2qyFiznfekDjdBFAt2RSDE0SAW
-         NppyFMImwT0fSMAF/OIsygjCGHikBOfMAvnR5i+0UWo2XhX8SGb7NTENQXvZSuIbhQ3T
-         GodoqaLSSVQqzhc6lzycAj1eSbAsdDu4JO5em2dNylnWU831pQ/rkO4e5o/WLD+dnqxJ
-         HbwoITuFU9zAzDiUY6LgagooMItBvv0PBwG4HPubNqHbxludfa3Yo4i4fAEOGyTVRk9T
-         fS5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=zhxgaciYhXpYZclEyoj76XiDHlN7ymumRTT0uPccOBQ=;
-        fh=uGZb/9E+ypTWYjJcj5ZzBkLFz+OEDROZpxwYJVQqyCc=;
-        b=X90P1uMb7rqrgHIpTJXgxoN4WcckhWfQ5/hK6NIVP8AveRCyFW2yMrqR9fBdYojcwv
-         bWmORqcPfCcFHPbOrR4jox2pHChqR92NO2i2nclqd0rq5Fb29WMEs4jofdzdIAN5C4Zu
-         ZzLlTjuImJnRnRvGuGZZaHdjkwjwGQJLpk+kYj3t1R+MWw8tmc9bFwxItzA0y1osPzKm
-         RBWUM8zwJ0hxWIZ/E9k7jX8b5ZMO+yAKPldJwvBCG8JKzJTyVlKtPVsflVH1akCYV+bV
-         +t31MJTKVtspD5qdJv5TMXGx08y4B7V7kcQz6IgWwvTaC+KSEawcx7IXk2z7GyOLw528
-         D9Kg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769149404; x=1769754204; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhxgaciYhXpYZclEyoj76XiDHlN7ymumRTT0uPccOBQ=;
-        b=LGndG7mEL3m4gzJ7DUwLEiB1dRp5z7oLfDWfWKvX/nPQBvUFWBKgK8fGontC0xXe9J
-         4gQ94pDFYa+4I0RozA5q3qGFj4N/xUw9paLM2ZSFvioSSM5D/q0cayCZDLBkikfrW6Vw
-         ddfnCW3YOOLHaptYsMFhpe/AZtOTZjToMDf1vP+veWuKDflReJ+TCkmjWw35+2IAssD0
-         fYI9Z0ijTJhVe4r9mS18ro/PSBCkwF6OFgEUyszMuUJ4Bob2ZjSKP/GHSnQREi2Ukv5I
-         eQ2ezzzut1StOqU4FJQhkKoxMn8qusYFTTwKv9PiiTkwT8JnybvWlnKym+1D+6ksZKDQ
-         PLZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769149404; x=1769754204;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zhxgaciYhXpYZclEyoj76XiDHlN7ymumRTT0uPccOBQ=;
-        b=I+yYBMbMRnBqdOk3Eaf0/PvMjAgAnU4b01lGdTpc2ahvavd/8j5csP/vN4+Ip/7NQZ
-         9/fKoEeinDkjhIRTWYvDJvPEgrxXqPT9rg2y6uaXxyNCzVAW4hOpQpsQ5RmKXk2agIQW
-         Q77yENZKmoGpiR2wF7x0igVpJknUpop1jJLbZz+BJVtYJMIG+m0WCqVcJjjTBN+PkQ9G
-         oweWkU/syJ9smTn6BXgXyLlGprjWVhdZwAb3fSXEGiR6Tzh7u4OrlwsYAVZSXIZJFLji
-         +GOEF85jIpgchxpcqxVrCHH7oT945Uwhellai537lDwUlr2YPfSxiIqaFJJNcqy4Q8HQ
-         FSdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8kJqBYKsm/fZH0w7g6mgOkRwGQK39LKmctCJsmodqOAXX7oQ+/ZIpHZWfgpotyBsoFID/9/iCXHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYmT36dam46yvgieY4zTcD3wjN+6qVP9oTBzhcv2cMaSnpAcwB
-	Gfu4TPiR7yL18AQq4WJShbg8WGPbBJF/EPSHdev+cc7siPIor64K4S1qYkGnZZppvYlGO9fN5YY
-	/1mZb/bLmIBIflfWO1b5H346SNsKyZrE=
-X-Gm-Gg: AZuq6aLj4Cwpd3qQf2wmojyio8GXRFpBGZ+jeOtdqLp/kyCP7UiQ96qbn/TE3kiOskr
-	YBuvLBQ2eUXqHPwOZVf7hzGx6lB6Fub05rpKJOvX06fqApGiAt3V4G+Xk0/rw98J6sSjChNOfMB
-	mimQPJqH//iVBEwZdL1rdVGtuk+cpdaJfCpAFnYgLrecCiLQlqBiKG4gK8X5ywG6ul5WEuFnx3L
-	tRi4LJeJ5hjnJrgOuZjM2j7QcBzn10sCPmWs1v+Cv+PW2qm4rWxX3mjoam4HT7stj6H/U7w7AaC
-	D5/nqmeT
-X-Received: by 2002:a05:7301:4e0b:b0:2a4:3593:c7c5 with SMTP id
- 5a478bee46e88-2b73995a3abmr797133eec.5.1769149404505; Thu, 22 Jan 2026
- 22:23:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gKjzE7cq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CD45C4CEF1;
+	Fri, 23 Jan 2026 07:46:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769154413;
+	bh=OAD/ygUEOD88K+ggqyDG4ngV41XfzkifYu+rUan4UmY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gKjzE7cqDXZweQuGHrMLnfOMSZf3lh7HGxajgtU/lt8kCe+JBtiVTH7cLgHlNYZDq
+	 /xkI+t4I2UXrUC62zmbj0vZUsBgJVNWHf2u/IB5rVWQ0M92qWVFNAn+aHpwjmatIJJ
+	 42HGEvas39c7oPcKIUvmKiwxdWG6F7op09dvqSnaEPXJxDYV8uNaZg5zuYpCGbPOV2
+	 uECZnk5jJ2EcGxljpENkS6fEZ1z6XTrmkHHGu/DMNaJHL0zQj3FpdgRCKBYhPwGr8Q
+	 PcpeqEt3bPSuwM7nEePid0sJHAvbYps2rpINdGvyHw/B3l0OhLkXuPNse9MoBWxRVu
+	 vChCTt8SYWz8g==
+Date: Thu, 22 Jan 2026 23:46:52 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Benjamin LaHaise <bcrl@kvack.org>, Gao Xiang <xiang@kernel.org>,
+	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Hongbo Li <lihongbo22@huawei.com>,
+	Chunhai Guo <guochunhai@vivo.com>, Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@kernel.org>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <jth@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Zi Yan <ziy@nvidia.com>, Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+	linux-mm@kvack.org, ntfs3@lists.linux.dev, devel@lists.orangefs.org,
+	linux-xfs@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v2 08/13] mm: update shmem_[kernel]_file_*() functions to
+ use vma_flags_t
+Message-ID: <20260123074652.GW5945@frogsfrogsfrogs>
+References: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
+ <736febd280eb484d79cef5cf55b8a6f79ad832d2.1769097829.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260122133633.79792-1-tianwentong2000@gmail.com> <5961c2655b49a7d384140c33d6897e53f89cb5fe.camel@intel.com>
-In-Reply-To: <5961c2655b49a7d384140c33d6897e53f89cb5fe.camel@intel.com>
-From: TwT pupupu <tianwentong2000@gmail.com>
-Date: Fri, 23 Jan 2026 14:23:13 +0800
-X-Gm-Features: AZwV_QgqsSas1GY0YO7VHpwDp1Q8NmEsEQKa1FNvxIJomShoSzfv2IK9DYrJyu0
-Message-ID: <CAGPELS7JdxTY5hthmTyU_yDxdG7xR2k0hoA1ZqV_Lj+8LEkO2w@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/sgx: use vm_flags_t for vm_prot_bits
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: "jarkko@kernel.org" <jarkko@kernel.org>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "tglx@kernel.org" <tglx@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
-	"x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <736febd280eb484d79cef5cf55b8a6f79ad832d2.1769097829.git.lorenzo.stoakes@oracle.com>
 
-Sorry about that, I'll make sure to reply to the list.
-On Thu, Jan 23, 2026 at 4:57 AM Huang, Kai <kai.huang@intel.com> wrote:
-> Hmm I was actually just pointing out, but not suggesting, since I am not
-> sure (honestly).
-Sorry for the misunderstanding.
-> With vm_flags_t I think "theoretically" it could stop being integer type
-> someday. But I guess the advantage is when someone does that that can
-> trigger build error here (so that we can be aware) which perhaps isn't a
-> bad thing?
-You're right, the build error would be a useful early warning if
-vm_flags_t ever becomes incompatible. I'm fine either way, let me know
-if you'd prefer keeping
-unsigned long and I'll send a v3.
+On Thu, Jan 22, 2026 at 04:06:17PM +0000, Lorenzo Stoakes wrote:
+> In order to be able to use only vma_flags_t in vm_area_desc we must adjust
+> shmem file setup functions to operate in terms of vma_flags_t rather than
+> vm_flags_t.
+> 
+> This patch makes this change and updates all callers to use the new
+> functions.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/ioctl.c           |  2 +-
+>  drivers/gpu/drm/drm_gem.c                 |  5 +-
+>  drivers/gpu/drm/i915/gem/i915_gem_shmem.c |  2 +-
+>  drivers/gpu/drm/i915/gem/i915_gem_ttm.c   |  3 +-
+>  drivers/gpu/drm/i915/gt/shmem_utils.c     |  3 +-
+>  drivers/gpu/drm/ttm/tests/ttm_tt_test.c   |  2 +-
+>  drivers/gpu/drm/ttm/ttm_backup.c          |  3 +-
+>  drivers/gpu/drm/ttm/ttm_tt.c              |  2 +-
+>  fs/xfs/scrub/xfile.c                      |  3 +-
+>  fs/xfs/xfs_buf_mem.c                      |  2 +-
+>  include/linux/shmem_fs.h                  |  8 ++-
+>  ipc/shm.c                                 |  6 +--
+>  mm/memfd.c                                |  2 +-
+>  mm/memfd_luo.c                            |  2 +-
+>  mm/shmem.c                                | 59 +++++++++++++----------
+>  security/keys/big_key.c                   |  2 +-
+>  16 files changed, 57 insertions(+), 49 deletions(-)
+> 
+
+<snip to xfs>
+
+> diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
+> index c753c79df203..fe0584a39f16 100644
+> --- a/fs/xfs/scrub/xfile.c
+> +++ b/fs/xfs/scrub/xfile.c
+> @@ -61,7 +61,8 @@ xfile_create(
+>  	if (!xf)
+>  		return -ENOMEM;
+>  
+> -	xf->file = shmem_kernel_file_setup(description, isize, VM_NORESERVE);
+> +	xf->file = shmem_kernel_file_setup(description, isize,
+> +					   mk_vma_flags(VMA_NORESERVE_BIT));
+
+Seems fine, macro sorcery aside...
+
+>  	if (IS_ERR(xf->file)) {
+>  		error = PTR_ERR(xf->file);
+>  		goto out_xfile;
+> diff --git a/fs/xfs/xfs_buf_mem.c b/fs/xfs/xfs_buf_mem.c
+> index dcbfa274e06d..fd6f0a5bc0ea 100644
+> --- a/fs/xfs/xfs_buf_mem.c
+> +++ b/fs/xfs/xfs_buf_mem.c
+> @@ -62,7 +62,7 @@ xmbuf_alloc(
+>  	if (!btp)
+>  		return -ENOMEM;
+>  
+> -	file = shmem_kernel_file_setup(descr, 0, 0);
+> +	file = shmem_kernel_file_setup(descr, 0, EMPTY_VMA_FLAGS);
+
+...but does mk_vma_flags() produce the same result?
+
+--D
+
+>  	if (IS_ERR(file)) {
+>  		error = PTR_ERR(file);
+>  		goto out_free_btp;
