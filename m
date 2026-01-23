@@ -1,186 +1,111 @@
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f65.google.com (mail-dl1-f65.google.com [74.125.82.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775C4387569;
-	Fri, 23 Jan 2026 06:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769149268; cv=none; b=Da/s+gEbIx6vvO1sBo1FUIvQJlWpOysEX/ASgQP+x1Ly/hi8HKEfKxYv78eMmzS1+/v6oDOUryvoF8wLT7G2swJ9oAczyOSGeAb8py1t9EuciBIs+ckbjUysXoFDDE/YnrBZZCX+LFeSUMpnUeMxG6608OdCbWgeJ5XvKlKIc8w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769149268; c=relaxed/simple;
-	bh=4qLfl1EKnef/GzUW0bVZNp7SUilauqiMWE77LRDXaXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ai3eoYiNavdZGugg2TZIWLm2AqVzGXwwY0RVp/Ou2OoUtE5dI6HrVvxo0DOD3HfxKavJ3hoRqdSRNoltajtwQezr/WA8ADAJ+z0FJKIgpjxL9RYVRGxKqSCZMgoUnESG40TvnbC5+DdCjhLBxAjHyLE9ikWPFV1Dk+jd9VCKVdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OONc+Hz4; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B06E2777E0
+	for <linux-sgx@vger.kernel.org>; Fri, 23 Jan 2026 06:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769149411; cv=pass; b=rddM+e+SJ0cmi+6gjTsp4eAMZKBJuA2N7sn5R0Zp/AyswkrMDYaeFAMmEvdAESF3EXua6kUJRjI1LuqF9no+3GaE0t7Msw5P17zIZ0HIrtfsU6OB0v140huoo2ECkiufns2yLmlf5YtGi8Ykbp6+RmjizkmFpLL568HneLHoerw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769149411; c=relaxed/simple;
+	bh=zhxgaciYhXpYZclEyoj76XiDHlN7ymumRTT0uPccOBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UUNvzIQ3OiqckpktNtBfCwXU4hhB5Vc0Ac5T2+jIoAHlLtTd0hwzQyrvcoPsxln33foNo3udcRB5WiibomFwHfpxDdQK/vJNHh7NShP8UExzq3CfhVnV2Hggc8IwHlieFZkSS2ZEMpxTDzBkBlsneUR1NY6o5ichMlZIAmQxQrc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LGndG7mE; arc=pass smtp.client-ip=74.125.82.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OONc+Hz4"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1769149255; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=1870OwY7Yt3wtHMS4Kw5+Uzzq7JdVz48VXgwCaXXTJw=;
-	b=OONc+Hz4lqc1HP74NtQusaU9uk/dcEZsCk52r2ESR4HBF9cIXsmU0KMm8jv1P0jB5096JAHEtML2Qgaqa+XP+adb6qIZpbtghlWD/Iu80rKb5FeQV2HR2YKl8Cp3S9Nn/aRLUSxCWnIp17SLWzv5twcC/C9IC25lv1ZbLsGjZr4=
-Received: from 30.74.144.120(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WxemimV_1769149254 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 23 Jan 2026 14:20:54 +0800
-Message-ID: <7ccc3447-3a39-4206-95c5-a6cd00e2bda6@linux.alibaba.com>
-Date: Fri, 23 Jan 2026 14:20:51 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LGndG7mE"
+Received: by mail-dl1-f65.google.com with SMTP id a92af1059eb24-12460a7caa2so2645773c88.1
+        for <linux-sgx@vger.kernel.org>; Thu, 22 Jan 2026 22:23:27 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769149404; cv=none;
+        d=google.com; s=arc-20240605;
+        b=DxLZX7FuJol0F0RMr8iTeCT2CNBBMOKKrYqxe7iBG5RMmQ9Y451j3StnHuy/tWBCtj
+         xAZSa+prtlY3wiaoAnKb+x6ke73AvVJFXmxSlu9+MF2qyFiznfekDjdBFAt2RSDE0SAW
+         NppyFMImwT0fSMAF/OIsygjCGHikBOfMAvnR5i+0UWo2XhX8SGb7NTENQXvZSuIbhQ3T
+         GodoqaLSSVQqzhc6lzycAj1eSbAsdDu4JO5em2dNylnWU831pQ/rkO4e5o/WLD+dnqxJ
+         HbwoITuFU9zAzDiUY6LgagooMItBvv0PBwG4HPubNqHbxludfa3Yo4i4fAEOGyTVRk9T
+         fS5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=zhxgaciYhXpYZclEyoj76XiDHlN7ymumRTT0uPccOBQ=;
+        fh=uGZb/9E+ypTWYjJcj5ZzBkLFz+OEDROZpxwYJVQqyCc=;
+        b=X90P1uMb7rqrgHIpTJXgxoN4WcckhWfQ5/hK6NIVP8AveRCyFW2yMrqR9fBdYojcwv
+         bWmORqcPfCcFHPbOrR4jox2pHChqR92NO2i2nclqd0rq5Fb29WMEs4jofdzdIAN5C4Zu
+         ZzLlTjuImJnRnRvGuGZZaHdjkwjwGQJLpk+kYj3t1R+MWw8tmc9bFwxItzA0y1osPzKm
+         RBWUM8zwJ0hxWIZ/E9k7jX8b5ZMO+yAKPldJwvBCG8JKzJTyVlKtPVsflVH1akCYV+bV
+         +t31MJTKVtspD5qdJv5TMXGx08y4B7V7kcQz6IgWwvTaC+KSEawcx7IXk2z7GyOLw528
+         D9Kg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769149404; x=1769754204; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zhxgaciYhXpYZclEyoj76XiDHlN7ymumRTT0uPccOBQ=;
+        b=LGndG7mEL3m4gzJ7DUwLEiB1dRp5z7oLfDWfWKvX/nPQBvUFWBKgK8fGontC0xXe9J
+         4gQ94pDFYa+4I0RozA5q3qGFj4N/xUw9paLM2ZSFvioSSM5D/q0cayCZDLBkikfrW6Vw
+         ddfnCW3YOOLHaptYsMFhpe/AZtOTZjToMDf1vP+veWuKDflReJ+TCkmjWw35+2IAssD0
+         fYI9Z0ijTJhVe4r9mS18ro/PSBCkwF6OFgEUyszMuUJ4Bob2ZjSKP/GHSnQREi2Ukv5I
+         eQ2ezzzut1StOqU4FJQhkKoxMn8qusYFTTwKv9PiiTkwT8JnybvWlnKym+1D+6ksZKDQ
+         PLZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769149404; x=1769754204;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zhxgaciYhXpYZclEyoj76XiDHlN7ymumRTT0uPccOBQ=;
+        b=I+yYBMbMRnBqdOk3Eaf0/PvMjAgAnU4b01lGdTpc2ahvavd/8j5csP/vN4+Ip/7NQZ
+         9/fKoEeinDkjhIRTWYvDJvPEgrxXqPT9rg2y6uaXxyNCzVAW4hOpQpsQ5RmKXk2agIQW
+         Q77yENZKmoGpiR2wF7x0igVpJknUpop1jJLbZz+BJVtYJMIG+m0WCqVcJjjTBN+PkQ9G
+         oweWkU/syJ9smTn6BXgXyLlGprjWVhdZwAb3fSXEGiR6Tzh7u4OrlwsYAVZSXIZJFLji
+         +GOEF85jIpgchxpcqxVrCHH7oT945Uwhellai537lDwUlr2YPfSxiIqaFJJNcqy4Q8HQ
+         FSdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8kJqBYKsm/fZH0w7g6mgOkRwGQK39LKmctCJsmodqOAXX7oQ+/ZIpHZWfgpotyBsoFID/9/iCXHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYmT36dam46yvgieY4zTcD3wjN+6qVP9oTBzhcv2cMaSnpAcwB
+	Gfu4TPiR7yL18AQq4WJShbg8WGPbBJF/EPSHdev+cc7siPIor64K4S1qYkGnZZppvYlGO9fN5YY
+	/1mZb/bLmIBIflfWO1b5H346SNsKyZrE=
+X-Gm-Gg: AZuq6aLj4Cwpd3qQf2wmojyio8GXRFpBGZ+jeOtdqLp/kyCP7UiQ96qbn/TE3kiOskr
+	YBuvLBQ2eUXqHPwOZVf7hzGx6lB6Fub05rpKJOvX06fqApGiAt3V4G+Xk0/rw98J6sSjChNOfMB
+	mimQPJqH//iVBEwZdL1rdVGtuk+cpdaJfCpAFnYgLrecCiLQlqBiKG4gK8X5ywG6ul5WEuFnx3L
+	tRi4LJeJ5hjnJrgOuZjM2j7QcBzn10sCPmWs1v+Cv+PW2qm4rWxX3mjoam4HT7stj6H/U7w7AaC
+	D5/nqmeT
+X-Received: by 2002:a05:7301:4e0b:b0:2a4:3593:c7c5 with SMTP id
+ 5a478bee46e88-2b73995a3abmr797133eec.5.1769149404505; Thu, 22 Jan 2026
+ 22:23:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/13] mm: update shmem_[kernel]_file_*() functions to
- use vma_flags_t
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: x86@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
- linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
- linux-mm@kvack.org, ntfs3@lists.linux.dev, devel@lists.orangefs.org,
- linux-xfs@vger.kernel.org, keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org
-References: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
- <736febd280eb484d79cef5cf55b8a6f79ad832d2.1769097829.git.lorenzo.stoakes@oracle.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <736febd280eb484d79cef5cf55b8a6f79ad832d2.1769097829.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20260122133633.79792-1-tianwentong2000@gmail.com> <5961c2655b49a7d384140c33d6897e53f89cb5fe.camel@intel.com>
+In-Reply-To: <5961c2655b49a7d384140c33d6897e53f89cb5fe.camel@intel.com>
+From: TwT pupupu <tianwentong2000@gmail.com>
+Date: Fri, 23 Jan 2026 14:23:13 +0800
+X-Gm-Features: AZwV_QgqsSas1GY0YO7VHpwDp1Q8NmEsEQKa1FNvxIJomShoSzfv2IK9DYrJyu0
+Message-ID: <CAGPELS7JdxTY5hthmTyU_yDxdG7xR2k0hoA1ZqV_Lj+8LEkO2w@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/sgx: use vm_flags_t for vm_prot_bits
+To: "Huang, Kai" <kai.huang@intel.com>
+Cc: "jarkko@kernel.org" <jarkko@kernel.org>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "tglx@kernel.org" <tglx@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
+	"x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-On 1/23/26 12:06 AM, Lorenzo Stoakes wrote:
-> In order to be able to use only vma_flags_t in vm_area_desc we must adjust
-> shmem file setup functions to operate in terms of vma_flags_t rather than
-> vm_flags_t.
-> 
-> This patch makes this change and updates all callers to use the new
-> functions.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-(reduced distribution list too)
-
-Thanks. The shmem part looks good to me with some nits below.
-
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
-> ---
->   arch/x86/kernel/cpu/sgx/ioctl.c           |  2 +-
->   drivers/gpu/drm/drm_gem.c                 |  5 +-
->   drivers/gpu/drm/i915/gem/i915_gem_shmem.c |  2 +-
->   drivers/gpu/drm/i915/gem/i915_gem_ttm.c   |  3 +-
->   drivers/gpu/drm/i915/gt/shmem_utils.c     |  3 +-
->   drivers/gpu/drm/ttm/tests/ttm_tt_test.c   |  2 +-
->   drivers/gpu/drm/ttm/ttm_backup.c          |  3 +-
->   drivers/gpu/drm/ttm/ttm_tt.c              |  2 +-
->   fs/xfs/scrub/xfile.c                      |  3 +-
->   fs/xfs/xfs_buf_mem.c                      |  2 +-
->   include/linux/shmem_fs.h                  |  8 ++-
->   ipc/shm.c                                 |  6 +--
->   mm/memfd.c                                |  2 +-
->   mm/memfd_luo.c                            |  2 +-
->   mm/shmem.c                                | 59 +++++++++++++----------
->   security/keys/big_key.c                   |  2 +-
->   16 files changed, 57 insertions(+), 49 deletions(-)
-
-[snip]
-
->   	inode->i_flags |= i_flags;
-> @@ -5864,9 +5869,10 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
->    *	checks are provided at the key or shm level rather than the inode.
->    * @name: name for dentry (to be seen in /proc/<pid>/maps)
->    * @size: size to be set for the file
-> - * @flags: VM_NORESERVE suppresses pre-accounting of the entire object size
-> + * @vma_flags: VMA_NORESERVE_BIT suppresses pre-accounting of the entire object size
-
-nit: s/vma_flags/flags
-
->    */
-> -struct file *shmem_kernel_file_setup(const char *name, loff_t size, unsigned long flags)
-> +struct file *shmem_kernel_file_setup(const char *name, loff_t size,
-> +				     vma_flags_t flags)
->   {
->   	return __shmem_file_setup(shm_mnt, name, size, flags, S_PRIVATE);
->   }
-> @@ -5878,7 +5884,7 @@ EXPORT_SYMBOL_GPL(shmem_kernel_file_setup);
->    * @size: size to be set for the file
->    * @flags: VM_NORESERVE suppresses pre-accounting of the entire object size
-
-nit: s/VM_NORESERVE/VMA_NORESERVE_BIT
-
->    */
-> -struct file *shmem_file_setup(const char *name, loff_t size, unsigned long flags)
-> +struct file *shmem_file_setup(const char *name, loff_t size, vma_flags_t flags)
->   {
->   	return __shmem_file_setup(shm_mnt, name, size, flags, 0);
->   }
-> @@ -5889,16 +5895,17 @@ EXPORT_SYMBOL_GPL(shmem_file_setup);
->    * @mnt: the tmpfs mount where the file will be created
->    * @name: name for dentry (to be seen in /proc/<pid>/maps)
->    * @size: size to be set for the file
-> - * @flags: VM_NORESERVE suppresses pre-accounting of the entire object size
-> + * @flags: VMA_NORESERVE_BIT suppresses pre-accounting of the entire object size
->    */
->   struct file *shmem_file_setup_with_mnt(struct vfsmount *mnt, const char *name,
-> -				       loff_t size, unsigned long flags)
-> +				       loff_t size, vma_flags_t flags)
->   {
->   	return __shmem_file_setup(mnt, name, size, flags, 0);
->   }
->   EXPORT_SYMBOL_GPL(shmem_file_setup_with_mnt);
->   
-> -static struct file *__shmem_zero_setup(unsigned long start, unsigned long end, vm_flags_t vm_flags)
-> +static struct file *__shmem_zero_setup(unsigned long start, unsigned long end,
-> +		vma_flags_t flags)
->   {
->   	loff_t size = end - start;
->   
-> @@ -5908,7 +5915,7 @@ static struct file *__shmem_zero_setup(unsigned long start, unsigned long end, v
->   	 * accessible to the user through its mapping, use S_PRIVATE flag to
->   	 * bypass file security, in the same way as shmem_kernel_file_setup().
->   	 */
-> -	return shmem_kernel_file_setup("dev/zero", size, vm_flags);
-> +	return shmem_kernel_file_setup("dev/zero", size, flags);
->   }
->   
->   /**
-> @@ -5918,7 +5925,7 @@ static struct file *__shmem_zero_setup(unsigned long start, unsigned long end, v
->    */
->   int shmem_zero_setup(struct vm_area_struct *vma)
->   {
-> -	struct file *file = __shmem_zero_setup(vma->vm_start, vma->vm_end, vma->vm_flags);
-> +	struct file *file = __shmem_zero_setup(vma->vm_start, vma->vm_end, vma->flags);
->   
->   	if (IS_ERR(file))
->   		return PTR_ERR(file);
-> @@ -5939,7 +5946,7 @@ int shmem_zero_setup(struct vm_area_struct *vma)
->    */
->   int shmem_zero_setup_desc(struct vm_area_desc *desc)
->   {
-> -	struct file *file = __shmem_zero_setup(desc->start, desc->end, desc->vm_flags);
-> +	struct file *file = __shmem_zero_setup(desc->start, desc->end, desc->vma_flags);
->   
->   	if (IS_ERR(file))
->   		return PTR_ERR(file);
-> diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-> index d46862ab90d6..268f702df380 100644
-> --- a/security/keys/big_key.c
-> +++ b/security/keys/big_key.c
-> @@ -103,7 +103,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
->   					 0, enckey);
->   
->   		/* save aligned data to file */
-> -		file = shmem_kernel_file_setup("", enclen, 0);
-> +		file = shmem_kernel_file_setup("", enclen, EMPTY_VMA_FLAGS);
->   		if (IS_ERR(file)) {
->   			ret = PTR_ERR(file);
->   			goto err_enckey;
-
+Sorry about that, I'll make sure to reply to the list.
+On Thu, Jan 23, 2026 at 4:57 AM Huang, Kai <kai.huang@intel.com> wrote:
+> Hmm I was actually just pointing out, but not suggesting, since I am not
+> sure (honestly).
+Sorry for the misunderstanding.
+> With vm_flags_t I think "theoretically" it could stop being integer type
+> someday. But I guess the advantage is when someone does that that can
+> trigger build error here (so that we can be aware) which perhaps isn't a
+> bad thing?
+You're right, the build error would be a useful early warning if
+vm_flags_t ever becomes incompatible. I'm fine either way, let me know
+if you'd prefer keeping
+unsigned long and I'll send a v3.
