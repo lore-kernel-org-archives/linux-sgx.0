@@ -1,129 +1,262 @@
-Received: from outbound.baidu.com (mx24.baidu.com [111.206.215.185])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572172A1BF;
-	Thu, 26 Feb 2026 01:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A14436353;
+	Fri, 27 Feb 2026 20:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772070090; cv=none; b=d4XkAPW19nRm+LizCCKvLH9bs6rkMQOje63nijy6aROe+skC/lbzz1z9SAmH+J9oToxJEotFNPssh/mSnjee3Sbk3rwLJpHVKndrv7pO4cOrTHLh0QlR1CfCMBEaRWBqYmUlJqBsx9d+bZqKlfprTsjA0+pfIAcLdUk0pO048s8=
+	t=1772222948; cv=none; b=pGFzacWEc6Amj8LiGF2pGv9z3bjLTIcq89KY0uozbm7dbsLydNEU3tESFagTIjfNLDmpynYe/CI+90bP8scKgU50VoxgDR5ADITw045zlHnQMpY+BPH2Q4Mhw0WQCrBfXrURpElJ6rAJaBCkaejgj6tn186H6mqBni1ozbwQiQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772070090; c=relaxed/simple;
-	bh=WVyxOVmx26xkKQfhzsr5SPzJju3zLGGtV5+xk/++DPY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e1MFTgkap38yT0rK+b1FzH9E3PrFKrCyNTsGptJz9CF2G8sVEESfXm9/nJTPlwuKqNPHc4+yt0pHAabYfl0qw8RYfegonyJVNT1zocCeAei19fJ4FeSKrOlm8VdR7b961XMBtVm2g0jN5A4kyr6EufDCS5IZ4hfR7llkgO24LqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: lirongqing <lirongqing@baidu.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@kernel.org>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, <x86@kernel.org>, "H .
- Peter Anvin" <hpa@zytor.com>, Kai Huang <kai.huang@intel.com>,
-	<linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Li RongQing <lirongqing@baidu.com>
-Subject: [PATCH][v2] x86/sgx: Use list_for_each_entry_srcu() for mm_list traversal
-Date: Wed, 25 Feb 2026 20:40:14 -0500
-Message-ID: <20260226014014.2541-1-lirongqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1772222948; c=relaxed/simple;
+	bh=uHYxem2rcFuwlV7scbCWwSyUtQMuMwhNJjysCrEHJOo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YbvCO6JDGqgYiEjuhsslSKBkQEZUt3dExi+/dAlLm73KS0EsMiorQHiTgkrXS/AaBod4VmCYvyf7A9yGbsQZ35cPugS+p0V0SXyxeCo/P0eOlFX1uz63KtVzN4UxmU+yv7nRFo5n5t+RpMZHGBuVgjNsdjGjPUN4KRa0evH3dHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+U9FbqK; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+U9FbqK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E88C116C6;
+	Fri, 27 Feb 2026 20:08:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772222948;
+	bh=uHYxem2rcFuwlV7scbCWwSyUtQMuMwhNJjysCrEHJOo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=P+U9FbqKF3CgiBsEPqPexZzZ93XmAcCqzSbUwaOX1Y8siePI12ijG2mxzI5YIf0mL
+	 /ms5mDjzZ41zbR+y1lyjSjd5si16Ajj3yoCRxi8QeNf7VJlp5WbLWxR/Cm1nnjaTYO
+	 IOJj8irdOEN+aJhdaLJh+fKK7+dKb7KlCCDxdNslqcoGrctiSrHy1YeE9LnRXJRhDK
+	 ivNZRpe0JCZ8M0dux5O/xFyufs7KMwSQdWCOqjqmQAjFgGIXu0NS+l21cUs4WBsHt5
+	 gFLiipJYdZxphu1iU6VvsVMrLyOefgdnpc25102oxNzG5Kz3JMlEpdrlW7fczulnx6
+	 d9eorSp6XyA4Q==
+From: "David Hildenbrand (Arm)" <david@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: "linux-mm @ kvack . org" <linux-mm@kvack.org>,
+	"David Hildenbrand (Arm)" <david@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@kernel.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	David Rientjes <rientjes@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	linuxppc-dev@lists.ozlabs.org,
+	kvm@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	linux-sgx@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-rdma@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v1 00/16] mm: cleanups around unmapping / zapping
+Date: Fri, 27 Feb 2026 21:08:31 +0100
+Message-ID: <20260227200848.114019-1-david@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: bjhj-exc4.internal.baidu.com (172.31.3.14) To
- bjkjy-exc3.internal.baidu.com (172.31.50.47)
-X-FEAS-Client-IP: 172.31.50.47
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Li RongQing <lirongqing@baidu.com>
+A bunch of cleanups around unmapping and zapping. Mostly simplifications,
+code movements, documentation and renaming of zapping functions.
 
-In commit 1728ab54b4be ("x86/sgx: Add a page reclaimer") (v5.11),
-list_for_each_entry_rcu() was used to traverse the enclave's mm_list.
-However, this is incorrect because the list is protected by a Sleepable
-RCU (SRCU) lock (encl->srcu).
+With this series, we'll have the following high-level zap/unmap functions
+(excluding high-level folio zapping):
+* unmap_vmas() for actual unmapping (vmas will go away)
+* zap_vma(): zap all page table entries in a vma
+* zap_vma_for_reaping(): zap_vma() that must not block
+* zap_vma_range(): zap a range of page table entries
+* zap_vma_range_batched(): zap_vma_range() with more options and batching
+* zap_special_vma_range(): limited zap_vma_range() for modules
+* __zap_vma_range(): internal helper
 
-Since commit 28875945ba98 ("rcu: Add support for consolidated-RCU reader
-checking") (v5.4), RCU lockdep checking has become stricter. When
-CONFIG_PROVE_RCU is enabled, using the standard list_for_each_entry_rcu()
-while only holding an SRCU lock triggers "suspicious RCU usage" false
-positive warnings, as it does not recognize SRCU read-side critical
-sections.
+Patch #1 is not about unmapping/zapping, but I stumbled over it while
+verifying MADV_DONTNEED range handling.
 
-Fix this by switching to list_for_each_entry_srcu(), which was
-introduced specifically for this purpose in commit ae2212a7216b
-("rculist: Introduce list/hlist_for_each_entry_srcu() macros") (v5.10).
-This correctly associates the traversal with the SRCU lock and
-eliminates the lockdep warnings.
+Patch #16 is related to [1], but makes sense even independent of that.
 
-Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Acked-by: Kai Huang <kai.huang@intel.com>
----
-Diff with v1: rewrite changelog
+[1] https://lore.kernel.org/r/aYSKyr7StGpGKNqW@google.com
 
- arch/x86/kernel/cpu/sgx/encl.c | 12 ++++++++----
- arch/x86/kernel/cpu/sgx/main.c |  3 ++-
- 2 files changed, 10 insertions(+), 5 deletions(-)
+The CC list is already long enough. As these are simple changes to
+drivers/arch code, I'm only CCing maintainers of all changes but only
+reviewers of the MM bits.
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index ac60ebd..91362d7 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -822,7 +822,8 @@ static struct sgx_encl_mm *sgx_encl_find_mm(struct sgx_encl *encl,
- 
- 	idx = srcu_read_lock(&encl->srcu);
- 
--	list_for_each_entry_rcu(tmp, &encl->mm_list, list) {
-+	list_for_each_entry_srcu(tmp, &encl->mm_list, list,
-+			srcu_read_lock_held(&encl->srcu)) {
- 		if (tmp->mm == mm) {
- 			encl_mm = tmp;
- 			break;
-@@ -933,7 +934,8 @@ const cpumask_t *sgx_encl_cpumask(struct sgx_encl *encl)
- 
- 	idx = srcu_read_lock(&encl->srcu);
- 
--	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-+	list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
-+			srcu_read_lock_held(&encl->srcu)) {
- 		if (!mmget_not_zero(encl_mm->mm))
- 			continue;
- 
-@@ -1018,7 +1020,8 @@ static struct mem_cgroup *sgx_encl_get_mem_cgroup(struct sgx_encl *encl)
- 	 */
- 	idx = srcu_read_lock(&encl->srcu);
- 
--	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-+	list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
-+			srcu_read_lock_held(&encl->srcu)) {
- 		if (!mmget_not_zero(encl_mm->mm))
- 			continue;
- 
-@@ -1212,7 +1215,8 @@ void sgx_zap_enclave_ptes(struct sgx_encl *encl, unsigned long addr)
- 
- 		idx = srcu_read_lock(&encl->srcu);
- 
--		list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-+		list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
-+				srcu_read_lock_held(&encl->srcu)) {
- 			if (!mmget_not_zero(encl_mm->mm))
- 				continue;
- 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 38b7fd2..581e0c4 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -120,7 +120,8 @@ static bool sgx_reclaimer_age(struct sgx_epc_page *epc_page)
- 
- 	idx = srcu_read_lock(&encl->srcu);
- 
--	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-+	list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
-+			srcu_read_lock_held(&encl->srcu)) {
- 		if (!mmget_not_zero(encl_mm->mm))
- 			continue;
- 
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Vlastimil Babka <vbabka@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Pedro Falcato <pfalcato@suse.de>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Alice Ryhl <aliceryhl@google.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Janosch Frank <frankja@linux.ibm.com>
+Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Thomas Gleixner <tglx@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Arve Hjønnevåg" <arve@android.com>
+Cc: Todd Kjos <tkjos@android.com>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Carlos Llamas <cmllamas@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>
+Cc: Ian Abbott <abbotti@mev.co.uk>
+Cc: H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Tvrtko Ursulin <tursulin@ursulin.net>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Leon Romanovsky <leon@kernel.org>
+Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Neal Cardwell <ncardwell@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: David Ahern <dsahern@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>
+
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: kvm@vger.kernel.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-sgx@vger.kernel.org
+Cc: intel-gfx@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-rdma@vger.kernel.org
+Cc: bpf@vger.kernel.org
+Cc: linux-perf-users@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: rust-for-linux@vger.kernel.org
+Cc: x86@kernel.org
+
+
+David Hildenbrand (Arm) (16):
+  mm/madvise: drop range checks in madvise_free_single_vma()
+  mm/memory: remove "zap_details" parameter from zap_page_range_single()
+  mm/memory: inline unmap_mapping_range_vma() into
+    unmap_mapping_range_tree()
+  mm/memory: simplify calculation in unmap_mapping_range_tree()
+  mm/oom_kill: use MMU_NOTIFY_CLEAR in __oom_reap_task_mm()
+  mm/oom_kill: factor out zapping of VMA into zap_vma_for_reaping()
+  mm/memory: rename unmap_single_vma() to __zap_vma_range()
+  mm/memory: move adjusting of address range to unmap_vmas()
+  mm/memory: convert details->even_cows into details->skip_cows
+  mm/memory: use __zap_vma_range() in zap_vma_for_reaping()
+  mm/memory: inline unmap_page_range() into __zap_vma_range()
+  mm: rename zap_vma_pages() to zap_vma()
+  mm: rename zap_page_range_single_batched() to zap_vma_range_batched()
+  mm: rename zap_page_range_single() to zap_vma_range()
+  mm: rename zap_vma_ptes() to zap_special_vma_range()
+  mm/memory: support VM_MIXEDMAP in zap_special_vma_range()
+
+ arch/powerpc/platforms/book3s/vas-api.c |   2 +-
+ arch/powerpc/platforms/pseries/vas.c    |   2 +-
+ arch/s390/mm/gmap_helpers.c             |   2 +-
+ arch/x86/kernel/cpu/sgx/encl.c          |   2 +-
+ drivers/android/binder/page_range.rs    |   4 +-
+ drivers/android/binder_alloc.c          |   2 +-
+ drivers/comedi/comedi_fops.c            |   2 +-
+ drivers/gpu/drm/i915/i915_mm.c          |   4 +-
+ drivers/infiniband/core/uverbs_main.c   |   6 +-
+ drivers/misc/sgi-gru/grumain.c          |   2 +-
+ include/linux/mm.h                      |  23 ++-
+ kernel/bpf/arena.c                      |   3 +-
+ kernel/events/core.c                    |   2 +-
+ lib/vdso/datastore.c                    |   2 +-
+ mm/internal.h                           |   7 +-
+ mm/interval_tree.c                      |   5 -
+ mm/madvise.c                            |  24 +--
+ mm/memory.c                             | 217 ++++++++++++------------
+ mm/oom_kill.c                           |  15 +-
+ mm/page-writeback.c                     |   2 +-
+ net/ipv4/tcp.c                          |   7 +-
+ rust/kernel/mm/virt.rs                  |   4 +-
+ 22 files changed, 162 insertions(+), 177 deletions(-)
+
+
+base-commit: df9c51269a5e2a6fbca2884a756a4011a5e78748
 -- 
-2.9.4
+2.43.0
 
