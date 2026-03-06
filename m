@@ -1,112 +1,149 @@
-Received: from outbound.baidu.com (mx22.baidu.com [220.181.50.185])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74081862;
-	Thu,  5 Mar 2026 08:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FD52874FF;
+	Fri,  6 Mar 2026 12:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772700252; cv=none; b=peARujRZi+BUcrhs+acoUZBsiLGB7eVbtSBHbOPsrAJHta+7ZxBNS9MPttgBLv6BpND0U6WFKyY7Z58/y5Tgn3L7kE9nfJ3rr4fKgvaSj7x1r0jHnGxaPhgp2R44KEHZ7VpZvfuOZZVokkCf+tJfHoAfxLxtYdEXDSRbvlOZMhY=
+	t=1772798607; cv=none; b=BBWuHlULqxdMkxUF1YalK4PfrYrEkYkiWP+C1fBkUuLBnkX46CbCBOABZy5Pqld06m3IDbfzWgl5tpzEKfX9caTmFvd6z9AazQOjHxlwmL5cC1mTxnIcoUKKuUybkxNkM2plI6CGcV38Xj2mQzD5OYKyxeZTEOQ53DR1sNiyukc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772700252; c=relaxed/simple;
-	bh=fu+tJQ0JiiUmNsTMRcRh3B70MCdZMNOpOfgtyYgUt+0=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ilMysMgRe6yrD4J4KymST8SglWFk0dFequYZcErU4fljTMyHSOQH1FdpXF3cttroiiCgZ6olX3dMtGM6fiA4tJMuYLfxlFKpZfGJJ7sUCFQRcGgvdO1LADKAzwZl6BWaZ2AV92GhU+efxFp9NwgMtu2e6OsKT7mby52aZyfmf20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: "Li,Rongqing(ACG CCN)" <lirongqing@baidu.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@kernel.org>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "x86@kernel.org"
-	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Kai Huang
-	<kai.huang@intel.com>, "linux-sgx@vger.kernel.org"
-	<linux-sgx@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIXVt2Ml0geDg2L3NneDogVXNlIGxpc3RfZm9yX2VhY2hf?=
- =?gb2312?B?ZW50cnlfc3JjdSgpIGZvciBtbV9saXN0IHRyYXZlcnNhbA==?=
-Thread-Topic: [PATCH][v2] x86/sgx: Use list_for_each_entry_srcu() for mm_list
- traversal
-Thread-Index: AQHcpsDeTyQCr4ISd0yU2FIIhTv3KbWfqo5w
-Date: Thu, 5 Mar 2026 08:43:15 +0000
-Message-ID: <b5c47e3305bc45d2acc1b2e5ab753205@baidu.com>
-References: <20260226014014.2541-1-lirongqing@baidu.com>
-In-Reply-To: <20260226014014.2541-1-lirongqing@baidu.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1772798607; c=relaxed/simple;
+	bh=8tIEjkmwTnv14wqiBx5utAVT1y4BywX848doWLEUMyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/pvDdoh12cyyBQhF3uShKmq3RUUWBseTFvnjqbEWbxVg3TpWX6tPCm2nrll0IDjvmrm2zt0nulCI8hCNWiNNWsJFFvHspMGWh7rA1h4AGkdW0hX7YwRbWWRwSSAmxeyphAIRY5KrJe4Lsu8l5O5L4sJjlrf/G7AypTlNSoKYvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1hNNt/g; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1hNNt/g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6488CC4CEF7;
+	Fri,  6 Mar 2026 12:03:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772798607;
+	bh=8tIEjkmwTnv14wqiBx5utAVT1y4BywX848doWLEUMyQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h1hNNt/ggkmOIg6nOIs6YVKXxpvjxXfuNC1/E243FERUMlrdAP/1JGuS8WftUsd7f
+	 sEmFfcrfCzizYh1WflGJxM+Mh8s8/NGzCybtmxDbPIa+RYlLhAC8M2mVomjBVzk4GJ
+	 ovvi/YoGsX9AnKFqWBjW+IpIUt/t0ThtH++DKgi9JosbOXhePSuaAgqwo9ysipyiZZ
+	 tJR6V8PVm0Q3rJsUQBZpi2/tPfiYYA+aTsakBMmVszHI4rXW/zZE1/jrzMC/3s/CgY
+	 3bcJ8hm+9ce3MEINimXRaNGIqZXC4Xd93/yIA5/AX590NC8dE2fbRiLTj205GiFNUz
+	 8UXcS4I1Opdeg==
+Date: Fri, 6 Mar 2026 12:03:24 +0000
+From: "Lorenzo Stoakes (Oracle)" <ljs@kernel.org>
+To: "David Hildenbrand (Arm)" <david@kernel.org>
+Cc: linux-kernel@vger.kernel.org, 
+	"linux-mm @ kvack . org" <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, David Rientjes <rientjes@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Ian Abbott <abbotti@mev.co.uk>, 
+	H Hartley Sweeten <hsweeten@visionengravers.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Leon Romanovsky <leon@kernel.org>, Dimitri Sivanich <dimitri.sivanich@hpe.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Eric Dumazet <edumazet@google.com>, 
+	Neal Cardwell <ncardwell@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v1 01/16] mm/madvise: drop range checks in
+ madvise_free_single_vma()
+Message-ID: <c5a89c14-0c6b-4c1e-a68c-0680c7d64f4c@lucifer.local>
+References: <20260227200848.114019-1-david@kernel.org>
+ <20260227200848.114019-2-david@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 172.31.3.14
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260227200848.114019-2-david@kernel.org>
 
-DQo+IEZyb206IExpIFJvbmdRaW5nIDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4NCj4gDQo+IEluIGNv
-bW1pdCAxNzI4YWI1NGI0YmUgKCJ4ODYvc2d4OiBBZGQgYSBwYWdlIHJlY2xhaW1lciIpICh2NS4x
-MSksDQo+IGxpc3RfZm9yX2VhY2hfZW50cnlfcmN1KCkgd2FzIHVzZWQgdG8gdHJhdmVyc2UgdGhl
-IGVuY2xhdmUncyBtbV9saXN0Lg0KPiBIb3dldmVyLCB0aGlzIGlzIGluY29ycmVjdCBiZWNhdXNl
-IHRoZSBsaXN0IGlzIHByb3RlY3RlZCBieSBhIFNsZWVwYWJsZSBSQ1UgKFNSQ1UpDQo+IGxvY2sg
-KGVuY2wtPnNyY3UpLg0KPiANCj4gU2luY2UgY29tbWl0IDI4ODc1OTQ1YmE5OCAoInJjdTogQWRk
-IHN1cHBvcnQgZm9yIGNvbnNvbGlkYXRlZC1SQ1UgcmVhZGVyDQo+IGNoZWNraW5nIikgKHY1LjQp
-LCBSQ1UgbG9ja2RlcCBjaGVja2luZyBoYXMgYmVjb21lIHN0cmljdGVyLiBXaGVuDQo+IENPTkZJ
-R19QUk9WRV9SQ1UgaXMgZW5hYmxlZCwgdXNpbmcgdGhlIHN0YW5kYXJkIGxpc3RfZm9yX2VhY2hf
-ZW50cnlfcmN1KCkNCj4gd2hpbGUgb25seSBob2xkaW5nIGFuIFNSQ1UgbG9jayB0cmlnZ2VycyAi
-c3VzcGljaW91cyBSQ1UgdXNhZ2UiIGZhbHNlIHBvc2l0aXZlDQo+IHdhcm5pbmdzLCBhcyBpdCBk
-b2VzIG5vdCByZWNvZ25pemUgU1JDVSByZWFkLXNpZGUgY3JpdGljYWwgc2VjdGlvbnMuDQo+IA0K
-PiBGaXggdGhpcyBieSBzd2l0Y2hpbmcgdG8gbGlzdF9mb3JfZWFjaF9lbnRyeV9zcmN1KCksIHdo
-aWNoIHdhcyBpbnRyb2R1Y2VkDQo+IHNwZWNpZmljYWxseSBmb3IgdGhpcyBwdXJwb3NlIGluIGNv
-bW1pdCBhZTIyMTJhNzIxNmINCj4gKCJyY3VsaXN0OiBJbnRyb2R1Y2UgbGlzdC9obGlzdF9mb3Jf
-ZWFjaF9lbnRyeV9zcmN1KCkgbWFjcm9zIikgKHY1LjEwKS4NCj4gVGhpcyBjb3JyZWN0bHkgYXNz
-b2NpYXRlcyB0aGUgdHJhdmVyc2FsIHdpdGggdGhlIFNSQ1UgbG9jayBhbmQgZWxpbWluYXRlcyB0
-aGUNCj4gbG9ja2RlcCB3YXJuaW5ncy4NCj4gDQoNClBpbmcNCiANCg0KW0xpLFJvbmdxaW5nXSAN
-Cg0KPiBGaXhlczogMTcyOGFiNTRiNGJlICgieDg2L3NneDogQWRkIGEgcGFnZSByZWNsYWltZXIi
-KQ0KPiBTaWduZWQtb2ZmLWJ5OiBMaSBSb25nUWluZyA8bGlyb25ncWluZ0BiYWlkdS5jb20+DQo+
-IEFja2VkLWJ5OiBLYWkgSHVhbmcgPGthaS5odWFuZ0BpbnRlbC5jb20+DQo+IC0tLQ0KPiBEaWZm
-IHdpdGggdjE6IHJld3JpdGUgY2hhbmdlbG9nDQo+IA0KPiAgYXJjaC94ODYva2VybmVsL2NwdS9z
-Z3gvZW5jbC5jIHwgMTIgKysrKysrKystLS0tDQo+IGFyY2gveDg2L2tlcm5lbC9jcHUvc2d4L21h
-aW4uYyB8ICAzICsrLQ0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCA1IGRl
-bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L2Vu
-Y2wuYyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L2VuY2wuYw0KPiBpbmRleCBhYzYwZWJkLi45
-MTM2MmQ3IDEwMDY0NA0KPiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9lbmNsLmMNCj4g
-KysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvZW5jbC5jDQo+IEBAIC04MjIsNyArODIyLDgg
-QEAgc3RhdGljIHN0cnVjdCBzZ3hfZW5jbF9tbSAqc2d4X2VuY2xfZmluZF9tbShzdHJ1Y3QNCj4g
-c2d4X2VuY2wgKmVuY2wsDQo+IA0KPiAgCWlkeCA9IHNyY3VfcmVhZF9sb2NrKCZlbmNsLT5zcmN1
-KTsNCj4gDQo+IC0JbGlzdF9mb3JfZWFjaF9lbnRyeV9yY3UodG1wLCAmZW5jbC0+bW1fbGlzdCwg
-bGlzdCkgew0KPiArCWxpc3RfZm9yX2VhY2hfZW50cnlfc3JjdSh0bXAsICZlbmNsLT5tbV9saXN0
-LCBsaXN0LA0KPiArCQkJc3JjdV9yZWFkX2xvY2tfaGVsZCgmZW5jbC0+c3JjdSkpIHsNCj4gIAkJ
-aWYgKHRtcC0+bW0gPT0gbW0pIHsNCj4gIAkJCWVuY2xfbW0gPSB0bXA7DQo+ICAJCQlicmVhazsN
-Cj4gQEAgLTkzMyw3ICs5MzQsOCBAQCBjb25zdCBjcHVtYXNrX3QgKnNneF9lbmNsX2NwdW1hc2so
-c3RydWN0IHNneF9lbmNsDQo+ICplbmNsKQ0KPiANCj4gIAlpZHggPSBzcmN1X3JlYWRfbG9jaygm
-ZW5jbC0+c3JjdSk7DQo+IA0KPiAtCWxpc3RfZm9yX2VhY2hfZW50cnlfcmN1KGVuY2xfbW0sICZl
-bmNsLT5tbV9saXN0LCBsaXN0KSB7DQo+ICsJbGlzdF9mb3JfZWFjaF9lbnRyeV9zcmN1KGVuY2xf
-bW0sICZlbmNsLT5tbV9saXN0LCBsaXN0LA0KPiArCQkJc3JjdV9yZWFkX2xvY2tfaGVsZCgmZW5j
-bC0+c3JjdSkpIHsNCj4gIAkJaWYgKCFtbWdldF9ub3RfemVybyhlbmNsX21tLT5tbSkpDQo+ICAJ
-CQljb250aW51ZTsNCj4gDQo+IEBAIC0xMDE4LDcgKzEwMjAsOCBAQCBzdGF0aWMgc3RydWN0IG1l
-bV9jZ3JvdXANCj4gKnNneF9lbmNsX2dldF9tZW1fY2dyb3VwKHN0cnVjdCBzZ3hfZW5jbCAqZW5j
-bCkNCj4gIAkgKi8NCj4gIAlpZHggPSBzcmN1X3JlYWRfbG9jaygmZW5jbC0+c3JjdSk7DQo+IA0K
-PiAtCWxpc3RfZm9yX2VhY2hfZW50cnlfcmN1KGVuY2xfbW0sICZlbmNsLT5tbV9saXN0LCBsaXN0
-KSB7DQo+ICsJbGlzdF9mb3JfZWFjaF9lbnRyeV9zcmN1KGVuY2xfbW0sICZlbmNsLT5tbV9saXN0
-LCBsaXN0LA0KPiArCQkJc3JjdV9yZWFkX2xvY2tfaGVsZCgmZW5jbC0+c3JjdSkpIHsNCj4gIAkJ
-aWYgKCFtbWdldF9ub3RfemVybyhlbmNsX21tLT5tbSkpDQo+ICAJCQljb250aW51ZTsNCj4gDQo+
-IEBAIC0xMjEyLDcgKzEyMTUsOCBAQCB2b2lkIHNneF96YXBfZW5jbGF2ZV9wdGVzKHN0cnVjdCBz
-Z3hfZW5jbCAqZW5jbCwNCj4gdW5zaWduZWQgbG9uZyBhZGRyKQ0KPiANCj4gIAkJaWR4ID0gc3Jj
-dV9yZWFkX2xvY2soJmVuY2wtPnNyY3UpOw0KPiANCj4gLQkJbGlzdF9mb3JfZWFjaF9lbnRyeV9y
-Y3UoZW5jbF9tbSwgJmVuY2wtPm1tX2xpc3QsIGxpc3QpIHsNCj4gKwkJbGlzdF9mb3JfZWFjaF9l
-bnRyeV9zcmN1KGVuY2xfbW0sICZlbmNsLT5tbV9saXN0LCBsaXN0LA0KPiArCQkJCXNyY3VfcmVh
-ZF9sb2NrX2hlbGQoJmVuY2wtPnNyY3UpKSB7DQo+ICAJCQlpZiAoIW1tZ2V0X25vdF96ZXJvKGVu
-Y2xfbW0tPm1tKSkNCj4gIAkJCQljb250aW51ZTsNCj4gDQo+IGRpZmYgLS1naXQgYS9hcmNoL3g4
-Ni9rZXJuZWwvY3B1L3NneC9tYWluLmMgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9tYWluLmMN
-Cj4gaW5kZXggMzhiN2ZkMi4uNTgxZTBjNCAxMDA2NDQNCj4gLS0tIGEvYXJjaC94ODYva2VybmVs
-L2NwdS9zZ3gvbWFpbi5jDQo+ICsrKyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L21haW4uYw0K
-PiBAQCAtMTIwLDcgKzEyMCw4IEBAIHN0YXRpYyBib29sIHNneF9yZWNsYWltZXJfYWdlKHN0cnVj
-dCBzZ3hfZXBjX3BhZ2UNCj4gKmVwY19wYWdlKQ0KPiANCj4gIAlpZHggPSBzcmN1X3JlYWRfbG9j
-aygmZW5jbC0+c3JjdSk7DQo+IA0KPiAtCWxpc3RfZm9yX2VhY2hfZW50cnlfcmN1KGVuY2xfbW0s
-ICZlbmNsLT5tbV9saXN0LCBsaXN0KSB7DQo+ICsJbGlzdF9mb3JfZWFjaF9lbnRyeV9zcmN1KGVu
-Y2xfbW0sICZlbmNsLT5tbV9saXN0LCBsaXN0LA0KPiArCQkJc3JjdV9yZWFkX2xvY2tfaGVsZCgm
-ZW5jbC0+c3JjdSkpIHsNCj4gIAkJaWYgKCFtbWdldF9ub3RfemVybyhlbmNsX21tLT5tbSkpDQo+
-ICAJCQljb250aW51ZTsNCj4gDQo+IC0tDQo+IDIuOS40DQoNCg==
+On Fri, Feb 27, 2026 at 09:08:32PM +0100, David Hildenbrand (Arm) wrote:
+> madvise_vma_behavior()-> madvise_dontneed_free()->madvise_free_single_vma()
+> is only called from madvise_walk_vmas()
+>
+> (a) After try_vma_read_lock() confirmed that the whole range falls into
+>     a single VMA (see is_vma_lock_sufficient()).
+>
+> (b) After adjusting the range to the VMA in the loop afterwards.
+>
+> madvise_dontneed_free() might drop the MM lock when handling
+> userfaultfd, but it properly looks up the VMA again to adjust the range.
+>
+> So in madvise_free_single_vma(), the given range should always fall into
+> a single VMA and should also span at least one page.
+>
+> Let's drop the error checks.
+>
+> The code now matches what we do in madvise_dontneed_single_vma(), where
+> we call zap_vma_range_batched() that documents: "The range must fit into
+> one VMA.". Although that function still adjusts that range, we'll change
+> that soon.
+>
+> Signed-off-by: David Hildenbrand (Arm) <david@kernel.org>
+
+Yeah I did wonder about some of these checks, thanks for going through and
+confirming these are useless.
+
+Checked the madvise_dontneed_free() case to be sure and LGTM so overall:
+
+Reviewed-by: Lorenzo Stoakes (Oracle) <ljs@kernel.org>
+
+> ---
+>  mm/madvise.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
+>
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index c0370d9b4e23..efc04334a000 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -799,9 +799,10 @@ static int madvise_free_single_vma(struct madvise_behavior *madv_behavior)
+>  {
+>  	struct mm_struct *mm = madv_behavior->mm;
+>  	struct vm_area_struct *vma = madv_behavior->vma;
+> -	unsigned long start_addr = madv_behavior->range.start;
+> -	unsigned long end_addr = madv_behavior->range.end;
+> -	struct mmu_notifier_range range;
+> +	struct mmu_notifier_range range = {
+> +		.start = madv_behavior->range.start,
+> +		.end = madv_behavior->range.end,
+> +	};
+>  	struct mmu_gather *tlb = madv_behavior->tlb;
+>  	struct mm_walk_ops walk_ops = {
+>  		.pmd_entry		= madvise_free_pte_range,
+> @@ -811,12 +812,6 @@ static int madvise_free_single_vma(struct madvise_behavior *madv_behavior)
+>  	if (!vma_is_anonymous(vma))
+>  		return -EINVAL;
+>
+> -	range.start = max(vma->vm_start, start_addr);
+> -	if (range.start >= vma->vm_end)
+> -		return -EINVAL;
+> -	range.end = min(vma->vm_end, end_addr);
+> -	if (range.end <= vma->vm_start)
+> -		return -EINVAL;
+>  	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm,
+>  				range.start, range.end);
+>
+> --
+> 2.43.0
+>
