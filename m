@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2873AA4E6;
-	Wed, 11 Mar 2026 09:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08769318B96;
+	Wed, 11 Mar 2026 09:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773220528; cv=none; b=VPg9pPOphHQ0t9iGyPbBTVh5Td5awR8elD/ubbd8i3WKC9H/oJm3YqiyGghkFzzt/uaphcx6JNUGGQtCZQrlYUD/0UUJ4TelX6jvAHVdlzz7quIq5joF2vIQYdIgfKKC1/hj4rY8wIkMh3S9jDYfVF+3MdCnIUFogtbdqsGbEkk=
+	t=1773220829; cv=none; b=j7qfHUW5YIRBHkZGtyze5LYteS+SpXxYR4Qs6ZRtRiVskH7Xgg0zmpW8L76B4Jz0+Z14602XkKg6XHI8JjVBpr0TGIpT68mIoDqvx2mQPqRjGQD3Jaqmp8kh65K9lH834t9z0LX6zKShEu3+KMVDloW5xOgvjYZ7mUw+6+ye7q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773220528; c=relaxed/simple;
-	bh=/qi/E3sx1wLUyctUK7y+OHXYZPNKh6z9xCAoPwaS9tY=;
+	s=arc-20240116; t=1773220829; c=relaxed/simple;
+	bh=JpypEF1J5OgRJiCd/MihIRnK/CNO9ssCWYiKbHTS/ro=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KJv//iT/jC3cibLGHfw3QWkJKpjB1XLJ/+ZW5MmVP/6gL67dWYy8KerPS4FUhHz38iZou3U55ygs3jcLOdZ/cAFliZIk+qP8F0RR/GxJtQLqV7ROZ6tpHYPXwMsizw16DilhHJF/7jduJqjBSRLGrTy7bQ1EuQm8zaVRA/BTT5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LgDro3Eo; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=qAAQB451ngsZvg/GfeikEuhxNN81oHFkMnE9HvMf5BfPX/LPGdwRB/2ERuzGXxa1VYlpDFqfWNJqlT1iP5kQzLxNbmq1A6paeR4cXnN1YiCpkv1H7m/RyupP3ngP6rKObQwhimLq0X8ghrL96+9cp/FGp/TcjwriHwrnjXPDUAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNr8gI0S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgDro3Eo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FCD9C4CEF7;
-	Wed, 11 Mar 2026 09:15:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNr8gI0S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1923C4CEF7;
+	Wed, 11 Mar 2026 09:20:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773220527;
-	bh=/qi/E3sx1wLUyctUK7y+OHXYZPNKh6z9xCAoPwaS9tY=;
+	s=k20201202; t=1773220828;
+	bh=JpypEF1J5OgRJiCd/MihIRnK/CNO9ssCWYiKbHTS/ro=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LgDro3Eo6GuEp/c7KpExTwow2lUTl/Pn1bh3kCtPgx5EZkzvkzK56JY3zwHnUDcCc
-	 2as2PvShmmr1XG14DpK2Vlg+JLgJPDOEbIdyLQiZA99gO2VhR6aNobJIyS0CqNvQtn
-	 yBA+KuKdx+4dfgWg9peWZmhGw4/QosQ2PPXaLIeUrGAHySdhxN3QZSvEY8TJQRF4w5
-	 5y2vcF8WS6Vs3oTWyB2qlm1mbS5CYuB5pIK+WazvnWck2cAfQHHfFT1RCTg/MOj6af
-	 KpqT4L8GJkV64xMCr6wNACXlhye3na8PI6Nzf9xRvk9/jbbFZy4EGpTLuB6A51j2SG
-	 LfTqtyCu5LFfA==
-Message-ID: <61df6369-333c-430a-bd18-c5b1acae68ea@kernel.org>
-Date: Wed, 11 Mar 2026 10:15:12 +0100
+	b=UNr8gI0SByGHmNtlUSwlW+rMeQgLKwbKy37F7Orbw5cWliVwlEh9uriCZXl35osx4
+	 Gw/7mXt+rvp3qbR1zONjRRSPW1LQcMXs1I3jF7fvjSRRFECl6QESr5xFHbldEjXoBK
+	 xzePRByzI3h9l9oF4gdxDX88nnD21W8X4ZZ9iq5eZsEt8l+SW02ToX5cRCuG9EpAVy
+	 TDnxPmjMA3KczLO+KXtYlACtFf7fJ5Z7eOttw+nFSb/RzNIKLXmsDlW8uqwHDPrtPp
+	 LeqCp9BSEiV8ut8oRObfPr4IIizsaEgqT3OXxVjiF2mqYoDhInBziLF3PchK1zUQTI
+	 FP9g9QL+vFfMw==
+Message-ID: <f7732d1c-0e85-4a14-948a-912c417018b5@kernel.org>
+Date: Wed, 11 Mar 2026 10:20:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -35,9 +35,9 @@ List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 16/16] mm/memory: support VM_MIXEDMAP in
- zap_special_vma_range()
-To: Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH v1 11/16] mm/memory: inline unmap_page_range() into
+ __zap_vma_range()
+To: "Lorenzo Stoakes (Oracle)" <ljs@kernel.org>
 Cc: linux-kernel@vger.kernel.org, "linux-mm @ kvack . org"
  <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>,
  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
@@ -66,7 +66,8 @@ Cc: linux-kernel@vger.kernel.org, "linux-mm @ kvack . org"
  Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
  Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
  <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Leon Romanovsky <leon@kernel.org>,
+ Simona Vetter <simona@ffwll.ch>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>,
  Dimitri Sivanich <dimitri.sivanich@hpe.com>, Arnd Bergmann <arnd@arndb.de>,
  Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
  Andrii Nakryiko <andrii@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
@@ -83,8 +84,10 @@ Cc: linux-kernel@vger.kernel.org, "linux-mm @ kvack . org"
  linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, x86@kernel.org
 References: <20260227200848.114019-1-david@kernel.org>
- <20260227200848.114019-17-david@kernel.org>
- <20260309142954.GM1687929@ziepe.ca>
+ <20260227200848.114019-12-david@kernel.org>
+ <a5765cac-69d6-4314-82d5-80ee363906de@lucifer.local>
+ <bc5cfcc4-5e51-4da1-9ce9-ea0831bec400@kernel.org>
+ <737a88b8-8221-44e6-aa90-3be326bc8612@lucifer.local>
 From: "David Hildenbrand (Arm)" <david@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
@@ -131,52 +134,65 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20260309142954.GM1687929@ziepe.ca>
+In-Reply-To: <737a88b8-8221-44e6-aa90-3be326bc8612@lucifer.local>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 3/9/26 15:29, Jason Gunthorpe wrote:
-> On Fri, Feb 27, 2026 at 09:08:47PM +0100, David Hildenbrand (Arm) wrote:
->> There is demand for also zapping page table entries by drivers in
->> VM_MIXEDMAP VMAs[1].
 >>
->> Nothing really speaks against supporting VM_MIXEDMAP for driver use. We
->> just don't want arbitrary drivers to zap in ordinary (non-special) VMAs.
+>> Tells me that "cur" is rather common.
 >>
->> [1] https://lore.kernel.org/r/aYSKyr7StGpGKNqW@google.com
+>>> It's not a big deal, but why not addr?
+>>
+>> Good question, I can just do that. :)
 > 
-> Are we sure about this?
+> Thanks!
 
-Yes, I don't think relaxing this for drivers to use it on VM_MIXEDMAP is
-a problem.
 
-> 
-> This whole function seems like a hack to support drivers that are not
-> using an address_space.
+@Andrew, the following fixup on top
 
-I assume, then using
-unmap_mapping_folio()/unmap_mapping_pages()/unmap_mapping_range() instead.
+From 8470e94c57b89819753c8f31e23320f33c14cd58 Mon Sep 17 00:00:00 2001
+From: "David Hildenbrand (Arm)" <david@kernel.org>
+Date: Wed, 11 Mar 2026 10:19:00 +0100
+Subject: [PATCH] fixup: mm/memory: inline unmap_page_range() into
+ __zap_vma_range()
 
-> 
-> I say that as one of the five driver authors who have made this
-> mistake.
-> 
-> The locking to safely use this function is really hard to do properly,
-> IDK if binder can shift to use address_space ??
-I cannot really tell.
+Let's call the local variable simply "addr".
 
-Skimming over the code, it looks like it really always handles "single
-VMA" stuff ("Since a binder_alloc can only be mapped once, we ensure the
-vma corresponds to this mapping by checking whether the binder_alloc is
-still mapped"), which makes the locking rather trivial.
+Signed-off-by: David Hildenbrand (Arm) <david@kernel.org>
+---
+ mm/memory.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-It does seem to mostly allocate/free pages in a single VMA, where I
-think the existing usage of zap_vma_range() makes sense.
+diff --git a/mm/memory.c b/mm/memory.c
+index 1c0bcdfc73b7..5f7607140de1 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2081,17 +2081,17 @@ static void __zap_vma_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 			return;
+ 		__unmap_hugepage_range(tlb, vma, start, end, NULL, zap_flags);
+ 	} else {
+-		unsigned long next, cur = start;
++		unsigned long next, addr = start;
+ 		pgd_t *pgd;
+ 
+ 		tlb_start_vma(tlb, vma);
+-		pgd = pgd_offset(vma->vm_mm, cur);
++		pgd = pgd_offset(vma->vm_mm, addr);
+ 		do {
+-			next = pgd_addr_end(cur, end);
++			next = pgd_addr_end(addr, end);
+ 			if (pgd_none_or_clear_bad(pgd))
+ 				continue;
+-			next = zap_p4d_range(tlb, vma, pgd, cur, next, details);
+-		} while (pgd++, cur = next, cur != end);
++			next = zap_p4d_range(tlb, vma, pgd, addr, next, details);
++		} while (pgd++, addr = next, addr != end);
+ 		tlb_end_vma(tlb, vma);
+ 	}
+ }
+-- 
+2.43.0
 
-So I'm not sure if using address_space would really be an improvement there.
-
-Having that said, maybe binder folks can be motivated to look into that.
-But I would consider that future work.
 
 -- 
 Cheers,
