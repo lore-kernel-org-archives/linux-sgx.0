@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F143AEF36;
-	Wed, 11 Mar 2026 08:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2873AA4E6;
+	Wed, 11 Mar 2026 09:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773217743; cv=none; b=eQTau/AJB1aQWf0rC82+DsDOSbrl3ddEC/zRJJx78FE9CQRmVC4JClr95j8WG04kdXDifi81Vdbad8BlMY/oG/fsh6TWs8c7VK4E8TOK5hmzz73YJH6K5Jhrv8DQIw/XGCsz/yv/4TP/lv5ZXpkufSW/zoaTIHLZIs3QDQWIFEA=
+	t=1773220528; cv=none; b=VPg9pPOphHQ0t9iGyPbBTVh5Td5awR8elD/ubbd8i3WKC9H/oJm3YqiyGghkFzzt/uaphcx6JNUGGQtCZQrlYUD/0UUJ4TelX6jvAHVdlzz7quIq5joF2vIQYdIgfKKC1/hj4rY8wIkMh3S9jDYfVF+3MdCnIUFogtbdqsGbEkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773217743; c=relaxed/simple;
-	bh=GE6B9Axf2iqOgQ6Zt2ej9Oufrn3oudVjXjL2vTIfmAQ=;
+	s=arc-20240116; t=1773220528; c=relaxed/simple;
+	bh=/qi/E3sx1wLUyctUK7y+OHXYZPNKh6z9xCAoPwaS9tY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TaBi0TpABpWppN3I/jAbHobNkU+IPhRgg4kTWje6nHkDy0dMhMylf7D4RPwXp98qPAPbG5P8LkjpZpnXIsGLMhpHs6J5wQ5GjvpMLxPdqsDrdHQTovZlD12pbVzLeS8/qOV4uoQpufNAoeuRvHHvnYd2dC/xFOnCHsC1h4yxOYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=utVavD96; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=KJv//iT/jC3cibLGHfw3QWkJKpjB1XLJ/+ZW5MmVP/6gL67dWYy8KerPS4FUhHz38iZou3U55ygs3jcLOdZ/cAFliZIk+qP8F0RR/GxJtQLqV7ROZ6tpHYPXwMsizw16DilhHJF/7jduJqjBSRLGrTy7bQ1EuQm8zaVRA/BTT5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LgDro3Eo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="utVavD96"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C4C3C4CEF7;
-	Wed, 11 Mar 2026 08:28:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgDro3Eo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FCD9C4CEF7;
+	Wed, 11 Mar 2026 09:15:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773217742;
-	bh=GE6B9Axf2iqOgQ6Zt2ej9Oufrn3oudVjXjL2vTIfmAQ=;
+	s=k20201202; t=1773220527;
+	bh=/qi/E3sx1wLUyctUK7y+OHXYZPNKh6z9xCAoPwaS9tY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=utVavD961L/MIxHcghlNRfP+qmyZvTz3tZkkai8biCLxovJiwSfi721dAan4WAerP
-	 qQU5S4O+so1CV/l13lXL1pBvxe6Xcb8kk+l/bBNkxM6Og8LAf+De6dljLV/bYd9vPF
-	 RnkVuR2LJMC1aO8Mmf8ZYzGG89DCjYYyg3JerSgXRXHIS9MEy5aP+0VPOJEnsfhJP/
-	 cAHnLbI4JCoH8Po1okfUE05z/3RGXHVkg9UE9OHdr7DaaCoUol+/nBwm0m7BwYmG4l
-	 DzBEoPXPx1/wX7BQYXu4AinRZizyRYhr3BiDVj3GhukhaNvYNRYVgru+HF9UqoHZIa
-	 O0mPmtOaDieiw==
-Message-ID: <5e5e0169-5197-4626-b91b-af4c13520805@kernel.org>
-Date: Wed, 11 Mar 2026 09:28:47 +0100
+	b=LgDro3Eo6GuEp/c7KpExTwow2lUTl/Pn1bh3kCtPgx5EZkzvkzK56JY3zwHnUDcCc
+	 2as2PvShmmr1XG14DpK2Vlg+JLgJPDOEbIdyLQiZA99gO2VhR6aNobJIyS0CqNvQtn
+	 yBA+KuKdx+4dfgWg9peWZmhGw4/QosQ2PPXaLIeUrGAHySdhxN3QZSvEY8TJQRF4w5
+	 5y2vcF8WS6Vs3oTWyB2qlm1mbS5CYuB5pIK+WazvnWck2cAfQHHfFT1RCTg/MOj6af
+	 KpqT4L8GJkV64xMCr6wNACXlhye3na8PI6Nzf9xRvk9/jbbFZy4EGpTLuB6A51j2SG
+	 LfTqtyCu5LFfA==
+Message-ID: <61df6369-333c-430a-bd18-c5b1acae68ea@kernel.org>
+Date: Wed, 11 Mar 2026 10:15:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -35,9 +35,9 @@ List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 09/16] mm/memory: convert details->even_cows into
- details->skip_cows
-To: "Lorenzo Stoakes (Oracle)" <ljs@kernel.org>
+Subject: Re: [PATCH v1 16/16] mm/memory: support VM_MIXEDMAP in
+ zap_special_vma_range()
+To: Jason Gunthorpe <jgg@ziepe.ca>
 Cc: linux-kernel@vger.kernel.org, "linux-mm @ kvack . org"
  <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>,
  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
@@ -66,8 +66,7 @@ Cc: linux-kernel@vger.kernel.org, "linux-mm @ kvack . org"
  Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
  Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
  <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jason Gunthorpe <jgg@ziepe.ca>,
- Leon Romanovsky <leon@kernel.org>,
+ Simona Vetter <simona@ffwll.ch>, Leon Romanovsky <leon@kernel.org>,
  Dimitri Sivanich <dimitri.sivanich@hpe.com>, Arnd Bergmann <arnd@arndb.de>,
  Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
  Andrii Nakryiko <andrii@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
@@ -84,8 +83,8 @@ Cc: linux-kernel@vger.kernel.org, "linux-mm @ kvack . org"
  linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, x86@kernel.org
 References: <20260227200848.114019-1-david@kernel.org>
- <20260227200848.114019-10-david@kernel.org>
- <091ce280-9204-4b85-bf39-5e2a61e3d0ba@lucifer.local>
+ <20260227200848.114019-17-david@kernel.org>
+ <20260309142954.GM1687929@ziepe.ca>
 From: "David Hildenbrand (Arm)" <david@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
@@ -132,88 +131,52 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <091ce280-9204-4b85-bf39-5e2a61e3d0ba@lucifer.local>
+In-Reply-To: <20260309142954.GM1687929@ziepe.ca>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
+On 3/9/26 15:29, Jason Gunthorpe wrote:
+> On Fri, Feb 27, 2026 at 09:08:47PM +0100, David Hildenbrand (Arm) wrote:
+>> There is demand for also zapping page table entries by drivers in
+>> VM_MIXEDMAP VMAs[1].
 >>
->>  	zap_page_range_single_batched(
->> diff --git a/mm/memory.c b/mm/memory.c
->> index fdcd2abf29c2..7d7c24c6917c 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -1554,11 +1554,13 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
->>  static inline bool should_zap_cows(struct zap_details *details)
+>> Nothing really speaks against supporting VM_MIXEDMAP for driver use. We
+>> just don't want arbitrary drivers to zap in ordinary (non-special) VMAs.
+>>
+>> [1] https://lore.kernel.org/r/aYSKyr7StGpGKNqW@google.com
 > 
-> Not sure if you fix up later, but we should probably change this function to
-> should_skip_cows() to keep everything consistent, otherwise this is a bit weird
-> and confusing.
+> Are we sure about this?
 
-should_skip_cows() is a bit misleading on its own IMHO, as we skip the
-"zap" context.
-
-Would have to be something like "should_skip_cows_when_zapping()", and I
-am not sure if that's really worth it.
-
-So I think we can leave it as is.
-
-Thanks!
+Yes, I don't think relaxing this for drivers to use it on VM_MIXEDMAP is
+a problem.
 
 > 
->>  {
->>  	/* By default, zap all pages */
->> -	if (!details || details->reclaim_pt)
->> +	if (!details)
->>  		return true;
->>
->> +	VM_WARN_ON_ONCE(details->skip_cows && details->reclaim_pt);
->> +
->>  	/* Or, we zap COWed pages only if the caller wants to */
->> -	return details->even_cows;
->> +	return !details->skip_cows;
->>  }
->>
->>  /* Decides whether we should zap this folio with the folio pointer specified */
->> @@ -2149,8 +2151,6 @@ void unmap_vmas(struct mmu_gather *tlb, struct unmap_desc *unmap)
->>  	struct mmu_notifier_range range;
->>  	struct zap_details details = {
->>  		.zap_flags = ZAP_FLAG_DROP_MARKER | ZAP_FLAG_UNMAP,
->> -		/* Careful - we need to zap private pages too! */
->> -		.even_cows = true,
->>  	};
->>
->>  	vma = unmap->first;
->> @@ -4282,7 +4282,7 @@ void unmap_mapping_folio(struct folio *folio)
->>  	first_index = folio->index;
->>  	last_index = folio_next_index(folio) - 1;
->>
->> -	details.even_cows = false;
->> +	details.skip_cows = true;
->>  	details.single_folio = folio;
->>  	details.zap_flags = ZAP_FLAG_DROP_MARKER;
->>
->> @@ -4312,7 +4312,7 @@ void unmap_mapping_pages(struct address_space *mapping, pgoff_t start,
->>  	pgoff_t	first_index = start;
->>  	pgoff_t	last_index = start + nr - 1;
->>
->> -	details.even_cows = even_cows;
->> +	details.skip_cows = !even_cows;
+> This whole function seems like a hack to support drivers that are not
+> using an address_space.
+
+I assume, then using
+unmap_mapping_folio()/unmap_mapping_pages()/unmap_mapping_range() instead.
+
 > 
-> Not sure if you clean up later, but seems sensible to cascade the change into
-> the local boolean here.
+> I say that as one of the five driver authors who have made this
+> mistake.
+> 
+> The locking to safely use this function is really hard to do properly,
+> IDK if binder can shift to use address_space ??
+I cannot really tell.
 
-There are too many unmap_mapping_range() users for me to want to change
-the external interface :)
+Skimming over the code, it looks like it really always handles "single
+VMA" stuff ("Since a binder_alloc can only be mapped once, we ensure the
+vma corresponds to this mapping by checking whether the binder_alloc is
+still mapped"), which makes the locking rather trivial.
 
-What I was thinking is that probably there should be two independent
-user-facing functions, instead of having this magical bool passed around
+It does seem to mostly allocate/free pages in a single VMA, where I
+think the existing usage of zap_vma_range() makes sense.
 
-Because I am sure, most users don't really know whether to set it to
-true or false ...
+So I'm not sure if using address_space would really be an improvement there.
 
-But that's something for another cleanup. (I left the whole
-unmap_mapping_pages() interface etc alone in this series)
+Having that said, maybe binder folks can be motivated to look into that.
+But I would consider that future work.
 
 -- 
 Cheers,
