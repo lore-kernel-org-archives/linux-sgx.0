@@ -1,122 +1,164 @@
-Received: from outbound.baidu.com (jpmx.baidu.com [119.63.196.201])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 80588382299;
-	Tue, 14 Apr 2026 07:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.63.196.201
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681513126D0;
+	Wed, 15 Apr 2026 02:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776152895; cv=none; b=QOQpt8QAJ/kenQ6a9SY9bRprE84cQCInTfrL3M5H6zfjYBtEBL5Jlm1aDxmTjLv5EdcM9JhipLjnndz48DLBidNxrRnSTBuEQJW2qJ4PfXLF2DYP47Mhfg5byAYPrm9sNIc/ll6PhaL/SgMI6Z8DLJbxXfyxaDTuowXtUwFie2c=
+	t=1776221380; cv=none; b=Rh8up2qFaGQwYLgU+MM9nDiqIq0Noa5qVsZEq/OFEMTgIwHP+Pde9RRZzXitE6DxSAX7MYA2ja7vL5Qe+gyvETnliD3nmnSF/Lo8mn4WaS3qsrWVZQXdcHxT4lRfVDm33ILcyyt56FW+Obx0KIsmaLlwy0lPS5ll2a4jF4jJZPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776152895; c=relaxed/simple;
-	bh=qj6mOA0Vk1vzsmNwQmBZpoCCZm0Lva72FMNjSLL4kpg=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oTL5TVxa/B/GxpnL7QuoFvD0KlI5JTTYIV0TkMgWNiLCzOFWEzq2vxTLFXehiIyhpNppmMmv5nR23f33voGEa1vq5qAAF2PuHwHRg4U3eo2fV6+fvGPpFNmJLMrc6GduAgGs527ShVO3d7WygcMiGVfjglyABWXuGF7XPAvHe3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; dkim=pass (2048-bit key) header.d=baidu.com header.i=@baidu.com header.b=R7Ak0n59; arc=none smtp.client-ip=119.63.196.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+	s=arc-20240116; t=1776221380; c=relaxed/simple;
+	bh=0AuenaOfmDE99zOKcXCll7vxX25cPALTWSc7lA12r8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ne1agljSJhoO917YV2sURDHdA80yVEpBSe7AxA/FVh4R0roBIbGuqv7hiwmlxA3E6HWiqVsaY0hQf8gZNu1v88rBmYDPthKpHI+QTWM9pDWrJHV/ajxeirXWYoCwxJ5xveDEOkuoJCritEx3y94hF53bM55i+CbZReyzraKI3ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NC5av1rK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baidu.com header.i=@baidu.com header.b="R7Ak0n59"
-X-MD-Sfrom: lirongqing@baidu.com
-X-MD-SrcIP: 172.31.50.46
-From: "Li,Rongqing(ACG CCN)" <lirongqing@baidu.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@kernel.org>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "x86@kernel.org"
-	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Kai Huang
-	<kai.huang@intel.com>, "linux-sgx@vger.kernel.org"
-	<linux-sgx@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIXVt2Ml0geDg2L3NneDogVXNlIGxpc3RfZm9yX2VhY2hf?=
- =?gb2312?B?ZW50cnlfc3JjdSgpIGZvciBtbV9saXN0IHRyYXZlcnNhbA==?=
-Thread-Topic: [PATCH][v2] x86/sgx: Use list_for_each_entry_srcu() for mm_list
- traversal
-Thread-Index: AQHcpsDeTyQCr4ISd0yU2FIIhTv3KbXeeF1Q
-Date: Tue, 14 Apr 2026 07:47:54 +0000
-Message-ID: <484ff5a62fee43618b30bbafb1ab3723@baidu.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NC5av1rK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D342C19425;
+	Wed, 15 Apr 2026 02:49:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776221380;
+	bh=0AuenaOfmDE99zOKcXCll7vxX25cPALTWSc7lA12r8I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NC5av1rK5RQMpd3VkE01VXX28D1NScamat3D2yU/BLI8M1aEWTiYwpWiegGHcWJYL
+	 5D7bg6J7MBdvO3JFbWT81/VtG6f4XuKg7OW8dvX8Saggo+z1MD4VfhrDpMj3si+Hx0
+	 cGziEv8MqIqcr3UENYdXBhswntrvfMSlkmgw6vIpGzZB/tS7X2XJ5nGIptdpmgMEi3
+	 MRATSuz3y+uSYhyvRJbPgaLQ0/Z3OeI3+b77lRiNP80EFPL3XLBdriGjt5du1mzSSm
+	 Uf3wTYkuMu7h5Ze2RdLHRqSDbY5BFDLDnVpFXR9XPTY0Sz3th2WGiEkAwNyVT6j2tT
+	 63CLqfkHl62lg==
+Date: Wed, 15 Apr 2026 05:49:36 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: "Li,Rongqing(ACG CCN)" <lirongqing@baidu.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, Kai Huang <kai.huang@intel.com>,
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: =?utf-8?B?562U5aSNOiBbUEFUQ0hdW3YyXSB4?= =?utf-8?Q?86=2Fsgx?=
+ =?utf-8?Q?=3A?= Use list_for_each_entry_srcu() for mm_list traversal
+Message-ID: <ad78wMV3Au2yN4ko@kernel.org>
 References: <20260226014014.2541-1-lirongqing@baidu.com>
-In-Reply-To: <20260226014014.2541-1-lirongqing@baidu.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+ <484ff5a62fee43618b30bbafb1ab3723@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=baidu.com;
-	s=selector1; t=1776152879;
-	bh=qj6mOA0Vk1vzsmNwQmBZpoCCZm0Lva72FMNjSLL4kpg=;
-	h=From:To:Subject:Date:Message-ID:Content-Type;
-	b=R7Ak0n59B7mhCrrgMy8M+tjcCC021OYGbzD5OvU6zIlWnHhbASvLh8e9UdoLUNdNV
-	 u/8iMdtBypqDYZyl3aQlHBGehueaMtw3db//Com1+of4j3aK8hLyhsa/e88x9ZRqH+
-	 pzFaaqExqnqwJbw6OkooKiM+EKLilYKyBoJ0oZYkHeY6x0XenXDTrKZ0QFzi7P0cV9
-	 +oQvoPjS2L0tyng2phrvyPmcs0PQKffXt9Nzc4yNmxX4DGRJ1yvP8+9zME1jy6UlAz
-	 +4SAoG4oqtxAVv51SeMc99raOklTi2eIECpSWE+I9sn1+gaKz1c5kUluWigSOBkvYx
-	 T/e8DmhgjYnnA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <484ff5a62fee43618b30bbafb1ab3723@baidu.com>
 
-DQoNCj4gRnJvbTogTGkgUm9uZ1FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KPiANCj4gSW4g
-Y29tbWl0IDE3MjhhYjU0YjRiZSAoIng4Ni9zZ3g6IEFkZCBhIHBhZ2UgcmVjbGFpbWVyIikgKHY1
-LjExKSwNCj4gbGlzdF9mb3JfZWFjaF9lbnRyeV9yY3UoKSB3YXMgdXNlZCB0byB0cmF2ZXJzZSB0
-aGUgZW5jbGF2ZSdzIG1tX2xpc3QuDQo+IEhvd2V2ZXIsIHRoaXMgaXMgaW5jb3JyZWN0IGJlY2F1
-c2UgdGhlIGxpc3QgaXMgcHJvdGVjdGVkIGJ5IGEgU2xlZXBhYmxlIFJDVSAoU1JDVSkNCj4gbG9j
-ayAoZW5jbC0+c3JjdSkuDQo+IA0KPiBTaW5jZSBjb21taXQgMjg4NzU5NDViYTk4ICgicmN1OiBB
-ZGQgc3VwcG9ydCBmb3IgY29uc29saWRhdGVkLVJDVSByZWFkZXINCj4gY2hlY2tpbmciKSAodjUu
-NCksIFJDVSBsb2NrZGVwIGNoZWNraW5nIGhhcyBiZWNvbWUgc3RyaWN0ZXIuIFdoZW4NCj4gQ09O
-RklHX1BST1ZFX1JDVSBpcyBlbmFibGVkLCB1c2luZyB0aGUgc3RhbmRhcmQgbGlzdF9mb3JfZWFj
-aF9lbnRyeV9yY3UoKQ0KPiB3aGlsZSBvbmx5IGhvbGRpbmcgYW4gU1JDVSBsb2NrIHRyaWdnZXJz
-ICJzdXNwaWNpb3VzIFJDVSB1c2FnZSIgZmFsc2UgcG9zaXRpdmUNCj4gd2FybmluZ3MsIGFzIGl0
-IGRvZXMgbm90IHJlY29nbml6ZSBTUkNVIHJlYWQtc2lkZSBjcml0aWNhbCBzZWN0aW9ucy4NCj4g
-DQo+IEZpeCB0aGlzIGJ5IHN3aXRjaGluZyB0byBsaXN0X2Zvcl9lYWNoX2VudHJ5X3NyY3UoKSwg
-d2hpY2ggd2FzIGludHJvZHVjZWQNCj4gc3BlY2lmaWNhbGx5IGZvciB0aGlzIHB1cnBvc2UgaW4g
-Y29tbWl0IGFlMjIxMmE3MjE2Yg0KPiAoInJjdWxpc3Q6IEludHJvZHVjZSBsaXN0L2hsaXN0X2Zv
-cl9lYWNoX2VudHJ5X3NyY3UoKSBtYWNyb3MiKSAodjUuMTApLg0KPiBUaGlzIGNvcnJlY3RseSBh
-c3NvY2lhdGVzIHRoZSB0cmF2ZXJzYWwgd2l0aCB0aGUgU1JDVSBsb2NrIGFuZCBlbGltaW5hdGVz
-IHRoZQ0KPiBsb2NrZGVwIHdhcm5pbmdzLg0KPiANCj4gRml4ZXM6IDE3MjhhYjU0YjRiZSAoIng4
-Ni9zZ3g6IEFkZCBhIHBhZ2UgcmVjbGFpbWVyIikNCj4gU2lnbmVkLW9mZi1ieTogTGkgUm9uZ1Fp
-bmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KPiBBY2tlZC1ieTogS2FpIEh1YW5nIDxrYWkuaHVh
-bmdAaW50ZWwuY29tPg0KPiAtLS0NCg0KUGluZw0KDQp0aGFua3MNCg0KW0xpLFJvbmdxaW5nXSAN
-Cg0KDQoNCj4gRGlmZiB3aXRoIHYxOiByZXdyaXRlIGNoYW5nZWxvZw0KPiANCj4gIGFyY2gveDg2
-L2tlcm5lbC9jcHUvc2d4L2VuY2wuYyB8IDEyICsrKysrKysrLS0tLQ0KPiBhcmNoL3g4Ni9rZXJu
-ZWwvY3B1L3NneC9tYWluLmMgfCAgMyArKy0NCj4gIDIgZmlsZXMgY2hhbmdlZCwgMTAgaW5zZXJ0
-aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJu
-ZWwvY3B1L3NneC9lbmNsLmMgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9lbmNsLmMNCj4gaW5k
-ZXggYWM2MGViZC4uOTEzNjJkNyAxMDA2NDQNCj4gLS0tIGEvYXJjaC94ODYva2VybmVsL2NwdS9z
-Z3gvZW5jbC5jDQo+ICsrKyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L2VuY2wuYw0KPiBAQCAt
-ODIyLDcgKzgyMiw4IEBAIHN0YXRpYyBzdHJ1Y3Qgc2d4X2VuY2xfbW0gKnNneF9lbmNsX2ZpbmRf
-bW0oc3RydWN0DQo+IHNneF9lbmNsICplbmNsLA0KPiANCj4gIAlpZHggPSBzcmN1X3JlYWRfbG9j
-aygmZW5jbC0+c3JjdSk7DQo+IA0KPiAtCWxpc3RfZm9yX2VhY2hfZW50cnlfcmN1KHRtcCwgJmVu
-Y2wtPm1tX2xpc3QsIGxpc3QpIHsNCj4gKwlsaXN0X2Zvcl9lYWNoX2VudHJ5X3NyY3UodG1wLCAm
-ZW5jbC0+bW1fbGlzdCwgbGlzdCwNCj4gKwkJCXNyY3VfcmVhZF9sb2NrX2hlbGQoJmVuY2wtPnNy
-Y3UpKSB7DQo+ICAJCWlmICh0bXAtPm1tID09IG1tKSB7DQo+ICAJCQllbmNsX21tID0gdG1wOw0K
-PiAgCQkJYnJlYWs7DQo+IEBAIC05MzMsNyArOTM0LDggQEAgY29uc3QgY3B1bWFza190ICpzZ3hf
-ZW5jbF9jcHVtYXNrKHN0cnVjdCBzZ3hfZW5jbA0KPiAqZW5jbCkNCj4gDQo+ICAJaWR4ID0gc3Jj
-dV9yZWFkX2xvY2soJmVuY2wtPnNyY3UpOw0KPiANCj4gLQlsaXN0X2Zvcl9lYWNoX2VudHJ5X3Jj
-dShlbmNsX21tLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCkgew0KPiArCWxpc3RfZm9yX2VhY2hfZW50
-cnlfc3JjdShlbmNsX21tLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCwNCj4gKwkJCXNyY3VfcmVhZF9s
-b2NrX2hlbGQoJmVuY2wtPnNyY3UpKSB7DQo+ICAJCWlmICghbW1nZXRfbm90X3plcm8oZW5jbF9t
-bS0+bW0pKQ0KPiAgCQkJY29udGludWU7DQo+IA0KPiBAQCAtMTAxOCw3ICsxMDIwLDggQEAgc3Rh
-dGljIHN0cnVjdCBtZW1fY2dyb3VwDQo+ICpzZ3hfZW5jbF9nZXRfbWVtX2Nncm91cChzdHJ1Y3Qg
-c2d4X2VuY2wgKmVuY2wpDQo+ICAJICovDQo+ICAJaWR4ID0gc3JjdV9yZWFkX2xvY2soJmVuY2wt
-PnNyY3UpOw0KPiANCj4gLQlsaXN0X2Zvcl9lYWNoX2VudHJ5X3JjdShlbmNsX21tLCAmZW5jbC0+
-bW1fbGlzdCwgbGlzdCkgew0KPiArCWxpc3RfZm9yX2VhY2hfZW50cnlfc3JjdShlbmNsX21tLCAm
-ZW5jbC0+bW1fbGlzdCwgbGlzdCwNCj4gKwkJCXNyY3VfcmVhZF9sb2NrX2hlbGQoJmVuY2wtPnNy
-Y3UpKSB7DQo+ICAJCWlmICghbW1nZXRfbm90X3plcm8oZW5jbF9tbS0+bW0pKQ0KPiAgCQkJY29u
-dGludWU7DQo+IA0KPiBAQCAtMTIxMiw3ICsxMjE1LDggQEAgdm9pZCBzZ3hfemFwX2VuY2xhdmVf
-cHRlcyhzdHJ1Y3Qgc2d4X2VuY2wgKmVuY2wsDQo+IHVuc2lnbmVkIGxvbmcgYWRkcikNCj4gDQo+
-ICAJCWlkeCA9IHNyY3VfcmVhZF9sb2NrKCZlbmNsLT5zcmN1KTsNCj4gDQo+IC0JCWxpc3RfZm9y
-X2VhY2hfZW50cnlfcmN1KGVuY2xfbW0sICZlbmNsLT5tbV9saXN0LCBsaXN0KSB7DQo+ICsJCWxp
-c3RfZm9yX2VhY2hfZW50cnlfc3JjdShlbmNsX21tLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCwNCj4g
-KwkJCQlzcmN1X3JlYWRfbG9ja19oZWxkKCZlbmNsLT5zcmN1KSkgew0KPiAgCQkJaWYgKCFtbWdl
-dF9ub3RfemVybyhlbmNsX21tLT5tbSkpDQo+ICAJCQkJY29udGludWU7DQo+IA0KPiBkaWZmIC0t
-Z2l0IGEvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvbWFpbi5jIGIvYXJjaC94ODYva2VybmVsL2Nw
-dS9zZ3gvbWFpbi5jDQo+IGluZGV4IDM4YjdmZDIuLjU4MWUwYzQgMTAwNjQ0DQo+IC0tLSBhL2Fy
-Y2gveDg2L2tlcm5lbC9jcHUvc2d4L21haW4uYw0KPiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1
-L3NneC9tYWluLmMNCj4gQEAgLTEyMCw3ICsxMjAsOCBAQCBzdGF0aWMgYm9vbCBzZ3hfcmVjbGFp
-bWVyX2FnZShzdHJ1Y3Qgc2d4X2VwY19wYWdlDQo+ICplcGNfcGFnZSkNCj4gDQo+ICAJaWR4ID0g
-c3JjdV9yZWFkX2xvY2soJmVuY2wtPnNyY3UpOw0KPiANCj4gLQlsaXN0X2Zvcl9lYWNoX2VudHJ5
-X3JjdShlbmNsX21tLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCkgew0KPiArCWxpc3RfZm9yX2VhY2hf
-ZW50cnlfc3JjdShlbmNsX21tLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCwNCj4gKwkJCXNyY3VfcmVh
-ZF9sb2NrX2hlbGQoJmVuY2wtPnNyY3UpKSB7DQo+ICAJCWlmICghbW1nZXRfbm90X3plcm8oZW5j
-bF9tbS0+bW0pKQ0KPiAgCQkJY29udGludWU7DQo+IA0KPiAtLQ0KPiAyLjkuNA0KDQo=
+On Tue, Apr 14, 2026 at 07:47:54AM +0000, Li,Rongqing(ACG CCN) wrote:
+> 
+> 
+> > From: Li RongQing <lirongqing@baidu.com>
+> > 
+> > In commit 1728ab54b4be ("x86/sgx: Add a page reclaimer") (v5.11),
+> > list_for_each_entry_rcu() was used to traverse the enclave's mm_list.
+> > However, this is incorrect because the list is protected by a Sleepable RCU (SRCU)
+> > lock (encl->srcu).
+> > 
+> > Since commit 28875945ba98 ("rcu: Add support for consolidated-RCU reader
+> > checking") (v5.4), RCU lockdep checking has become stricter. When
+> > CONFIG_PROVE_RCU is enabled, using the standard list_for_each_entry_rcu()
+> > while only holding an SRCU lock triggers "suspicious RCU usage" false positive
+> > warnings, as it does not recognize SRCU read-side critical sections.
+> > 
+> > Fix this by switching to list_for_each_entry_srcu(), which was introduced
+> > specifically for this purpose in commit ae2212a7216b
+> > ("rculist: Introduce list/hlist_for_each_entry_srcu() macros") (v5.10).
+> > This correctly associates the traversal with the SRCU lock and eliminates the
+> > lockdep warnings.
+> > 
+> > Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
+> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> > Acked-by: Kai Huang <kai.huang@intel.com>
+> > ---
+> 
+> Ping
+> 
+> thanks
+> 
+> [Li,Rongqing] 
+> 
+> 
+> 
+> > Diff with v1: rewrite changelog
+> > 
+> >  arch/x86/kernel/cpu/sgx/encl.c | 12 ++++++++----
+> > arch/x86/kernel/cpu/sgx/main.c |  3 ++-
+> >  2 files changed, 10 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> > index ac60ebd..91362d7 100644
+> > --- a/arch/x86/kernel/cpu/sgx/encl.c
+> > +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> > @@ -822,7 +822,8 @@ static struct sgx_encl_mm *sgx_encl_find_mm(struct
+> > sgx_encl *encl,
+> > 
+> >  	idx = srcu_read_lock(&encl->srcu);
+> > 
+> > -	list_for_each_entry_rcu(tmp, &encl->mm_list, list) {
+> > +	list_for_each_entry_srcu(tmp, &encl->mm_list, list,
+> > +			srcu_read_lock_held(&encl->srcu)) {
+> >  		if (tmp->mm == mm) {
+> >  			encl_mm = tmp;
+> >  			break;
+> > @@ -933,7 +934,8 @@ const cpumask_t *sgx_encl_cpumask(struct sgx_encl
+> > *encl)
+> > 
+> >  	idx = srcu_read_lock(&encl->srcu);
+> > 
+> > -	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
+> > +	list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
+> > +			srcu_read_lock_held(&encl->srcu)) {
+> >  		if (!mmget_not_zero(encl_mm->mm))
+> >  			continue;
+> > 
+> > @@ -1018,7 +1020,8 @@ static struct mem_cgroup
+> > *sgx_encl_get_mem_cgroup(struct sgx_encl *encl)
+> >  	 */
+> >  	idx = srcu_read_lock(&encl->srcu);
+> > 
+> > -	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
+> > +	list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
+> > +			srcu_read_lock_held(&encl->srcu)) {
+> >  		if (!mmget_not_zero(encl_mm->mm))
+> >  			continue;
+> > 
+> > @@ -1212,7 +1215,8 @@ void sgx_zap_enclave_ptes(struct sgx_encl *encl,
+> > unsigned long addr)
+> > 
+> >  		idx = srcu_read_lock(&encl->srcu);
+> > 
+> > -		list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
+> > +		list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
+> > +				srcu_read_lock_held(&encl->srcu)) {
+> >  			if (!mmget_not_zero(encl_mm->mm))
+> >  				continue;
+> > 
+> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> > index 38b7fd2..581e0c4 100644
+> > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > @@ -120,7 +120,8 @@ static bool sgx_reclaimer_age(struct sgx_epc_page
+> > *epc_page)
+> > 
+> >  	idx = srcu_read_lock(&encl->srcu);
+> > 
+> > -	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
+> > +	list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
+> > +			srcu_read_lock_held(&encl->srcu)) {
+> >  		if (!mmget_not_zero(encl_mm->mm))
+> >  			continue;
+> > 
+> > --
+> > 2.9.4
+> 
+
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+BR, Jarkko
