@@ -1,164 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outbound.baidu.com (mx13.baidu.com [220.181.3.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681513126D0;
-	Wed, 15 Apr 2026 02:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C322F8E9A;
+	Fri,  8 May 2026 00:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.3.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776221380; cv=none; b=Rh8up2qFaGQwYLgU+MM9nDiqIq0Noa5qVsZEq/OFEMTgIwHP+Pde9RRZzXitE6DxSAX7MYA2ja7vL5Qe+gyvETnliD3nmnSF/Lo8mn4WaS3qsrWVZQXdcHxT4lRfVDm33ILcyyt56FW+Obx0KIsmaLlwy0lPS5ll2a4jF4jJZPY=
+	t=1778201159; cv=none; b=Jc2NBHE7SdPzWtCTikQ8wj4JPjyer1fwVVYh6W+UxYPiSdCwTHpA+IXOXhM/IDjqWaH7JvK7OHmXwSrXJmCSrG5hXv+a6hSq3/kzbF8lzxT+xeSwL81/+wpF/ahL6c4hyQYMMGVPnmjN5jG7riW2b3upHdmV/cNNtYt90WOE0l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776221380; c=relaxed/simple;
-	bh=0AuenaOfmDE99zOKcXCll7vxX25cPALTWSc7lA12r8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ne1agljSJhoO917YV2sURDHdA80yVEpBSe7AxA/FVh4R0roBIbGuqv7hiwmlxA3E6HWiqVsaY0hQf8gZNu1v88rBmYDPthKpHI+QTWM9pDWrJHV/ajxeirXWYoCwxJ5xveDEOkuoJCritEx3y94hF53bM55i+CbZReyzraKI3ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NC5av1rK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778201159; c=relaxed/simple;
+	bh=ZnBbKW2QVzVcmwztlvC0qlGM9lKrgPlMyhYrowjPQNg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EzUKHhkF4/Ujl2a++QdOob86odU1/hXqkT4m5MhLZZDqw5lTRAwGewzU5VMqp3zY1teHS4sCVrdQuwZ3QBXwB8AhgsUtZ7ygQSGs6kU1yBzz08ktaotlyquLIYD7l55RfW6rnRwHuvzCFnBOwFaiBYhsAbgiC1d02kmBlI/LLTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; dkim=pass (2048-bit key) header.d=baidu.com header.i=@baidu.com header.b=ITtmwgmO; arc=none smtp.client-ip=220.181.3.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NC5av1rK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D342C19425;
-	Wed, 15 Apr 2026 02:49:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776221380;
-	bh=0AuenaOfmDE99zOKcXCll7vxX25cPALTWSc7lA12r8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NC5av1rK5RQMpd3VkE01VXX28D1NScamat3D2yU/BLI8M1aEWTiYwpWiegGHcWJYL
-	 5D7bg6J7MBdvO3JFbWT81/VtG6f4XuKg7OW8dvX8Saggo+z1MD4VfhrDpMj3si+Hx0
-	 cGziEv8MqIqcr3UENYdXBhswntrvfMSlkmgw6vIpGzZB/tS7X2XJ5nGIptdpmgMEi3
-	 MRATSuz3y+uSYhyvRJbPgaLQ0/Z3OeI3+b77lRiNP80EFPL3XLBdriGjt5du1mzSSm
-	 Uf3wTYkuMu7h5Ze2RdLHRqSDbY5BFDLDnVpFXR9XPTY0Sz3th2WGiEkAwNyVT6j2tT
-	 63CLqfkHl62lg==
-Date: Wed, 15 Apr 2026 05:49:36 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Li,Rongqing(ACG CCN)" <lirongqing@baidu.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>, Kai Huang <kai.huang@intel.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: =?utf-8?B?562U5aSNOiBbUEFUQ0hdW3YyXSB4?= =?utf-8?Q?86=2Fsgx?=
- =?utf-8?Q?=3A?= Use list_for_each_entry_srcu() for mm_list traversal
-Message-ID: <ad78wMV3Au2yN4ko@kernel.org>
+	dkim=pass (2048-bit key) header.d=baidu.com header.i=@baidu.com header.b="ITtmwgmO"
+X-MD-Sfrom: lirongqing@baidu.com
+X-MD-SrcIP: 172.31.50.46
+From: "Li,Rongqing(ACG CCN)" <lirongqing@baidu.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+CC: Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner
+	<tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin"
+	<hpa@zytor.com>, Kai Huang <kai.huang@intel.com>, "linux-sgx@vger.kernel.org"
+	<linux-sgx@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?gb2312?B?tPC4tDogWz8/Pz9dIFJlOiA/PzogW1BBVENIXVt2Ml0geDg2L3NneDogVXNl?=
+ =?gb2312?B?IGxpc3RfZm9yX2VhY2hfZW50cnlfc3JjdSgpIGZvciBtbV9saXN0IHRyYXZl?=
+ =?gb2312?Q?rsal?=
+Thread-Topic: [????] Re: ??: [PATCH][v2] x86/sgx: Use
+ list_for_each_entry_srcu() for mm_list traversal
+Thread-Index: AQHcpsDeTyQCr4ISd0yU2FIIhTv3KbXeeF1QgAC5AgCAJIhHQA==
+Date: Fri, 8 May 2026 00:43:31 +0000
+Message-ID: <e15394a0999b48dcaa33dbe3c2cab638@baidu.com>
 References: <20260226014014.2541-1-lirongqing@baidu.com>
- <484ff5a62fee43618b30bbafb1ab3723@baidu.com>
+ <484ff5a62fee43618b30bbafb1ab3723@baidu.com> <ad78wMV3Au2yN4ko@kernel.org>
+In-Reply-To: <ad78wMV3Au2yN4ko@kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <484ff5a62fee43618b30bbafb1ab3723@baidu.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=baidu.com;
+	s=selector1; t=1778201016;
+	bh=ZnBbKW2QVzVcmwztlvC0qlGM9lKrgPlMyhYrowjPQNg=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type;
+	b=ITtmwgmO3tFbUj2QuTVXMJ+A2ok8n1R6ejx85eeWeMgW3TwiNNLxDqJftrJiL1zs9
+	 ygl2nNmz+zeeX1K5CU2XoTP+PxHrD9b6sZGc7BW7j6vBOmu8G8ZhEna1Bq1YeJoXuW
+	 FSe0UvketKXQWqf0rP7SrBE58njnPejiAVj5WeUqH+M0kJGzhz1E1aqfwlsS5BfWMu
+	 ZVwx+Tiz8XVsEHXr8cz3zgAVbzoDfxbdfqt5X92+CgTbNescRwQnoZlV+oeALMtnuu
+	 38/yM1nxKt6FZK0amWuKYnCs1yZqPUOezvSkGnu3GNCIYgIGeo6Oy5PzNTpVSHr5uH
+	 mxzIeE96RK+9g==
 
-On Tue, Apr 14, 2026 at 07:47:54AM +0000, Li,Rongqing(ACG CCN) wrote:
-> 
-> 
-> > From: Li RongQing <lirongqing@baidu.com>
-> > 
-> > In commit 1728ab54b4be ("x86/sgx: Add a page reclaimer") (v5.11),
-> > list_for_each_entry_rcu() was used to traverse the enclave's mm_list.
-> > However, this is incorrect because the list is protected by a Sleepable RCU (SRCU)
-> > lock (encl->srcu).
-> > 
-> > Since commit 28875945ba98 ("rcu: Add support for consolidated-RCU reader
-> > checking") (v5.4), RCU lockdep checking has become stricter. When
-> > CONFIG_PROVE_RCU is enabled, using the standard list_for_each_entry_rcu()
-> > while only holding an SRCU lock triggers "suspicious RCU usage" false positive
-> > warnings, as it does not recognize SRCU read-side critical sections.
-> > 
-> > Fix this by switching to list_for_each_entry_srcu(), which was introduced
-> > specifically for this purpose in commit ae2212a7216b
-> > ("rculist: Introduce list/hlist_for_each_entry_srcu() macros") (v5.10).
-> > This correctly associates the traversal with the SRCU lock and eliminates the
-> > lockdep warnings.
-> > 
-> > Fixes: 1728ab54b4be ("x86/sgx: Add a page reclaimer")
-> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> > Acked-by: Kai Huang <kai.huang@intel.com>
-> > ---
-> 
-> Ping
-> 
-> thanks
-> 
-> [Li,Rongqing] 
-> 
-> 
-> 
-> > Diff with v1: rewrite changelog
-> > 
-> >  arch/x86/kernel/cpu/sgx/encl.c | 12 ++++++++----
-> > arch/x86/kernel/cpu/sgx/main.c |  3 ++-
-> >  2 files changed, 10 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-> > index ac60ebd..91362d7 100644
-> > --- a/arch/x86/kernel/cpu/sgx/encl.c
-> > +++ b/arch/x86/kernel/cpu/sgx/encl.c
-> > @@ -822,7 +822,8 @@ static struct sgx_encl_mm *sgx_encl_find_mm(struct
-> > sgx_encl *encl,
-> > 
-> >  	idx = srcu_read_lock(&encl->srcu);
-> > 
-> > -	list_for_each_entry_rcu(tmp, &encl->mm_list, list) {
-> > +	list_for_each_entry_srcu(tmp, &encl->mm_list, list,
-> > +			srcu_read_lock_held(&encl->srcu)) {
-> >  		if (tmp->mm == mm) {
-> >  			encl_mm = tmp;
-> >  			break;
-> > @@ -933,7 +934,8 @@ const cpumask_t *sgx_encl_cpumask(struct sgx_encl
-> > *encl)
-> > 
-> >  	idx = srcu_read_lock(&encl->srcu);
-> > 
-> > -	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-> > +	list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
-> > +			srcu_read_lock_held(&encl->srcu)) {
-> >  		if (!mmget_not_zero(encl_mm->mm))
-> >  			continue;
-> > 
-> > @@ -1018,7 +1020,8 @@ static struct mem_cgroup
-> > *sgx_encl_get_mem_cgroup(struct sgx_encl *encl)
-> >  	 */
-> >  	idx = srcu_read_lock(&encl->srcu);
-> > 
-> > -	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-> > +	list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
-> > +			srcu_read_lock_held(&encl->srcu)) {
-> >  		if (!mmget_not_zero(encl_mm->mm))
-> >  			continue;
-> > 
-> > @@ -1212,7 +1215,8 @@ void sgx_zap_enclave_ptes(struct sgx_encl *encl,
-> > unsigned long addr)
-> > 
-> >  		idx = srcu_read_lock(&encl->srcu);
-> > 
-> > -		list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-> > +		list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
-> > +				srcu_read_lock_held(&encl->srcu)) {
-> >  			if (!mmget_not_zero(encl_mm->mm))
-> >  				continue;
-> > 
-> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> > index 38b7fd2..581e0c4 100644
-> > --- a/arch/x86/kernel/cpu/sgx/main.c
-> > +++ b/arch/x86/kernel/cpu/sgx/main.c
-> > @@ -120,7 +120,8 @@ static bool sgx_reclaimer_age(struct sgx_epc_page
-> > *epc_page)
-> > 
-> >  	idx = srcu_read_lock(&encl->srcu);
-> > 
-> > -	list_for_each_entry_rcu(encl_mm, &encl->mm_list, list) {
-> > +	list_for_each_entry_srcu(encl_mm, &encl->mm_list, list,
-> > +			srcu_read_lock_held(&encl->srcu)) {
-> >  		if (!mmget_not_zero(encl_mm->mm))
-> >  			continue;
-> > 
-> > --
-> > 2.9.4
-> 
-
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-BR, Jarkko
+PiBPbiBUdWUsIEFwciAxNCwgMjAyNiBhdCAwNzo0Nzo1NEFNICswMDAwLCBMaSxSb25ncWluZyhB
+Q0cgQ0NOKSB3cm90ZToNCj4gPg0KPiA+DQo+ID4gPiBGcm9tOiBMaSBSb25nUWluZyA8bGlyb25n
+cWluZ0BiYWlkdS5jb20+DQo+ID4gPg0KPiA+ID4gSW4gY29tbWl0IDE3MjhhYjU0YjRiZSAoIng4
+Ni9zZ3g6IEFkZCBhIHBhZ2UgcmVjbGFpbWVyIikgKHY1LjExKSwNCj4gPiA+IGxpc3RfZm9yX2Vh
+Y2hfZW50cnlfcmN1KCkgd2FzIHVzZWQgdG8gdHJhdmVyc2UgdGhlIGVuY2xhdmUncyBtbV9saXN0
+Lg0KPiA+ID4gSG93ZXZlciwgdGhpcyBpcyBpbmNvcnJlY3QgYmVjYXVzZSB0aGUgbGlzdCBpcyBw
+cm90ZWN0ZWQgYnkgYQ0KPiA+ID4gU2xlZXBhYmxlIFJDVSAoU1JDVSkgbG9jayAoZW5jbC0+c3Jj
+dSkuDQo+ID4gPg0KPiA+ID4gU2luY2UgY29tbWl0IDI4ODc1OTQ1YmE5OCAoInJjdTogQWRkIHN1
+cHBvcnQgZm9yIGNvbnNvbGlkYXRlZC1SQ1UNCj4gPiA+IHJlYWRlcg0KPiA+ID4gY2hlY2tpbmci
+KSAodjUuNCksIFJDVSBsb2NrZGVwIGNoZWNraW5nIGhhcyBiZWNvbWUgc3RyaWN0ZXIuIFdoZW4N
+Cj4gPiA+IENPTkZJR19QUk9WRV9SQ1UgaXMgZW5hYmxlZCwgdXNpbmcgdGhlIHN0YW5kYXJkDQo+
+ID4gPiBsaXN0X2Zvcl9lYWNoX2VudHJ5X3JjdSgpIHdoaWxlIG9ubHkgaG9sZGluZyBhbiBTUkNV
+IGxvY2sgdHJpZ2dlcnMNCj4gPiA+ICJzdXNwaWNpb3VzIFJDVSB1c2FnZSIgZmFsc2UgcG9zaXRp
+dmUgd2FybmluZ3MsIGFzIGl0IGRvZXMgbm90IHJlY29nbml6ZSBTUkNVDQo+IHJlYWQtc2lkZSBj
+cml0aWNhbCBzZWN0aW9ucy4NCj4gPiA+DQo+ID4gPiBGaXggdGhpcyBieSBzd2l0Y2hpbmcgdG8g
+bGlzdF9mb3JfZWFjaF9lbnRyeV9zcmN1KCksIHdoaWNoIHdhcw0KPiA+ID4gaW50cm9kdWNlZCBz
+cGVjaWZpY2FsbHkgZm9yIHRoaXMgcHVycG9zZSBpbiBjb21taXQgYWUyMjEyYTcyMTZiDQo+ID4g
+PiAoInJjdWxpc3Q6IEludHJvZHVjZSBsaXN0L2hsaXN0X2Zvcl9lYWNoX2VudHJ5X3NyY3UoKSBt
+YWNyb3MiKSAodjUuMTApLg0KPiA+ID4gVGhpcyBjb3JyZWN0bHkgYXNzb2NpYXRlcyB0aGUgdHJh
+dmVyc2FsIHdpdGggdGhlIFNSQ1UgbG9jayBhbmQNCj4gPiA+IGVsaW1pbmF0ZXMgdGhlIGxvY2tk
+ZXAgd2FybmluZ3MuDQo+ID4gPg0KPiA+ID4gRml4ZXM6IDE3MjhhYjU0YjRiZSAoIng4Ni9zZ3g6
+IEFkZCBhIHBhZ2UgcmVjbGFpbWVyIikNCj4gPiA+IFNpZ25lZC1vZmYtYnk6IExpIFJvbmdRaW5n
+IDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4NCj4gPiA+IEFja2VkLWJ5OiBLYWkgSHVhbmcgPGthaS5o
+dWFuZ0BpbnRlbC5jb20+DQo+ID4gPiAtLS0NCj4gPg0KPiA+IFBpbmcNCj4gPg0KPiA+IHRoYW5r
+cw0KPiA+DQo+ID4gW0xpLFJvbmdxaW5nXQ0KPiA+DQo+ID4NCj4gPg0KPiA+ID4gRGlmZiB3aXRo
+IHYxOiByZXdyaXRlIGNoYW5nZWxvZw0KPiA+ID4NCj4gPiA+ICBhcmNoL3g4Ni9rZXJuZWwvY3B1
+L3NneC9lbmNsLmMgfCAxMiArKysrKysrKy0tLS0NCj4gPiA+IGFyY2gveDg2L2tlcm5lbC9jcHUv
+c2d4L21haW4uYyB8ICAzICsrLQ0KPiA+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMTAgaW5zZXJ0aW9u
+cygrKSwgNSBkZWxldGlvbnMoLSkNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYv
+a2VybmVsL2NwdS9zZ3gvZW5jbC5jDQo+ID4gPiBiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L2Vu
+Y2wuYyBpbmRleCBhYzYwZWJkLi45MTM2MmQ3IDEwMDY0NA0KPiA+ID4gLS0tIGEvYXJjaC94ODYv
+a2VybmVsL2NwdS9zZ3gvZW5jbC5jDQo+ID4gPiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L3Nn
+eC9lbmNsLmMNCj4gPiA+IEBAIC04MjIsNyArODIyLDggQEAgc3RhdGljIHN0cnVjdCBzZ3hfZW5j
+bF9tbQ0KPiA+ID4gKnNneF9lbmNsX2ZpbmRfbW0oc3RydWN0IHNneF9lbmNsICplbmNsLA0KPiA+
+ID4NCj4gPiA+ICAJaWR4ID0gc3JjdV9yZWFkX2xvY2soJmVuY2wtPnNyY3UpOw0KPiA+ID4NCj4g
+PiA+IC0JbGlzdF9mb3JfZWFjaF9lbnRyeV9yY3UodG1wLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCkg
+ew0KPiA+ID4gKwlsaXN0X2Zvcl9lYWNoX2VudHJ5X3NyY3UodG1wLCAmZW5jbC0+bW1fbGlzdCwg
+bGlzdCwNCj4gPiA+ICsJCQlzcmN1X3JlYWRfbG9ja19oZWxkKCZlbmNsLT5zcmN1KSkgew0KPiA+
+ID4gIAkJaWYgKHRtcC0+bW0gPT0gbW0pIHsNCj4gPiA+ICAJCQllbmNsX21tID0gdG1wOw0KPiA+
+ID4gIAkJCWJyZWFrOw0KPiA+ID4gQEAgLTkzMyw3ICs5MzQsOCBAQCBjb25zdCBjcHVtYXNrX3Qg
+KnNneF9lbmNsX2NwdW1hc2soc3RydWN0DQo+ID4gPiBzZ3hfZW5jbA0KPiA+ID4gKmVuY2wpDQo+
+ID4gPg0KPiA+ID4gIAlpZHggPSBzcmN1X3JlYWRfbG9jaygmZW5jbC0+c3JjdSk7DQo+ID4gPg0K
+PiA+ID4gLQlsaXN0X2Zvcl9lYWNoX2VudHJ5X3JjdShlbmNsX21tLCAmZW5jbC0+bW1fbGlzdCwg
+bGlzdCkgew0KPiA+ID4gKwlsaXN0X2Zvcl9lYWNoX2VudHJ5X3NyY3UoZW5jbF9tbSwgJmVuY2wt
+Pm1tX2xpc3QsIGxpc3QsDQo+ID4gPiArCQkJc3JjdV9yZWFkX2xvY2tfaGVsZCgmZW5jbC0+c3Jj
+dSkpIHsNCj4gPiA+ICAJCWlmICghbW1nZXRfbm90X3plcm8oZW5jbF9tbS0+bW0pKQ0KPiA+ID4g
+IAkJCWNvbnRpbnVlOw0KPiA+ID4NCj4gPiA+IEBAIC0xMDE4LDcgKzEwMjAsOCBAQCBzdGF0aWMg
+c3RydWN0IG1lbV9jZ3JvdXANCj4gPiA+ICpzZ3hfZW5jbF9nZXRfbWVtX2Nncm91cChzdHJ1Y3Qg
+c2d4X2VuY2wgKmVuY2wpDQo+ID4gPiAgCSAqLw0KPiA+ID4gIAlpZHggPSBzcmN1X3JlYWRfbG9j
+aygmZW5jbC0+c3JjdSk7DQo+ID4gPg0KPiA+ID4gLQlsaXN0X2Zvcl9lYWNoX2VudHJ5X3JjdShl
+bmNsX21tLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCkgew0KPiA+ID4gKwlsaXN0X2Zvcl9lYWNoX2Vu
+dHJ5X3NyY3UoZW5jbF9tbSwgJmVuY2wtPm1tX2xpc3QsIGxpc3QsDQo+ID4gPiArCQkJc3JjdV9y
+ZWFkX2xvY2tfaGVsZCgmZW5jbC0+c3JjdSkpIHsNCj4gPiA+ICAJCWlmICghbW1nZXRfbm90X3pl
+cm8oZW5jbF9tbS0+bW0pKQ0KPiA+ID4gIAkJCWNvbnRpbnVlOw0KPiA+ID4NCj4gPiA+IEBAIC0x
+MjEyLDcgKzEyMTUsOCBAQCB2b2lkIHNneF96YXBfZW5jbGF2ZV9wdGVzKHN0cnVjdCBzZ3hfZW5j
+bA0KPiA+ID4gKmVuY2wsIHVuc2lnbmVkIGxvbmcgYWRkcikNCj4gPiA+DQo+ID4gPiAgCQlpZHgg
+PSBzcmN1X3JlYWRfbG9jaygmZW5jbC0+c3JjdSk7DQo+ID4gPg0KPiA+ID4gLQkJbGlzdF9mb3Jf
+ZWFjaF9lbnRyeV9yY3UoZW5jbF9tbSwgJmVuY2wtPm1tX2xpc3QsIGxpc3QpIHsNCj4gPiA+ICsJ
+CWxpc3RfZm9yX2VhY2hfZW50cnlfc3JjdShlbmNsX21tLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCwN
+Cj4gPiA+ICsJCQkJc3JjdV9yZWFkX2xvY2tfaGVsZCgmZW5jbC0+c3JjdSkpIHsNCj4gPiA+ICAJ
+CQlpZiAoIW1tZ2V0X25vdF96ZXJvKGVuY2xfbW0tPm1tKSkNCj4gPiA+ICAJCQkJY29udGludWU7
+DQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L21haW4u
+Yw0KPiA+ID4gYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9tYWluLmMgaW5kZXggMzhiN2ZkMi4u
+NTgxZTBjNCAxMDA2NDQNCj4gPiA+IC0tLSBhL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L21haW4u
+Yw0KPiA+ID4gKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvbWFpbi5jDQo+ID4gPiBAQCAt
+MTIwLDcgKzEyMCw4IEBAIHN0YXRpYyBib29sIHNneF9yZWNsYWltZXJfYWdlKHN0cnVjdA0KPiA+
+ID4gc2d4X2VwY19wYWdlDQo+ID4gPiAqZXBjX3BhZ2UpDQo+ID4gPg0KPiA+ID4gIAlpZHggPSBz
+cmN1X3JlYWRfbG9jaygmZW5jbC0+c3JjdSk7DQo+ID4gPg0KPiA+ID4gLQlsaXN0X2Zvcl9lYWNo
+X2VudHJ5X3JjdShlbmNsX21tLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCkgew0KPiA+ID4gKwlsaXN0
+X2Zvcl9lYWNoX2VudHJ5X3NyY3UoZW5jbF9tbSwgJmVuY2wtPm1tX2xpc3QsIGxpc3QsDQo+ID4g
+PiArCQkJc3JjdV9yZWFkX2xvY2tfaGVsZCgmZW5jbC0+c3JjdSkpIHsNCj4gPiA+ICAJCWlmICgh
+bW1nZXRfbm90X3plcm8oZW5jbF9tbS0+bW0pKQ0KPiA+ID4gIAkJCWNvbnRpbnVlOw0KPiA+ID4N
+Cj4gPiA+IC0tDQo+ID4gPiAyLjkuNA0KPiA+DQo+IA0KPiANCj4gUmV2aWV3ZWQtYnk6IEphcmtr
+byBTYWtraW5lbiA8amFya2tvQGtlcm5lbC5vcmc+DQo+IA0KDQpUaGFua3MgZm9yIHlvdXIgcmV2
+aWV3Lg0KDQpBbmQgcGluZw0KDQpbTGksUm9uZ3FpbmddIA0KDQoNCj4gQlIsIEphcmtrbw0K
