@@ -1,137 +1,84 @@
-Received: from outbound.baidu.com (mx13.baidu.com [220.181.3.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C322F8E9A;
-	Fri,  8 May 2026 00:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.3.100
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF85387362;
+	Thu,  4 Jun 2026 18:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778201159; cv=none; b=Jc2NBHE7SdPzWtCTikQ8wj4JPjyer1fwVVYh6W+UxYPiSdCwTHpA+IXOXhM/IDjqWaH7JvK7OHmXwSrXJmCSrG5hXv+a6hSq3/kzbF8lzxT+xeSwL81/+wpF/ahL6c4hyQYMMGVPnmjN5jG7riW2b3upHdmV/cNNtYt90WOE0l8=
+	t=1780597796; cv=none; b=IbpE0P1wREFv0C6SPYgXA+nIRZESStIa5heKX4zdzPmsGpL0HcwhwURpLT9DDOuDyTb6eujKxSHmjbVdcXXMbwbOVfUyVh58VlHEElGUBnZzA4UiT3mPEUvZea1NtL9ivgnAhFXgV98kL9jzVfQlsFRt5CoFCBlWCxCTOuVSAr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778201159; c=relaxed/simple;
-	bh=ZnBbKW2QVzVcmwztlvC0qlGM9lKrgPlMyhYrowjPQNg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EzUKHhkF4/Ujl2a++QdOob86odU1/hXqkT4m5MhLZZDqw5lTRAwGewzU5VMqp3zY1teHS4sCVrdQuwZ3QBXwB8AhgsUtZ7ygQSGs6kU1yBzz08ktaotlyquLIYD7l55RfW6rnRwHuvzCFnBOwFaiBYhsAbgiC1d02kmBlI/LLTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; dkim=pass (2048-bit key) header.d=baidu.com header.i=@baidu.com header.b=ITtmwgmO; arc=none smtp.client-ip=220.181.3.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baidu.com header.i=@baidu.com header.b="ITtmwgmO"
-X-MD-Sfrom: lirongqing@baidu.com
-X-MD-SrcIP: 172.31.50.46
-From: "Li,Rongqing(ACG CCN)" <lirongqing@baidu.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-CC: Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner
-	<tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin"
-	<hpa@zytor.com>, Kai Huang <kai.huang@intel.com>, "linux-sgx@vger.kernel.org"
-	<linux-sgx@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: =?gb2312?B?tPC4tDogWz8/Pz9dIFJlOiA/PzogW1BBVENIXVt2Ml0geDg2L3NneDogVXNl?=
- =?gb2312?B?IGxpc3RfZm9yX2VhY2hfZW50cnlfc3JjdSgpIGZvciBtbV9saXN0IHRyYXZl?=
- =?gb2312?Q?rsal?=
-Thread-Topic: [????] Re: ??: [PATCH][v2] x86/sgx: Use
- list_for_each_entry_srcu() for mm_list traversal
-Thread-Index: AQHcpsDeTyQCr4ISd0yU2FIIhTv3KbXeeF1QgAC5AgCAJIhHQA==
-Date: Fri, 8 May 2026 00:43:31 +0000
-Message-ID: <e15394a0999b48dcaa33dbe3c2cab638@baidu.com>
-References: <20260226014014.2541-1-lirongqing@baidu.com>
- <484ff5a62fee43618b30bbafb1ab3723@baidu.com> <ad78wMV3Au2yN4ko@kernel.org>
-In-Reply-To: <ad78wMV3Au2yN4ko@kernel.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1780597796; c=relaxed/simple;
+	bh=tdCBIKH15YGi5T/akMz88/niI0yIDsK4QHkJGr0NjXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=i/7rwAZhSxOVK+h2WMuKGn0rbQE3cttQ8mmIGh+GHBtIbp4rS2EJjAAQRAdHgb9BmtBFQDiGYnLvIYoubD8nZZKvlR/Ri7BrMZNh+sk4A7E3L4847IdpAX3Qtq1sJXy3KhtBa4NGVIiAsDzNb65gWwBbaSP/2ilESZVsPFGnQ04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe1d30.dip0.t-ipconnect.de [79.254.29.48])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 051ED201CB9;
+	Thu,  4 Jun 2026 20:29:48 +0200 (CEST)
+Date: Thu, 4 Jun 2026 20:29:46 +0200
+From: =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
+To: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	coconut-svsm@lists.linux.dev, linux-sgx@vger.kernel.org
+Cc: Dhaval Giani <dhaval.giani@gmail.com>
+Subject: [CfP] Confidential Computing Microconference (LPC 2026)
+Message-ID: <aiHCZo2BWj0MaJLQ@8bytes.org>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=baidu.com;
-	s=selector1; t=1778201016;
-	bh=ZnBbKW2QVzVcmwztlvC0qlGM9lKrgPlMyhYrowjPQNg=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type;
-	b=ITtmwgmO3tFbUj2QuTVXMJ+A2ok8n1R6ejx85eeWeMgW3TwiNNLxDqJftrJiL1zs9
-	 ygl2nNmz+zeeX1K5CU2XoTP+PxHrD9b6sZGc7BW7j6vBOmu8G8ZhEna1Bq1YeJoXuW
-	 FSe0UvketKXQWqf0rP7SrBE58njnPejiAVj5WeUqH+M0kJGzhz1E1aqfwlsS5BfWMu
-	 ZVwx+Tiz8XVsEHXr8cz3zgAVbzoDfxbdfqt5X92+CgTbNescRwQnoZlV+oeALMtnuu
-	 38/yM1nxKt6FZK0amWuKYnCs1yZqPUOezvSkGnu3GNCIYgIGeo6Oy5PzNTpVSHr5uH
-	 mxzIeE96RK+9g==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-PiBPbiBUdWUsIEFwciAxNCwgMjAyNiBhdCAwNzo0Nzo1NEFNICswMDAwLCBMaSxSb25ncWluZyhB
-Q0cgQ0NOKSB3cm90ZToNCj4gPg0KPiA+DQo+ID4gPiBGcm9tOiBMaSBSb25nUWluZyA8bGlyb25n
-cWluZ0BiYWlkdS5jb20+DQo+ID4gPg0KPiA+ID4gSW4gY29tbWl0IDE3MjhhYjU0YjRiZSAoIng4
-Ni9zZ3g6IEFkZCBhIHBhZ2UgcmVjbGFpbWVyIikgKHY1LjExKSwNCj4gPiA+IGxpc3RfZm9yX2Vh
-Y2hfZW50cnlfcmN1KCkgd2FzIHVzZWQgdG8gdHJhdmVyc2UgdGhlIGVuY2xhdmUncyBtbV9saXN0
-Lg0KPiA+ID4gSG93ZXZlciwgdGhpcyBpcyBpbmNvcnJlY3QgYmVjYXVzZSB0aGUgbGlzdCBpcyBw
-cm90ZWN0ZWQgYnkgYQ0KPiA+ID4gU2xlZXBhYmxlIFJDVSAoU1JDVSkgbG9jayAoZW5jbC0+c3Jj
-dSkuDQo+ID4gPg0KPiA+ID4gU2luY2UgY29tbWl0IDI4ODc1OTQ1YmE5OCAoInJjdTogQWRkIHN1
-cHBvcnQgZm9yIGNvbnNvbGlkYXRlZC1SQ1UNCj4gPiA+IHJlYWRlcg0KPiA+ID4gY2hlY2tpbmci
-KSAodjUuNCksIFJDVSBsb2NrZGVwIGNoZWNraW5nIGhhcyBiZWNvbWUgc3RyaWN0ZXIuIFdoZW4N
-Cj4gPiA+IENPTkZJR19QUk9WRV9SQ1UgaXMgZW5hYmxlZCwgdXNpbmcgdGhlIHN0YW5kYXJkDQo+
-ID4gPiBsaXN0X2Zvcl9lYWNoX2VudHJ5X3JjdSgpIHdoaWxlIG9ubHkgaG9sZGluZyBhbiBTUkNV
-IGxvY2sgdHJpZ2dlcnMNCj4gPiA+ICJzdXNwaWNpb3VzIFJDVSB1c2FnZSIgZmFsc2UgcG9zaXRp
-dmUgd2FybmluZ3MsIGFzIGl0IGRvZXMgbm90IHJlY29nbml6ZSBTUkNVDQo+IHJlYWQtc2lkZSBj
-cml0aWNhbCBzZWN0aW9ucy4NCj4gPiA+DQo+ID4gPiBGaXggdGhpcyBieSBzd2l0Y2hpbmcgdG8g
-bGlzdF9mb3JfZWFjaF9lbnRyeV9zcmN1KCksIHdoaWNoIHdhcw0KPiA+ID4gaW50cm9kdWNlZCBz
-cGVjaWZpY2FsbHkgZm9yIHRoaXMgcHVycG9zZSBpbiBjb21taXQgYWUyMjEyYTcyMTZiDQo+ID4g
-PiAoInJjdWxpc3Q6IEludHJvZHVjZSBsaXN0L2hsaXN0X2Zvcl9lYWNoX2VudHJ5X3NyY3UoKSBt
-YWNyb3MiKSAodjUuMTApLg0KPiA+ID4gVGhpcyBjb3JyZWN0bHkgYXNzb2NpYXRlcyB0aGUgdHJh
-dmVyc2FsIHdpdGggdGhlIFNSQ1UgbG9jayBhbmQNCj4gPiA+IGVsaW1pbmF0ZXMgdGhlIGxvY2tk
-ZXAgd2FybmluZ3MuDQo+ID4gPg0KPiA+ID4gRml4ZXM6IDE3MjhhYjU0YjRiZSAoIng4Ni9zZ3g6
-IEFkZCBhIHBhZ2UgcmVjbGFpbWVyIikNCj4gPiA+IFNpZ25lZC1vZmYtYnk6IExpIFJvbmdRaW5n
-IDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4NCj4gPiA+IEFja2VkLWJ5OiBLYWkgSHVhbmcgPGthaS5o
-dWFuZ0BpbnRlbC5jb20+DQo+ID4gPiAtLS0NCj4gPg0KPiA+IFBpbmcNCj4gPg0KPiA+IHRoYW5r
-cw0KPiA+DQo+ID4gW0xpLFJvbmdxaW5nXQ0KPiA+DQo+ID4NCj4gPg0KPiA+ID4gRGlmZiB3aXRo
-IHYxOiByZXdyaXRlIGNoYW5nZWxvZw0KPiA+ID4NCj4gPiA+ICBhcmNoL3g4Ni9rZXJuZWwvY3B1
-L3NneC9lbmNsLmMgfCAxMiArKysrKysrKy0tLS0NCj4gPiA+IGFyY2gveDg2L2tlcm5lbC9jcHUv
-c2d4L21haW4uYyB8ICAzICsrLQ0KPiA+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMTAgaW5zZXJ0aW9u
-cygrKSwgNSBkZWxldGlvbnMoLSkNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYv
-a2VybmVsL2NwdS9zZ3gvZW5jbC5jDQo+ID4gPiBiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L2Vu
-Y2wuYyBpbmRleCBhYzYwZWJkLi45MTM2MmQ3IDEwMDY0NA0KPiA+ID4gLS0tIGEvYXJjaC94ODYv
-a2VybmVsL2NwdS9zZ3gvZW5jbC5jDQo+ID4gPiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L3Nn
-eC9lbmNsLmMNCj4gPiA+IEBAIC04MjIsNyArODIyLDggQEAgc3RhdGljIHN0cnVjdCBzZ3hfZW5j
-bF9tbQ0KPiA+ID4gKnNneF9lbmNsX2ZpbmRfbW0oc3RydWN0IHNneF9lbmNsICplbmNsLA0KPiA+
-ID4NCj4gPiA+ICAJaWR4ID0gc3JjdV9yZWFkX2xvY2soJmVuY2wtPnNyY3UpOw0KPiA+ID4NCj4g
-PiA+IC0JbGlzdF9mb3JfZWFjaF9lbnRyeV9yY3UodG1wLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCkg
-ew0KPiA+ID4gKwlsaXN0X2Zvcl9lYWNoX2VudHJ5X3NyY3UodG1wLCAmZW5jbC0+bW1fbGlzdCwg
-bGlzdCwNCj4gPiA+ICsJCQlzcmN1X3JlYWRfbG9ja19oZWxkKCZlbmNsLT5zcmN1KSkgew0KPiA+
-ID4gIAkJaWYgKHRtcC0+bW0gPT0gbW0pIHsNCj4gPiA+ICAJCQllbmNsX21tID0gdG1wOw0KPiA+
-ID4gIAkJCWJyZWFrOw0KPiA+ID4gQEAgLTkzMyw3ICs5MzQsOCBAQCBjb25zdCBjcHVtYXNrX3Qg
-KnNneF9lbmNsX2NwdW1hc2soc3RydWN0DQo+ID4gPiBzZ3hfZW5jbA0KPiA+ID4gKmVuY2wpDQo+
-ID4gPg0KPiA+ID4gIAlpZHggPSBzcmN1X3JlYWRfbG9jaygmZW5jbC0+c3JjdSk7DQo+ID4gPg0K
-PiA+ID4gLQlsaXN0X2Zvcl9lYWNoX2VudHJ5X3JjdShlbmNsX21tLCAmZW5jbC0+bW1fbGlzdCwg
-bGlzdCkgew0KPiA+ID4gKwlsaXN0X2Zvcl9lYWNoX2VudHJ5X3NyY3UoZW5jbF9tbSwgJmVuY2wt
-Pm1tX2xpc3QsIGxpc3QsDQo+ID4gPiArCQkJc3JjdV9yZWFkX2xvY2tfaGVsZCgmZW5jbC0+c3Jj
-dSkpIHsNCj4gPiA+ICAJCWlmICghbW1nZXRfbm90X3plcm8oZW5jbF9tbS0+bW0pKQ0KPiA+ID4g
-IAkJCWNvbnRpbnVlOw0KPiA+ID4NCj4gPiA+IEBAIC0xMDE4LDcgKzEwMjAsOCBAQCBzdGF0aWMg
-c3RydWN0IG1lbV9jZ3JvdXANCj4gPiA+ICpzZ3hfZW5jbF9nZXRfbWVtX2Nncm91cChzdHJ1Y3Qg
-c2d4X2VuY2wgKmVuY2wpDQo+ID4gPiAgCSAqLw0KPiA+ID4gIAlpZHggPSBzcmN1X3JlYWRfbG9j
-aygmZW5jbC0+c3JjdSk7DQo+ID4gPg0KPiA+ID4gLQlsaXN0X2Zvcl9lYWNoX2VudHJ5X3JjdShl
-bmNsX21tLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCkgew0KPiA+ID4gKwlsaXN0X2Zvcl9lYWNoX2Vu
-dHJ5X3NyY3UoZW5jbF9tbSwgJmVuY2wtPm1tX2xpc3QsIGxpc3QsDQo+ID4gPiArCQkJc3JjdV9y
-ZWFkX2xvY2tfaGVsZCgmZW5jbC0+c3JjdSkpIHsNCj4gPiA+ICAJCWlmICghbW1nZXRfbm90X3pl
-cm8oZW5jbF9tbS0+bW0pKQ0KPiA+ID4gIAkJCWNvbnRpbnVlOw0KPiA+ID4NCj4gPiA+IEBAIC0x
-MjEyLDcgKzEyMTUsOCBAQCB2b2lkIHNneF96YXBfZW5jbGF2ZV9wdGVzKHN0cnVjdCBzZ3hfZW5j
-bA0KPiA+ID4gKmVuY2wsIHVuc2lnbmVkIGxvbmcgYWRkcikNCj4gPiA+DQo+ID4gPiAgCQlpZHgg
-PSBzcmN1X3JlYWRfbG9jaygmZW5jbC0+c3JjdSk7DQo+ID4gPg0KPiA+ID4gLQkJbGlzdF9mb3Jf
-ZWFjaF9lbnRyeV9yY3UoZW5jbF9tbSwgJmVuY2wtPm1tX2xpc3QsIGxpc3QpIHsNCj4gPiA+ICsJ
-CWxpc3RfZm9yX2VhY2hfZW50cnlfc3JjdShlbmNsX21tLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCwN
-Cj4gPiA+ICsJCQkJc3JjdV9yZWFkX2xvY2tfaGVsZCgmZW5jbC0+c3JjdSkpIHsNCj4gPiA+ICAJ
-CQlpZiAoIW1tZ2V0X25vdF96ZXJvKGVuY2xfbW0tPm1tKSkNCj4gPiA+ICAJCQkJY29udGludWU7
-DQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L21haW4u
-Yw0KPiA+ID4gYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NneC9tYWluLmMgaW5kZXggMzhiN2ZkMi4u
-NTgxZTBjNCAxMDA2NDQNCj4gPiA+IC0tLSBhL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L21haW4u
-Yw0KPiA+ID4gKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvbWFpbi5jDQo+ID4gPiBAQCAt
-MTIwLDcgKzEyMCw4IEBAIHN0YXRpYyBib29sIHNneF9yZWNsYWltZXJfYWdlKHN0cnVjdA0KPiA+
-ID4gc2d4X2VwY19wYWdlDQo+ID4gPiAqZXBjX3BhZ2UpDQo+ID4gPg0KPiA+ID4gIAlpZHggPSBz
-cmN1X3JlYWRfbG9jaygmZW5jbC0+c3JjdSk7DQo+ID4gPg0KPiA+ID4gLQlsaXN0X2Zvcl9lYWNo
-X2VudHJ5X3JjdShlbmNsX21tLCAmZW5jbC0+bW1fbGlzdCwgbGlzdCkgew0KPiA+ID4gKwlsaXN0
-X2Zvcl9lYWNoX2VudHJ5X3NyY3UoZW5jbF9tbSwgJmVuY2wtPm1tX2xpc3QsIGxpc3QsDQo+ID4g
-PiArCQkJc3JjdV9yZWFkX2xvY2tfaGVsZCgmZW5jbC0+c3JjdSkpIHsNCj4gPiA+ICAJCWlmICgh
-bW1nZXRfbm90X3plcm8oZW5jbF9tbS0+bW0pKQ0KPiA+ID4gIAkJCWNvbnRpbnVlOw0KPiA+ID4N
-Cj4gPiA+IC0tDQo+ID4gPiAyLjkuNA0KPiA+DQo+IA0KPiANCj4gUmV2aWV3ZWQtYnk6IEphcmtr
-byBTYWtraW5lbiA8amFya2tvQGtlcm5lbC5vcmc+DQo+IA0KDQpUaGFua3MgZm9yIHlvdXIgcmV2
-aWV3Lg0KDQpBbmQgcGluZw0KDQpbTGksUm9uZ3FpbmddIA0KDQoNCj4gQlIsIEphcmtrbw0K
+Hi everyone,
+
+We are pleased to officially open the Call for Presentations for the 2026
+Confidential Computing Microconference at LPC this year. LPC will take place
+from October 5th to 7th in Prague.
+
+Our goal is to bring open-source developers and industry experts together for
+productive discussions that lead to concrete solutions. We are looking for
+interactive discussions, ongoing development topics, and problem-solving
+sessions rather than static status updates.
+
+We are looking for proposals covering, but not limited to, the following
+developments and challenges:
+
+	* Enhancements to CVM memory backing via `guest_memfd`
+	* KVM Support for ARM CCA
+	* Privilege separation features in KVM
+	* CVM live migration
+	* Secure VM Service Module (SVSM) architecture and Linux support
+	* Trusted I/O software architecture
+	* Solutions for the full CVM (remote) attestation problem
+	* Linux as a CVM operating system across hypervisors
+	* CVM Performance optimization and benchmarking
+
+If you are working on any of these areas or have another critical Confidential
+Computing topic that requires community alignment, please submit your proposal!
+
+LPC microconferences are built around discussion and collaboration. Proposals
+should focus on open problems, architectural roadblocks, or design choices that
+would benefit from in-person feedback from the community.
+
+* Submit here:		https://lpc.events/event/20/abstracts/
+* Submission Deadline:	August 7, 2026
+
+Make sure to select "Confidential Computing MC" as the track! This year the LPC
+organization committee will grant pre-registration vouchers to anyone who has
+submitted a topic. These are at the usual price ($600) which must be used
+before registration opens. If your topic is not accepted you should be eligible
+for a refund if your employer doesn’t approve your travel. For more details see
+
+	https://lpc.events/blog/current/index.php/2026/04/06/changes-to-registration-availability-for-2026/
+
+Looking forward to seeing you there,
+
+
+- Dhaval and Joerg
