@@ -1,78 +1,34 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C393A2E2B
-	for <linux-sgx@vger.kernel.org>; Tue, 30 Jun 2026 16:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D496B3B27EE;
+	Wed,  1 Jul 2026 09:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782837389; cv=none; b=bK6tzaH3Fct/fWnn5GH+oL91XN6F0ZGfRE4SR92s5FvmPt6y3XjX7w746z2nxBCqMpVbF2njdeoUWiCzHMjmyM0T0X68VaHhOe1JxUi7hqgmKuvAeyTxHkY+7J17vCijzGXt/lWsaSgEFj5hZr56VADzoft9ig/qj3mjBAupNOI=
+	t=1782898985; cv=none; b=YA1foMsAWrG8Xryxl9NriODU7LtvqYZPDVYNtjgrY+RYVkUFSUz9+zWSA/yrexiq2jNnSAcbXh5Hxov2xrE/qVUGv8Tr1Q3rFodUU/8QPIkYk+3cfkwlHOU95aNa9T1ib1+cau0Xunj6PBkg8aY8cazb8JuBzhFpWxNCMWDSat0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782837389; c=relaxed/simple;
-	bh=d9wug2nxL1uyn9+xDv1rDebfpG+gnaq49E2sbVFw0kg=;
+	s=arc-20240116; t=1782898985; c=relaxed/simple;
+	bh=EJTWrCholcPIoSl8RFtuUpkQI/cEAyQCVknR64tfFn8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GBln4MFwfjnKjxiiNgpmqjR5DFTbiPycDhXdHMdwL39XnwyuF0uNfwM56B2KrDGX+Mm6q/e0xrAaaCO/Iz91b5jUDEp0EpwQEIO1E2RAJ0J2hgSrQhR6DMoYxmqm86hxrQMTXAJiUFbbzyqcDuJGuHfc8fF8M2H+0yMz0NlyN9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Csm/0TAQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SuTooq+C; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Csm/0TAQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SuTooq+C; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	 Content-Type:Content-Disposition:In-Reply-To; b=M92xdCP275uHH+5fvb+Izen4goeAE9iL/PiykJS/6bqIlNTtlnW/6AiCC8yuSBtN2Cs13JlS6yxiYmfWhec/BYE0gA22MXdf2QBdmdRX1NLYbJ+mLwIqEzoxQOu8guFzFgDnPmq8vvf6DL6PHgkV4f6gpIes+O6k5gHImsfBnbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMvirreP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Csm/0TAQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SuTooq+C";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Csm/0TAQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SuTooq+C"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9485D75953;
-	Tue, 30 Jun 2026 16:36:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1782837384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zwtvYcpEu3U9PLHqG7OTydVnRKJe82b04p0UFeAYHjA=;
-	b=Csm/0TAQDKcAqPahjvJm4t6wIygBvouh4o3HLWaKsgyk698bUArVP/FODSuGjNHcARgLTj
-	CJc2gPmeHEfliGZdWDOcmZZZ0vZ9z95eXBkXNuiEMJpmpW8Tp01B9gZwKHKhDLyJoN2tn+
-	chGgPP4YUFkHsmNHRAZUF9xPb+SnjMo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1782837384;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zwtvYcpEu3U9PLHqG7OTydVnRKJe82b04p0UFeAYHjA=;
-	b=SuTooq+CQho1YfxuTrEUMCh69pnVtR5UtZwMeH7IAZfA6dmdObdMjx1/u2fLm2dXcH2Fos
-	1ruN1lCKBfY39zDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="Csm/0TAQ";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=SuTooq+C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1782837384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zwtvYcpEu3U9PLHqG7OTydVnRKJe82b04p0UFeAYHjA=;
-	b=Csm/0TAQDKcAqPahjvJm4t6wIygBvouh4o3HLWaKsgyk698bUArVP/FODSuGjNHcARgLTj
-	CJc2gPmeHEfliGZdWDOcmZZZ0vZ9z95eXBkXNuiEMJpmpW8Tp01B9gZwKHKhDLyJoN2tn+
-	chGgPP4YUFkHsmNHRAZUF9xPb+SnjMo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1782837384;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zwtvYcpEu3U9PLHqG7OTydVnRKJe82b04p0UFeAYHjA=;
-	b=SuTooq+CQho1YfxuTrEUMCh69pnVtR5UtZwMeH7IAZfA6dmdObdMjx1/u2fLm2dXcH2Fos
-	1ruN1lCKBfY39zDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E748F779A8;
-	Tue, 30 Jun 2026 16:36:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GZUpNYPwQ2qifgAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Tue, 30 Jun 2026 16:36:19 +0000
-Date: Tue, 30 Jun 2026 17:36:18 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <ljs@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMvirreP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2C261F000E9;
+	Wed,  1 Jul 2026 09:42:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782898984;
+	bh=yD2RrJDZdDL6RXjT+lWLw24YuDCa/4sSWtW/fyWFcdQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NMvirreP+CX8s1HLyn6zgBtUDz2oDbR9gIrXRS6YaNTcLZcnF2rsBWbQVm+Jl25Sr
+	 A8lJ4z61L/giXcR/ptNpe3o3puYpqxx0hsQHO+85EjYqDjCEIO/1lP13eBb0n33jbM
+	 UqdM041iHE/nTaNAA42LQ7VXM81xgA3Bi0FchvCuGazRU+YOdfKqe2mJyLfx4J0AJ1
+	 B3RyYF4D778BuLdBJm0jXf0mSpjvs1QuEQapPlpQ8TZMICq6soqt5v87zbEEbs2TAJ
+	 FdEluByUsfWooss92oIM/tmJ0RAV1NPZbvuLQEU3DJQZvF/ZXYqF3+AFDc5BkN379N
+	 fKMeFEDS7Kh+w==
+Date: Wed, 1 Jul 2026 10:42:43 +0100
+From: Lorenzo Stoakes <ljs@kernel.org>
+To: Pedro Falcato <pfalcato@suse.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>, 
 	Russell King <linux@armlinux.org.uk>, Dinh Nguyen <dinguyen@kernel.org>, 
 	Simon Schuster <schuster.simon@siemens-energy.com>, 
@@ -106,10 +62,11 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	iommu@lists.linux.dev, linux-perf-users@vger.kernel.org, 
 	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com, damon@lists.linux.dev, 
 	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 12/30] mm/vma: clean up anon_vma_compatible()
-Message-ID: <akPwbHbGiF1FxL6m@pedro-suse.lan>
+Subject: Re: [PATCH 01/30] mm: move vma_start_pgoff() into mm.h and clean up
+Message-ID: <akTfDTjDnnZ-8zwE@lucifer>
 References: <cover.1782735110.git.ljs@kernel.org>
- <5a7a07bd2a774989849b0fea84f758059ed914df.1782735110.git.ljs@kernel.org>
+ <b28b698df4c009e85c4728446ca5863d8e633164.1782735110.git.ljs@kernel.org>
+ <akPqIfmQLOs4gI7h@pedro-suse.lan>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -118,89 +75,96 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5a7a07bd2a774989849b0fea84f758059ed914df.1782735110.git.ljs@kernel.org>
-X-Spam-Flag: NO
-X-Rspamd-Action: no action
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,armlinux.org.uk,kernel.org,siemens-energy.com,hansenpartnership.com,gmx.de,redhat.com,alien8.de,linux.intel.com,mev.co.uk,visionengravers.com,pengutronix.de,gmail.com,ffwll.ch,suse.de,oss.qualcomm.com,ideasonboard.com,nvidia.com,amd.com,shazbot.org,zeniv.linux.org.uk,linux.dev,google.com,infradead.org,samsung.com,goodmis.org,huawei.com,vger.kernel.org,lists.infradead.org,lists.freedesktop.org,lists.linux.dev,kvack.org,googlegroups.com,surriel.com];
-	FROM_HAS_DN(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_GT_50(0.00)[75];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[pedro-suse.lan:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 9485D75953
-X-Spam-Score: -3.01
+In-Reply-To: <akPqIfmQLOs4gI7h@pedro-suse.lan>
 
-On Mon, Jun 29, 2026 at 01:23:23PM +0100, Lorenzo Stoakes wrote:
-> Break up the existing very large conditional, add comments and use
-> vma_[start/end]_pgoff() to make clearer what we're doing here.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
-> ---
->  mm/vma.c | 21 ++++++++++++++++-----
->  1 file changed, 16 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/vma.c b/mm/vma.c
-> index b60375c6c5c3..6296acecf3b7 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -1967,14 +1967,25 @@ static int anon_vma_compatible(struct vm_area_struct *a, struct vm_area_struct *
->  {
->  	vma_flags_t diff = vma_flags_diff_pair(&a->flags, &b->flags);
->  
-> +	/* Ignore flags that mprotect() can change. */
->  	vma_flags_clear_mask(&diff, VMA_ACCESS_FLAGS);
-> +	/* Ignore flags that do not impact merging. */
->  	vma_flags_clear_mask(&diff, VMA_IGNORE_MERGE_FLAGS);
->  
-> -	return a->vm_end == b->vm_start &&
-> -		mpol_equal(vma_policy(a), vma_policy(b)) &&
-> -		a->vm_file == b->vm_file &&
-> -		vma_flags_empty(&diff) &&
-> -		b->vm_pgoff == a->vm_pgoff + ((b->vm_start - a->vm_start) >> PAGE_SHIFT);
-> +	/* Must be adjacent. */
-> +	if (a->vm_end != b->vm_start)
-> +		return false;
-> +	/* Must have matching policy. */
-> +	if (!mpol_equal(vma_policy(a), vma_policy(b)))
-> +		return false;
-> +	/* Must both be anon or map the same file (MAP_PRIVATE case). */
-> +	if (a->vm_file != b->vm_file)
-> +		return false;
-> +	/* Flags must be equivalent modulo mprotect(). */
-> +	if (!vma_flags_empty(&diff))
-> +		return false;
-> +	/* Page offset must align. */
-> +	return vma_end_pgoff(a) == vma_start_pgoff(b);
+On Tue, Jun 30, 2026 at 05:10:55PM +0100, Pedro Falcato wrote:
+> On Mon, Jun 29, 2026 at 01:23:12PM +0100, Lorenzo Stoakes wrote:
+> > vma_last_pgoff() already lives there, so it's a bit odd to keep
+> > vma_start_pgoff() in mm/interval_tree.c. Move them together.
+>
+> Hmm, a part of me wonders if this is the part where we should start cleaning
+> up mm.h into vma.h or something. Probably not, it would be extra churn right
+> now.
 
-Very nice.
+Yeah the issue is there's some confusion about vma.h - mm.h should be for
+stuff that is used outside of mm, and these helpers are definitely like
+that.
 
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+vma.h is purely for internal mm vma stuff, and most people should be accessing
+that via internal.h (I address that in patch 27).
 
--- 
-Pedro
+I do wonder if that could be done more nicely but punt that to another time.
+
+But also probably worth doing a pass over some of the defines, I have a
+bunch of series chur^W changing stuff lately so can do a follow up on that
+maybe.
+
+>
+> >
+> > These each return unsigned long, which pgoff_t is typedef'd to. Make this
+> > consistent and have these functions return pgoff_t instead.
+> >
+> > Additionally, express vma_last_pgoff() in terms of vma_start_pgoff(), since
+> > we wrap the vma->vm_pgoff access, we may as well use it here.
+> >
+> > Also while we're here, const-ify the VMA and cleanup a bit.
+> >
+> > No functional change intended.
+> >
+> > Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
+>
+> Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+
+Thanks!
+
+>
+> > ---
+> >  include/linux/mm.h | 9 +++++++--
+> >  mm/interval_tree.c | 5 -----
+> >  2 files changed, 7 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 485df9c2dbdd..059144435729 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -4278,9 +4278,14 @@ static inline unsigned long vma_pages(const struct vm_area_struct *vma)
+> >  	return (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
+> >  }
+> >
+> > -static inline unsigned long vma_last_pgoff(struct vm_area_struct *vma)
+> > +static inline pgoff_t vma_start_pgoff(const struct vm_area_struct *vma)
+> >  {
+> > -	return vma->vm_pgoff + vma_pages(vma) - 1;
+> > +	return vma->vm_pgoff;
+> > +}
+> > +
+> > +static inline pgoff_t vma_last_pgoff(const struct vm_area_struct *vma)
+> > +{
+> > +	return vma_start_pgoff(vma) + vma_pages(vma) - 1;
+> >  }
+> >
+> >  static inline unsigned long vma_desc_size(const struct vm_area_desc *desc)
+> > diff --git a/mm/interval_tree.c b/mm/interval_tree.c
+> > index 32bcfbfcf15f..344d1f5946c7 100644
+> > --- a/mm/interval_tree.c
+> > +++ b/mm/interval_tree.c
+> > @@ -10,11 +10,6 @@
+> >  #include <linux/rmap.h>
+> >  #include <linux/interval_tree_generic.h>
+> >
+> > -static inline unsigned long vma_start_pgoff(struct vm_area_struct *v)
+> > -{
+> > -	return v->vm_pgoff;
+> > -}
+> > -
+> >  INTERVAL_TREE_DEFINE(struct vm_area_struct, shared.rb,
+> >  		     unsigned long, shared.rb_subtree_last,
+> >  		     vma_start_pgoff, vma_last_pgoff, /* empty */, vma_interval_tree)
+> > --
+> > 2.54.0
+> >
+>
+> --
+> Pedro
+
+Cheers, Lorenzo
