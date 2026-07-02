@@ -1,75 +1,75 @@
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F6942E8FF
-	for <linux-sgx@vger.kernel.org>; Thu,  2 Jul 2026 11:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8314071E0
+	for <linux-sgx@vger.kernel.org>; Thu,  2 Jul 2026 11:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782992674; cv=none; b=QRsrdRqfRRDnkd7XpqXLsN5FwlFz2JAFzY+cfW67VGbKyqqMKthWFBKnPzaRm2kKJVhORzwMj16liNZHQd/UMcFepuNl6rei0xaRR6n6+HdrxUha88tossXcInReQFcXZE6S5D70IywBnk9kuKMQKI2VK0mQE1glA24YpCTNqqI=
+	t=1782993200; cv=none; b=CSmF6LUUxbnFKGauEyHXJTeQYV1ZFYTS/0V7Hsfpxv8bjS/uhh6wwl07NweWnIDEL8iYF+Hn1i7kN0WXg7mi15lYgFNHQTU8MrMjVkhcHdqEUfrDWlygHtlJLkD103UiS8RcWhu6icDdAQC/a3N/sVh1pHVKuTRBBSMZaQLsg+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782992674; c=relaxed/simple;
-	bh=2iib/6qzyTeiWqoloXxjUbgOG9FYp+QTrMdppSXZ47o=;
+	s=arc-20240116; t=1782993200; c=relaxed/simple;
+	bh=0nzVK4pL1TFIe/BHP21jD7kuyIRs9dRrUj42zYkQjp0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r5UDfZ8g6oie7Eh2Qf3yMjrOBa0f+OX5GtJctd+BCtRmk2HWocnScH/ZBOkZqCNYRvTYMvB8FYqvOk6+74QKQkcNM6BFe2Olcd/AHmKcDvT1Krl0o/GzmIlSEC/i6nVfUbS7uFoC/QG4twBOvWJbK3D8Z/vK8lTBpL2s++BCwcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BsLjh1T5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IRqowbv8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BsLjh1T5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IRqowbv8; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=kDF/MVLbZ1CjPSKyylxinkA70iVJg08BZgODxRoM+zS8Qnhe324/dT8WvlqilcblvmgHKPvZY4nJXfmcxpr9lYxFcqzk0eDccCxt08XwKxAFbwbbh7Ct7fknGP3OXbA4MAPf7/Sy2oGKSf+erpmLm4hcYnV7BBKeinGE0cF+rOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xYVfKCYZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1CfcEF2X; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZsoQ8uTQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KH4HUf0G; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BsLjh1T5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IRqowbv8";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BsLjh1T5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IRqowbv8"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xYVfKCYZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1CfcEF2X";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZsoQ8uTQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KH4HUf0G"
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 98DEF75C4E;
-	Thu,  2 Jul 2026 11:44:27 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2167576031;
+	Thu,  2 Jul 2026 11:53:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1782992667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1782993196; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j+IuV5NXgLWOHGH7hlb2Ti+qJXpSv2ZiBAFyqHwiaiY=;
-	b=BsLjh1T5s0g7Spf0lz/24ftBN67tZIUYSBaPUkNS6bZaaYvxYAiBFimLgrIso4fNLwhvEt
-	B8mLiz40gQvD/6CCLl+sN2DIrp5wjd3qEKvV/Iq4fVghDpX8Yh2RCC7XVr8cMYy5PbLcn9
-	+H8VxZdiowi1t4PpNhYyvi/BS1zZkes=
+	bh=vVyat4DfuJxMczGxKMvPQcf269Ets9cihaExe8YQLuA=;
+	b=xYVfKCYZqsD2UpmKdK9fQagIYcRuil6l2nF+c+r+OdaWXSJ3/rwYjd7a01znBykkCl/Xt3
+	9O4NKD4ShEoEJNxL6hGpG4AaLC9aa6PdJXC9DHJBilYLHQ97wn3GN35NJMqUm9UCDFS88r
+	wicYeO/ITfDsf1NnfuUfNeKKq6hAmCg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1782992667;
+	s=susede2_ed25519; t=1782993196;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j+IuV5NXgLWOHGH7hlb2Ti+qJXpSv2ZiBAFyqHwiaiY=;
-	b=IRqowbv8tTNdVsXh2T0dBluIEHHSfkKO0XY2vdlLy/h3tosatT85+qiq8+q1FZ9A599s1s
-	W+iTOaW6Aeqc7vBw==
+	bh=vVyat4DfuJxMczGxKMvPQcf269Ets9cihaExe8YQLuA=;
+	b=1CfcEF2XREK0S/tUSQtvmsJmKkDvH3H5nu0WdgGnc2E7VNJZR/Zw6wuuz38wcdrZmhtyEi
+	jix7vUFpBgOEGBCg==
 Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1782992667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1782993195; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j+IuV5NXgLWOHGH7hlb2Ti+qJXpSv2ZiBAFyqHwiaiY=;
-	b=BsLjh1T5s0g7Spf0lz/24ftBN67tZIUYSBaPUkNS6bZaaYvxYAiBFimLgrIso4fNLwhvEt
-	B8mLiz40gQvD/6CCLl+sN2DIrp5wjd3qEKvV/Iq4fVghDpX8Yh2RCC7XVr8cMYy5PbLcn9
-	+H8VxZdiowi1t4PpNhYyvi/BS1zZkes=
+	bh=vVyat4DfuJxMczGxKMvPQcf269Ets9cihaExe8YQLuA=;
+	b=ZsoQ8uTQ9HKMle6PfLos3WQbXxWjN5sSXPSkT4+ZanUKBq2lpNP4jJRp6GUkrzXkwHJjvB
+	yWpyhzC0YNGQkPHvBgmFCvrDVYHqifJdwhEcBa2T0tb/TAg1tJpbYwf72U7Ci9qPVJUSvT
+	ORMtcGbh+MGBJHqHakIUbwKXHdphSvU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1782992667;
+	s=susede2_ed25519; t=1782993195;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j+IuV5NXgLWOHGH7hlb2Ti+qJXpSv2ZiBAFyqHwiaiY=;
-	b=IRqowbv8tTNdVsXh2T0dBluIEHHSfkKO0XY2vdlLy/h3tosatT85+qiq8+q1FZ9A599s1s
-	W+iTOaW6Aeqc7vBw==
+	bh=vVyat4DfuJxMczGxKMvPQcf269Ets9cihaExe8YQLuA=;
+	b=KH4HUf0G2xIXtfn7ykyjf+pVZsRa2r7mxNuifMcKR/Sb9aOtVjljEmdJqCSJ/e9IL2sF9Y
+	uM7PBo8soLh0gDAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1F79E779AA;
-	Thu,  2 Jul 2026 11:44:23 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A8A84779AA;
+	Thu,  2 Jul 2026 11:53:10 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id e+V5BBdPRmq4BgAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Thu, 02 Jul 2026 11:44:23 +0000
-Date: Thu, 2 Jul 2026 12:44:21 +0100
+	id 6MDvJSZRRmr6DwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Thu, 02 Jul 2026 11:53:10 +0000
+Date: Thu, 2 Jul 2026 12:53:09 +0100
 From: Pedro Falcato <pfalcato@suse.de>
 To: Lorenzo Stoakes <ljs@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, 
@@ -105,10 +105,11 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	iommu@lists.linux.dev, linux-perf-users@vger.kernel.org, 
 	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com, damon@lists.linux.dev, 
 	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 29/30] tools/testing/vma: default VMA flag bits to 64-bit
-Message-ID: <akZO3xI4Lt1iSbms@pedro-suse.lan>
+Subject: Re: [PATCH 30/30] tools/testing/vma: output compared expression on
+ ASSERT_[EQ, NE]()
+Message-ID: <akZPXB56I83vkyxd@pedro-suse.lan>
 References: <cover.1782735110.git.ljs@kernel.org>
- <27cd07f6dd862d92410cf9db03f7c11e5f66854d.1782735110.git.ljs@kernel.org>
+ <432444fa4c12ae1c4047550e2b205d3e9bab458f.1782735110.git.ljs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -117,7 +118,7 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <27cd07f6dd862d92410cf9db03f7c11e5f66854d.1782735110.git.ljs@kernel.org>
+In-Reply-To: <432444fa4c12ae1c4047550e2b205d3e9bab458f.1782735110.git.ljs@kernel.org>
 X-Spam-Flag: NO
 X-Spamd-Result: default: False [-2.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
@@ -125,57 +126,96 @@ X-Spamd-Result: default: False [-2.80 / 50.00];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_CC(0.00)[linux-foundation.org,armlinux.org.uk,kernel.org,siemens-energy.com,hansenpartnership.com,gmx.de,redhat.com,alien8.de,linux.intel.com,mev.co.uk,visionengravers.com,pengutronix.de,gmail.com,ffwll.ch,suse.de,oss.qualcomm.com,ideasonboard.com,nvidia.com,amd.com,shazbot.org,zeniv.linux.org.uk,linux.dev,google.com,infradead.org,samsung.com,goodmis.org,huawei.com,vger.kernel.org,lists.infradead.org,lists.freedesktop.org,lists.linux.dev,kvack.org,googlegroups.com,surriel.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
 	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[75];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MISSING_XM_UA(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,pedro-suse.lan:mid]
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,armlinux.org.uk,kernel.org,siemens-energy.com,hansenpartnership.com,gmx.de,redhat.com,alien8.de,linux.intel.com,mev.co.uk,visionengravers.com,pengutronix.de,gmail.com,ffwll.ch,suse.de,oss.qualcomm.com,ideasonboard.com,nvidia.com,amd.com,shazbot.org,zeniv.linux.org.uk,linux.dev,google.com,infradead.org,samsung.com,goodmis.org,huawei.com,vger.kernel.org,lists.infradead.org,lists.freedesktop.org,lists.linux.dev,kvack.org,googlegroups.com,surriel.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[75];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo,pedro-suse.lan:mid]
 X-Spam-Level: 
 X-Spam-Score: -2.80
 
-On Mon, Jun 29, 2026 at 01:23:40PM +0100, Lorenzo Stoakes wrote:
-> With all of the sanitisers turned on, setting the VMA flag bits depth to
-> 128 by default results in overly long build times.
+On Mon, Jun 29, 2026 at 01:23:41PM +0100, Lorenzo Stoakes wrote:
+> Update the macros to output the compared values at hex for easier debugging
+> when test asserts fail.
 > 
-> Reduce this to 64 - we can always manipulate these later for testing of
-> larger bitmaps as needed.
+> Also remove unused IS_SET() macro.
 > 
-
-Hmm, what's the problem with the sanitizers? Shouldn't this just result in
-slightly different codegen?
-
 > Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 > ---
->  tools/testing/vma/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  tools/testing/vma/shared.h | 31 +++++++++++++++++++------------
+>  1 file changed, 19 insertions(+), 12 deletions(-)
 > 
-> diff --git a/tools/testing/vma/Makefile b/tools/testing/vma/Makefile
-> index e72b45dedda5..ef6cc558afe1 100644
-> --- a/tools/testing/vma/Makefile
-> +++ b/tools/testing/vma/Makefile
-> @@ -10,7 +10,7 @@ OFILES = $(SHARED_OFILES) main.o shared.o maple-shim.o
->  TARGETS = vma
->  
->  # These can be varied to test different sizes.
-> -CFLAGS += -DNUM_VMA_FLAG_BITS=128 -DNUM_MM_FLAG_BITS=128
-> +CFLAGS += -DNUM_VMA_FLAG_BITS=64 -DNUM_MM_FLAG_BITS=64
->  
->  main.o: main.c shared.c shared.h vma_internal.h tests/merge.c tests/mmap.c tests/vma.c ../../../mm/vma.c ../../../mm/vma_init.c ../../../mm/vma_exec.c ../../../mm/vma.h include/custom.h include/dup.h include/stubs.h
->  
-> -- 
+> diff --git a/tools/testing/vma/shared.h b/tools/testing/vma/shared.h
+> index ca4f1238f1c7..216be4cda369 100644
+> --- a/tools/testing/vma/shared.h
+> +++ b/tools/testing/vma/shared.h
+> @@ -21,19 +21,28 @@
+>  		}							\
+>  	} while (0)
+> 
+> -#define ASSERT_TRUE(_expr)						\
+> -	do {								\
+> -		if (!(_expr)) {						\
+> -			fprintf(stderr,					\
+> -				"Assert FAILED at %s:%d:%s(): %s is FALSE.\n", \
+> -				__FILE__, __LINE__, __FUNCTION__, #_expr); \
+> -			return false;					\
+> -		}							\
+> +#define __ASSERT_TRUE(_expr, _fmt, ...)					   \
+> +	do {								   \
+> +		if (!(_expr)) {						   \
+> +			fprintf(stderr,					   \
+> +				"Assert FAILED at %s:%d:%s(): %s is FALSE" \
+> +				_fmt ".\n",				   \
+> +				__FILE__, __LINE__, __FUNCTION__, #_expr   \
+> +				__VA_OPT__(,) __VA_ARGS__);		   \
+> +			return false;					   \
+> +		}							   \
+>  	} while (0)
+> 
+> +#define __TO_SCALAR(x)	((unsigned long long)(uintptr_t)(x))
+
+There's a slight footgun here: this can truncate 64-bit types in 32-bit archs.
+Though it doesn't really matter in our case, I think.
+
+> +
+> +#define ASSERT_TRUE(_expr) __ASSERT_TRUE(_expr, "")
+>  #define ASSERT_FALSE(_expr) ASSERT_TRUE(!(_expr))
+> -#define ASSERT_EQ(_val1, _val2) ASSERT_TRUE((_val1) == (_val2))
+> -#define ASSERT_NE(_val1, _val2) ASSERT_TRUE((_val1) != (_val2))
+> +#define ASSERT_EQ(_val1, _val2)						\
+> +	__ASSERT_TRUE((_val1) == (_val2), " (0x%llx != 0x%llx)",	\
+> +		      __TO_SCALAR(_val1), __TO_SCALAR(_val2))
+> +#define ASSERT_NE(_val1, _val2) \
+> +	__ASSERT_TRUE((_val1) != (_val2), " (0x%llx == 0x%llx)", \
+> +		       __TO_SCALAR(_val1), __TO_SCALAR(_val2))
+> 
+>  #define ASSERT_FLAGS_SAME_MASK(_flags, _flags_other) \
+>  	ASSERT_TRUE(vma_flags_same_mask((_flags), (_flags_other)))
+> @@ -53,8 +62,6 @@
+>  #define ASSERT_FLAGS_NONEMPTY(_flags) \
+>  	ASSERT_FALSE(vma_flags_empty(_flags))
+> 
+> -#define IS_SET(_val, _flags) ((_val & _flags) == _flags)
+> -
+>  extern bool fail_prealloc;
+> 
+>  /* Override vma_iter_prealloc() so we can choose to fail it. */
+> --
 > 2.54.0
-> 
+
+Acked-by: Pedro Falcato <pfalcato@suse.de>
 
 -- 
 Pedro
