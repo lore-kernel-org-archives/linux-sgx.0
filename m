@@ -1,75 +1,75 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EBA38E5ED
-	for <linux-sgx@vger.kernel.org>; Thu,  2 Jul 2026 10:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB123C7DE1
+	for <linux-sgx@vger.kernel.org>; Thu,  2 Jul 2026 10:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782988971; cv=none; b=u58z44gEgPzw5N88wttlUkUBFLx4X0lrF91RPcrKAMSJpkR9gqBczhx6gH6sBKYTxujbjN4xpVL9OgsV71vOpjj9kOcUYpyuwQwNK7ZUstnt3zq/Q9+zvUfiVzUejMwOOI3nQy98i5+vmUDRMoxQq2sJGspE9cCSHIzwGx8aPFU=
+	t=1782989240; cv=none; b=n77fgFDBKDpx2X+LDk8qmhm3Es8uviKA9/Al7AFC8ieTvqBkYVVJ6n3oWh7/Cmy+ghoPTVcaopn34FMDYFcyatSEtUdLo5QPGpOKsNoF3Oy84ZqLHitAV521iUkFLg/zJzVQlOuv88zyzHWJOWNxll5AZHc9cCqTCAi4YjP1CfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782988971; c=relaxed/simple;
-	bh=aKOKVJI0JaueOjS10mZT86CPWDWHk4sD/peAzkiwnFI=;
+	s=arc-20240116; t=1782989240; c=relaxed/simple;
+	bh=d8icz/ixGdlOZANe6SwZw7wtPXBkeATQyRCuJiLYDyw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r2uCOZLvl/p7flXupDBVLpHYRBL2lCR/UR0ElDWWRPRZr7oz7n5khHTmElnXag2t4kQ9hywQT6zLTbWvWAImI1vMVz2CDiyaRqWnVUsZhNx1VlCY5XMBWT6StxpOAACSYCD6zYX4HbLZhA+McpOJiylg/RCPB3Xp/W46q1cbUjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eigjpOMw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=q/U++tzx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xlurvhJZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ocZhQyCC; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=N7znW62UuZzd/iYaizVCkFU8ogjf8vG9Xa1fA857DG8eg7YJjeK5G4bDTAFivvsCtuq8fHY7WBaTqb/NW/WzRSRDv98pjrTo5fjUas3UB09Wdgd0vPSz0Vx5o/f13xtmxZzHFT0Lxk52gTv3KS/gm3Mb8FthJe7pa5jux5tRyPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GrWovErJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ehHkiWmD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GrWovErJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ehHkiWmD; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eigjpOMw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="q/U++tzx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xlurvhJZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ocZhQyCC"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GrWovErJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ehHkiWmD";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GrWovErJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ehHkiWmD"
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AFE7C74146;
-	Thu,  2 Jul 2026 10:42:46 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 566D5760B8;
+	Thu,  2 Jul 2026 10:47:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1782988968; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1782989236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+OYrOKm2y+IPf/TBhdY0t5WTGZpGwCxFj/S/SQ8488Y=;
-	b=eigjpOMwCHKsp0QlLdPpMcF8x8YrayWRnzfHfvODR/6dKqPHXZeHbV2DT2pzAJBMhbbx7R
-	tRqfZH/GB7TsawNocniLPKO5thhoAuLefpdWz6JPkkbhDKSclWKmPx6OSaDelU4gjdkjpj
-	woNSZwMKF7Peh7/oytZxet39XgfaEKI=
+	bh=9NfWo2weclINUw6MV5FDK701ZBILS+CvN5hySDNslMU=;
+	b=GrWovErJ6rL052dcQVQCMeo/4/pT3HWmf1zMvdaqhHDBMQqV0tWAjESSUHoWWawRQ6evNv
+	tkpd9Z7MdT2r0gEiK+IWZltCy7DbsJUk16Lreal3m3UxFoO4EIC6ff62RmaDINN7BOgmsb
+	eocg6AnTWQBQGSyKtZBLwm2Pi83twWM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1782988968;
+	s=susede2_ed25519; t=1782989236;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+OYrOKm2y+IPf/TBhdY0t5WTGZpGwCxFj/S/SQ8488Y=;
-	b=q/U++tzx8qa4+x8Gw0MJz+jWu6UgS3xyNKaGGAp0e1ENNcATjqwPM7L3HqhNmP44yrB48y
-	klgKNCvbJQYufPBg==
-Authentication-Results: smtp-out1.suse.de;
+	bh=9NfWo2weclINUw6MV5FDK701ZBILS+CvN5hySDNslMU=;
+	b=ehHkiWmD7EKwIXxqiIsorHMs6eVrAYCvS5eAMtlXCKRjYVubi1uur1JxBJ4PJxW/RCoVhn
+	aHP2Oo1+he86bfAg==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1782988966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1782989236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+OYrOKm2y+IPf/TBhdY0t5WTGZpGwCxFj/S/SQ8488Y=;
-	b=xlurvhJZQ3mXJVSo1TGr3+U+3s9Vs5K2A4PLjDUJTyS7sdye00+88JiCTHcDK31v3CPcnO
-	rrlQggGBy8ydvRJqbp1is2vaoX5PEnsGFPKY5x2CF6Prckml+vOKnHwE1X41ykbTTFp1YJ
-	n8OTQIpaFUh76Xa+jBzkMSjZDsIis6I=
+	bh=9NfWo2weclINUw6MV5FDK701ZBILS+CvN5hySDNslMU=;
+	b=GrWovErJ6rL052dcQVQCMeo/4/pT3HWmf1zMvdaqhHDBMQqV0tWAjESSUHoWWawRQ6evNv
+	tkpd9Z7MdT2r0gEiK+IWZltCy7DbsJUk16Lreal3m3UxFoO4EIC6ff62RmaDINN7BOgmsb
+	eocg6AnTWQBQGSyKtZBLwm2Pi83twWM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1782988966;
+	s=susede2_ed25519; t=1782989236;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+OYrOKm2y+IPf/TBhdY0t5WTGZpGwCxFj/S/SQ8488Y=;
-	b=ocZhQyCCg0SKk6258qbQxFVliDRRnDd+DmM7Yozj9Lje550bddc/c7rMNDRlb+kdfKrUos
-	MK/fXnZdrHKeKcAQ==
+	bh=9NfWo2weclINUw6MV5FDK701ZBILS+CvN5hySDNslMU=;
+	b=ehHkiWmD7EKwIXxqiIsorHMs6eVrAYCvS5eAMtlXCKRjYVubi1uur1JxBJ4PJxW/RCoVhn
+	aHP2Oo1+he86bfAg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4CA29779AA;
-	Thu,  2 Jul 2026 10:42:42 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C8A84779AA;
+	Thu,  2 Jul 2026 10:47:11 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CLF3D6JARmqSRwAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Thu, 02 Jul 2026 10:42:42 +0000
-Date: Thu, 2 Jul 2026 11:42:40 +0100
+	id oRJLLa9BRmoRTAAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Thu, 02 Jul 2026 10:47:11 +0000
+Date: Thu, 2 Jul 2026 11:47:10 +0100
 From: Pedro Falcato <pfalcato@suse.de>
 To: Lorenzo Stoakes <ljs@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, 
@@ -105,10 +105,11 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	iommu@lists.linux.dev, linux-perf-users@vger.kernel.org, 
 	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com, damon@lists.linux.dev, 
 	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 15/30] mm: introduce and use linear_page_delta()
-Message-ID: <akZAhI3Ims6hUPhS@pedro-suse.lan>
+Subject: Re: [PATCH 16/30] mm/vma: use vma_start_pgoff(), linear_page_index()
+ in mm code
+Message-ID: <akZAwT-QWhA1wdA9@pedro-suse.lan>
 References: <cover.1782735110.git.ljs@kernel.org>
- <eedf589778aaab33e6df2ad6556dcde536e13460.1782735110.git.ljs@kernel.org>
+ <33d79008948391d30bab38db5ae31072ce12f0a1.1782735110.git.ljs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -117,47 +118,114 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <eedf589778aaab33e6df2ad6556dcde536e13460.1782735110.git.ljs@kernel.org>
+In-Reply-To: <33d79008948391d30bab38db5ae31072ce12f0a1.1782735110.git.ljs@kernel.org>
 X-Spam-Flag: NO
 X-Spam-Score: -2.80
 X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
+	BAYES_HAM(-3.00)[100.00%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
 	FREEMAIL_CC(0.00)[linux-foundation.org,armlinux.org.uk,kernel.org,siemens-energy.com,hansenpartnership.com,gmx.de,redhat.com,alien8.de,linux.intel.com,mev.co.uk,visionengravers.com,pengutronix.de,gmail.com,ffwll.ch,suse.de,oss.qualcomm.com,ideasonboard.com,nvidia.com,amd.com,shazbot.org,zeniv.linux.org.uk,linux.dev,google.com,infradead.org,samsung.com,goodmis.org,huawei.com,vger.kernel.org,lists.infradead.org,lists.freedesktop.org,lists.linux.dev,kvack.org,googlegroups.com,surriel.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
 	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[75];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[pedro-suse.lan:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[pedro-suse.lan:mid,suse.de:email]
 X-Spam-Level: 
 
-On Mon, Jun 29, 2026 at 01:23:26PM +0100, Lorenzo Stoakes wrote:
-> It's often useful to obtain the number of pages a given address lies at
-> within a VMA.
+small nit: perhaps the subject should simply have mm: as it hits mm in general
+
+On Mon, Jun 29, 2026 at 01:23:27PM +0100, Lorenzo Stoakes wrote:
+> There are many instances in which linear_page_index() (as well as
+> linear_page_delta()) is open-coded, which is confusing and inconsistent.
 > 
-> Add linear_page_delta() to determine this and update linear_page_index() to
-> make use of it.
+> Additionally, vma->vm_pgoff doesn't necessarily make it clear that this is
+> the page offset of the start of the VMA range.
 > 
-> Add comments to describe both linear_page_delta() and linear_page_index().
+> Doing so also aids greppability.
+> 
+> So use vma_start_pgoff() in favour of directly accessing vma->vm_pgoff, and
+> linear_page_index() where we can.
+> 
+> This also lays the ground for future changes which will add an anonymous
+> page offset in order to be able to index MAP_PRIVATE-file backed anon
+> folios in terms of their virtual page offset.
 > 
 > No functional change intended.
 > 
 > Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
+> ---
+>  include/linux/huge_mm.h    |  1 +
+>  include/linux/hugetlb.h    |  3 +--
+>  include/linux/pagemap.h    |  2 +-
+>  mm/damon/vaddr.c           |  5 +++--
+>  mm/debug.c                 |  2 +-
+>  mm/filemap.c               |  7 ++++---
+>  mm/huge_memory.c           |  2 +-
+>  mm/hugetlb.c               | 11 ++++-------
+>  mm/internal.h              | 24 ++++++++++++++----------
+>  mm/khugepaged.c            |  3 ++-
+>  mm/madvise.c               |  6 +++---
+>  mm/mapping_dirty_helpers.c |  2 +-
+>  mm/memory.c                | 25 +++++++++++++------------
+>  mm/mempolicy.c             | 13 +++++++------
+>  mm/mremap.c                | 12 ++++--------
+>  mm/msync.c                 |  4 ++--
+>  mm/nommu.c                 |  7 ++++---
+>  mm/pagewalk.c              |  2 +-
+>  mm/shmem.c                 |  9 +++++----
+>  mm/userfaultfd.c           |  4 ++--
+>  mm/util.c                  |  4 ++--
+>  mm/vma.c                   | 15 +++++++--------
+>  mm/vma_exec.c              |  4 ++--
+>  mm/vma_init.c              |  2 +-
+>  24 files changed, 86 insertions(+), 83 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index ad20f7f8c179..653b81d08fe7 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -230,6 +230,7 @@ static inline bool thp_vma_suitable_order(struct vm_area_struct *vma,
+>  
+>  	/* Don't have to check pgoff for anonymous vma */
+>  	if (!vma_is_anonymous(vma)) {
+> +		/* vma_start_pgoff() in mm.h so not available. */
+
+Yay for gigaheaders...
+
+>  		if (!IS_ALIGNED((vma->vm_start >> PAGE_SHIFT) - vma->vm_pgoff,
+>  				hpage_size >> PAGE_SHIFT))
+>  			return false;
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index 2abaf99321e9..8390f50604d6 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -792,8 +792,7 @@ static inline pgoff_t hugetlb_linear_page_index(struct vm_area_struct *vma,
+>  {
+>  	struct hstate *h = hstate_vma(vma);
+>  
+> -	return ((address - vma->vm_start) >> huge_page_shift(h)) +
+> -		(vma->vm_pgoff >> huge_page_order(h));
+> +	return linear_page_index(vma, address) >> huge_page_order(h);
+>  }
+>  
+
+Anyway, nothing jumped out at me.
 
 Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+
 
 -- 
 Pedro
