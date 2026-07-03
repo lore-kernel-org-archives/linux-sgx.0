@@ -1,158 +1,184 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3225F3859EE;
-	Fri,  3 Jul 2026 08:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9233D8909
+	for <linux-sgx@vger.kernel.org>; Fri,  3 Jul 2026 13:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783068459; cv=none; b=AF5vfNhylQpI7xyRtFVQi40BCZAlm3nwdl+XImPeYtJwMCOu7peavsy8Yb9TOphtD4mLo6kMW904kjrov5BoEH3Voa8P7h0UecOZFliLOd4PSud4zi90H3h+OpDkvfrS9BfXUeXP/xVTYc05ioHzcWska4cpUZb6hyHl1N3/zWU=
+	t=1783085767; cv=none; b=Rng/uWwJs4knFhXSy7Et2YHMrcN6jlnLx8Hd+JNkpSMHc/RX3Et76mdDWppB4RWCTB7f6fr0pa/Y+42JBPRHfagw4s+bTFRael1HYfamQt4sezMv6TE/KLNqOIEjOqnHxMkjR6ikQPwRCiO8Q+cUCujcrlA5BgPxqX+VLZzT4cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783068459; c=relaxed/simple;
-	bh=SoMHBSOUYGFgfP+NEU70pT3nLxzPVIpeyoJ7QhlfL6A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j0lrOSkJRs51/i7PisPtmNlsGmKIn9KvPIC5tASopuQQ3n840JhIMKiz67LrnSJ2ceTQS+ugE0Nd7K4ceIgxA13WgLcmItkFeVSak5lALlrhRx7ztQrlb8xu2ngJ7wLxZOlBl2ftrY6LjA349ceFb7Kjze4eEF0a/Z4s26XeSRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=guGMpHlL; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1783085767; c=relaxed/simple;
+	bh=3+iyZZJ72WgUSPLdNBTNWi2rabs+mKXDECi8R3MNjWs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AUbQU1PdFyjR6Ha0oxkPF1cb4dZBie9nhdJAQUm+OuMtnhiu+WUt1hgA7wZRfc5kmHlkBcHoKQI3W/9735pg1vlt2mr6PeXlTHSANIwnfLlKnMcSDv53B+O0XkWxxlpDvVvc9iw15d9/u9gahdJleJyOfITd81kAXoADUXYLkEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IL+OxW5n; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="guGMpHlL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1783068457; x=1814604457;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=SoMHBSOUYGFgfP+NEU70pT3nLxzPVIpeyoJ7QhlfL6A=;
-  b=guGMpHlLFIkG/2P898ea1XSFqCxLz9aSjRdWPrLE6E4rYGd9aBlqezDj
-   uG2nN1OysJ9Dnx5JZv00iB+f+2vtv+LBfqFgQYGOPP/FdG38TnzfZqaxH
-   7ChWG0N0Y4DlExHwal6YO42NQOPk0wQs6Wa1p6t1EDGsS/EoZrxrUf3p4
-   YNE1XNwCtje6QoxgDfFr8W7+50AesMKqpiC6HEBIwxWjnHDpb3ojebSk1
-   UL16Yd6oJCG2RYLDLdp/mAS6ldjRz75Hbe3SfTtS9ZpcKjU60hj/l8eLr
-   LSAE0ZHFqYhnuESKSEjiUPcueDgZ7TlAOiKJ8RCbmuTEJxH25Qdml9cOH
-   A==;
-X-CSE-ConnectionGUID: raOimBg+S9uMZHo7jtO1ng==
-X-CSE-MsgGUID: NIPJoL86RhuxOgH1+GPkbQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11835"; a="94179094"
-X-IronPort-AV: E=Sophos;i="6.25,145,1779174000"; 
-   d="scan'208";a="94179094"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2026 01:47:37 -0700
-X-CSE-ConnectionGUID: I9Yz0pPHSqW/MFYvGiqEjg==
-X-CSE-MsgGUID: DMS0CCMqRbGyR2DZ0OwJzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,145,1779174000"; 
-   d="scan'208";a="254980425"
-Received: from ubuntu.bj.intel.com ([10.238.152.72])
-  by fmviesa004.fm.intel.com with ESMTP; 03 Jul 2026 01:47:34 -0700
-From: Jun Miao <jun.miao@intel.com>
-To: jarkko@kernel.org,
-	dave.hansen@linux.intel.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	hpa@zytor.com,
-	kai.huang@intel.com
-Cc: linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	fan.du@intel.com,
-	jun.miao@intel.com,
-	x86@kernel.org
-Subject: [PATCH v5] x86/sgx: Report RCU-Tasks quiescent state in EPC sanitization loop
-Date: Fri,  3 Jul 2026 16:48:10 +0800
-Message-Id: <20260703084810.145567-1-jun.miao@intel.com>
-X-Mailer: git-send-email 2.32.0
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IL+OxW5n"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-493bb0e2894so998605e9.2
+        for <linux-sgx@vger.kernel.org>; Fri, 03 Jul 2026 06:36:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1783085763; x=1783690563; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=FNBtslBmkdxYY8pJaB+biO9zOY0LMt3+psd/OnIDrZs=;
+        b=IL+OxW5neLn5t1qzQH0sjTS8g6WWnE1LSAY1otwpN++M+eYk+7Qb/eOyuH56JyZdsb
+         viO0GDl7TqRygk8yFdTH5ZPZHKLPmUcVS2uJHg6brbMcUAt4Mn1kIo5syIywXMuub5Ob
+         jk6ZdNIM55TxHOw/+h0uAGuHqbqEWcTM1gGlHNCLKnt+uY1gfrh8svmNObcr4YZUngUa
+         MpKoL/DuHGfSUPpflFRvfvKW8bas6qbb7gkUdwwUyLQjy3xnjOLYSBZOk/GkfZk44pV7
+         tC7teC6Zo7nCBlLbCkWw0nDGDFqSy1uvg9eNfGapGpBDIDU+UKgaEWo33gbkFNpAOFdx
+         EutQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783085763; x=1783690563;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=FNBtslBmkdxYY8pJaB+biO9zOY0LMt3+psd/OnIDrZs=;
+        b=lHZVOMA8trblAN/PZNhLVHbf7qxQPFBSvH5Z8jKvXsW6rNUVeBq6f891t0MSK8ASra
+         klyb6WtNPVywQNofaTSU7hgKiVu5ju0RYHCC6OtwHm9mDooQ8UunhAho8XhYOJMbuGwe
+         gWhmZetY3sb7xb96taLgi4WadXCEG8eCUR4UsZw1Zf3isXlWbrS9GmiQRIy8tiAJh49A
+         dL1m17i3aS/xV56z9vJZRMJErCk6ztVUy1mL8FmDGnAMrgm2//gUT4PJfldMipFMTwQz
+         auu7pwkp3jqkj44afnX+Qj/L2eEUo59tE7KDPEnIGuF5p/NJXNBROgPTWf0P/DI0jYSe
+         fUPQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8mqxBT6yNMvsAV+fZghQUf5OsEf+/7kPS1uP3XdzeOS22wYLeqCHu3JxWL8SdbExhyPFpkLP9ycR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxECKa7Ekto0wU39u6wJdyYPoy2BPLOkGaDThu4QZIY5h1QLhv1
+	a6rg1fDoS38jHilPK9mi6HY4vKuHsRYV7c0ox+7CiUBt/vM/i/nkzSi2U9zbZrKXKyY=
+X-Gm-Gg: AfdE7cnZCZRrrcOi1Z4QR38RVR5yxG50G+9zqarFOw5FrdF+ccTQOjGNdD5LLHY8CG4
+	ZQGaz4bn/r1hYl9OkmfILuPP9ISd0sQrzVS9La5tYHz6G3/mBBPzTRNwejOqG/mkZ4WR72B/lF5
+	8bB45fSfD+Tu1QHi8CeSO7NrIWQYSR9EtiVqhLWY5HqDx5vCh4qG/aF9o3IPGplG4n8whb7oX4s
+	czrPvPSL6d5oyWeY388a1558U/LOUhthDMIZspx164D5/Vd7ZDGjPxLQIxrbv8Qwtqs9TnAXYdU
+	U0t7svNhjZ94IWOJCCyx38uvwD0dGnf2w1Xh4Fy+4AymTBgUk8+ab/PK1+4JEgeMO1+30qC/qUd
+	iWpwnd9+vcrFQdOTfjzV86oXXPJnCaCKfTOmSFzBK8BLoFHsS6BmqlugTA3+LaemgRNwLkmiIjU
+	y+Aqw9YR8=
+X-Received: by 2002:a05:600c:1912:b0:493:bd67:315 with SMTP id 5b1f17b1804b1-493c2b91fe3mr73724125e9.5.1783085762867;
+        Fri, 03 Jul 2026 06:36:02 -0700 (PDT)
+Received: from ?IPV6:2001:1a48:8:903::e14? ([2001:1a48:8:903::e14])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493bef11338sm202929555e9.1.2026.07.03.06.36.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Jul 2026 06:36:02 -0700 (PDT)
+Message-ID: <f0110241-eb12-49f8-81ce-3acf12939f45@suse.com>
+Date: Fri, 3 Jul 2026 15:36:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/30] mm: move vma_start_pgoff() into mm.h and clean up
+Content-Language: en-US
+To: Lorenzo Stoakes <ljs@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Russell King <linux@armlinux.org.uk>, Dinh Nguyen <dinguyen@kernel.org>,
+ Simon Schuster <schuster.simon@siemens-energy.com>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, Ian Abbott <abbotti@mev.co.uk>,
+ H Hartley Sweeten <hsweeten@visionengravers.com>,
+ Lucas Stach <l.stach@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Christian Koenig <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>,
+ Ankit Agrawal <ankita@nvidia.com>, Alex Williamson <alex@shazbot.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Dan Williams <djbw@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ David Hildenbrand <david@kernel.org>, Suren Baghdasaryan
+ <surenb@google.com>, "Liam R . Howlett" <liam@infradead.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ SeongJae Park <sj@kernel.org>, Miaohe Lin <linmiaohe@huawei.com>,
+ Hugh Dickins <hughd@google.com>, Mike Rapoport <rppt@kernel.org>,
+ Kees Cook <kees@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-parisc@vger.kernel.org, linux-sgx@vger.kernel.org,
+ etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org, kvm@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev, linux-mm@kvack.org,
+ iommu@lists.linux.dev, linux-perf-users@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+ damon@lists.linux.dev, Pedro Falcato <pfalcato@suse.de>,
+ Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>,
+ Jann Horn <jannh@google.com>
+References: <cover.1782735110.git.ljs@kernel.org>
+ <b28b698df4c009e85c4728446ca5863d8e633164.1782735110.git.ljs@kernel.org>
+From: Vlastimil Babka <vbabka@suse.com>
+Autocrypt: addr=vbabka@suse.com; keydata=
+ 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
+ pYekxJujNeEDkUlky0Y=
+In-Reply-To: <b28b698df4c009e85c4728446ca5863d8e633164.1782735110.git.ljs@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When the kernel boots from kexec, the EPC pages may have a stale state.
-The kernel sanitizes all EPC pages to reset them to a clean state before
-their first use in any enclave.  The EPC size could be several GBs and
-resetting them could take a significant amount of time.  Because of that,
-the kernel performs the reset in a loop through a kernel thread ksgxd() at
-early boot, and there's a cond_resched() after resetting each EPC page.
+On 6/29/26 14:23, Lorenzo Stoakes wrote:
+> vma_last_pgoff() already lives there, so it's a bit odd to keep
+> vma_start_pgoff() in mm/interval_tree.c. Move them together.
+> 
+> These each return unsigned long, which pgoff_t is typedef'd to. Make this
+> consistent and have these functions return pgoff_t instead.
+> 
+> Additionally, express vma_last_pgoff() in terms of vma_start_pgoff(), since
+> we wrap the vma->vm_pgoff access, we may as well use it here.
+> 
+> Also while we're here, const-ify the VMA and cleanup a bit.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 
-This is fine in most cases, but becomes a problem when there's other kernel
-code waiting for an RCU-Tasks grace period but the cond_resched() in
-ksgxd() never triggers rescheduling.  Because cond_resched() doesn't report
-a quiescent state when it doesn't trigger rescheduling, the thread that is
-waiting for an RCU-Tasks grace period will wait until all EPC pages are
-reset.
-
-For instance, BPF LSM subsystem can invoke synchronize_rcu_tasks() at
-kernel boot time.  A VM with a large EPC assigned and BPF LSM enabled can
-take a long time to boot, with a call trace triggered:
-
-    rcu_tasks_wait_gp: rcu_tasks grace period number 1 (since boot) is
-	130631 jiffies old.
-    INFO: task systemd:1 blocked for more than 122 seconds.
-    ...
-    task:systemd  state:D stack:0  pid:1  tpid:1  ppid:0  flags:0x00000002
-    Call Trace:
-    ...
-    schedule_timeout+0x157/0x170
-    wait_for_completion+0x88/0x150
-    __wait_rcu_gp+0x17e/0x190
-    synchronize_rcu_tasks_generic+0x64/0x60
-    ...
-    synchronize_rcu_tasks+0x15/0x20
-    register_ftrace_direct+0x31f/0x350
-    ...
-    bpf_trampoline_link_prog+0x33/0x60
-    bpf_tracing_prog_attach+0x3c5/0x5f0
-
-Replace cond_resched() with cond_resched_tasks_rcu_qs() which explicitly
-reports quiescent state regardless of whether actual rescheduling is
-triggered.  Resetting all EPC pages in ksgxd() isn't performance critical
-so the extra cost of cond_resched_tasks_rcu_qs() isn't a problem.
-
-Tests showed this reduced the VM kernel boot time from ~50s to ~700ms.
-
-Fixes: e7e0545299d8 ("x86/sgx: Initialize metadata for Enclave Page Cache (EPC) sections")
-Suggested-by: Kai Huang <kai.huang@intel.com>
-Co-developed-by: Fan Du <fan.du@intel.com>
-Signed-off-by: Fan Du <fan.du@intel.com>
-Signed-off-by: Jun Miao <jun.miao@intel.com>
-Tested-by: Challvy Tee <challvy.tee@gmail.com>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
-Link: https://github.com/systemd/systemd/issues/40423
-
----
-v1 -> v2:
- - Clarify the RCU Tasks stall root cause.
- - Use cond_resched_rcu_qs() following the Kai`s suggestion.
-
-v2 -> v3:
- - cee439398933 ("rcu: Rename cond_resched_rcu_qs() to cond_resched_tasks_rcu_qs()")
-
-v3 -> v4:
- - Trim down/rewrite changelog following Kai`s suggestion.
-
-v4 -> v5:
- - Change the title, not state the problem directly
- - Corrected spelling and grammatical errors by Kai
- - Add "Reviewed-by: Kai Huang"
-
----
- arch/x86/kernel/cpu/sgx/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 4505f808af5e..7d2f57663177 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -106,7 +106,7 @@ static unsigned long __sgx_sanitize_pages(struct list_head *dirty_page_list)
- 			left_dirty++;
- 		}
-
--		cond_resched();
-+		cond_resched_tasks_rcu_qs();
- 	}
-
- 	list_splice(&dirty, dirty_page_list);
---
-2.32.0
+Reviewed-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
 
