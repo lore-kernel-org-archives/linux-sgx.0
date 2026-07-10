@@ -1,174 +1,176 @@
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31F7399360
-	for <linux-sgx@vger.kernel.org>; Fri, 10 Jul 2026 20:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C794395AEB;
+	Fri, 10 Jul 2026 20:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783714807; cv=none; b=Z60AAm21dkAC3JOW1RZxbRNP/G0NlRpJ2ryTj0SPGR/yoaQOTFFgkIOs+n8fv+5efdWf9/gFlW1aIVc+B8yKg9bAhNeNw+KHSMFjcEYukcgMlnNk7xiNpR7FOb3BigPRJf0JXRnxxQoNW070vz1WWl+XJxRJzHmonupOuhQVayU=
+	t=1783714815; cv=none; b=cI0sJPODuMRdD0U4W31EvZozuUBXQ3v8o7wD/+R8xq15NyAs67lc4vxs0jC45YLxDViLl6glkspBdTdSARNeFmm1GloyrpQD0jz5Dnp308j2343G9Zntly2Xm4WCmmhZEF8ds480tpp+sZNgvxuZzOBynfFs2rfEDbpqJvMJ62Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783714807; c=relaxed/simple;
-	bh=hY0ihDWAncS8x5azfJXUc95BFne8Ovg7UFiz7I6gZN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPeEbTlCkBNvaymGVvKrNja44hG5cshG6pUtW6fo6zfNMxf36EYile2+xUj2s2KMcxnU+3QjHppHrud9zlvkRj7SmxgOf2PzwI9m9G0SQo0djgEmHIOlfwgrMHooZPIyoL5vDI93pt9JlWmapn73I2mOAnD+oQYog2tzsBTn8Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=X3mYeLKC; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+	s=arc-20240116; t=1783714815; c=relaxed/simple;
+	bh=+vEjD5vk3USGS9eYkwFhK69Zz1FxHMWNBbZKQBCnxeY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=oRo6uqrC9Ag9WkoLSLDYdI8xCcxbIXpj18x7gGqopRLGckZBHC1jOt/As9HicSc1zZoCJE4b1WM7K+G0X4mWjPxiBYZK5yK6SmoFWHUk5Wzr3pDKJLQqm2/9AjtHQ3B5k8HE1SMDZuQzcvmXEFiE9shjuq+5TX7+8rZtsMbbjBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KklfwoQD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="X3mYeLKC"
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-51c5382806fso12686831cf.2
-        for <linux-sgx@vger.kernel.org>; Fri, 10 Jul 2026 13:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1783714804; x=1784319604; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Atx/vDG1sDwzZEMAHR3NGh72ccSeLTTbFrhohwZH8Yk=;
-        b=X3mYeLKCTjrKKg7CrKhhtCpJiHPHVx9i7wyXOXHXJaNZNTkaIVryh75DoorULOx84m
-         TM+OwWO82Wa5PBzq/bp3fBMco7tSum+uO7dHKjgCrcAOtrj2ZcQoqjcMRdW+2pjSQB+w
-         tlu3tni9BW495YqGesm+7e+WSEHEYWpHM5hPATAn+CpKpWPA/cUG+5VCwhc5PCHe0PUS
-         MFkXf6cktWK5db+chO1jL7u4Y/QBBpOwl8MiEg45GxqUmoLXqyMpkCjPR69yebLQ4Enu
-         QCcQoXAuwRIe5dPzaJOvDluq2JLNeIY5o4vGwaqPBzmc1kC+TmHXnJkELSBsdLoTg8vE
-         umKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783714804; x=1784319604;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Atx/vDG1sDwzZEMAHR3NGh72ccSeLTTbFrhohwZH8Yk=;
-        b=JWafY+04KNth8MH+cUDuX4DjjWWGac390/4uRV367y5Nqf/Cpo1Mst0z3M5ugE9lR+
-         eHQ0fmtgzTzOhxmoMZefanc4ONLTnIK70f+KYtffRRV3XBbbzwcoIcuJQVgMuJ4f0asI
-         FlTh+UIiWxzdLu+H09cl1lz+C6IHlLZtYYUpNxF5odd0MKbzKODJw3mWN78LgZzCsPNs
-         W79ixE7xnVSoXyYBo2gURNWW5iiMBlWb/63S1Dt66L79b7UEdMTfeAC0GGv2CbJh1F2/
-         kftcTwDjSw14oW1MavwtshG0tkwKPYALWXOSWj2Vq4OGaUmGirqoWY3zwvK01uT7N8m7
-         ZlSA==
-X-Forwarded-Encrypted: i=1; AHgh+Roele+s0pqYeBSd7AH8aUtmSbX3iqK5GUiMfhOaFqVm11dXhCRvxF1VxyHDB9YOCayjUxZP62KBjcQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZgirQkZjRpgGwS5EjEMwVow7g38RDhCeGxiYP4aHYJlPaVSRV
-	Dae4g96dNicTWxwCsWlSLcNHAlsqCtrvmVHblXmsMkWY77wEInzW+v7WsndCd6KBVYw=
-X-Gm-Gg: AfdE7ckIVCpMNLY+0eg1LPi+5xSLRhnHMDL+vb9JK/XJ8EFZAHzaYP64SJmNelGJujz
-	W0ojD4i/LVR36cBfrPC6MzFSUI6z2Ff9pjIDEfAh1K/2otTL5JHoTO4toS83KO4nMN8wSUrXooP
-	dDV7eYkKHi5fzKIEVk8zlQgeHOy+qAZPmLs/fmlfB+oMvXrOo7GDMT3p2Jwd5A4LHNzGp1QMGzA
-	WJdB3lGS7IxKIpiMy3bBweopBTMPC+9cmWnSIhCuwMDXHdkJMJ7qxyLOB/JjXJUZRhHtqmThH4d
-	NCIdGmQRyaVHQmdUoszO6saxH4atIyHSqQSHs3NQ7/SKjtNyhXEeGE3fu+3YQn1RVCuUBuadPgJ
-	0SZvm2hZHSRxDnr9Z8/J0hpLl2Yu7CQvSuqbYtb9YtZaXpInoaqeyAnBLiUwXqE39LMSA2eh9uR
-	nsCMLRFZPArEk98DazH1K8sPj2F/JxOIUkOsmDYuHRvHu7j+YOkQ73GEPOBGhddrVvampb
-X-Received: by 2002:ac8:7c56:0:b0:51c:1291:911c with SMTP id d75a77b69052e-51cbf0e0649mr5096251cf.14.1783714804352;
-        Fri, 10 Jul 2026 13:20:04 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-60-52.washdc.fios.verizon.net. [173.79.60.52])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd50e10f4sm49427896d6.1.2026.07.10.13.20.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jul 2026 13:20:03 -0700 (PDT)
-Date: Fri, 10 Jul 2026 16:19:58 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Lorenzo Stoakes <ljs@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Simon Schuster <schuster.simon@siemens-energy.com>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>, Ankit Agrawal <ankita@nvidia.com>,
-	Alex Williamson <alex@shazbot.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Dan Williams <djbw@kernel.org>, Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	"Liam R . Howlett" <liam@infradead.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>, SeongJae Park <sj@kernel.org>,
-	Miaohe Lin <linmiaohe@huawei.com>, Hugh Dickins <hughd@google.com>,
-	Mike Rapoport <rppt@kernel.org>, Kees Cook <kees@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
-	linux-sgx@vger.kernel.org, etnaviv@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-mm@kvack.org, iommu@lists.linux.dev,
-	linux-perf-users@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	damon@lists.linux.dev, Pedro Falcato <pfalcato@suse.de>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>,
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 29/30] tools/testing/vma: default VMA flag bits to 64-bit
-Message-ID: <alFT7lx8F04rN01D@gourry-fedora-PF4VCD3F>
-References: <cover.1782735110.git.ljs@kernel.org>
- <27cd07f6dd862d92410cf9db03f7c11e5f66854d.1782735110.git.ljs@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KklfwoQD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C9341F00AC4;
+	Fri, 10 Jul 2026 20:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783714814;
+	bh=b6m+Kx9pTca8aDLZIa9EAYyuWtzQz4rBN6lpqZdjtOI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=KklfwoQDYnFJiSgF8x/fmMsC82irr6fiC3vgvxdByDvRhoedHf7pQDn1c9NZI5DfX
+	 MOp1LTiHjHpzA9VLvkhYbildB4cu1vHCk5/KVbHKUSlprjpTaQUNMDmjsiOI1Te042
+	 uo77hJ8LafjCsZg+xC7CeE0CvOqdnXPhDR3G8yHgib8IhAkNPTshHLMdz11XWgX0vK
+	 SiUbzRTgSYO80iNLU2glBBPv+CXZpdrT32nDMj1+31ugD/CwsX4SHX531HtcRV/aAa
+	 LS7f/v828c4J4dL0OksyoCQ6qMBgXKJbADW9m+mA8/97HyNxBJyN4JJFdTQqAIWyVR
+	 mgWAx34mGiLzg==
+From: Lorenzo Stoakes <ljs@kernel.org>
+Date: Fri, 10 Jul 2026 21:16:48 +0100
+Subject: [PATCH v2 07/33] mm/rmap: elide unnecessary static inline's in
+ interval_tree.c
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27cd07f6dd862d92410cf9db03f7c11e5f66854d.1782735110.git.ljs@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260710-b4-pre-scalable-cow-v2-7-2a5aa403d977@kernel.org>
+References: <20260710-b4-pre-scalable-cow-v2-0-2a5aa403d977@kernel.org>
+In-Reply-To: <20260710-b4-pre-scalable-cow-v2-0-2a5aa403d977@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ David Hildenbrand <david@kernel.org>, 
+ "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+ Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+ Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>, 
+ Lance Yang <lance.yang@linux.dev>, Pedro Falcato <pfalcato@suse.de>, 
+ Russell King <linux@armlinux.org.uk>, Dinh Nguyen <dinguyen@kernel.org>, 
+ Simon Schuster <schuster.simon@siemens-energy.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Helge Deller <deller@gmx.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Dan Williams <djbw@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ James Clark <james.clark@linaro.org>, Zi Yan <ziy@nvidia.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, 
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+ Barry Song <baohua@kernel.org>, Miaohe Lin <linmiaohe@huawei.com>, 
+ Naoya Horiguchi <nao.horiguchi@gmail.com>, Xu Xin <xu.xin16@zte.com.cn>, 
+ Chengming Zhou <chengming.zhou@linux.dev>, SJ Park <sj@kernel.org>, 
+ Matthew Brost <matthew.brost@intel.com>, 
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, 
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+ Ying Huang <ying.huang@linux.alibaba.com>, 
+ Alistair Popple <apopple@nvidia.com>, Hugh Dickins <hughd@google.com>, 
+ Peter Xu <peterx@redhat.com>, Kees Cook <kees@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Robin Murphy <robin.murphy@arm.com>, 
+ Andrey Konovalov <andreyknvl@gmail.com>, 
+ Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Jarkko Sakkinen <jarkko@kernel.org>, 
+ Dave Hansen <dave.hansen@linux.intel.com>, 
+ Thomas Gleixner <tglx@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Ian Abbott <abbotti@mev.co.uk>, 
+ H Hartley Sweeten <hsweeten@visionengravers.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, 
+ Christian Gmeiner <christian.gmeiner@gmail.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Christian Koenig <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, 
+ Matthew Auld <matthew.auld@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+ Yishai Hadas <yishaih@nvidia.com>, 
+ Shameer Kolothum <skolothumtho@nvidia.com>, 
+ Kevin Tian <kevin.tian@intel.com>, Ankit Agrawal <ankita@nvidia.com>, 
+ Alex Williamson <alex@shazbot.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+ Shakeel Butt <shakeel.butt@linux.dev>, Usama Arif <usama.arif@linux.dev>
+Cc: Lorenzo Stoakes <ljs@kernel.org>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-parisc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ nvdimm@lists.linux.dev, linux-perf-users@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, damon@lists.linux.dev, 
+ iommu@lists.linux.dev, kasan-dev@googlegroups.com, 
+ linux-sgx@vger.kernel.org, etnaviv@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+ kvm@vger.kernel.org, Russell King <linux+etnaviv@armlinux.org.uk>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1497; i=ljs@kernel.org;
+ h=from:subject:message-id; bh=+vEjD5vk3USGS9eYkwFhK69Zz1FxHMWNBbZKQBCnxeY=;
+ b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLICg62zJyhL7JCZOvGsm/Q/rj3+70IOrpitfMx/uvyjz
+ oi4HzwnOkpZGMS4GGTFFFmefxHfHyQSNq/zgr8bzBxWJpAhDFycAjCRdCeG/y41XWeYDhe96a2Z
+ 3BWx1eDu9tse2jMKv71UKpp856v5jjuMDJ8f1fW/3H7zvFYYW6fsng/1loVifcVXfG1nbto7c1k
+ vFwcA
+X-Developer-Key: i=ljs@kernel.org; a=openpgp;
+ fpr=E7F417BF5214569E89D04F46CF9DCD8A81E27F14
 
-On Mon, Jun 29, 2026 at 01:23:40PM +0100, Lorenzo Stoakes wrote:
-> With all of the sanitisers turned on, setting the VMA flag bits depth to
-> 128 by default results in overly long build times.
-> 
-> Reduce this to 64 - we can always manipulate these later for testing of
-> larger bitmaps as needed.
-> 
-> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
+It's not necessary to declare these functions static inline as they are
+contained within a single compilation unit.
 
-Seems like this causes instrumented inlining to go crazy.
+This makes the anonymous interval tree code consistent with the newly
+updated file-backed interval tree code.
 
-static inline void bitmap_or(...) {
-	if (small_const_nbits(nbits))
-		*dst = *src1 | *src2;
-	else
-		__bitmap_or(dst, src1, src2, nbits);
-	        ^^^^ this branch is being hit ^^^^
-}
+No functional change intended.
 
-tl;dr: __bitmap_or() gets emitted and then the sanitizers have to
-instrument a ton of inlined functions instead of the compiler simply
-injecting a couple 'or' instructions.
-
-if you wanted to keep the coverage you could do something like
-
-# These can be varied to test different sizes.
-NUM_VMA_FLAG_BITS ?= 64
-NUM_MM_FLAG_BITS  ?= 64
-CFLAGS += -DNUM_VMA_FLAG_BITS=$(NUM_VMA_FLAG_BITS) -DNUM_MM_FLAG_BITS=$(NUM_MM_FLAG_BITS)
-
-w/ 
-
-make NUM_VMA_FLAG_BITS=128
-
-would let you still test the branch but not by default.
-
-anyway:
-
+Reviewed-by: Pedro Falcato <pfalcato@suse.de>
 Reviewed-by: Gregory Price <gourry@gourry.net>
+Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
+---
+ mm/interval_tree.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-~Gregory
+diff --git a/mm/interval_tree.c b/mm/interval_tree.c
+index ff36fd14ef37..b387d39e0547 100644
+--- a/mm/interval_tree.c
++++ b/mm/interval_tree.c
+@@ -81,19 +81,19 @@ vma_interval_tree_iter_next(struct vm_area_struct *vma,
+ 
+ /* Anonymous interval tree (anon_vma->rb_root) */
+ 
+-static inline unsigned long avc_start_pgoff(struct anon_vma_chain *avc)
++static unsigned long avc_start_pgoff(struct anon_vma_chain *avc)
+ {
+ 	return vma_start_pgoff(avc->vma);
+ }
+ 
+-static inline unsigned long avc_last_pgoff(struct anon_vma_chain *avc)
++static unsigned long avc_last_pgoff(struct anon_vma_chain *avc)
+ {
+ 	return vma_last_pgoff(avc->vma);
+ }
+ 
+ INTERVAL_TREE_DEFINE(struct anon_vma_chain, rb, unsigned long, rb_subtree_last,
+ 		     avc_start_pgoff, avc_last_pgoff,
+-		     static inline, __anon_vma_interval_tree)
++		     static, __anon_vma_interval_tree)
+ 
+ void anon_vma_interval_tree_insert(struct anon_vma_chain *node,
+ 				   struct rb_root_cached *root)
+
+-- 
+2.55.0
+
