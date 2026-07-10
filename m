@@ -1,207 +1,213 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED21439A4C5;
-	Fri, 10 Jul 2026 20:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29353AA4F8
+	for <linux-sgx@vger.kernel.org>; Fri, 10 Jul 2026 20:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783715418; cv=none; b=nAPemqXjPlHfJl42iL7wxcMRAGe+KN7MtXuJDdWIfrjnsDtD9yCZ0cj0KqhgW5VVoc6IXu+xGUD+Tdh84hLQvVWw6lGuOSWfdlbGsVvMj9JQ3xjUWw+my9lBOj1Iw+blOQC5qkoGkVTHamDwbiubcc42nybFxejXYsSiRtIeUQE=
+	t=1783716548; cv=none; b=cOeDfG3ogdbs2jDYsXClMlqZvJOp7OI+maoS795Uq9srPvIy918Zv+exDJQ4KFLFrOGjy4ZXysM3cjENUM5p2np716aDE+y2BF320BAxDITqTLlVwwUP2FTaNW4sNM1hizFxJPMCru5a9zPO956e7FB7XZnE9E5wEo/NAzCBrqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783715418; c=relaxed/simple;
-	bh=G0Z54AjtjNI6CjvRN0QWBiGJMevNN1T++vP+QCfqk78=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Yn8az0M3/awDg4Wu9mHjLkVwAC28Hc86cu21FObEk1aXkX4VdFZ5Y7Zk6A8pdrkb2V8EmkxkvFQTtkbv3368pXFtFvc/p4Kg/JT3KiA63b/y550vPNgUU/lq9QqsMc7QoQp+3MWTOM12KO0v/zGDmLJZtn+WUb1AAdK1Qld+3iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJU/LxQF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783716548; c=relaxed/simple;
+	bh=gC5eUqeAebp3PWfUT6EP2kjPnQImFCyW8H71EpslMQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EC8eCZ2N3cgpG8G5sGXJzdojgfDHDc3UifWTQ/XJfssEIdP8KNP0NswAS+G2070JQ1r9FXJYuZpHCbf9OJnX3Wb/jXhvLNFzgkIJNDpcCg/837aQrmW8CA+Q3EDx3Cee8+apKhS3nJDHbBuMmcsllQehcq1KbepPNUm0z5VpX2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=fonv6uPz; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJU/LxQF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE5081F000E9;
-	Fri, 10 Jul 2026 20:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783715416;
-	bh=B5I9XJhmOOi1LkWbRSVKnYIkRF+jGCGnmzoiak9EY5o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=HJU/LxQFVzsJlRTCMRzOJHdKDqTBAxtBcBwpt63liPwwYag6kcqfVKglYfllNuHwG
-	 zruaDbLFSHOKgoo0BqDuxifQenxMZ32LDVjzeICMBYJ3UJv5j+AnJcMgzxnGHtBdeN
-	 j8C36crjgwo2R/uzmYN1HthGyrQ3fCMsmbG+73WdXAXoxUFqceMyzp9ZW1PdmaRa9O
-	 G5/VT52++Jk599/Cwob6URDW22K7/Nduaq0RP+KDtJ0pkxdcPa3d89vPvW4V4rHBk/
-	 CW0bBjmWxC4r28Ips94X2CU8upp1gMEWiWKnHmBXHuAIxpE3/rXj+RtTqbCeQkATao
-	 rwCQBxnl2483Q==
-From: Lorenzo Stoakes <ljs@kernel.org>
-Date: Fri, 10 Jul 2026 21:17:14 +0100
-Subject: [PATCH v2 33/33] tools/testing/vma: output compared expression on
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="fonv6uPz"
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-517dc520840so9180801cf.3
+        for <linux-sgx@vger.kernel.org>; Fri, 10 Jul 2026 13:49:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1783716545; x=1784321345; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=fM3Bw1AZy4lAkPPHaL59OrI7vB0RIP/keCGdI0vS7tk=;
+        b=fonv6uPzbSKpXVdHanWV5yL2JqDJx0BGpTTlatVYw7KbdZpIPvlukInSDvuGJzFPvj
+         9Rb6nF6N1V592BAcnYZj+KuIQ6SUkNVw5BFkU33l8++hsxVZYpm6N2yINGX4SeQYz5Pm
+         0uC+wmjY2g/BzoUPQOVBvgQPzF+896+ru9GQ2Bke9PjtSUaYf3ji+w173v1VHl2JDf2D
+         cuZ4xUZCBkOxjsAwjzBGUe8aor3Jv10fASVIo+klHJhyWjemtNaXu9/XAhOtcs6ap+8P
+         tLKZ/vRdwaA27+Rqe3dkWQovqS2cERzk2/CXU2jrO9ebCfwVgJ2tr/qigd8Ad8xNjTbV
+         N9kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783716545; x=1784321345;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=fM3Bw1AZy4lAkPPHaL59OrI7vB0RIP/keCGdI0vS7tk=;
+        b=SZqf3CO46KMN0ka1xbam4SFoEqxE3N3f7RXiIlHeNLWaM+cftPwJTFrmqCc08sIr7K
+         lF2DFaVqqn+QWR2ln55qybRyBsTKOlbTg4en9YMgxul100LAXU6mODUBCVEKdV4mS/bL
+         9LYwWkRwhtIJYccA+W/CP+BM2jr1sz1Pn0u4UkGkeW0OzIVUafxZKRmbnSIZBCE3IpW6
+         rLdaOCWQrTeXBFads2sq2BhYrZiEJbyx12RZJmwtwLpztoCaWFK3Ec22440i7BwuE+Ok
+         2mvS0uG/KCXIfsfbhaK82iU+Ays9RO+L1A7fOc5vZlB7xZuKJI0b/exSFYhXtC/jv/DS
+         6lUQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpTPnUKW1FiXQxF3Qr9oJwenFa0qTZdyUBvfPi2kEN0KRzUgghuheWxBE5fGLB7CwqkAzhgEooJFRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh6goSQac/nqTC/TCt+RXHxm4yIyN7hSoBBH8cY30/qjXQ4zQc
+	+VElbtkqAbE85iqG6p2PsbQx72ksPvXJUV6AUF24wYEq/OjJ2/Vq0QGf9MgPDeVfnqw=
+X-Gm-Gg: AfdE7cnQqueJYfeRUU99cX5StKDqrHv6OiA8BFQXZyiyoxPVuor3nJMSRq47n9syLas
+	ib+hExoMHbMoOcIkV2BiND+S/G87vBOolIp7NitnZyCpdpuY4YT/5h/aaKKmpxl0sepdIcAwMbh
+	VmRUbW6G30BFa845ojW8dFc2cn5N1pEuD8f5aZGNtaCPwMh4V7JGQHgSJFNTsZIlooVnucJn2Bh
+	wjFtIA3KIspH5l47/Nt0Y2whjTdhKPVkUXuaVqUvYSGNfRFUAU84TKkND/mhGQNNkRoiHFGa/bl
+	Xkt+vAOlWiDOhbDAIe9Fxx13QxxMnjcSP5oxRBglETLEotDesfOM5R0/HSHjMAPEHc3e/rEEJI6
+	v6PgcDYvhHDQKsukbFu8IGfUDVGI9YWe9GAbxbA/XD8ubp/VVXjrGpzqZhWKQC+qTbP8IHtdrBO
+	QN6cQe9J1/Fdphj9LpVLhCAINIBIjvaRTM582TEkAgKJXsmX98qtBUqvnJf6cfrSMMe77Y
+X-Received: by 2002:a05:622a:15c4:b0:51c:7b11:41a3 with SMTP id d75a77b69052e-51cbf361a3bmr5658901cf.80.1783716544856;
+        Fri, 10 Jul 2026 13:49:04 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-60-52.washdc.fios.verizon.net. [173.79.60.52])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-51caaf5f61csm24147321cf.22.2026.07.10.13.49.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jul 2026 13:49:04 -0700 (PDT)
+Date: Fri, 10 Jul 2026 16:48:58 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Lorenzo Stoakes <ljs@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Simon Schuster <schuster.simon@siemens-energy.com>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>, Ankit Agrawal <ankita@nvidia.com>,
+	Alex Williamson <alex@shazbot.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Dan Williams <djbw@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	"Liam R . Howlett" <liam@infradead.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>, SeongJae Park <sj@kernel.org>,
+	Miaohe Lin <linmiaohe@huawei.com>, Hugh Dickins <hughd@google.com>,
+	Mike Rapoport <rppt@kernel.org>, Kees Cook <kees@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
+	linux-sgx@vger.kernel.org, etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-mm@kvack.org, iommu@lists.linux.dev,
+	linux-perf-users@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+	damon@lists.linux.dev, Pedro Falcato <pfalcato@suse.de>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>,
+	Jann Horn <jannh@google.com>
+Subject: Re: [PATCH 30/30] tools/testing/vma: output compared expression on
  ASSERT_[EQ, NE]()
+Message-ID: <alFausURKttxHUAI@gourry-fedora-PF4VCD3F>
+References: <cover.1782735110.git.ljs@kernel.org>
+ <432444fa4c12ae1c4047550e2b205d3e9bab458f.1782735110.git.ljs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260710-b4-pre-scalable-cow-v2-33-2a5aa403d977@kernel.org>
-References: <20260710-b4-pre-scalable-cow-v2-0-2a5aa403d977@kernel.org>
-In-Reply-To: <20260710-b4-pre-scalable-cow-v2-0-2a5aa403d977@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- David Hildenbrand <david@kernel.org>, 
- "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
- Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
- Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>, 
- Lance Yang <lance.yang@linux.dev>, Pedro Falcato <pfalcato@suse.de>, 
- Russell King <linux@armlinux.org.uk>, Dinh Nguyen <dinguyen@kernel.org>, 
- Simon Schuster <schuster.simon@siemens-energy.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- Helge Deller <deller@gmx.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Dan Williams <djbw@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
- Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- James Clark <james.clark@linaro.org>, Zi Yan <ziy@nvidia.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, 
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
- Barry Song <baohua@kernel.org>, Miaohe Lin <linmiaohe@huawei.com>, 
- Naoya Horiguchi <nao.horiguchi@gmail.com>, Xu Xin <xu.xin16@zte.com.cn>, 
- Chengming Zhou <chengming.zhou@linux.dev>, SJ Park <sj@kernel.org>, 
- Matthew Brost <matthew.brost@intel.com>, 
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, 
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
- Ying Huang <ying.huang@linux.alibaba.com>, 
- Alistair Popple <apopple@nvidia.com>, Hugh Dickins <hughd@google.com>, 
- Peter Xu <peterx@redhat.com>, Kees Cook <kees@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Robin Murphy <robin.murphy@arm.com>, 
- Andrey Konovalov <andreyknvl@gmail.com>, 
- Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Jarkko Sakkinen <jarkko@kernel.org>, 
- Dave Hansen <dave.hansen@linux.intel.com>, 
- Thomas Gleixner <tglx@kernel.org>, Borislav Petkov <bp@alien8.de>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Ian Abbott <abbotti@mev.co.uk>, 
- H Hartley Sweeten <hsweeten@visionengravers.com>, 
- Lucas Stach <l.stach@pengutronix.de>, 
- Christian Gmeiner <christian.gmeiner@gmail.com>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Christian Koenig <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, 
- Matthew Auld <matthew.auld@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
- Yishai Hadas <yishaih@nvidia.com>, 
- Shameer Kolothum <skolothumtho@nvidia.com>, 
- Kevin Tian <kevin.tian@intel.com>, Ankit Agrawal <ankita@nvidia.com>, 
- Alex Williamson <alex@shazbot.org>, Paolo Bonzini <pbonzini@redhat.com>, 
- Shakeel Butt <shakeel.butt@linux.dev>, Usama Arif <usama.arif@linux.dev>
-Cc: Lorenzo Stoakes <ljs@kernel.org>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-parisc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- nvdimm@lists.linux.dev, linux-perf-users@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, damon@lists.linux.dev, 
- iommu@lists.linux.dev, kasan-dev@googlegroups.com, 
- linux-sgx@vger.kernel.org, etnaviv@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
- freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
- kvm@vger.kernel.org, Russell King <linux+etnaviv@armlinux.org.uk>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2588; i=ljs@kernel.org;
- h=from:subject:message-id; bh=G0Z54AjtjNI6CjvRN0QWBiGJMevNN1T++vP+QCfqk78=;
- b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLICg+027xOdH8B2QFVjitv8mSdNCqatzzDPuLx5q/P3m
- bsqvNas6ihlYRDjYpAVU2R5/kV8f5BI2LzOC/5uMHNYmUCGMHBxCsBESt8y/M8V4Tz0xp5xXe19
- wcer453cVuotTvQq2Z9Z+MFqXm4M42uG/5UJ81+tnzZdSGb1KWONWwnKD/+4b41bGtXx//vvOW9
- DqtkB
-X-Developer-Key: i=ljs@kernel.org; a=openpgp;
- fpr=E7F417BF5214569E89D04F46CF9DCD8A81E27F14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <432444fa4c12ae1c4047550e2b205d3e9bab458f.1782735110.git.ljs@kernel.org>
 
-Update the macros to output the compared values at hex for easier debugging
-when test asserts fail.
+On Mon, Jun 29, 2026 at 01:23:41PM +0100, Lorenzo Stoakes wrote:
+> -#define ASSERT_TRUE(_expr)						\
+> -	do {								\
+> -		if (!(_expr)) {						\
+> -			fprintf(stderr,					\
+> -				"Assert FAILED at %s:%d:%s(): %s is FALSE.\n", \
+> -				__FILE__, __LINE__, __FUNCTION__, #_expr); \
+> -			return false;					\
+> -		}							\
+> +#define __ASSERT_TRUE(_expr, _fmt, ...)					   \
+> +	do {								   \
+> +		if (!(_expr)) {						   \
+> +			fprintf(stderr,					   \
+> +				"Assert FAILED at %s:%d:%s(): %s is FALSE" \
+> +				_fmt ".\n",				   \
+> +				__FILE__, __LINE__, __FUNCTION__, #_expr   \
+> +				__VA_OPT__(,) __VA_ARGS__);		   \
+> +			return false;					   \
+> +		}							   \
+>  	} while (0)
+> 
+> +#define __TO_SCALAR(x)	((unsigned long long)(uintptr_t)(x))
+> +
+> +#define ASSERT_TRUE(_expr) __ASSERT_TRUE(_expr, "")
 
-We have to be careful not to re-evaluate expressions as they may have
-side-effects. So update the code to take local copies and use these for
-both the test and the debug output.
+Mmmmm... macro madness.... I don't think this is what you want.
 
-Also remove unused IS_SET() macro.
+I think you end up double-running the expression in the failure branch.
 
-Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
----
- tools/testing/vma/shared.h | 38 ++++++++++++++++++++++++++------------
- 1 file changed, 26 insertions(+), 12 deletions(-)
+  ASSERT_EQ(cleanup_mm(&mm, &vmi), 2)
 
-diff --git a/tools/testing/vma/shared.h b/tools/testing/vma/shared.h
-index ca4f1238f1c7..97cd7a679dc1 100644
---- a/tools/testing/vma/shared.h
-+++ b/tools/testing/vma/shared.h
-@@ -21,19 +21,35 @@
- 		}							\
- 	} while (0)
- 
--#define ASSERT_TRUE(_expr)						\
--	do {								\
--		if (!(_expr)) {						\
--			fprintf(stderr,					\
--				"Assert FAILED at %s:%d:%s(): %s is FALSE.\n", \
--				__FILE__, __LINE__, __FUNCTION__, #_expr); \
--			return false;					\
--		}							\
-+#define __ASSERT_TRUE(_expr, _fmt, ...)					   \
-+	do {								   \
-+		if (!(_expr)) {						   \
-+			fprintf(stderr,					   \
-+				"Assert FAILED at %s:%d:%s(): %s is FALSE" \
-+				_fmt ".\n",				   \
-+				__FILE__, __LINE__, __FUNCTION__, #_expr   \
-+				__VA_OPT__(,) __VA_ARGS__);		   \
-+			return false;					   \
-+		}							   \
- 	} while (0)
- 
-+#define __TO_SCALAR(x)	((unsigned long long)(uintptr_t)(x))
-+
-+#define ASSERT_TRUE(_expr) __ASSERT_TRUE(_expr, "")
- #define ASSERT_FALSE(_expr) ASSERT_TRUE(!(_expr))
--#define ASSERT_EQ(_val1, _val2) ASSERT_TRUE((_val1) == (_val2))
--#define ASSERT_NE(_val1, _val2) ASSERT_TRUE((_val1) != (_val2))
-+#define ASSERT_EQ(_val1, _val2) do {				 \
-+	__typeof__(_val1) __val1 = (_val1);			 \
-+	__typeof__(_val2) __val2 = (_val2);			 \
-+	__ASSERT_TRUE(__val1 == __val2, " (0x%llx != 0x%llx)",	 \
-+		      __TO_SCALAR(__val1), __TO_SCALAR(__val2)); \
-+	} while (0)
-+
-+#define ASSERT_NE(_val1, _val2) do {				 \
-+	__typeof__(_val1) __val1 = (_val1);			 \
-+	__typeof__(_val2) __val2 = (_val2);			 \
-+	__ASSERT_TRUE(__val1 != __val2, " (0x%llx == 0x%llx)",	 \
-+		      __TO_SCALAR(__val1), __TO_SCALAR(__val2)); \
-+	} while (0)
- 
- #define ASSERT_FLAGS_SAME_MASK(_flags, _flags_other) \
- 	ASSERT_TRUE(vma_flags_same_mask((_flags), (_flags_other)))
-@@ -53,8 +69,6 @@
- #define ASSERT_FLAGS_NONEMPTY(_flags) \
- 	ASSERT_FALSE(vma_flags_empty(_flags))
- 
--#define IS_SET(_val, _flags) ((_val & _flags) == _flags)
--
- extern bool fail_prealloc;
- 
- /* Override vma_iter_prealloc() so we can choose to fail it. */
+run through the preprocessor expands to:
 
--- 
-2.55.0
+  do {
+      if (!( (cleanup_mm(&mm, &vmi)) == (2) )) {
+              **** first run ****
 
+          fprintf(stderr,
+              "Assert FAILED at %s:%d:%s(): %s is FALSE" " (0x%llx != 0x%llx)" ".\n",
+              "merge.c", 645, __FUNCTION__,
+              "(cleanup_mm(&mm, &vmi)) == (2)",
+              ((unsigned long long)(uintptr_t)(cleanup_mm(&mm, &vmi))),
+                                               **** second run ****
+
+              ((unsigned long long)(uintptr_t)(2)));
+          return false;
+      }
+  } while (0);
+
+
+A bunch of existing ASSERT callers mutate state, so there's no guarantee
+the printed value matches teh actual test value.
+
+I think you want something like:
+
+#define ASSERT_EQ(_val1, _val2) do {	\
+	__auto_type _v1 = (_val1);	\
+	__auto_type _v2 = (_val2);	\
+	__ASSERT_TRUE(_v1 == _v2, " (0x%llx != 0x%llx)",	\
+		__TO_SCALAR(_v1), __TO_SCALAR(_v2));	\
+} while (0)
+
+which expands to:
+
+  do {
+      __auto_type _v1 = (cleanup_mm(&mm, &vmi));
+      __auto_type _v2 = (2);
+      do {
+          if (!(_v1 == _v2)) {
+              fprintf(stderr, "...FALSE (0x%llx != 0x%llx).\n",
+                      "merge.c", 645, __FUNCTION__, "_v1 == _v2",
+                      ((unsigned long long)(uintptr_t)(_v1)),
+                      ((unsigned long long)(uintptr_t)(_v2)));
+              return false;
+          }
+      } while (0);
+  } while (0);
+
+~Gregory
