@@ -1,65 +1,66 @@
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69285383318
-	for <linux-sgx@vger.kernel.org>; Fri, 10 Jul 2026 19:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4D030DD1B
+	for <linux-sgx@vger.kernel.org>; Fri, 10 Jul 2026 19:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783711253; cv=none; b=kCYG71lYeWUdQSWPZ19MXW9LtuIYu9fGJ6nIASm7YwlyFiVvhIbaellCvkYKPrBO3fg50ni+6UyipJe652df5GZcA+j1RjtrLlBu21BgLRCe3XGP2raIbuAKClYudB1zn+YEFEY875Zn2uEhuhXbBspJAL2vRmgKh/CNwpJVj3M=
+	t=1783711568; cv=none; b=F+kbpOtyYFCA4ZY7TCDWbsDMK4tASlRBTihCL8O8QyIKIxzda2kChG+dfDvaU4NlT7/9nqOO+zZeJDxMiQ99493yuUL3lVAWYTizXfLhw+1m+MOo7eBKVoI/6f2Pw+0b6OMmwQPmoa+oHHgU5LcC35iDXJQMykJGSdgKdjUCzA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783711253; c=relaxed/simple;
-	bh=bX34iOgCjAyoyd0wtccoyCGEJ+0E8xtv6sAci2MgTt8=;
+	s=arc-20240116; t=1783711568; c=relaxed/simple;
+	bh=QOojT1E2vhWM7tSRUHih+fCOI5zTfyzCTjJ63JRhM4w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KXCZmfHF4oZ5gpp4gYZzcDwqRp1Lzo3og5XV/VXwW84E7eAD8x8/Z5R+yqs13NQ1P/7sDF5CFW4w0aFqRzYDZWDNt6y1eSbyPjd8Gr/wcfHnySUNEbxQ0f5Eq8SUddfmPkrrA4inbLFbirzVR34aiKgixX56DUBNCAL5ZeRyC78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=QRHXydDJ; arc=none smtp.client-ip=209.85.222.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jxzdmgpe5UTxqVjGZdv2VUQZ67uLkIlqa2gBQKPw3wIwCp2rlT0gJKfgdi7+8gK//tcf7mb0GkeGXX3R0WKgZLZtIQKMjwEdMPchPmDV5q9JJ4YWzkSR/JvsBmxHpaws5nJHfvTyMJOL0FtYhFQ2RngAwPm9Vn1gEXHQ1XQLsbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=dbm+yKTe; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="QRHXydDJ"
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-92e50a650a0so64079385a.1
-        for <linux-sgx@vger.kernel.org>; Fri, 10 Jul 2026 12:20:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="dbm+yKTe"
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-92e53581361so73660885a.1
+        for <linux-sgx@vger.kernel.org>; Fri, 10 Jul 2026 12:26:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1783711249; x=1784316049; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1783711565; x=1784316365; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=xFW+QIJ4JFkYmnZudtxzUHG1gsom4gRJfGrSXFnz7n8=;
-        b=QRHXydDJ5/nQOc8HvU3q4OunBP6vz4zthUIJ0dkwyXxVO/A5OI0D3B5US7tjGhkA0o
-         2Y4iy8tprf9PaAxfkB8E4J4KUFOeR0hOdpRHpcm/3cq9mk2PpgAhLGikVu9EtYdys80y
-         7CThLFBj6rKv8qfTgGy54aok4Gk/KcW5DYg5XZSEaB9mevnpFZmmPoMZoGQD8l3/rPMw
-         ZWbB6ttvdjuCrPiV0APso8CbgZXYVm2zeKU1oT4g8xXhqPRqb/WazBgSs8BZvH8o4Nfm
-         Yu9bvipGLMh3EB8pwlFHBEsrUFfGTNGooltP0RM3rBS+KU3LKl86QIqefaM9ZlDcZqJD
-         Iv6A==
+        bh=aHwFumUUjp1dZn3azv3jRxV2z4/4b2Y11BxxEMyANyA=;
+        b=dbm+yKTeJMcBsc/CYkcTAQ4TIaGcuSrF3MF8158c1/hSDk31EH/NClDCmOcYl88b3+
+         hXK2sJzbsspq3YRmQe/WvOsgPfE3Qzw5eyC/EKH6hSvkj/mG9cOY7C4On4sX5yfxN23N
+         IIZT62bWwMkkXTTwstqxKOhh8SSCO4kYe+3dI0dJ/f0zNPLVc0f/SCNfGd7jQQdwLW8y
+         BbAHzwTvJM0kOtacFFyDuHKqRY4VG9oFO8eAMNtw/Gb2mSJuYiE890oQvrnVkH2rMIL/
+         9/oLWYzMWVDHe+7TRYQoM0jPmN3lg+xFcC9eeEkkAzAAR19IeCxBEu5izY1fuWnQK5w2
+         rTwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783711249; x=1784316049;
+        d=1e100.net; s=20251104; t=1783711565; x=1784316365;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=xFW+QIJ4JFkYmnZudtxzUHG1gsom4gRJfGrSXFnz7n8=;
-        b=YcUINvC/l4Z9wa8uNzO7QWCF1RAZsqG3I9k5LVDZfBg+mTfKnhyZyMG8gbz5AvKauH
-         y5EhBdPlGR4WoCAMEqKwQUtvSM/I8AfEeXvI5QBZYw1TmK/k4B2wmo9vIFV+6aEc6v/+
-         nIHYYatXQJ4ZXk0djaxb/THCiI0+ZfBsYtSkc8XMRpxnAy9bcpdxID1UhOiqddI0lMKe
-         PmmvUXJE2taD+fn1jEFMAw5jBUOzAUvDnSQMzan6Zxpn87V7yHjFNrJXgVQthMiJILdJ
-         RdYAiyBr5IHBhJgMTn+2mMkizDwO1OaYn7EsdFmUvLyfUa82/uCk65wrHKQj3vC63W3P
-         nzjw==
-X-Forwarded-Encrypted: i=1; AHgh+RrAQBt9mgP/1dT8lUOHK2B4YmUxQqQCJCEzxubL9oNp7Js/r6hMQbPuc/W69gp49/mUeDJuFACcb8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjQ52NlvZ6Kxn2RJJ0eDb5XigFbtwQ1p2OllNpNfuHnSN+KA/E
-	tLVWnuGCXEmnM8FhF9aZzsvjpKV6LJn8yxKs4a236FVBmWsUmMY83CXG2WvYlOjp5tM=
-X-Gm-Gg: AfdE7clemoSRp5V4wSZK9qnkQGrAT0QrY8r0uJz6OgvVEkGwrx1yKKEPSlScBilvNSw
-	8qedPPA6cesl+nw5jeJ8WAeT7aZGfTZoOcDXxZQVvpsidvtN2t5zTmh5UIFHuDNFoH8GAEPqTYD
-	MLMkFV9EqlUY/4P6utpS5p9ZaMklGe6M/WHUjKUo4c+zVXEONhTv6cj6ApnvUXleV+Fp4Zn9Iuw
-	yCZyPT75UGBHBF0ggF1BdwJrlPrS8DALpfTyXdQPP3fEj9QZY/bcI9DvGMCkyT95tKYZ9u8NN18
-	bmT2FZd3EKIq3LmfIwGAiO96KCGYuOwTk6NSF3ky3mS9Rs1+GhJtkT9fGyAepZBCUGzE4Z5wJ0S
-	SwzdngxTRZbPU8hUYfO2uLM/FWYTM12zcuvtDtDtXwUzXcBzgDAutF6LC5ITiqqGFgwP5tUnPad
-	mXmYMzQJipUkI0GPi+RWaMbta8BM20TK9Avh77Af+an/k/auIvtk/g/b99DC/3cbfJpYDM
-X-Received: by 2002:a05:620a:44c3:b0:92e:c117:5ecd with SMTP id af79cd13be357-92ef2d107efmr56266185a.77.1783711249227;
-        Fri, 10 Jul 2026 12:20:49 -0700 (PDT)
+        bh=aHwFumUUjp1dZn3azv3jRxV2z4/4b2Y11BxxEMyANyA=;
+        b=Hzbh6oA4l3zqIMyWU7+gPPGd07TECeokMqdNrA7HEInTIhJN+YSYFZYrcPVwaS5K45
+         rv3Okd7SZI3wm2A06e7/vhKVS/rYrzOw1WvebaKB3w9qAjnI5c4Qk867J3Ip/cP9+GY8
+         ZAFX6UbgBNR2jAbljEFog7d+bUGTc5vFkt23MPM/MRmmkYRXSipSQ0k8ksnz1RKQTrmi
+         l7RBFI27cp4ya9SlqhXvZqxkZE8WPfQTibP37BLucFcwC0pgpIl8aWe7ZsVUKZ9f2LWu
+         6fbvaQDNpFTsTl5F4HIJmdFMDnR5kHRwV5UDzc07IQz4K2iNc1gHQnCV/tPoNxwlwE75
+         jHpg==
+X-Forwarded-Encrypted: i=1; AHgh+Rpr0Rq/pcSDQpn+MaSu1iylqjmxgbA+gvCdjjKgaiS7b1vfHAjwtVpY8q4AUfCizCcK7eH894YE+eE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6goMNx09fU/MgP0sv9G6QQbLt+aZPEMK5gigoggcMUX3XmiB0
+	2/DIc1uyvp9H2uyzzzlkfYBSNNs4Qj8z1Hb6glhEZAZxR1w3tVBmf31Ki7bHZp8HcW8=
+X-Gm-Gg: AfdE7clcC+JdpbXN72dQoPw8jKrhW0L7mx6QsMroopm2pSorkIrf2g/UaBoIyAHM/sm
+	K4R3WK194UQLaSCci78c4PjoB6kys/gqp5L0mAm1VbTMFwhaW+LqSQteyryNta1eeuqxGO2mf0L
+	0SpYCw9uz3zc6ACzmbhc2xydxO7uqWFzhpGCCcD0bnPrmfgFa22bpNUj3UxTG0Ca4t0l/DD+44+
+	mRc5f5vHxDkNGzEME56OETxkgxxr2attQDf+iwfzCG/PahSz2uN/S/dJzHfyDlD2ZdHAvIbShs3
+	caAd25kPpNK5i87FhXBYC7n2h2RSHD7tVuAwZk6zA5k5s0vPEGlMfogJCrtQY9zzA1FepGRGaw/
+	YRz7OJrKvN9SI/OMfKDateu+efm3cOlL4TlYRDbev+IYdjpS7M4a5nDtJpPNO2stk/XuczA7JqY
+	Kjrqup9ymJj6ToM8r/t2P8k0e4UJYvWUQEFZ3CIVEI4u32LQMEo+WTNC0WFhh4dDmQjQUGRwYWC
+	CTHqDA=
+X-Received: by 2002:a05:620a:2993:b0:915:8502:f7f6 with SMTP id af79cd13be357-92ef2b575e8mr66564685a.35.1783711565033;
+        Fri, 10 Jul 2026 12:26:05 -0700 (PDT)
 Received: from gourry-fedora-PF4VCD3F (pool-173-79-60-52.washdc.fios.verizon.net. [173.79.60.52])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-92ee5b8b3f2sm268883885a.13.2026.07.10.12.20.47
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-92ee5d37540sm265182485a.38.2026.07.10.12.26.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jul 2026 12:20:48 -0700 (PDT)
-Date: Fri, 10 Jul 2026 15:20:43 -0400
+        Fri, 10 Jul 2026 12:26:04 -0700 (PDT)
+Date: Fri, 10 Jul 2026 15:25:59 -0400
 From: Gregory Price <gourry@gourry.net>
 To: Lorenzo Stoakes <ljs@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -117,10 +118,10 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	damon@lists.linux.dev, Pedro Falcato <pfalcato@suse.de>,
 	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>,
 	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 26/30] mm/vma: introduce and use vma_set_pgoff()
-Message-ID: <alFGC3Vq-sbf56lV@gourry-fedora-PF4VCD3F>
+Subject: Re: [PATCH 27/30] mm/vma: correct incorrect vma.h inclusion
+Message-ID: <alFHR3fg8K1-SITK@gourry-fedora-PF4VCD3F>
 References: <cover.1782735110.git.ljs@kernel.org>
- <37f4d951897641f304dba26f6f91ade03a50eb01.1782735110.git.ljs@kernel.org>
+ <22d0f4e3fe11f6fd1312734e242d008267ad142c.1782735110.git.ljs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -129,34 +130,29 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <37f4d951897641f304dba26f6f91ade03a50eb01.1782735110.git.ljs@kernel.org>
+In-Reply-To: <22d0f4e3fe11f6fd1312734e242d008267ad142c.1782735110.git.ljs@kernel.org>
 
-On Mon, Jun 29, 2026 at 01:23:37PM +0100, Lorenzo Stoakes wrote:
-> In order to lay the foundation for work that permits us to track the
-> virtual page offset of MAP_PRIVATE file-backed mappings, we abstract the
-> assignment of vma->vm_pgoff to vma_set_pgoff().
+On Mon, Jun 29, 2026 at 01:23:38PM +0100, Lorenzo Stoakes wrote:
+> The only files which should be including vma.h are the implementation files
+> for the core VMA logic - vma.c, vma_init.c, and vma_exec.c.
 > 
-> We additionally add a lock check here using the newly introduced
-> vma_assert_can_modify(). This asserts the VMA write lock if the VMA is
-> attached.
+> This is in order to allow for userland testing of core VMA logic. In this
+> cases, vma_internal.h and vma.h are included, providing both the
+> dependencies upon which the core VMA logic requires and its declarations.
 > 
-> We also assert that, if this is an anonymous VMA and unfaulted, that its
-> (virtual) page offset is equal to the page offset of the VMA's address.
+> Userland testable VMA logic is achieved by having separate vma_internal.h
+> implementations for userland and kernel.
 > 
-> In order to maintain correctness given this assert, we also update
-> __install_special_mapping() to invoke vma_set_range() after it's set
-> vma->vm_ops (which determine whether the VMA is anonymous or not).
+> Callers other than the core VMA implementation should include internal.h
+> instead. This header does not need to include vma_internal.h as it only
+> contains the vma.h declarations, for which the includes already present
+> suffice.
 > 
-> We do not use vma_set_pgoff() in vm_area_init_from(), as at the point of
-> forking, we don't necessarily have correct locking state.
+> Update code to reflect this, update comments to reflect the fact there are
+> 3 VMA implementation files and document things more clearly.
 > 
-> Updating vma_set_range() covers most cases, but in addition to this we also
-> update insert_vm_struct(), compat_set_vma_from_desc() and nommu callers.
-> 
-> We also update vma_add_pgoff() and vma_sub_pgoff() to use vma_set_pgoff().
-> 
-> While we're here, we drop a BUG_ON() and update insert_vm_struct()'s
-> comment to reflect the fact anonymous mappings can be added here.
+> While we're here, slightly improve the language of the comment describing
+> vma_exec.c.
 > 
 > No functional change intended.
 > 
@@ -164,3 +160,20 @@ On Mon, Jun 29, 2026 at 01:23:37PM +0100, Lorenzo Stoakes wrote:
 
 Reviewed-by: Gregory Price <gourry@gourry.net>
 
+> +/*
+> + * To allow for userland testing we place internal dependencies in
+> + * vma_internal.h and external VMA API declarations in vma.h.
+> + */
+...
+> +/*
+> + * To allow for userland testing we place internal dependencies in
+> + * vma_internal.h and external VMA API declarations in vma.h.
+> + */
+...
+> +/*
+> + * To allow for userland testing we place internal dependencies in
+> + * vma_internal.h and external VMA API declarations in vma.h.
+> + */
+
+Do you actually need 3 copies of this comment or just one copy in
+vma_internal.h?
