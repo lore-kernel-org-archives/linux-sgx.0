@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318932264C0;
-	Sat, 11 Jul 2026 06:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFD82264C0;
+	Sat, 11 Jul 2026 06:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783751600; cv=none; b=MGEn2XOdUtZGEZv/EI5qpqFiZEcubQuRy15IpafqOc/34qXanRYWgVTR0AQXtiPxwCcdImBfFpsEBDb9guDxj8U4lN7N3xUDFk1hIwRiE7FwNRD0RELwOuzku8S7fD2MW01e8ZXgiUD8yKjJxuUKROOEdjD/vKdctymyJI022Oc=
+	t=1783751700; cv=none; b=uSDqagBLneyuuMUSdBi6QtHTBHrD4PchsXKCEXxXNeEgrqi2hDeBRqQJHxMMbeDULtXcFs6SDdkdZSIEc5dz7ouPqV2PNXK97lNguL7zMj5s6t3t/DQenAHNeIE3bM3wh93sbc0sMHtskDLRIx9ADelhsOu9+iGGW7liQiurw0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783751600; c=relaxed/simple;
-	bh=IhuKekt2PQXuM2aC1ZwPWPJ0ZHIWcPpVLch8ZcQ+oPU=;
+	s=arc-20240116; t=1783751700; c=relaxed/simple;
+	bh=LcVpu5n9Px0aNntls5Ti5FkbgET7fFzrYzyLaRzMgKA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f9xD4M61lWQACoZT2MCw2gsU838xsqH7WukoO8YINH9E9ld6h/sBYYKp6pG6XzNDIBqHjfyx4d+DVjRpNlTIPRcEw+zQsRi4k5u0ZBfQUahoFf4zg8k74qlPYkTNO8VXns6sYnWvUgwGcJjhAow8ICHaOKyNP9eOI+4hNcO6XEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EPG2DeF4; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=OnpGrt3MJV3iBzgqAGgnrzZ3jQk817B14BLTSFfYSREBIEFszHba3vsdJ0zTXQJCiomTHN88Tz/Cdy4UsRX7CNt2ndbwaHKaVfLOVMLWu3JHfMWDVOyAtDX3+th5xL91dU/OaK72Xdy4Q30b/psyGIJ9Cbe6TRq7y6Qs+fSppEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSFAG2xz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPG2DeF4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D80AA1F000E9;
-	Sat, 11 Jul 2026 06:33:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSFAG2xz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81E831F000E9;
+	Sat, 11 Jul 2026 06:34:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783751598;
-	bh=IhuKekt2PQXuM2aC1ZwPWPJ0ZHIWcPpVLch8ZcQ+oPU=;
+	s=k20260515; t=1783751699;
+	bh=GJJhsK9UGkbC0fJg0T/BshNksgm9QoTCT4bawaC+z7g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EPG2DeF4UTCSaR61iBwMXCgHQEn643ddtwajqsHEeGX2acXFY9ki43vFQ7gy8Bl0W
-	 BuXOW3LXg2kAEBfh13Hs0ZYMFR91r8JsrHpYYyQ3iVnNER02xUYKPYy+XAphOKNsC9
-	 WxQoVUhR1TUlCSyiEB/VspCyJtQW/GzjedFjyCgZJPJ6Q/gQG6rVW2boHGQqSDe7fZ
-	 b4ZROnX7C4o1b1i8MbQJXaxv8hBq+sorHlvvkjlhjEhEf1cNal0kos9Dmx4MMB3uPX
-	 +caq0W8QPJajr44BSXmfelnlwPZUxmrKpz84RfDbyY5pbBa8+xpkhUS3UCT0amuC6h
-	 49Cf5nI8dBADw==
-Date: Sat, 11 Jul 2026 07:32:51 +0100
+	b=OSFAG2xzhmr/8YQvg4NEImxF07jxqbUEEh7NwCiLHgeM7x3UggZev3LSdvaUAskdK
+	 yMdFPgyqXym8+YxpIqdArYXwrA1e31glpfB+vT/AGy+UyHYaEl3EbzmDMBMqm6oS9S
+	 rV8S1zftmc37pBGjvzyZ/9mf/PmAlQDTR2GR/5LsbXiF9Yys9XqwBQ/oO5Iu/PACIz
+	 T34DpydP7RCQVGW7fAb+/e81YQv/kgHEj2uwBZjxXoCQIImeX4HjT8vV8otTJkUR3J
+	 rJWAp3wgwbORSmHnmAU7zE5h3zYF3v1IbJdUxD0WIe4MXsxHGIBwL2tCYLpNTApr1C
+	 S5LVbRXET280g==
+Date: Sat, 11 Jul 2026 07:34:36 +0100
 From: Lorenzo Stoakes <ljs@kernel.org>
 To: Gregory Price <gourry@gourry.net>
 Cc: Andrew Morton <akpm@linux-foundation.org>, 
@@ -52,30 +52,21 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
 	SJ Park <sj@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
 	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
-	Hugh Dickins <hughd@google.com>, Peter Xu <peterx@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
 	Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>, 
 	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, 
 	Shameer Kolothum <skolothumtho@nvidia.com>, Kevin Tian <kevin.tian@intel.com>, 
 	Ankit Agrawal <ankita@nvidia.com>, Alex Williamson <alex@shazbot.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Usama Arif <usama.arif@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, kasan-dev@googlegroups.com, linux-sgx@vger.kernel.org, 
-	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, kvm@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	kasan-dev@googlegroups.com, linux-sgx@vger.kernel.org, etnaviv@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, kvm@vger.kernel.org, 
 	Russell King <linux+etnaviv@armlinux.org.uk>
-Subject: Re: [PATCH v2 33/33] tools/testing/vma: output compared expression
- on ASSERT_[EQ, NE]()
-Message-ID: <alHjL4lT8WLrJ1uj@lucifer>
+Subject: Re: [PATCH v2 32/33] tools/testing/vma: default VMA, mm flag bits to
+ 64-bit
+Message-ID: <alHjzZxfXOTMOC4I@lucifer>
 References: <20260710-b4-pre-scalable-cow-v2-0-2a5aa403d977@kernel.org>
- <20260710-b4-pre-scalable-cow-v2-33-2a5aa403d977@kernel.org>
- <alFfopehgN0dkMzM@gourry-fedora-PF4VCD3F>
+ <20260710-b4-pre-scalable-cow-v2-32-2a5aa403d977@kernel.org>
+ <alFewd7j_uiNP1Vw@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
@@ -84,34 +75,53 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alFfopehgN0dkMzM@gourry-fedora-PF4VCD3F>
+In-Reply-To: <alFewd7j_uiNP1Vw@gourry-fedora-PF4VCD3F>
 
-On Fri, Jul 10, 2026 at 05:09:54PM -0400, Gregory Price wrote:
-> On Fri, Jul 10, 2026 at 09:17:14PM +0100, Lorenzo Stoakes wrote:
-> > Update the macros to output the compared values at hex for easier debugging
-> > when test asserts fail.
+On Fri, Jul 10, 2026 at 05:08:30PM -0400, Gregory Price wrote:
+> On Fri, Jul 10, 2026 at 09:17:13PM +0100, Lorenzo Stoakes wrote:
+> > With all of the sanitisers turned on, setting the VMA and mm flag bits
+> > depth to 128 by default results in overly long build times.
 > >
-> > We have to be careful not to re-evaluate expressions as they may have
-> > side-effects. So update the code to take local copies and use these for
-> > both the test and the debug output.
->
-> Aw you found it before i reported it :]
-
-Claude did :) I take no credit for it :P I guess I thought the re-eval wouldn't
-be an issue but obviously when it's a side-effect and the userland tests do do
-that, it's very important you DON'T re-evaluate :P
-
-Human 'meh that'll probably be fine-ish' vs. robot/Gregory laser-focused vision
-doing the whole 'Sorry Dave I'm afraid I can't do that' ;)
-
->
-> >
-> > Also remove unused IS_SET() macro.
+> > Reduce this to 64 - we can always manipulate these later for testing of
+> > larger bitmaps as needed.
 > >
 > > Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 >
+> I've never had a "too main recipients" error with my email client
+> before.  Bravo.
+
+Yeah I kinda just let b4 add recipients unlike the 1st where I trimmed. Any v3
+will be trimmed again because even my usually super reliable mail client is
+err... slow on this thread :)
+
+(Apologies all for noise...!)
+
 >
 > Reviewed-by: Gregory Price <gourry@gourry.net>
+
+Thanks!
+
 >
+> > ---
+> >  tools/testing/vma/Makefile | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/tools/testing/vma/Makefile b/tools/testing/vma/Makefile
+> > index e72b45dedda5..ef6cc558afe1 100644
+> > --- a/tools/testing/vma/Makefile
+> > +++ b/tools/testing/vma/Makefile
+> > @@ -10,7 +10,7 @@ OFILES = $(SHARED_OFILES) main.o shared.o maple-shim.o
+> >  TARGETS = vma
+> >
+> >  # These can be varied to test different sizes.
+> > -CFLAGS += -DNUM_VMA_FLAG_BITS=128 -DNUM_MM_FLAG_BITS=128
+> > +CFLAGS += -DNUM_VMA_FLAG_BITS=64 -DNUM_MM_FLAG_BITS=64
+> >
+> >  main.o: main.c shared.c shared.h vma_internal.h tests/merge.c tests/mmap.c tests/vma.c ../../../mm/vma.c ../../../mm/vma_init.c ../../../mm/vma_exec.c ../../../mm/vma.h include/custom.h include/dup.h include/stubs.h
+> >
+> >
+> > --
+> > 2.55.0
+> >
 
 Cheers, Lorenzo
