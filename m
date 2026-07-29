@@ -1,32 +1,32 @@
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01AA3C3BFA
-	for <linux-sgx@vger.kernel.org>; Wed, 29 Jul 2026 12:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073E2488773
+	for <linux-sgx@vger.kernel.org>; Wed, 29 Jul 2026 12:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785329829; cv=none; b=nzG45U8yElKGsnwpb36juUHklvPngCsU5JoeJ6xNkMa057/Ci3PZffr8c0Q75oVIpT9EFEvi4JWQ4uYjq8WJnxQ0DV5mWkN3Ot9Dm1TWifa8W58sr/n/PIm2v2TyuGszeTw/J2Vf2euNBvfW1NbPFlZutoDCNXUzhSnMqoYWzlI=
+	t=1785329834; cv=none; b=stSkNArhQWu+qJ0xDP6DE7ZbBu3n85x5L3eHnSm7L3nordC/x+UedDzDsmU5kJVVu0fyUFvf9fUFgv0QIHZz9N5p2rJBnZvdo5PwT8P4ClnO6ai0kdXBEImScY2pWl2uzGWNeXXx0QnOP3itpnmkk3F4Ui4zcP3LgsiuOy48uzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785329829; c=relaxed/simple;
-	bh=QGiDIXr/JFABPhjDOULKPBaTgQfGgcL/30YZ0jzf/x0=;
+	s=arc-20240116; t=1785329834; c=relaxed/simple;
+	bh=tE/3wBaWmfJhrTOJl412K6ZCc8lrcqn+JbfOZG7yMww=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QlvEOM7jegdaQYC2S83hpChOo3ASQHZnkVwM+CLSuHHTj+OiIgyHQI9+NMzAgV5GLYULUECSaYsypGZy/p5cfX8lMIybrTLtbtZ3eZJ+tx7DVdwJ6n+xI9wbZ4/wok7quZrqejIN5egaXRla9pwczo6Ct7hfSRKQbGLd0aPjQMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VT49o1d3; arc=none smtp.client-ip=95.215.58.186
+	 MIME-Version; b=EWosjs9EbDFqA5B4ufS6qMFS94usffoHgeIAElb5NTqAV092AA8LBGBqYEb0WQdemQMr40gxeDhg3vGmmHdTfzZY8ePVd/CtuUiNIvpMyQ2RiFSoo0ktRpNY15HEEeHt8UeWx8OXJDxm/pNYskerJc7Ui1yBOGV+1u15kUJE7LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B62cC5Vc; arc=none smtp.client-ip=95.215.58.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VT49o1d3"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B62cC5Vc"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1785329815;
+	t=1785329811;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NpRK1w04dTe0/VMhMyqDdAHkCv+c10bYjwG1efWA2jk=;
-	b=VT49o1d3J2J6gh+hXqu/vTp/vzEjtoZ5h4lkBzoD6+m4/5H4MnnK08sn7RBUWtQy0iI/CN
-	B9HPDRkXf7M6wDTYHWndT/JAc+Oe2h3cdweBtLMJLTHtfrBRCgDkg8hjhiMpKo18PK5U3E
-	QNwIRKGEFI3yDa/Ya/5Z0HvjT2KW5HM=
+	bh=t0zUa/3j4PsfvidPVIQwBKOtar7vHPGtPPo6X0V12Ok=;
+	b=B62cC5VcSW5B/il1oRsb6J5VDePq6oa9ZVjLvfu+A19HNRUetKhLps8DEK39hNSUY2Ae6O
+	8OSoX2mnnrBJ4ULGwj8G7y2fdbZW7w+eyj2EuugCqc6DLmRQjJmADJXYvUwylViXhu/Xrl
+	mH3B477VaVLz/qOjNMVOFMVbFXm5e/0=
 From: Thorsten Blum <thorsten.blum@linux.dev>
 To: Jarkko Sakkinen <jarkko@kernel.org>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
@@ -39,9 +39,9 @@ Cc: linux-sgx@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thorsten Blum <thorsten.blum@linux.dev>,
 	Kai Huang <kai.huang@intel.com>
-Subject: [PATCH v2 3/3] x86/sgx: Use SGX_LAUNCH_TOKEN_SIZE in __sgx_virt_einit()
-Date: Wed, 29 Jul 2026 14:56:28 +0200
-Message-ID: <20260729125624.514697-8-thorsten.blum@linux.dev>
+Subject: [PATCH v2 1/3] x86/sgx: Remove unused TCS definitions
+Date: Wed, 29 Jul 2026 14:56:26 +0200
+Message-ID: <20260729125624.514697-6-thorsten.blum@linux.dev>
 In-Reply-To: <20260729125624.514697-5-thorsten.blum@linux.dev>
 References: <20260729125624.514697-5-thorsten.blum@linux.dev>
 Precedence: bulk
@@ -50,34 +50,80 @@ List-Id: <linux-sgx.vger.kernel.org>
 List-Subscribe: <mailto:linux-sgx+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1106; i=thorsten.blum@linux.dev; h=from:subject; bh=QGiDIXr/JFABPhjDOULKPBaTgQfGgcL/30YZ0jzf/x0=; b=owGbwMvMwCUWt7pQ4caZUj3G02pJDFmZPyql3tQxrMmuDDyyLmTV/TVHlyYdvdN25eDm6Y9Pt s+8Uu8g3lHKwiDGxSArpsjyYNaPGb6lNZWbTCJ2wsxhZQIZwsDFKQAT6QxhZFj64u+Oid5vz6Xo Sk93Z357+IK/8soLu94/cDOad/varT1XGBkOyWtG3mLwVt4Y8cz75qej7n4TRY18b2X6Rz/qZVt xTIIDAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2606; i=thorsten.blum@linux.dev; h=from:subject; bh=tE/3wBaWmfJhrTOJl412K6ZCc8lrcqn+JbfOZG7yMww=; b=owGbwMvMwCUWt7pQ4caZUj3G02pJDFmZPyp6eRJXm5/15/BecXGhTYFT89Zixag7gjfuebM0b A7VSBDrKGVhEONikBVTZHkw68cM39Kayk0mETth5rAygQxh4OIUgIksecnIcC/il5Gk2x3Tf3dd M8/b7Fg282i44qcG/l38Xhb2i/P/rmD4n6x+cuINk/Zpk11UFlWqzG09GpWbeHXmR+Wgd0Ker21 XMAEA
 X-Developer-Key: i=thorsten.blum@linux.dev; a=openpgp; fpr=1D60735E8AEF3BE473B69D84733678FD8DFEEAD4
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Both sgx_ioc_enclave_init() and __sgx_virt_einit() use the same 304-byte
-launch token. Use SGX_LAUNCH_TOKEN_SIZE in __sgx_virt_einit() instead of
-maintaining a second local definition.
+The TCS structure was added with commit 70d3b8ddcd20 ("x86/sgx: Add SGX
+architectural data structures"), but has never had an in-tree user.
+Remove the unused TCS structure and its corresponding definitions.
 
-Reviewed-by: Kai Huang <kai.huang@intel.com>
+Acked-by: Kai Huang <kai.huang@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- arch/x86/kernel/cpu/sgx/virt.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/x86/include/asm/sgx.h | 50 --------------------------------------
+ 1 file changed, 50 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-index 6a1933ddc6fc..7c5ac5d38ee1 100644
---- a/arch/x86/kernel/cpu/sgx/virt.c
-+++ b/arch/x86/kernel/cpu/sgx/virt.c
-@@ -395,9 +395,8 @@ static int __sgx_virt_einit(void __user *sigstruct, void __user *token,
- 	 * All other checks deferred to ENCLS itself.  Also see comment
- 	 * for @secs in sgx_virt_ecreate().
- 	 */
--#define SGX_EINITTOKEN_SIZE	304
- 	if (WARN_ON_ONCE(!access_ok(sigstruct, sizeof(struct sgx_sigstruct)) ||
--			 !access_ok(token, SGX_EINITTOKEN_SIZE) ||
-+			 !access_ok(token, SGX_LAUNCH_TOKEN_SIZE) ||
- 			 !access_ok(secs, PAGE_SIZE)))
- 		return -EINVAL;
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index 04958459a7ca..fe106c55a593 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -193,56 +193,6 @@ struct sgx_secs {
+ 	u8  reserved4[3834];
+ } __packed;
  
+-/**
+- * enum sgx_tcs_flags - execution flags for TCS
+- * @SGX_TCS_DBGOPTIN:	If enabled allows single-stepping and breakpoints
+- *			inside an enclave. It is cleared by EADD but can
+- *			be set later with EDBGWR.
+- */
+-enum sgx_tcs_flags {
+-	SGX_TCS_DBGOPTIN	= 0x01,
+-};
+-
+-#define SGX_TCS_RESERVED_MASK	GENMASK_ULL(63, 1)
+-#define SGX_TCS_RESERVED_SIZE	4024
+-
+-/**
+- * struct sgx_tcs - Thread Control Structure (TCS)
+- * @state:		used to mark an entered TCS
+- * @flags:		execution flags (cleared by EADD)
+- * @ssa_offset:		SSA stack offset relative to the enclave base
+- * @ssa_index:		the current SSA frame index (cleard by EADD)
+- * @nr_ssa_frames:	the number of frame in the SSA stack
+- * @entry_offset:	entry point offset relative to the enclave base
+- * @exit_addr:		address outside the enclave to exit on an exception or
+- *			interrupt
+- * @fs_offset:		offset relative to the enclave base to become FS
+- *			segment inside the enclave
+- * @gs_offset:		offset relative to the enclave base to become GS
+- *			segment inside the enclave
+- * @fs_limit:		size to become a new FS-limit (only 32-bit enclaves)
+- * @gs_limit:		size to become a new GS-limit (only 32-bit enclaves)
+- *
+- * Thread Control Structure (TCS) is an enclave page visible in its address
+- * space that defines an entry point inside the enclave. A thread enters inside
+- * an enclave by supplying address of TCS to ENCLU(EENTER). A TCS can be entered
+- * by only one thread at a time.
+- */
+-struct sgx_tcs {
+-	u64 state;
+-	u64 flags;
+-	u64 ssa_offset;
+-	u32 ssa_index;
+-	u32 nr_ssa_frames;
+-	u64 entry_offset;
+-	u64 exit_addr;
+-	u64 fs_offset;
+-	u64 gs_offset;
+-	u32 fs_limit;
+-	u32 gs_limit;
+-	u8  reserved[SGX_TCS_RESERVED_SIZE];
+-} __packed;
+-
+ /**
+  * struct sgx_pageinfo - an enclave page descriptor
+  * @addr:	address of the enclave page
