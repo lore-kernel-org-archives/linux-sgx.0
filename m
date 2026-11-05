@@ -1,49 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793912884;
-	b=ucN+kiwI6FEI90VERG575MGza2QKsOtCUy/lbeIaYTOiXUUrrjWHYUx2mnNQ4qvaC424
-	 gQHQQ07RQUZ0VpW4cmf8EQX+Y4tzRCNzZ3zhpZ1OqVjUAHkbjES1WZuEINsv4dEbXC6/X
-	 k4qcQhJgBWGVsdPQynSOFJQJAlRuKBPmzNJcFPsxnsUzUESGgpqo0yK7XpQf8hAoChf8K
-	 oTk+5M3lnJUz1SxP0TujgByi9Ln8/ekoyQKlBj/rgB2COz/+5ecDnM/xuGmYUTYtytiBw
-	 fPfs71cAnbuzkwDiFj4g4Lr3J4TUdTqv9/IzQEJORKmUi9qI/F5TU74okZlLNsNdDsQ==
+	t=1793912897;
+	b=sszawuTdpGQPDHJiiR9FNysCbVzJpE8qE8q1byf35wBik4UmNBd7v+e4Lrr+rAyoRdX/
+	 AkahJi4c3+FmKEL6HsJpAIBtWKm6q0ea+kYfM86Y3qkx36i/IG38VFwPu+i058RtlFEbc
+	 xMoxtSZH9I0vHJLkAvruoVSjZIR91KL9SvMv49A65zdzBlVmJ9l3HRZqs9gNWJ5IMbOqk
+	 vI8V85Ii0ZR6E9nS4wcCuIT8kgyyycI4M451scJy8NmpRsLcA8Wz85ImtVl2fqPvlprQY
+	 P0Kw2lyOX3hWKGMhODWKJWeCqKWjdRoziUpUGLpDCMcymgz1v/ImH84+U6jItEA+unw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793912884;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793912897;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=AH46OuGdtEt1nsUri8AEqTjCIJ9jhn5rP+r92fYTTuo=;
-	b=T6nmcKmtY8DCJLQXIh4aTk7FI7DTbK6NHK0AD30+a7NHw1msNi62XhiXCVW/EDEUH/hZ
-	 BS8+wBUP+gRWaoVpTVqfRzE+TN3TVbunMy7aelv+RiIrbEyCjwivCPrzHLi7l0JV85uD/
-	 pua4K8l7AsVBExrpKDntakWJWO0gn3UpkQvEu0GIi6v6W2JmSBlNY3HAtg779Hkpx6nRU
-	 aMo+Vot3FTZTm1NzkdisH1aTm4WyFbBKOBQ1wVD+VBzM1VHEHbN5VY+RFsOmB0X8uckqh
-	 sV5lgHOLyrGoJsmRM0vq21G/RYqWyKU41ltprO8mQL/l/C87NCM2LDL68foPt5AajtA==
+	bh=RBvzqqEVktGOwLM5OpYBfN5N4ekxKtBbieuNh5yiCZc=;
+	b=3uDXfkQWwgqwqSDsSujVb4FXkqG9sIGyw8GxGxoFv9wNz2DGN/9ECC9KUNFBl33Ev1NV
+	 t7+bxgnKfVkTAe90AuSBLQECKnpKa1izsuOedQHdQZnzJ4cpwd6g9Js1y/uilXL5fv1YV
+	 b6liCZIVx6fzRhAM0I7MkBOQR0ItFOIbf/ito/4IXowcK3vGmuSEAc94P6Pvyiz45mxzK
+	 uzMoWkV1lA/ExlZs+0rRa9CLu2SfKUHh7LV5S6Gd9BMWqnkMxbDiUtO+d+EuZYgIBeGwV
+	 fHTicEER6sqlWAewEAUlQz3ftwdEUyO+780FO+ZECHeo66u+Dj7CWF2p7LpXuv7mKmA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gQXtnC+u;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kFtPRv+v;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518AA606EE98;
-	Thu,  5 Nov 2026 21:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1439606EEA8;
+	Thu,  5 Nov 2026 21:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gQXtnC+u
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40DBB1F008AB;
-	Thu,  5 Nov 2026 21:07:52 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kFtPRv+v
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DED61F008BD;
+	Thu,  5 Nov 2026 21:08:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793912884;
-	bh=AH46OuGdtEt1nsUri8AEqTjCIJ9jhn5rP+r92fYTTuo=;
+	s=k20260515; t=1793912896;
+	bh=RBvzqqEVktGOwLM5OpYBfN5N4ekxKtBbieuNh5yiCZc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=gQXtnC+uGV3ca+q7ByIhTFttKWFz/mEPWtGFIHyr1U7eyA5UiL3F5di8hwOyKNKIF
-	 owKNBe70mg3Zo5esALsOGrB3Gu4dftp1gp/kDfIf8QLSYdragHGzq3le/t0ApgBOdt
-	 W9up1YKjS36n6toNIJ3j5acZKXZ8wWo1sMDx7UIrb0pziMl9w8OPwDPPoOYAZT36u2
-	 vi8ESoYJVVURVm/u4/xMe23aJwZSVnqx7/HIEZFlTMpz35L2uOhW7gv4mJl1kf17SO
-	 iv7fymeQuygUorjvcrauyoeA1G+MidvGijWcp/sEyevbIArziwLEOE45fNvfWtSV44
-	 zrRXpq/nRe5Qg==
+	b=kFtPRv+vDCqA4I5+7Ba5v1oinPquBwNlu0qv3u1pswQ05uBi8FuxynMX1Au0gqEq1
+	 GNXzlN8uFqSJSkJeLpBlJWDZzthZT1QYCXHTFJpJfWyomWsTXudAv/0qXIrV+l9VV5
+	 VF2TBnLkW7OziZTahtTdvm/Fn5QH8mhXKLp8QhXY0Hyb/snkD00bpMyAE1rQGFuYCw
+	 ngKcgCmFZhysfGBUK8uVX24hJfLxdMi0u0jCBy+ukszMXCOfZPfMf+Kqm78OIzM0tn
+	 RxPiN2jic03BG/QtPw6o+SbdcC1jd9rBy5GjZqyDDQ8JEFbdtYwrd4ZQ7qVlg2U+Ut
+	 GK2nqGNNO/c5g==
 From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-Date: Thu, 05 Nov 2026 21:05:41 +0000
-Subject: [PATCH 10/14] soc: qcom: rmtfs_mem: convert mmap hook to
- mmap_prepare
+Date: Thu, 05 Nov 2026 21:05:42 +0000
+Subject: [PATCH 11/14] tee: convert shm mmap hook to mmap_prepare
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Post: <mailto:linux-sgx@vger.kernel.org>
@@ -55,7 +54,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261105-late-2026-mmap_prepare-v1-10-c56aadfbab8a@kernel.org>
+Message-Id: <20261105-late-2026-mmap_prepare-v1-11-c56aadfbab8a@kernel.org>
 References: <20261105-late-2026-mmap_prepare-v1-0-c56aadfbab8a@kernel.org>
 In-Reply-To: <20261105-late-2026-mmap_prepare-v1-0-c56aadfbab8a@kernel.org>
 To: Juergen Gross <jgross@suse.com>, 
@@ -100,70 +99,63 @@ Cc: ljs@kernel.org, xen-devel@lists.xenproject.org,
  linux-aspeed@lists.ozlabs.org, linux-arm-msm@vger.kernel.org, 
  op-tee@lists.trustedfirmware.org, netdev@vger.kernel.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2040; i=ljs@kernel.org;
- h=from:subject:message-id; bh=VZRnIpM2wCvIjSh9P+PGr0d/uBMnYJCKqKQo3RqP51A=;
- b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLLevF/DcEy9Yf31Kzsm7ZGRmTflc4KO8ympbO+gxpqId
- 5e4dnYId5SyMIhxMciKKbI8/yK+P0gkbF7nBX83mDmsTGBDuDgFYCJ83owMN3b7GPFPClBsUdpb
- 91BjyqODrGFXl9VPszke3LF79vZDiYwMd/fO2SCzWsEy+nRExp61KyZ+Xqt1rPVFwbrq23tKLII
- esgIA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1686; i=ljs@kernel.org;
+ h=from:subject:message-id; bh=2RLQC1bSA3UhuwZbggzNroMh6l6JITaynZarCSoVuAM=;
+ b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLLevF/zLjZTWyx1cX6TOl+BpvzBu+qXr/bqSR+fKzhJ4
+ VdhWI5PRykLgxgXg6yYIsvzL+L7g0TC5nVe8HeDmcPKBDKEgYtTACZS68PIcLlhWdCvuI8njsvz
+ mpsrWjeVPPbtMH501Wkee5q85d6Dpgz/M7corpQ8r5YdLpejWb5uisP052unmkTtMXCZ9+B2usA
+ hdgA=
 X-Developer-Key: i=ljs@kernel.org; a=openpgp;
  fpr=E7F417BF5214569E89D04F46CF9DCD8A81E27F14
 
 Move from the deprecated mmap hook to the new mmap_prepare hook, using the
-PFN remap mmap action to map the region.
+PFN remap mmap action to map the shared memory.
 
 Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 ---
- drivers/soc/qcom/rmtfs_mem.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ drivers/tee/tee_shm.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
-index 342c0845134e..5e2ac75f41d5 100644
---- a/drivers/soc/qcom/rmtfs_mem.c
-+++ b/drivers/soc/qcom/rmtfs_mem.c
-@@ -129,24 +129,22 @@ static const struct class rmtfs_class = {
- 	.name           = "rmtfs",
- };
+diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
+index daa4af1e089e..8fcbf0232aeb 100644
+--- a/drivers/tee/tee_shm.c
++++ b/drivers/tee/tee_shm.c
+@@ -567,10 +567,9 @@ static int tee_shm_fop_release(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
  
--static int qcom_rmtfs_mem_mmap(struct file *filep, struct vm_area_struct *vma)
-+static int qcom_rmtfs_mem_mmap_prepare(struct vm_area_desc *desc)
+-static int tee_shm_fop_mmap(struct file *filp, struct vm_area_struct *vma)
++static int tee_shm_fop_mmap_prepare(struct vm_area_desc *desc)
  {
--	struct qcom_rmtfs_mem *rmtfs_mem = filep->private_data;
-+	struct qcom_rmtfs_mem *rmtfs_mem = desc->file->private_data;
+-	struct tee_shm *shm = filp->private_data;
+-	size_t size = vma->vm_end - vma->vm_start;
++	struct tee_shm *shm = desc->file->private_data;
  
--	if (vma->vm_end - vma->vm_start > rmtfs_mem->size) {
-+	if (vma_desc_size(desc) > rmtfs_mem->size) {
- 		dev_dbg(&rmtfs_mem->dev,
- 			"vm_end[%lu] - vm_start[%lu] [%lu] > mem->size[%pa]\n",
--			vma->vm_end, vma->vm_start,
--			(vma->vm_end - vma->vm_start), &rmtfs_mem->size);
-+			desc->end, desc->start, vma_desc_size(desc),
-+			&rmtfs_mem->size);
+ 	/* Refuse sharing shared memory provided by application */
+ 	if (shm->flags & TEE_SHM_USER_MAPPED)
+@@ -580,17 +579,18 @@ static int tee_shm_fop_mmap(struct file *filp, struct vm_area_struct *vma)
  		return -EINVAL;
- 	}
  
--	vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
--	return remap_pfn_range(vma,
--			       vma->vm_start,
--			       rmtfs_mem->addr >> PAGE_SHIFT,
--			       vma->vm_end - vma->vm_start,
--			       vma->vm_page_prot);
-+	desc->page_prot = pgprot_writecombine(desc->page_prot);
-+	mmap_action_remap_full(desc, rmtfs_mem->addr >> PAGE_SHIFT);
+ 	/* check for overflowing the buffer's size */
+-	if (vma->vm_pgoff + vma_pages(vma) > shm->size >> PAGE_SHIFT)
++	if (desc->pgoff + vma_desc_pages(desc) > shm->size >> PAGE_SHIFT)
+ 		return -EINVAL;
+ 
+-	return remap_pfn_range(vma, vma->vm_start, shm->paddr >> PAGE_SHIFT,
+-			       size, vma->vm_page_prot);
++	mmap_action_remap_full(desc, shm->paddr >> PAGE_SHIFT);
 +
 +	return 0;
  }
  
- static const struct file_operations qcom_rmtfs_mem_fops = {
-@@ -156,7 +154,7 @@ static const struct file_operations qcom_rmtfs_mem_fops = {
- 	.write = qcom_rmtfs_mem_write,
- 	.release = qcom_rmtfs_mem_release,
- 	.llseek = default_llseek,
--	.mmap = qcom_rmtfs_mem_mmap,
-+	.mmap_prepare = qcom_rmtfs_mem_mmap_prepare,
+ static const struct file_operations tee_shm_fops = {
+ 	.owner = THIS_MODULE,
+ 	.release = tee_shm_fop_release,
+-	.mmap = tee_shm_fop_mmap,
++	.mmap_prepare = tee_shm_fop_mmap_prepare,
  };
  
- static void qcom_rmtfs_mem_release_device(struct device *dev)
+ /**
 
 -- 
 2.56.0
