@@ -1,50 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793912762;
-	b=eIFvOmD50+bHbXC8za8CgL3Oaaqb89XRnfCubynQH0AT6wMT7VWHHLl6B6lAxXscbj1b
-	 qp2J31SpqX1bgYBVBNoc51MIj8BXmj6laUrj7p9gkvMrC7nwe/uTHkzOtZzu5WJ9Qwp8W
-	 zqA9CxQDQEMVmawpbVsA4CB+SEc2fgVjEOkSPraSl231YGCZ+b3vg8WYy+WQglbicXj3O
-	 N/YkVNqBwRDT7cqqYWTsOa7XPet7G6Dzw91Em41nXETyfMjrW1VD8rRLBfYp48msavVNs
-	 YDUBnhcaQ/buVRjFcqAPou/R7H1JG4JK9E0GZ7GnCGlYF4P6Phey5eifcRyojf3/Zjg==
+	t=1793912774;
+	b=T21o7ua+4INLvGQY9hBQbEWZUBQcUNAIqaody44bsdHWiB5Qs4iUeIEN5TfMKvdOJWRR
+	 nYnc93VhZpts8zqsdUuIrILdMsBvPjCMs6xjM3eaqx49gFdRx9r6LqeP41skhds3l3G/i
+	 Irppd32B7UDv+lzNhVKVtscUGwo5qKSTQ8aULDpaTWLbI5feM8Q0pZxZr2YUMjhy/k3RL
+	 Sulr9hpusmX9eZ3oI2e6jgdQGxitHE+frBzqtMr8SCj3xVNsCiFRqbrjDB6U4S/vKFKHY
+	 rXNqDk/L5FIR8rVcvOw95L8eUcUvYzqnIyd60HpZ1yqdZHcD2Z0qhJcqfZSbwfPbmOQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793912762;
-	h=Received:DKIM-Signature:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=r1JpUn64UzzrZcFRUjQyI0S3ynWk5u6y/MaberysBgo=;
-	b=i6pqCzK0ZWdwsXCWHfzhwisuGfuf2kji0oOj8bF1EnfUDlH+NNUorOXkV2Ya1vwz4gP3
-	 3wCApOVtrHlKpRVGakYzaydwOFJzJiQRlWwTSNsB7xVTZ4IdqBmfTU7PiMGcSn/IUboxD
-	 MMg/ln0DADY9bgjedRdQK7E0WzsFEjjrXwTX4rPVs2pv3VtlUs45zStiKDRWCmrDxvRnW
-	 8TouM1+WXlDEEQ8gskUsj4byMy1RpRJ8GUEOypwrIQmCy4VzLsru/ua43smsifOYKe1c+
-	 jl+QoM5yu+3L2cWpOLg32/EO/QgN3PTh3N0QpJZrvl7CwfuK9lta6F9IMsywDxY0wgA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793912774;
+	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=rQ5eRcL8i4WiE6GtABNg6lA1lIZIpMhDQQ82RZBg9WY=;
+	b=iMJiDttZDjd7BYUjF6abzbTmcOgwhnLp4G/1Fe74EQ5QT0OQo4V621eTzsE8G/dvrXrq
+	 ZLh9/dJjO2XF1vrcYlifR9BvXcJdPOCSkj7G5d8uN05hG4BcD5wI2i4ccH8nJ2UjBrDBM
+	 QSHTF1UyMJ75E2HOmntUcv309ZjjgAcbH6/c6rRNeyTBJbeXRHbb/KDbUgiaWh1Hg/FZ5
+	 jyE6x0Zomff8eC9u4aNP2hzJprgZNtD8zlVKbnKnTKSbCZGyadVo/jzTwLTsmGX1xVEhP
+	 45S97WQ6IUb/gcuz0DgyMATsjVw+RZWwTrg+J4DTHgXrnQiKIailVCUj27q8eiFiOlw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n5OND3Bx;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S8CYFX4J;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0772B606A328;
-	Thu,  5 Nov 2026 21:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3710A606A332;
+	Thu,  5 Nov 2026 21:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n5OND3Bx
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB99D1F0089F;
-	Thu,  5 Nov 2026 21:05:49 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S8CYFX4J
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 190791F008A1;
+	Thu,  5 Nov 2026 21:06:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793912761;
-	bh=r1JpUn64UzzrZcFRUjQyI0S3ynWk5u6y/MaberysBgo=;
-	h=From:Subject:Date:To:Cc;
-	b=n5OND3BxSSsOe8W9Zhi3cBnfi6d7KzMyxkuyo5/trkHHVydx/yyOeQwXqKCdDUFcT
-	 m0c7eQ5D+U2buHxE7rSfcgJl5cMehkqtS+hpW9IxvuXOMi55EMjADBA8fn4bKVqGbY
-	 QpdNhrT0rU9HdBZA+CuDfrevb5VT/Sx+nUsDraIAPhBmT6/yt6g6bda0HLCJEF8Rbm
-	 u4rk8HUwvqrwddVG/k8amH7FQhV89FGy1AgFqoqMKw9DPQswpB9EwKW20G2YExJRhk
-	 9nSCRJkbQMXNq6KKP+CtmuUzVVPRlageLXK7RVKP4WcD+F7KQux77Q7qE1lDODIcT6
-	 zYdrWy6DfJfSw==
+	s=k20260515; t=1793912773;
+	bh=rQ5eRcL8i4WiE6GtABNg6lA1lIZIpMhDQQ82RZBg9WY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=S8CYFX4JsG8LD0hbwcgSQGkkF0ToeoZfZ+W7sYhcVvvvyId0c2kXpF/nDLh5GP73y
+	 l7FqfeS0r2inh81Q2FLwfe3R1ub9kpTEp9U4p7m3RAnpnM8hrf7E3MImfStu2/hGgP
+	 LnSVVcH69MPY1AsZqhp2mJ3P4GZH0mZ86gqHSeymX92cts+0GqS28OGx/cZF7XHj1k
+	 GL6MG2AyfpLshr0MBMZ64Ltlwq9gJBLs0ISnJcnAK79zb/Tnl4XS5J9SjY4vmytNA5
+	 ICvmM/z0LTXJeWId5xk8NfZc8pCl5JdEtXH1WbDlcIxV8F3Lr49iZHWLQljjvgkmcx
+	 kdk0o/ntqNkiA==
 From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-Subject: [PATCH 00/14] mm: convert further simple mmap hooks to
- mmap_prepare
-Date: Thu, 05 Nov 2026 21:05:31 +0000
-Message-Id: <20261105-late-2026-mmap_prepare-v1-0-c56aadfbab8a@kernel.org>
+Date: Thu, 05 Nov 2026 21:05:32 +0000
+Subject: [PATCH 01/14] xen/privcmd: convert mmap hook to mmap_prepare
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Post: <mailto:linux-sgx@vger.kernel.org>
@@ -56,10 +54,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MXQqAIBAE4KvIPregBhVdJSJEt1roRzQiiO7e1
- uM3zMwNmRJThlbdkOjkzPsmMIUCP7ttIuQgBqttZYw2uLiD8BOuq4tDTBRdItTWN3WwpVQIZCz
- 5yNd/3PXP8wJmgP8laAAAAA==
-X-Change-ID: 20261101-late-2026-mmap_prepare-02c87d23101e
+Message-Id: <20261105-late-2026-mmap_prepare-v1-1-c56aadfbab8a@kernel.org>
+References: <20261105-late-2026-mmap_prepare-v1-0-c56aadfbab8a@kernel.org>
+In-Reply-To: <20261105-late-2026-mmap_prepare-v1-0-c56aadfbab8a@kernel.org>
 To: Juergen Gross <jgross@suse.com>, 
  Stefano Stabellini <sstabellini@kernel.org>, 
  Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
@@ -102,72 +99,58 @@ Cc: ljs@kernel.org, xen-devel@lists.xenproject.org,
  linux-aspeed@lists.ozlabs.org, linux-arm-msm@vger.kernel.org, 
  op-tee@lists.trustedfirmware.org, netdev@vger.kernel.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2622; i=ljs@kernel.org;
- h=from:subject:message-id; bh=bTkwJYolGBPtNOiPTfj3hFZfQ60rxzsNf5rIq+CvvT4=;
- b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLLevF/tK9xtdq7Cd9m+05LfHinP2t1rLvjzsfyV5AfsU
- /zCH+pydZSyMIhxMciKKbI8/yK+P0gkbF7nBX83mDmsTCBDGLg4BWAiX68x/GI6KjBdv8dWvKl/
- o4fajxstEyfeVrhs6VhWqdT9b1lOzElGhhMsTpzms2K+v4ia9+OlpuvFLR9T93vz6S/zZZ6pzvr
- 6EAsA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1514; i=ljs@kernel.org;
+ h=from:subject:message-id; bh=GK8WxTPthKHfR93FzNaT4NLMedimx0+ktYQW4BobhBY=;
+ b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLLevF99VPp6bFPmGrbg90HFf0669ovdC6+z+yPP6qT6/
+ 43lmrDCjlIWBjEuBlkxRZbnX8T3B4mEzeu84O8GM4eVCWQIAxenAEzkyiVGhhddyb5uM/686WNQ
+ fPLi1lmb7Xrn/+udbrtjGvdeLJrHfj7D/5yLgT+f8MQUZDw4PNFjcW0v43WvQwzhSqW5cg/9JO3
+ rWQE=
 X-Developer-Key: i=ljs@kernel.org; a=openpgp;
  fpr=E7F417BF5214569E89D04F46CF9DCD8A81E27F14
 
-Continue the conversion of users of the deprecated f_op->mmap callback to
-f_op->mmap_prepare. Keep things gentle this cycle by targeting simple
-cases.
+Move from the deprecated mmap hook to the new mmap_prepare hook.
 
-No functional change intended.
-
-Build tested on x86-64 (allmodconfig, each patch individually), i386,
-arm64 and ppc64le.
-
-<<>>
-
-David, Andrew - I wonder whether one of you guys could take this series
-through your tree? Since it's kernel-wide it seems sensible to take it
-through an mm tree.
-
-Thanks!
+The hook only sets VMA flags and operations. The VMA private data is
+already NULL at this point, so we no longer explicitly clear it.
 
 Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 ---
-Lorenzo Stoakes (ARM) (14):
-      xen/privcmd: convert mmap hook to mmap_prepare
-      KVM: PPC: Book3S: convert spapr TCE mmap hook to mmap_prepare
-      mshv_vtl: convert mmap hooks to mmap_prepare
-      vduse: convert IOVA domain mmap hook to mmap_prepare
-      x86/sgx: convert vepc mmap hook to mmap_prepare
-      udf: convert mmap hook to mmap_prepare
-      selinuxfs: convert mmap hooks to mmap_prepare
-      xen: convert xenstore interface mmap hooks to mmap_prepare
-      soc: aspeed: convert LPC and P2A control mmap hooks to mmap_prepare
-      soc: qcom: rmtfs_mem: convert mmap hook to mmap_prepare
-      tee: convert shm mmap hook to mmap_prepare
-      misc: bcm-vk: convert mmap hook to mmap_prepare
-      ptp: vmclock: convert mmap hook to mmap_prepare
-      vhost-vdpa: convert mmap hook to mmap_prepare
+ drivers/xen/privcmd.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
- arch/powerpc/kvm/book3s_64_vio.c        |  6 +++---
- arch/x86/kernel/cpu/sgx/virt.c          | 15 ++++++++-------
- drivers/hv/mshv_vtl_main.c              | 14 +++++++-------
- drivers/misc/bcm-vk/bcm_vk_dev.c        | 20 ++++++++++----------
- drivers/ptp/ptp_vmclock.c               | 19 +++++++++----------
- drivers/soc/aspeed/aspeed-lpc-ctrl.c    | 20 +++++++++-----------
- drivers/soc/aspeed/aspeed-p2a-ctrl.c    | 22 ++++++++--------------
- drivers/soc/qcom/rmtfs_mem.c            | 22 ++++++++++------------
- drivers/tee/tee_shm.c                   | 14 +++++++-------
- drivers/vdpa/vdpa_user/iova_domain.c    | 12 ++++++------
- drivers/vhost/vdpa.c                    | 23 ++++++++++++-----------
- drivers/xen/privcmd.c                   | 11 +++++------
- drivers/xen/xenbus/xenbus_dev_backend.c | 14 ++++++--------
- drivers/xen/xenfs/xenstored.c           | 14 ++++++--------
- fs/udf/file.c                           |  8 ++++----
- security/selinux/selinuxfs.c            | 24 +++++++++++-------------
- 16 files changed, 121 insertions(+), 137 deletions(-)
----
-base-commit: b61fa14ce6bcbba2cb9a96feea31b760226d6b43
-change-id: 20261101-late-2026-mmap_prepare-02c87d23101e
+diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+index 5e56fbc93447..16f96c05af2d 100644
+--- a/drivers/xen/privcmd.c
++++ b/drivers/xen/privcmd.c
+@@ -1630,14 +1630,13 @@ static const struct vm_operations_struct privcmd_vm_ops = {
+ 	.fault = privcmd_fault
+ };
+ 
+-static int privcmd_mmap(struct file *file, struct vm_area_struct *vma)
++static int privcmd_mmap_prepare(struct vm_area_desc *desc)
+ {
+ 	/* DONTCOPY is essential for Xen because copy_page_range doesn't know
+ 	 * how to recreate these mappings */
+-	vm_flags_set(vma, VM_IO | VM_PFNMAP | VM_DONTCOPY |
+-			 VM_DONTEXPAND | VM_DONTDUMP);
+-	vma->vm_ops = &privcmd_vm_ops;
+-	vma->vm_private_data = NULL;
++	vma_desc_set_flags(desc, VMA_IO_BIT, VMA_PFNMAP_BIT, VMA_DONTCOPY_BIT,
++			   VMA_DONTEXPAND_BIT, VMA_DONTDUMP_BIT);
++	desc->vm_ops = &privcmd_vm_ops;
+ 
+ 	return 0;
+ }
+@@ -1666,7 +1665,7 @@ const struct file_operations xen_privcmd_fops = {
+ 	.unlocked_ioctl = privcmd_ioctl,
+ 	.open = privcmd_open,
+ 	.release = privcmd_release,
+-	.mmap = privcmd_mmap,
++	.mmap_prepare = privcmd_mmap_prepare,
+ };
+ EXPORT_SYMBOL_GPL(xen_privcmd_fops);
+ 
 
-Cheers,
 -- 
-Lorenzo Stoakes (ARM) <ljs@kernel.org>
+2.56.0
 
