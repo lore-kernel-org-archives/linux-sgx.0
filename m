@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793912811;
-	b=CY/R6G9SVKsK7qEE744fCoJ8Xq0oM+vjY4xNZhrX9DeMUzXGj3h1KWMsNRnrULOaxgeN
-	 XaxjHyCkTHTmY7od9lGivAdMgFCM34J2a4ArO9VvIHqRcfS4k3ULvs5f7GXc/ybL3UqTr
-	 0f8d/Ns1pvuCDpUuyiz1xdh1NWMBg7GGNNwMSMVDzwLcJ6VKwfTfBOxcS8CLdRdb13ssV
-	 P0wSjWQXSkligQazXPoClB4byCNYcWYAdAptEiYScWJf04kLZy4NOR822NwIam3bTlXDF
-	 FFJpIYUkcfDKTc2hMcrM6KXzVxCpQICbpFzZiUfoUizrYYwlFakc8R2RWIosf55yfxQ==
+	t=1793912823;
+	b=jMv8kKB3PXmjjQsL9LUMau+HiU8s7dBVwep38j2L1eU+mgfyD2VFoYgezl6H4T8Ontd4
+	 UWFfZQCl3qcaYKBJH87chKFY6G0o0u/fGpqarL6GMN/nvrWQzqLV9caBLkQ8ubQ+M2aGD
+	 xp2J7znabbX96tMwQd7zHX0EwFFdlZwwp3+BOgcwtpszBKzdv7vuH6ofb6R49jjzkuWa6
+	 JSwomOMmdfqlbixMUupQYzLTj4IOcQB75oLAiFKWGdcJqF8kRtGcht406yVpRySGXlEny
+	 Gw7o3i241L422tLnjpTxYv7r6EFEd8ja4azkpYaGW1fDFFLQ4aR3lXjnbo2wqeOIy4A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793912811;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793912823;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=lMfCHuJWDITAzVX5MILlRUAfVtlxLQX6U8OJOyztS0Q=;
-	b=Dt+Dls7yKOnhWGt/dV0AbWYHJ0Qhx+74xNJePRtvoLaO4q+G4l+WHLx23Ww895odhZQD
-	 e5YXhZawFjRZv9ls0NY+cQeOEyV9VqAaCTtMzxgCyMTekWHmu2PpFbvy1zb+C1YMr2Ud4
-	 sl2jok7IkSnUlGdodNA3G9xCi8cg8vsFbqUOpJrw+XeaQbmGDCIEHaQCuhcvfA41U2WVW
-	 VX+ZkzmWSpvF824SM5zGqzdt/jPtTwoFhb5RsfUJgtJ/OLIDZ6+uvWab+rhSHEpp3OWGp
-	 Cf4mAw/OyvbxGc9BV96Iyj0Xu+uaWMRLGGpywce2ob3RGIOlIb7SZ+qQoQ1krU6rK+A==
+	bh=bqfQWE9INck3Aoq42ZNpSathvk4p8fmQAVJsjbZAm0g=;
+	b=FXwSHCZ1yMOYntGU1/xrsqlvdXwtwszTNC0w4WU3WiDxUvzftXkHUYNx49PJ65W35jn5
+	 PzFkCRss5diarwe7qtij1dzdvpiPhRDPqad2ajYOu1hiP4X95CO6H+vPmNWnxr9cvATfj
+	 lozlcFO/wipF8rJa5IQJiU6fID1hDh3L7LIIswLSfCrcetoqiBw3RdlQu/w/GHQpDYY3K
+	 93iqUZfCiJs5tmGE04u2v6FpL2HK4Sf5ldT4KdQ7GyJ6/qmCTZBhFU7aCaNlTDO5Sc/EQ
+	 jy3huorqAmuY3xt0lxtZsFNra7ix7Mh9AP6oucS40twJLdc5akS+ssHaHxrKupKxqHg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hyoADFGo;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GWekXUJt;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C01606A33B;
-	Thu,  5 Nov 2026 21:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30BB606D818;
+	Thu,  5 Nov 2026 21:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hyoADFGo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C70931F008A2;
-	Thu,  5 Nov 2026 21:06:38 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GWekXUJt
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 073691F008A6;
+	Thu,  5 Nov 2026 21:06:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793912810;
-	bh=lMfCHuJWDITAzVX5MILlRUAfVtlxLQX6U8OJOyztS0Q=;
+	s=k20260515; t=1793912822;
+	bh=bqfQWE9INck3Aoq42ZNpSathvk4p8fmQAVJsjbZAm0g=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=hyoADFGoZhaTWJkzXcW3KcbEavv04p8OShbOv92vBdUSDNLHC33p5UKp1V2NVcrld
-	 kDlm4+Dh0N0ewg6c+CsYgrDJ3ZyQfeLnEMeGuWWhUOa1JWAqXOF3EIa9dU7hEYQurC
-	 UD8uUTqIpkS8973AB0tlJQaOj0TVHyTL25qiKUL5PD3kHvTGhvyIEbBHKWXDn6uHka
-	 RoxnfP2r7Ju1UsLJ3jtzSicq0aWOqHOlTJAt5o8ROmzR1tSO11ZVBsg+5OZeT4rkNp
-	 9MHuwVurtm4FxobT/XptLLk7AHWfQIwdo04JpdFyuH/BI40j4CP1PTKjHXSsUS4XXm
-	 oJDzW5rZ2ElnQ==
+	b=GWekXUJtTW/bmKiTy4QB6lwJ7qbgw7vFuwUU+DOaOfg/TRAzLeM32R3kLak4qQeQ3
+	 Qv4vJ9ieuL7oXsySpCaty+GruAFXFHyboa49jWYOSQ5CvYOGpKEnZ4EVlYgXyECMBV
+	 SAYyovNMBS/4DJV9jvSExBs04MC2Ny8P8JjIrR64zZOycDnouZr851hmFFOt4+wNVA
+	 fPiv0XZG2hDHC8h3Gwkazyekp82IqzHvmXnmVgCZg0iO26M0dmBWKapLrfZusp9wwT
+	 zzsZcWlKHFiQMAFkueAeuPV0PQFvmCrLb3vSKAp9PJu0JxbVW/FD9XwOTh2SLxX8iP
+	 /o3UyJrfNU3sg==
 From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-Date: Thu, 05 Nov 2026 21:05:35 +0000
-Subject: [PATCH 04/14] vduse: convert IOVA domain mmap hook to mmap_prepare
+Date: Thu, 05 Nov 2026 21:05:36 +0000
+Subject: [PATCH 05/14] x86/sgx: convert vepc mmap hook to mmap_prepare
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Post: <mailto:linux-sgx@vger.kernel.org>
@@ -54,7 +54,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261105-late-2026-mmap_prepare-v1-4-c56aadfbab8a@kernel.org>
+Message-Id: <20261105-late-2026-mmap_prepare-v1-5-c56aadfbab8a@kernel.org>
 References: <20261105-late-2026-mmap_prepare-v1-0-c56aadfbab8a@kernel.org>
 In-Reply-To: <20261105-late-2026-mmap_prepare-v1-0-c56aadfbab8a@kernel.org>
 To: Juergen Gross <jgross@suse.com>, 
@@ -99,55 +99,62 @@ Cc: ljs@kernel.org, xen-devel@lists.xenproject.org,
  linux-aspeed@lists.ozlabs.org, linux-arm-msm@vger.kernel.org, 
  op-tee@lists.trustedfirmware.org, netdev@vger.kernel.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1527; i=ljs@kernel.org;
- h=from:subject:message-id; bh=f+7KpJr4q75MSHX3Bd7fDuPR7a/rNIIIf/bMN+NEgYc=;
- b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLLevF8du8y356wo75UohnvW1WmG2azZxoEG9l+mvHw8c
- ZHxmh0fOkpZGMS4GGTFFFmefxHfHyQSNq/zgr8bzBxWJpAhDFycAjCRiBOMDB0R1y2sCsxZCz9d
- WmjgP+cKZ4HBz+NXpWMcv1wV1woTUGNk+FWtznBzgiPz5WrBrQefRpSzaacb3N2dE78n6eYhful
- ubgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1666; i=ljs@kernel.org;
+ h=from:subject:message-id; bh=8M6KXM/gidl407BgZsE6l9e639j02CBQooR3iZ5mU4M=;
+ b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLLevF/NfkpnyQUdw7u/LIOuqb1l2agTvF3TyPxd3+spl
+ 1Y3rn9v1lHKwiDGxSArpsjy/Iv4/iCRsHmdF/zdYOawMoEMYeDiFICJyAcx/NONOFpeGCnRO6e7
+ +3T/k1zGsxF7YoO6TcO7Xjvq/jC+sIuRocFi0+uncd+Ew6Qit/5Nqt5kFnHQtvGp8hbW+Lk53Av
+ lmAA=
 X-Developer-Key: i=ljs@kernel.org; a=openpgp;
  fpr=E7F417BF5214569E89D04F46CF9DCD8A81E27F14
 
 Move from the deprecated mmap hook to the new mmap_prepare hook. The hook
-only sets VMA flags, operations and private data.
+only checks that the mapping is shared and sets VMA flags, operations and
+private data.
 
 Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 ---
- drivers/vdpa/vdpa_user/iova_domain.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/sgx/virt.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_user/iova_domain.c
-index b6c958224b7c..64465f690a4d 100644
---- a/drivers/vdpa/vdpa_user/iova_domain.c
-+++ b/drivers/vdpa/vdpa_user/iova_domain.c
-@@ -575,13 +575,13 @@ static const struct vm_operations_struct vduse_domain_mmap_ops = {
- 	.fault = vduse_domain_mmap_fault,
+diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+index 6a1933ddc6fc..850990519ca5 100644
+--- a/arch/x86/kernel/cpu/sgx/virt.c
++++ b/arch/x86/kernel/cpu/sgx/virt.c
+@@ -98,17 +98,18 @@ static const struct vm_operations_struct sgx_vepc_vm_ops = {
+ 	.fault = sgx_vepc_fault,
  };
  
--static int vduse_domain_mmap(struct file *file, struct vm_area_struct *vma)
-+static int vduse_domain_mmap_prepare(struct vm_area_desc *desc)
+-static int sgx_vepc_mmap(struct file *file, struct vm_area_struct *vma)
++static int sgx_vepc_mmap_prepare(struct vm_area_desc *desc)
  {
--	struct vduse_iova_domain *domain = file->private_data;
-+	struct vduse_iova_domain *domain = desc->file->private_data;
+-	struct sgx_vepc *vepc = file->private_data;
++	struct sgx_vepc *vepc = desc->file->private_data;
  
--	vm_flags_set(vma, VM_DONTDUMP | VM_DONTEXPAND);
--	vma->vm_private_data = domain;
--	vma->vm_ops = &vduse_domain_mmap_ops;
-+	vma_desc_set_flags(desc, VMA_DONTDUMP_BIT, VMA_DONTEXPAND_BIT);
-+	desc->private_data = domain;
-+	desc->vm_ops = &vduse_domain_mmap_ops;
+-	if (!(vma->vm_flags & VM_SHARED))
++	if (!vma_desc_test(desc, VMA_SHARED_BIT))
+ 		return -EINVAL;
+ 
+-	vma->vm_ops = &sgx_vepc_vm_ops;
++	desc->vm_ops = &sgx_vepc_vm_ops;
+ 	/* Don't copy VMA in fork() */
+-	vm_flags_set(vma, VM_PFNMAP | VM_IO | VM_DONTDUMP | VM_DONTCOPY);
+-	vma->vm_private_data = vepc;
++	vma_desc_set_flags(desc, VMA_PFNMAP_BIT, VMA_IO_BIT, VMA_DONTDUMP_BIT,
++			   VMA_DONTCOPY_BIT);
++	desc->private_data = vepc;
  
  	return 0;
  }
-@@ -606,7 +606,7 @@ static int vduse_domain_release(struct inode *inode, struct file *file)
- 
- static const struct file_operations vduse_domain_fops = {
- 	.owner = THIS_MODULE,
--	.mmap = vduse_domain_mmap,
-+	.mmap_prepare = vduse_domain_mmap_prepare,
- 	.release = vduse_domain_release,
+@@ -315,7 +316,7 @@ static const struct file_operations sgx_vepc_fops = {
+ 	.unlocked_ioctl	= sgx_vepc_ioctl,
+ 	.compat_ioctl	= sgx_vepc_ioctl,
+ 	.release	= sgx_vepc_release,
+-	.mmap		= sgx_vepc_mmap,
++	.mmap_prepare	= sgx_vepc_mmap_prepare,
  };
  
+ static struct miscdevice sgx_vepc_dev = {
 
 -- 
 2.56.0
