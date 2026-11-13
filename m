@@ -1,66 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794558050;
-	b=mFZ+PFVtxCet6dYujSe+0N64k5kuwTrRUpUdvPtRhryvcnPFZDLXBVlH7so2PC30hqrr
-	 ukHeVNPCMqtEKXqCgqTY4Ut2PbKh0uAyvDumAVX0N+yqxSAXnUVktaXmuwbND9IIEUnZa
-	 F7pd2WrQBw35PZjO+STGSm/gFubVl6MvG61Pfzu1Dg1nCzJCSXyMobi/y666yZYJJB8mn
-	 PNQns8BBRZqPelD0pwdUMUYBeboHLGMbVzy9tMsZBrpRhilgBwZPj9jlJppETJasJkRSZ
-	 ehUei1/zLB27x6kA9VGgXchHgbue497ltEDwO1PLZtRMcX3O9YPq5wUroW39T88LI5Q==
+	t=1794573922;
+	b=okoVZ16ej5sGMsw6cJPFJgOIYWMNyF+i6hhfWbCjxfRR9YQF0HWrKyg9/XDI/ddGjQV8
+	 f+qoq8Y+j7mqoapkRklwttXyVNOtI0TaMp7kTGaMv3vt25/TQFxBpa9w75R2ly4k/aQcf
+	 bCSQPzQOFbnKeZ3UIEbJl8YNhrOT+eYMACnZLdRXu9WOVzxluKB3Kg40bT5adFp1WGReH
+	 ao5RxSdLPHoDrrEKMomghoTVHAXpXs4F0vgdxs5IQ33BzgnDaBqED/4g8OEUqZjkS8Axv
+	 z9/O1Eg9aAbsn3I/gZ7TBtanNHcHyW8gNilwRaY7IMkYQjaTDkWnyClIGl646KCdYMA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794558050;
-	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:From:To:Cc:
-	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	a=rsa-sha256; c=relaxed/relaxed; t=1794573922;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:X-Developer-Signature:X-Developer-Key:
 	 Content-Transfer-Encoding;
-	bh=4Gp5QAphXPOU9Urmv4w5lLuRS2sQ7D3ObztsA4P01E8=;
-	b=gT2SgkQs39aG8cRQV5FbyP2HY5Et5/rcqs8mihiXE7PqoppDEe8XzQuubu2J1eDKO5zl
-	 Qa1h54MBpN/OBuU6bJSzCH99CllZqD/v++0ZqDePbRpypF4ZxQNJGlHieEl/OVYq3RZJD
-	 OCZosxNXg+cmAx54hBnr8Bmo4nO4tjc1PfQuzLLFXYnzoA4fJWUJK4H7C6ZfDjWVnq+/S
-	 tM8stOrWA/mmf4eKLBzYCFQzJsII/rulBSLA8dXGift4E2qs7R8vwaB34Om+/fcVhfCVp
-	 NSI4DTKlhsPVGlSDlBaffKMQuIGfLmWjqxuSAkBT8iTprsobj8xDpqaSxG/yRnYygnw==
+	bh=StfimioWjvVPXYjFy+9Yc79OyOR0BzyILDGtzeIcoEc=;
+	b=vh2y+nfojPLoGaDkE9fd1dlFtJfzpNpf68W4E57IccbMTvpSDL32F+YV/O1yYn2rtjgU
+	 M6P+4mAmUc2j+Ld02tGmWaI6pjt5/FKRqcU5QpmVWX32TCcC4iWUjfXu3tvnePo2jpVBD
+	 liUppPd0G8oISK/445cKZ8nO8H1dKGZ2L3l/Yr0U1JdZoxkooTi1PvF0oyhGOFEgRUGPd
+	 5/VZ3tVdzz8HvdW532aC+hOkt1DwDU2yWh7pqEs8Zrxl3E/RLqGn4147S7sSNpizuQ7WL
+	 Lt92HOGgk7tEBpengw7NxnhaK0Vigt0J7NkNd5rfVQjf/JUAcYkB1QNaRP54a6bGFYw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.alibaba.com;
-	spf=pass smtp.mailfrom=linux.alibaba.com;
-	dkim=pass header.d=linux.alibaba.com header.i=@linux.alibaba.com header.a=rsa-sha256 header.s=default header.b=ZLuvAZKg;
-	arc=none smtp.remote-ip=115.124.30.111
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OZ2VjQb7;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493C6606A337;
-	Fri, 13 Nov 2026 08:20:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 493C6606A337
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277AD606A323;
+	Fri, 13 Nov 2026 12:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.a=rsa-sha256 header.s=default header.b=ZLuvAZKg
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1794558045; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=4Gp5QAphXPOU9Urmv4w5lLuRS2sQ7D3ObztsA4P01E8=;
-	b=ZLuvAZKgSIFEOC2LzBDygHQRlofg3GWWb6VszCy+ZvY6bNNszQLCgJNEXyFuawTExbJWN3WXsksoXrwG47oCs737tpsFZI42dwHyFJeTU7HeoE+hKiieAz5WmSLiATYkO2QX7dTGYNfxW8JMsWyGk7HOgCl9MfbAygoC4JzJ/CQ=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R481e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045133197;MF=xiangzao@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0XEeQ124_1794558037;
-Received: from banye.tbsite.net(mailfrom:xiangzao@linux.alibaba.com fp:SMTPD_---0XEeQ124_1794558037 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 13 Nov 2026 16:20:44 +0800
-From: Yuanhe Shu <xiangzao@linux.alibaba.com>
-To: bp@alien8.de
-Cc: dave.hansen@linux.intel.com,
-	jarkko@kernel.org,
-	tglx@kernel.org,
-	mingo@redhat.com,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OZ2VjQb7
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDE9C1F000C4;
+	Fri, 13 Nov 2026 12:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794573921;
+	bh=StfimioWjvVPXYjFy+9Yc79OyOR0BzyILDGtzeIcoEc=;
+	h=From:To:Cc:Subject:Date;
+	b=OZ2VjQb76fkQy+eCyFR/83yQHPtXM4CHT+vlGVkWHEvyvzQumkkAfH53ITFiiCSlZ
+	 yvB84UyfM7dKcHXwZMDICCsI/abNve3cEhdkiStYfYjg3fhurkTo/SU2aXEmuI8XPH
+	 bpWEO98g+4b/7tnwKjEsPNWKjH6Aj1ch/j2Iv+ggp5hYmBvADKMj7wDYyr0x886lpu
+	 6j8ihOboGhP1vGd+L6u0iB2A3mR3pg3Via5IQgzEVepcbILtsjpgTvcZCSMZbPZe+P
+	 nf3QURNCyqx5tng82BgcfyhhMXMMF8mLz+wFtowOTrJs7U37F6whgjUnvaVGHOdVr6
+	 e3tPtt+3NtIYg==
+From: Thorsten Blum <blum@kernel.org>
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+	Kai Huang <kai.huang@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
 	"H. Peter Anvin" <hpa@zytor.com>,
-	x86@kernel.org,
-	linux-sgx@vger.kernel.org,
+	x86@kernel.org
+Cc: linux-sgx@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org,
-	challvy.tee@gmail.com,
-	xiangzao@linux.alibaba.com
-Subject: Re: [PATCH v2] x86/crash: Disable SGX in the kdump kernel
-Date: Fri, 13 Nov 2026 16:20:36 +0800
-Message-ID: <20261113082036.52175-1-xiangzao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <0E3109CB-AE2B-475D-95AF-BD5465748ED9@alien8.de>
-References: <20261113035019.3747461-1-xiangzao@linux.alibaba.com> <0E3109CB-AE2B-475D-95AF-BD5465748ED9@alien8.de>
+	Thorsten Blum <blum@kernel.org>
+Subject: [PATCH RESEND v2 0/3] x86/sgx: Remove unused definitions and reuse launch token size
+Date: Fri, 13 Nov 2026 13:44:49 +0100
+Message-ID: <20261113124448.70586-5-blum@kernel.org>
+X-Mailer: git-send-email 2.56.1
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Post: <mailto:linux-sgx@vger.kernel.org>
@@ -70,19 +65,23 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-sgx+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=641; i=blum@kernel.org; h=from:subject; bh=9dF9afxvdXRrPrLvKh+QsdDnwLa6XoR83auXHs8jeL8=; b=owGbwMvMwCUWt7pQ4caZUj3G02pJDFnf2RyWbtre+eD+6u7P34TjuKpKXqWuvJv7ec6W3TsNF 894u6owuaOUhUGMi0FWTJHlwawfM3xLayo3mUTshJnDygQyhIGLUwAmoqvNyPBGl4d3Jf+c7WHr v28+qMP8+NzkAzzKZexNNkyrKtoTKn4y/OGuTJ7umKWV8D7/4brPlhlOP4W8LRfeWt57xuH1ivr nrcwA
+X-Developer-Key: i=blum@kernel.org; a=openpgp; fpr=1D60735E8AEF3BE473B69D84733678FD8DFEEAD4
 Content-Transfer-Encoding: 8bit
 
-On 11/13/26 06:19, Borislav Petkov wrote:
-> I don't think you even read my mail.
+Remove SGX definitions that have never had in-tree users and reuse
+SGX_LAUNCH_TOKEN_SIZE when validating the launch token in
+__sgx_virt_einit().
 
-Sorry, I misunderstood your point - language and my reading
-comprehension got in the way.
+Changes in v2:
+- Adjust commit message 3/3 as suggested by Kai
+- v1: https://lore.kernel.org/r/20260711100053.739588-5-thorsten.blum@linux.dev/
 
-Based on the v1 review and your feedback, my proposed approach is a
-small kdump_disable_features() in the x86 kdump code that checks
-is_kdump_kernel() and clears the cap, called from setup_arch() after
-parse_early_param().  This keeps the disable in x86 kdump code without
-a parameter hook.  Does that work for you?
+Thorsten Blum (3):
+  x86/sgx: Remove unused TCS definitions
+  x86/sgx: Remove unused size and count definitions
+  x86/sgx: Use SGX_LAUNCH_TOKEN_SIZE in __sgx_virt_einit()
 
---
-Yuanhe
+ arch/x86/include/asm/sgx.h     | 59 ----------------------------------
+ arch/x86/kernel/cpu/sgx/virt.c |  3 +-
+ 2 files changed, 1 insertion(+), 61 deletions(-)
