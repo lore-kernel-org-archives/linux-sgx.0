@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794573930;
-	b=VcDxErhcChDGGGbEg1Pq02Ou3/JbuhX0g1IGNPlC/MzuG8MO+uB+TcNqtWXTd5toni6T
-	 hOswZ3ioOGw0WanxQo+vBT7OErPtMh673/UAOLQLlEnJlNILapZu3s5f6li4TCm3YMmLn
-	 O4u6eF6SDmJUOCblESa5SEiBJyGGzqcJbde37V5y1fV2bLQ12v4lxOPkrGzssx0R+fXWE
-	 4bYM0U+/+xg7IwjI60i75HoYwNbbcrIhDM2ttIfwfCRFgrWHJuGk8FrMJVUDnFZZ+pdHO
-	 /pquVjo5Bdo/x4uPVsTJuXPa0FuLPpRNyM2RbR1sRRw3S7c6Tsdi2h4UapSCmCIUT3w==
+	t=1794573934;
+	b=uyh/1za/wBtSrABayTFCTgYtpv5CTBuXMSKZP91o7+2Mu0lx6fMoRCQ1iDJ4C/YT/hsG
+	 xtdGEUG/pJodMDLsEF34ZHqrO6VENAsl9JGDBaCwCJIg7gtcrkyoGkywGJlmf41dsGrFe
+	 IPTWhmqFWRvdNNHEArZ3RWthj5owBZrNtEceD2jQOiDjlnFKuak6TWkxsZYNG5duewlng
+	 4dluZNjvmSIg9vjW4z+0bjA12Rys+uuHK5Mux+BccPu78W82LUfGSZYlLqhndNmFe/MvH
+	 Izm2H66HZVFTyInTnCxvyk+ZrcSSdS07Y0p9CoqGPKLZp9DPdsTtN/ci98LnZEDOlVA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794573930;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794573934;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:X-Developer-Signature:
 	 X-Developer-Key:Content-Transfer-Encoding;
-	bh=KMXReMhXYVZD2NLOqrCcax4dDoOfXYb/orwkzfp02xM=;
-	b=qt0NIrVSXn5bSdPKVqWaFUd6z/NOsaZD3O86IChlXhcOKXwQTdNv5fEo4rOU42FJodbH
-	 xNhfuk64qTe63gs2HznGBmSoX5wiP94Mukiz114337pTM619WYFCVUEI/XaYLN8xCuLIW
-	 ITe7xYOItH0hgCBjajSnUZupruD7QCY72Bqm9qOMy1C5fLuIrqo8B2pfomW3W7xxxxUoa
-	 wx5my3pSR1/dGJELMMH45JpDAqfiPu8C4+Iwh3F81EdUcadLlFLLOSjfH0RDdpJFAb3TR
-	 QeLOrqZErBKqdhcyo+kqUcd6r19d1vVRFpbvZbDhhKbE91I58Bm4sJyXZzZfrMJP3mQ==
+	bh=qAdRMe27UO0j9h/LxR0eO7g2Q0xbqUQINwEmxPoZbJM=;
+	b=T8/OPbnURTXAR8mLERPo+II3smgZIxw2ncLlaFjdwpUEwGSW04On9a1W2bMVrNHhGBBL
+	 CIIAl8gzLiqOqoaiGFPyxohxw+8haLSmgoLalp5HW5y99ZIxNWbx/7zTgHqLh/Cpo0keP
+	 uIjfpqAR3iOl8J0OY1jwdg3UojsOVhvTA/k+l+k2MQI+gcmo9v4CZYCjLZtwaHAFC//U6
+	 Ahv5dJ+KiqDoko9cefUMX/nELrm911yJvonNT1cucHMUTS+fyZx/TjPLXkeTGjrLlJRyI
+	 Y10bkg+VcWt3yZDAzyH9rgjej6zAeByTztSkJ8bXKaK2GRjWIlGZk1ZaDb/diSY03NA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SCuYYgGE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cnAD6EWc;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E36D606A338;
-	Fri, 13 Nov 2026 12:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556E1606A331;
+	Fri, 13 Nov 2026 12:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SCuYYgGE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C2BC1F000C7;
-	Fri, 13 Nov 2026 12:45:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cnAD6EWc
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EACF1F000C5;
+	Fri, 13 Nov 2026 12:45:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794573929;
-	bh=KMXReMhXYVZD2NLOqrCcax4dDoOfXYb/orwkzfp02xM=;
+	s=k20260515; t=1794573934;
+	bh=qAdRMe27UO0j9h/LxR0eO7g2Q0xbqUQINwEmxPoZbJM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=SCuYYgGEg2fp8C8m+lYWl2gF3n78YYLHuf42KD9Aiz8dMcAMayFIc4q5niu5b+rXo
-	 c8u+vu5r7Tc5lL8Z333gHUZad5fcHLmqPieKfc5EYDZXO/SPn03V9kUoXjkNwU58Tr
-	 R+MWbwgVhyR1hP3Ay0P+TKNOEShxYjRMPHxG46Iy56K6DJZzdld00yKlwWJu3SEXii
-	 KVTcUYq38sv+mSXzbi4pxlC6FnP/ShD1tRCpyru+Fhwo9bc4Ggcj9jvmt1LpB0jZpN
-	 UCLN5Qa/MtGnmjKsj/Q7GWasPh4qRr8frfde/rXS0ojtBm9dwvS4spkmHUShjknuHH
-	 KbgR04TiwvnBw==
+	b=cnAD6EWcxhWGX0zi+7smysIwX+Ivw2YSPVtz4BmCucqLUGs302jrMl2iFhjPKDe3v
+	 GigUU/6Zlse0jQ6+9gQTgd3eGM8OcQRZD+nWdx9y2gjQ8xzg4X8kgUkxUvHsq4cTiy
+	 w26TYJQQmeAAaryfFEqeWfZCiHNkWQKZOQooLRm6IYwE8Wc9Cy+YnmOfaJgbOPCUiF
+	 1X+0p76eSN7IbNSN/DOlEM9HgiL8GkIZA8eyWcPuxVc4njIHYvcK6maqXe44JR6ZRF
+	 G9BH+sEUVbfYus6sSHcJfctzM3lh1m5vOQsiF+bQiUrt29G1v8G4uSsr2dP2SuM+ye
+	 kw9Oo7rmm7YoA==
 From: Thorsten Blum <blum@kernel.org>
 To: Jarkko Sakkinen <jarkko@kernel.org>,
 	Kai Huang <kai.huang@intel.com>,
@@ -52,9 +52,9 @@ To: Jarkko Sakkinen <jarkko@kernel.org>,
 Cc: linux-sgx@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thorsten Blum <blum@kernel.org>
-Subject: [PATCH RESEND v2 2/3] x86/sgx: Remove unused size and count definitions
-Date: Fri, 13 Nov 2026 13:44:51 +0100
-Message-ID: <20261113124448.70586-7-blum@kernel.org>
+Subject: [PATCH RESEND v2 3/3] x86/sgx: Use SGX_LAUNCH_TOKEN_SIZE in __sgx_virt_einit()
+Date: Fri, 13 Nov 2026 13:44:52 +0100
+Message-ID: <20261113124448.70586-8-blum@kernel.org>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261113124448.70586-5-blum@kernel.org>
 References: <20261113124448.70586-5-blum@kernel.org>
@@ -67,53 +67,33 @@ List-Unsubscribe: <mailto:linux-sgx+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-sgx+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1490; i=blum@kernel.org; h=from:subject; bh=vAf2C64KMrWZ7HWV/CthkUS15iLLCpHjpXStTrHoy+g=; b=owGbwMvMwCUWt7pQ4caZUj3G02pJDFnf2dxtr3Qt+tK4wuT8i8e64lduFuT2h874+y8yWesm8 5H4GsvPHaUsDGJcDLJiiiwPZv2Y4VtaU7nJJGInzBxWJpAhDFycAjCRLElGhgVJZxgWrDj03DxG gGuvrYwPY4vz11CN69zPn3bMcWg/2cbI8DQ48cbJsnm8uzdsil8m2i5rm/1t76s/lhm6s1MPT0s vZwAA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1098; i=blum@kernel.org; h=from:subject; bh=eh8G5JQqfW6fjcCppCY80Zz0Iq/hvPYPQBnR51vLosU=; b=owGbwMvMwCUWt7pQ4caZUj3G02pJDFnf2dwFOcV/nuq25dNSXPAgRX3H4mO6O5YV536Yz2+++ +J/3gVyHaUsDGJcDLJiiiwPZv2Y4VtaU7nJJGInzBxWJpAhDFycAjCRjVyMDO9/KX8NWjCNUf3S rqS/tvwJtZO6poZWHTZfNk32wNfP7tcZGc7WbHp+0t3iYPERxwKJcuFPGQt9fO8vnWLWs5JNqCh QhRMA
 X-Developer-Key: i=blum@kernel.org; a=openpgp; fpr=1D60735E8AEF3BE473B69D84733678FD8DFEEAD4
 Content-Transfer-Encoding: 8bit
 
-The definitions were added with commit 70d3b8ddcd20 ("x86/sgx: Add SGX
-architectural data structures"), but have never been used. The SIGSTRUCT
-reserved field sizes are also redundant because the structure uses
-literal sizes instead. Remove them.
+Both sgx_ioc_enclave_init() and __sgx_virt_einit() use the same 304-byte
+launch token. Use SGX_LAUNCH_TOKEN_SIZE in __sgx_virt_einit() instead of
+maintaining a second local definition.
 
-Acked-by: Kai Huang <kai.huang@intel.com>
+Reviewed-by: Kai Huang <kai.huang@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 Signed-off-by: Thorsten Blum <blum@kernel.org>
 ---
- arch/x86/include/asm/sgx.h | 9 ---------
- 1 file changed, 9 deletions(-)
+ arch/x86/kernel/cpu/sgx/virt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index fe106c55a593..af5cd6ce9010 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -108,9 +108,6 @@ enum sgx_miscselect {
+diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
+index 6a1933ddc6fc..7c5ac5d38ee1 100644
+--- a/arch/x86/kernel/cpu/sgx/virt.c
++++ b/arch/x86/kernel/cpu/sgx/virt.c
+@@ -395,9 +395,8 @@ static int __sgx_virt_einit(void __user *sigstruct, void __user *token,
+ 	 * All other checks deferred to ENCLS itself.  Also see comment
+ 	 * for @secs in sgx_virt_ecreate().
+ 	 */
+-#define SGX_EINITTOKEN_SIZE	304
+ 	if (WARN_ON_ONCE(!access_ok(sigstruct, sizeof(struct sgx_sigstruct)) ||
+-			 !access_ok(token, SGX_EINITTOKEN_SIZE) ||
++			 !access_ok(token, SGX_LAUNCH_TOKEN_SIZE) ||
+ 			 !access_ok(secs, PAGE_SIZE)))
+ 		return -EINVAL;
  
- #define SGX_MISC_RESERVED_MASK	GENMASK_ULL(63, 1)
- 
--#define SGX_SSA_GPRS_SIZE		184
--#define SGX_SSA_MISC_EXINFO_SIZE	16
--
- /**
-  * enum sgx_attribute - the attributes field in &struct sgx_secs
-  * @SGX_ATTR_INIT:		Enclave can be entered (is initialized).
-@@ -227,7 +224,6 @@ enum sgx_page_type {
- 	SGX_PAGE_TYPE_TRIM,
- };
- 
--#define SGX_NR_PAGE_TYPES	5
- #define SGX_PAGE_TYPE_MASK	GENMASK(7, 0)
- 
- /**
-@@ -288,11 +284,6 @@ struct sgx_pcmd {
- 	u8  mac[16];
- } __packed __aligned(128);
- 
--#define SGX_SIGSTRUCT_RESERVED1_SIZE 84
--#define SGX_SIGSTRUCT_RESERVED2_SIZE 20
--#define SGX_SIGSTRUCT_RESERVED3_SIZE 32
--#define SGX_SIGSTRUCT_RESERVED4_SIZE 12
--
- /**
-  * struct sgx_sigstruct_header -  defines author of the enclave
-  * @header1:		constant byte string
