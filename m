@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795529114;
-	b=zVjCC8ZxMvkTzs/WhetINQ1wAkraialqV7pAbkUXJQmgaT7IHojf3OOhbdki3KlXRbuq
-	 SIYFBsCygQSmQ7lDc3k49MGZYt7K/xIfrQYi0RRLX+lmmLPa00CTy2yqIs6UZ+z7ZPnJv
-	 KPgJi4jFkhQgMZMhEQwr7f1Bhb4n8h33kU2h+sH4al5N4t7BEj2RH0O9WpepFPk8rNL4D
-	 Hb/nrv1QW1mx9kgcQosdJmWQ02suHLy2i3LD0SiqSe4rlNtB88Y9MmrCBKZFd2PWJGE59
-	 Mq4tKJqo8AkMQjSD5s+62lmYhQgIZyS5FtQKweDwpYy8xumO+ff4r+vBKrX3eJEUllA==
+	t=1795529130;
+	b=5T0YJJvqyAC7KNIu8rJnWvu+t0SbWJplGQgUAxpaysufi7gTx6s/4gu60+nxv6a87/e7
+	 IZjSavJBN3sJf6947giGx+BiORWNjorMn0rncLHpFRZZh3wloSS4IqItVArL2fvMRLIJE
+	 FL4yQv+EsN8zdQgcZPBcVDI7UomiQIOx1m9hHlmKFa5e8jtoIY6cKQVh1S1B28P2IzbKq
+	 kN52wWGHcZkVU/hWxmIEqjcnUwRHf+wqHsAEXg1uvAgzqCKUM9nsKAeaJFAUwSq6lt3yU
+	 Qr8X+60wZfp1L3x8zZ4YVOPC+P5fKfon541FEQuV4i+KXH4g5786c4fKZogl+y5WDiA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795529114;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795529130;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=hW7ZGPoql/0vjAt5ga+sKkmm9W80eGku2aKEtGV2c8w=;
-	b=e0dao/2SEbJVPiVbAGecmuxP/II7ufubxLNG6cTLh3W4I9YnbLn1tVz58vPo0GnWy0gc
-	 Z88sALFW2A+qYnlV881mSd3loiqFLGD8uKTiWFFfpthOgxlDmK4M0XuD+NXfDQJkBFUMo
-	 HRIzCvc1ECUmEUUTsDBakIoHktBj4MWLsxqG+/1wHmmViJEs+/ZVtMeVVHDKo8AQNYqBP
-	 fRxGRwTBiwKqlv7HDsDwC/ROqvx251RMNnENESbf0vt26oLK0O7+xHiUrNnOF4/G3Nhn5
-	 fU9EWc5+d5jArhtPIFI+5LeDJ6cLnzqr6FiAZAHaiF7RUZ/KGUtk2Rqx6y9IXUquOcg==
+	bh=SrYlGGY0gACro/+moR4ki8LLaruR+DRcq/Omm4chfzc=;
+	b=ZUSgMF2J535mKZ00gjve1n/ROUIFNZecKiqZUqX63/JfurVMxpqnNBhLJpQnd6KCLoAy
+	 v3+/uvAHO1Udl0XL5TghaKDvXdKDpz/rj3p2b5H7lv2cYNsUIxyj1X/k7wOG6SPtGqaSN
+	 pVLVEJGzvBW9FTO6PC9YJ1cVCy1oDa7POgYPAKbG0WYescJJdw61FIeDrA9KT9A+2JA2v
+	 9bv8sYJ/zcEyKkXPx1HtttTnBa1QP5NxvtsNQfzBDaW+5ociPLPi6NA3iSaZZqrNPbm52
+	 5lyj4h+lrsA8nHpGAjIb0PTZ6VyoSFGmjgy3fkKUZIjnIo3zd6LI/oQYvK8NPDXqQYw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nEQsEOVv;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cDqI3wph;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A828606A336;
-	Tue, 24 Nov 2026 14:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D72606A6BD;
+	Tue, 24 Nov 2026 14:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nEQsEOVv
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E8BA1F000EE;
-	Tue, 24 Nov 2026 14:04:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cDqI3wph
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B83991F000EE;
+	Tue, 24 Nov 2026 14:05:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795529113;
-	bh=hW7ZGPoql/0vjAt5ga+sKkmm9W80eGku2aKEtGV2c8w=;
+	s=k20260515; t=1795529129;
+	bh=SrYlGGY0gACro/+moR4ki8LLaruR+DRcq/Omm4chfzc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=nEQsEOVvPg9uZs8lPh3fAj1Qo39UVf8WJg/6I4WGhW8GIIKBie2GuD5DK/hWJLD7N
-	 XXFbsjJmFJ4zdg+ZeAGS56aohbKj0o8RcUk9oJKGqRdvPA1dlzGKwJgzce04YTfDoE
-	 kQMX4Kt1jvbJUHGy+3IdAW2GpTkIMJJi2M8m1j0s/6gqGZd3guFcFTSNOxrS31I3la
-	 KAii9xzYdmifvwQhJIoDqn1DIYWc1NWrZ02MGPgXDMQbsER2kNVx51Lo6ZPJT0J2gp
-	 lE7tqkcpAKoxp6VZEtLHwb1xz4xg8XIw89cIiw8bdorFELUoAEwIqVHFvq3itixg0I
-	 yBzI/3vuVb+EA==
+	b=cDqI3wph5w7mSk7+SA/9MbSHsr7FMUNedC7vWKFhxrOIlpLi/Jg4MsG1xI0bxGAWy
+	 qUiRaEAEH9wspwamO2MBPTiaLlH+o8/BVteTJUZpqSzXmShf0FdMFnZW3UEQJcz7qC
+	 f0q+icWXYKtjYOrK50ZhDj/QKBpyCbqFkfEyHMExa5AY7OG1tFqiudHtdUMmkTRev9
+	 aGc5oo1L+3PAwfFOjRq5w+19u+ENdztRn8Q+pxEcrA7oJco/+Rjiqm6mmh5CB+kEqL
+	 sIffKObc49Vrs4vWH7Uf0X1GOMC5zvZdhqnNg0SOOT3TWCwu12uPxmZxl+e1i6P7ig
+	 N7AdOF2UuX5WA==
 From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-Date: Tue, 24 Nov 2026 14:02:50 +0000
-Subject: [PATCH v2 07/13] xen: convert xenstore interface mmap hooks to
- mmap_prepare
+Date: Tue, 24 Nov 2026 14:02:51 +0000
+Subject: [PATCH v2 08/13] soc: aspeed: convert LPC and P2A control mmap
+ hooks to mmap_prepare
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Post: <mailto:linux-sgx@vger.kernel.org>
@@ -55,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261124-late-2026-mmap_prepare-v2-7-0b0d99d655f9@kernel.org>
+Message-Id: <20261124-late-2026-mmap_prepare-v2-8-0b0d99d655f9@kernel.org>
 References: <20261124-late-2026-mmap_prepare-v2-0-0b0d99d655f9@kernel.org>
 In-Reply-To: <20261124-late-2026-mmap_prepare-v2-0-0b0d99d655f9@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>, 
@@ -102,101 +102,123 @@ Cc: ljs@kernel.org, xen-devel@lists.xenproject.org,
  op-tee@lists.trustedfirmware.org, netdev@vger.kernel.org, 
  linux-mm@kvack.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2905; i=ljs@kernel.org;
- h=from:subject:message-id; bh=zpA8p99yoYyAJavHN2hpgi/WaqiNX8jwA5osK7vUTPI=;
- b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLJZZ4rvLvioea3/4JPLzEeZbl3oWb0s/9PJC095PjVfV
- dpvcXbWh44SFgYxLgZZMUWW51/E9weJhM3rvODvBjOHlQlkCAMXpwBMZBMrw/fUYytbLzaFN9Wt
- rU8JjT29a39kwz7OkrMbhI/s38wcfoaRYX/mMr77a2f5/t33Q2Wm5f1vJQLpU5PlHZd2C57NSnr
- eyAgA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4097; i=ljs@kernel.org;
+ h=from:subject:message-id; bh=s32LdAaaGb1M+/iwl2Ev3ih3n8WWn5YLe6Ixr8jPsP8=;
+ b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLJZZ4rzb1g8Sfr0brEfn7ZbKupLCrGYKk8Tb2y48VJl3
+ jY9zdPzO0pZGMS4GGTFFFmefxHfHyQSNq/zgr8bzBxWJpAhDFycAjCR19MY/hnu+fP5693M5Yyr
+ ejU5//XJhc6sqJ6o9PpW5fE7dQeKBLMZGc4t57X/s8jJhD/YdFVqu/caTalFBt/OvYpdl9D1e27
+ EOQYA
 X-Developer-Key: i=ljs@kernel.org; a=openpgp;
  fpr=E7F417BF5214569E89D04F46CF9DCD8A81E27F14
 
-Move from the deprecated mmap hook to the new mmap_prepare hook for the
-xenfs xsd_kva file and the xenbus_backend device, both of which remap the
-xenstore interface page.
+Move from the deprecated mmap hook to the new mmap_prepare hook for both
+the LPC control and P2A control drivers.
 
-Use the PFN remap mmap action to do so, retaining the -EAGAIN error on
-failure via the action error override.
+Both remap a range of their reserved memory region, so use the PFN remap
+mmap action to do so, retaining the -EAGAIN error on failure via the action
+error override.
 
+Acked-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 ---
- drivers/xen/xenbus/xenbus_dev_backend.c | 14 ++++++--------
- drivers/xen/xenfs/xenstored.c           | 14 ++++++--------
- 2 files changed, 12 insertions(+), 16 deletions(-)
+ drivers/soc/aspeed/aspeed-lpc-ctrl.c | 20 +++++++++-----------
+ drivers/soc/aspeed/aspeed-p2a-ctrl.c | 22 ++++++++--------------
+ 2 files changed, 17 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/xen/xenbus/xenbus_dev_backend.c b/drivers/xen/xenbus/xenbus_dev_backend.c
-index edba5fecde4d..3e4cb267f411 100644
---- a/drivers/xen/xenbus/xenbus_dev_backend.c
-+++ b/drivers/xen/xenbus/xenbus_dev_backend.c
-@@ -89,27 +89,25 @@ static long xenbus_backend_ioctl(struct file *file, unsigned int cmd,
- 	}
+diff --git a/drivers/soc/aspeed/aspeed-lpc-ctrl.c b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+index 5d91ba2038d5..702fb3e85472 100644
+--- a/drivers/soc/aspeed/aspeed-lpc-ctrl.c
++++ b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+@@ -47,22 +47,20 @@ static struct aspeed_lpc_ctrl *file_aspeed_lpc_ctrl(struct file *file)
+ 			miscdev);
  }
  
--static int xenbus_backend_mmap(struct file *file, struct vm_area_struct *vma)
-+static int xenbus_backend_mmap_prepare(struct vm_area_desc *desc)
+-static int aspeed_lpc_ctrl_mmap(struct file *file, struct vm_area_struct *vma)
++static int aspeed_lpc_ctrl_mmap_prepare(struct vm_area_desc *desc)
  {
--	size_t size = vma->vm_end - vma->vm_start;
-+	size_t size = vma_desc_size(desc);
+-	struct aspeed_lpc_ctrl *lpc_ctrl = file_aspeed_lpc_ctrl(file);
+-	unsigned long vsize = vma->vm_end - vma->vm_start;
+-	pgprot_t prot = vma->vm_page_prot;
++	struct aspeed_lpc_ctrl *lpc_ctrl = file_aspeed_lpc_ctrl(desc->file);
  
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	if ((size > PAGE_SIZE) || (vma->vm_pgoff != 0))
-+	if ((size > PAGE_SIZE) || (desc->pgoff != 0))
+-	if (vma->vm_pgoff + vma_pages(vma) > lpc_ctrl->mem_size >> PAGE_SHIFT)
++	if (desc->pgoff + vma_desc_pages(desc) >
++	    lpc_ctrl->mem_size >> PAGE_SHIFT)
  		return -EINVAL;
  
+ 	/* ast2400/2500 AHB accesses are not cache coherent */
+-	prot = pgprot_noncached(prot);
++	desc->page_prot = pgprot_noncached(desc->page_prot);
+ 
 -	if (remap_pfn_range(vma, vma->vm_start,
--			    virt_to_pfn(xen_store_interface),
--			    size, vma->vm_page_prot))
+-		(lpc_ctrl->mem_base >> PAGE_SHIFT) + vma->vm_pgoff,
+-		vsize, prot))
 -		return -EAGAIN;
-+	mmap_action_remap_full(desc, virt_to_pfn(xen_store_interface));
++	mmap_action_remap_full(desc,
++		(lpc_ctrl->mem_base >> PAGE_SHIFT) + desc->pgoff);
 +	desc->action.error_override = -EAGAIN;
  
  	return 0;
  }
+@@ -216,7 +214,7 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
  
- static const struct file_operations xenbus_backend_fops = {
- 	.open = xenbus_backend_open,
--	.mmap = xenbus_backend_mmap,
-+	.mmap_prepare = xenbus_backend_mmap_prepare,
- 	.unlocked_ioctl = xenbus_backend_ioctl,
+ static const struct file_operations aspeed_lpc_ctrl_fops = {
+ 	.owner		= THIS_MODULE,
+-	.mmap		= aspeed_lpc_ctrl_mmap,
++	.mmap_prepare	= aspeed_lpc_ctrl_mmap_prepare,
+ 	.unlocked_ioctl	= aspeed_lpc_ctrl_ioctl,
  };
  
-diff --git a/drivers/xen/xenfs/xenstored.c b/drivers/xen/xenfs/xenstored.c
-index f59235f9f8a2..0cf57c286adb 100644
---- a/drivers/xen/xenfs/xenstored.c
-+++ b/drivers/xen/xenfs/xenstored.c
-@@ -31,24 +31,22 @@ static int xsd_kva_open(struct inode *inode, struct file *file)
- 	return 0;
+diff --git a/drivers/soc/aspeed/aspeed-p2a-ctrl.c b/drivers/soc/aspeed/aspeed-p2a-ctrl.c
+index efa106d37bd7..7387b0cd8666 100644
+--- a/drivers/soc/aspeed/aspeed-p2a-ctrl.c
++++ b/drivers/soc/aspeed/aspeed-p2a-ctrl.c
+@@ -97,29 +97,23 @@ static void aspeed_p2a_disable_bridge(struct aspeed_p2a_ctrl *p2a_ctrl)
+ 	regmap_update_bits(p2a_ctrl->regmap, SCU180, SCU180_ENP2A, 0);
  }
  
--static int xsd_kva_mmap(struct file *file, struct vm_area_struct *vma)
-+static int xsd_kva_mmap_prepare(struct vm_area_desc *desc)
+-static int aspeed_p2a_mmap(struct file *file, struct vm_area_struct *vma)
++static int aspeed_p2a_mmap_prepare(struct vm_area_desc *desc)
  {
--	size_t size = vma->vm_end - vma->vm_start;
-+	size_t size = vma_desc_size(desc);
+-	unsigned long vsize;
+-	pgprot_t prot;
+-	struct aspeed_p2a_user *priv = file->private_data;
++	struct aspeed_p2a_user *priv = desc->file->private_data;
+ 	struct aspeed_p2a_ctrl *ctrl = priv->parent;
  
--	if ((size > PAGE_SIZE) || (vma->vm_pgoff != 0))
-+	if ((size > PAGE_SIZE) || (desc->pgoff != 0))
+ 	if (ctrl->mem_base == 0 && ctrl->mem_size == 0)
  		return -EINVAL;
  
+-	vsize = vma->vm_end - vma->vm_start;
+-	prot = vma->vm_page_prot;
+-
+-	if (vma->vm_pgoff + vma_pages(vma) > ctrl->mem_size >> PAGE_SHIFT)
++	if (desc->pgoff + vma_desc_pages(desc) > ctrl->mem_size >> PAGE_SHIFT)
+ 		return -EINVAL;
+ 
+ 	/* ast2400/2500 AHB accesses are not cache coherent */
+-	prot = pgprot_noncached(prot);
++	desc->page_prot = pgprot_noncached(desc->page_prot);
+ 
 -	if (remap_pfn_range(vma, vma->vm_start,
--			    virt_to_pfn(xen_store_interface),
--			    size, vma->vm_page_prot))
+-		(ctrl->mem_base >> PAGE_SHIFT) + vma->vm_pgoff,
+-		vsize, prot))
 -		return -EAGAIN;
-+	mmap_action_remap_full(desc, virt_to_pfn(xen_store_interface));
++	mmap_action_remap_full(desc,
++		(ctrl->mem_base >> PAGE_SHIFT) + desc->pgoff);
 +	desc->action.error_override = -EAGAIN;
  
  	return 0;
  }
+@@ -308,7 +302,7 @@ static int aspeed_p2a_release(struct inode *inode, struct file *file)
  
- const struct file_operations xsd_kva_file_ops = {
- 	.open = xsd_kva_open,
--	.mmap = xsd_kva_mmap,
-+	.mmap_prepare = xsd_kva_mmap_prepare,
- 	.read = xsd_read,
- 	.release = xsd_release,
- };
+ static const struct file_operations aspeed_p2a_ctrl_fops = {
+ 	.owner = THIS_MODULE,
+-	.mmap = aspeed_p2a_mmap,
++	.mmap_prepare = aspeed_p2a_mmap_prepare,
+ 	.unlocked_ioctl = aspeed_p2a_ioctl,
+ 	.open = aspeed_p2a_open,
+ 	.release = aspeed_p2a_release,
 
 -- 
 2.56.1
