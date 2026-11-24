@@ -1,48 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795529098;
-	b=GOerHjhsbdvtpmGzWJQG2Xpm+4SxUmNE6jk7In98fIWpyVcPh3J59UcZhqEjUFV9E79x
-	 ulIYNnqH8I077C7GxrfpEwfsWHXaELy4OG1ZtGI5Co2kVc9Cg99uTmBWmye9MdFcrtdyG
-	 ZEFPB0syCk5fa/2j3PlSbp8f+yDDmNLYMvA61VzV9x0yoo1OqnlgvwIWcG+shZjaOlMEO
-	 udqWG3xaJ4oi2Ewv8mV/vnHfrcgbr8btqUAePLNw+FIfB4VthprTmv8JKKFGg5j8CBlJ8
-	 jgEsTWM0m56NRdbjA5E/d2q+RLcn19YkvR1hNETqX9Mi/2lUaUQEalX304Zl20e8mtw==
+	t=1795529114;
+	b=zVjCC8ZxMvkTzs/WhetINQ1wAkraialqV7pAbkUXJQmgaT7IHojf3OOhbdki3KlXRbuq
+	 SIYFBsCygQSmQ7lDc3k49MGZYt7K/xIfrQYi0RRLX+lmmLPa00CTy2yqIs6UZ+z7ZPnJv
+	 KPgJi4jFkhQgMZMhEQwr7f1Bhb4n8h33kU2h+sH4al5N4t7BEj2RH0O9WpepFPk8rNL4D
+	 Hb/nrv1QW1mx9kgcQosdJmWQ02suHLy2i3LD0SiqSe4rlNtB88Y9MmrCBKZFd2PWJGE59
+	 Mq4tKJqo8AkMQjSD5s+62lmYhQgIZyS5FtQKweDwpYy8xumO+ff4r+vBKrX3eJEUllA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795529098;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795529114;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=dyKHuWz1d2Frm11VryLe5MVhcgNxdq9OLcfJXX7QEjE=;
-	b=gSPJ74UglRqfl/97M5JM9cTEy7l/Euv/WKnASa2IutawFuo3q13eKpyJd3AwGNXBZzwi
-	 onbYTW+zcTodvt4SiKbdfmSolompKqfUrLpQqmoKYKf8gqw/FSysg+QimNyaHL6YFwPHC
-	 Y6g0W6SCnJ0H1m55667NiBpYRdMRr8zut7q19/01WOK6jVVLHPe2Yr+2J5EDW30lOB4Q0
-	 kO6fGVl5izkcEJtKGQ2pmhQb0iVWLB1sK+Mn6LyWOtrpeqGwighWTRfpxgje4SPS4iZbf
-	 cH3McsI05F8Kyv1S4DPw5euR5qlSjV6qyCGQfEPZEcOl4Cv+hMjaOJ3pQhcrvSLLVgg==
+	bh=hW7ZGPoql/0vjAt5ga+sKkmm9W80eGku2aKEtGV2c8w=;
+	b=e0dao/2SEbJVPiVbAGecmuxP/II7ufubxLNG6cTLh3W4I9YnbLn1tVz58vPo0GnWy0gc
+	 Z88sALFW2A+qYnlV881mSd3loiqFLGD8uKTiWFFfpthOgxlDmK4M0XuD+NXfDQJkBFUMo
+	 HRIzCvc1ECUmEUUTsDBakIoHktBj4MWLsxqG+/1wHmmViJEs+/ZVtMeVVHDKo8AQNYqBP
+	 fRxGRwTBiwKqlv7HDsDwC/ROqvx251RMNnENESbf0vt26oLK0O7+xHiUrNnOF4/G3Nhn5
+	 fU9EWc5+d5jArhtPIFI+5LeDJ6cLnzqr6FiAZAHaiF7RUZ/KGUtk2Rqx6y9IXUquOcg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q6MV3T+Q;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nEQsEOVv;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3628760A2624;
-	Tue, 24 Nov 2026 14:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A828606A336;
+	Tue, 24 Nov 2026 14:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q6MV3T+Q
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F63E1F00ADF;
-	Tue, 24 Nov 2026 14:04:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nEQsEOVv
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E8BA1F000EE;
+	Tue, 24 Nov 2026 14:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795529097;
-	bh=dyKHuWz1d2Frm11VryLe5MVhcgNxdq9OLcfJXX7QEjE=;
+	s=k20260515; t=1795529113;
+	bh=hW7ZGPoql/0vjAt5ga+sKkmm9W80eGku2aKEtGV2c8w=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=Q6MV3T+QtMeFGS05JxbY86fyXxb5BpRhz2xNTl9eMNfcKfw+grBzdABfY7zkWcmhf
-	 3oXmd4lIvhn6HY6OzXXCGpX3x871baxo9e2taEWdz4G5NRtFr4HIZLW/Mmej4HB25n
-	 pd5Rhlwzeg+i3fuK3nnd+/5nYHtvXaH9/5nXXdyOVT9uYdK2a7c0OsQs/bVh+3Yb8D
-	 8M6p5tkece9ezcQQtmoIpKbmcdZqP5JmjEIvTz5EAB0KjX1oZMDeijKf3LV7e9LjgL
-	 CH5DW18DiH/zpC3bH1tBGKVdQ66YVARE97fBELOKoKVCGs4OrCADqFtuBQSEP/uZlf
-	 9AljS1iLyidaw==
+	b=nEQsEOVvPg9uZs8lPh3fAj1Qo39UVf8WJg/6I4WGhW8GIIKBie2GuD5DK/hWJLD7N
+	 XXFbsjJmFJ4zdg+ZeAGS56aohbKj0o8RcUk9oJKGqRdvPA1dlzGKwJgzce04YTfDoE
+	 kQMX4Kt1jvbJUHGy+3IdAW2GpTkIMJJi2M8m1j0s/6gqGZd3guFcFTSNOxrS31I3la
+	 KAii9xzYdmifvwQhJIoDqn1DIYWc1NWrZ02MGPgXDMQbsER2kNVx51Lo6ZPJT0J2gp
+	 lE7tqkcpAKoxp6VZEtLHwb1xz4xg8XIw89cIiw8bdorFELUoAEwIqVHFvq3itixg0I
+	 yBzI/3vuVb+EA==
 From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-Date: Tue, 24 Nov 2026 14:02:49 +0000
-Subject: [PATCH v2 06/13] selinuxfs: convert mmap hooks to mmap_prepare
+Date: Tue, 24 Nov 2026 14:02:50 +0000
+Subject: [PATCH v2 07/13] xen: convert xenstore interface mmap hooks to
+ mmap_prepare
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Post: <mailto:linux-sgx@vger.kernel.org>
@@ -54,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261124-late-2026-mmap_prepare-v2-6-0b0d99d655f9@kernel.org>
+Message-Id: <20261124-late-2026-mmap_prepare-v2-7-0b0d99d655f9@kernel.org>
 References: <20261124-late-2026-mmap_prepare-v2-0-0b0d99d655f9@kernel.org>
 In-Reply-To: <20261124-late-2026-mmap_prepare-v2-0-0b0d99d655f9@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>, 
@@ -101,88 +102,100 @@ Cc: ljs@kernel.org, xen-devel@lists.xenproject.org,
  op-tee@lists.trustedfirmware.org, netdev@vger.kernel.org, 
  linux-mm@kvack.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2650; i=ljs@kernel.org;
- h=from:subject:message-id; bh=cFTcX5zX06yJZykgfJZX7vj2B6uDxu9XGGETlT23sQE=;
- b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLJZZ4oXBnSrzg9q6W+pOxNa5sv2mHvLOWmLDf/9bu4Ve
- ODDKszVUcrCIMbFICumyPL8i/j+IJGweZ0X/N1g5rAygQxh4OIUgIm8fMzw3/3c1MgpujcfSn5k
- 2CWletNH79GRC8V1Jxk2GHx6IO3yXJmRYf13k5To5D2ZX6wtDu9wmJ724si7t5XdipY5N4On9PC
- z8AMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2905; i=ljs@kernel.org;
+ h=from:subject:message-id; bh=zpA8p99yoYyAJavHN2hpgi/WaqiNX8jwA5osK7vUTPI=;
+ b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLJZZ4rvLvioea3/4JPLzEeZbl3oWb0s/9PJC095PjVfV
+ dpvcXbWh44SFgYxLgZZMUWW51/E9weJhM3rvODvBjOHlQlkCAMXpwBMZBMrw/fUYytbLzaFN9Wt
+ rU8JjT29a39kwz7OkrMbhI/s38wcfoaRYX/mMr77a2f5/t33Q2Wm5f1vJQLpU5PlHZd2C57NSnr
+ eyAgA
 X-Developer-Key: i=ljs@kernel.org; a=openpgp;
  fpr=E7F417BF5214569E89D04F46CF9DCD8A81E27F14
 
 Move from the deprecated mmap hook to the new mmap_prepare hook for the
-policy and status files.
+xenfs xsd_kva file and the xenbus_backend device, both of which remap the
+xenstore interface page.
 
-The policy file only sets VMA flags and operations. The status file remaps
-a single page, so use the PFN remap mmap action to do so.
+Use the PFN remap mmap action to do so, retaining the -EAGAIN error on
+failure via the action error override.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 ---
- security/selinux/selinuxfs.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ drivers/xen/xenbus/xenbus_dev_backend.c | 14 ++++++--------
+ drivers/xen/xenfs/xenstored.c           | 14 ++++++--------
+ 2 files changed, 12 insertions(+), 16 deletions(-)
 
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index 310e19efff1d..e78c65685020 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -236,27 +236,25 @@ static ssize_t sel_read_handle_status(struct file *filp, char __user *buf,
- 				       sizeof(struct selinux_kernel_status));
+diff --git a/drivers/xen/xenbus/xenbus_dev_backend.c b/drivers/xen/xenbus/xenbus_dev_backend.c
+index edba5fecde4d..3e4cb267f411 100644
+--- a/drivers/xen/xenbus/xenbus_dev_backend.c
++++ b/drivers/xen/xenbus/xenbus_dev_backend.c
+@@ -89,27 +89,25 @@ static long xenbus_backend_ioctl(struct file *file, unsigned int cmd,
+ 	}
  }
  
--static int sel_mmap_handle_status(struct file *filp,
--				  struct vm_area_struct *vma)
-+static int sel_mmap_prepare_handle_status(struct vm_area_desc *desc)
+-static int xenbus_backend_mmap(struct file *file, struct vm_area_struct *vma)
++static int xenbus_backend_mmap_prepare(struct vm_area_desc *desc)
  {
--	struct page    *status = filp->private_data;
--	unsigned long	size = vma->vm_end - vma->vm_start;
-+	struct page    *status = desc->file->private_data;
+-	size_t size = vma->vm_end - vma->vm_start;
++	size_t size = vma_desc_size(desc);
  
- 	BUG_ON(!status);
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
  
- 	/* only allows one page from the head */
--	if (vma->vm_pgoff > 0 || size != PAGE_SIZE)
-+	if (desc->pgoff > 0 || vma_desc_size(desc) != PAGE_SIZE)
- 		return -EIO;
+-	if ((size > PAGE_SIZE) || (vma->vm_pgoff != 0))
++	if ((size > PAGE_SIZE) || (desc->pgoff != 0))
+ 		return -EINVAL;
  
--	return remap_pfn_range(vma, vma->vm_start,
--			       page_to_pfn(status),
--			       size, vma->vm_page_prot);
-+	mmap_action_remap_full(desc, page_to_pfn(status));
-+
-+	return 0;
- }
- 
- static const struct file_operations sel_handle_status_ops = {
- 	.open		= sel_open_handle_status,
- 	.read		= sel_read_handle_status,
--	.mmap		= sel_mmap_handle_status,
-+	.mmap_prepare	= sel_mmap_prepare_handle_status,
- 	.llseek		= generic_file_llseek,
- };
- 
-@@ -419,10 +417,10 @@ static const struct vm_operations_struct sel_mmap_policy_ops = {
- 	.page_mkwrite = sel_mmap_policy_fault,
- };
- 
--static int sel_mmap_policy(struct file *filp, struct vm_area_struct *vma)
-+static int sel_mmap_prepare_policy(struct vm_area_desc *desc)
- {
--	vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);
--	vma->vm_ops = &sel_mmap_policy_ops;
-+	vma_desc_set_flags(desc, VMA_DONTEXPAND_BIT, VMA_DONTDUMP_BIT);
-+	desc->vm_ops = &sel_mmap_policy_ops;
+-	if (remap_pfn_range(vma, vma->vm_start,
+-			    virt_to_pfn(xen_store_interface),
+-			    size, vma->vm_page_prot))
+-		return -EAGAIN;
++	mmap_action_remap_full(desc, virt_to_pfn(xen_store_interface));
++	desc->action.error_override = -EAGAIN;
  
  	return 0;
  }
-@@ -430,7 +428,7 @@ static int sel_mmap_policy(struct file *filp, struct vm_area_struct *vma)
- static const struct file_operations sel_policy_ops = {
- 	.open		= sel_open_policy,
- 	.read		= sel_read_policy,
--	.mmap		= sel_mmap_policy,
-+	.mmap_prepare	= sel_mmap_prepare_policy,
- 	.release	= sel_release_policy,
- 	.llseek		= generic_file_llseek,
+ 
+ static const struct file_operations xenbus_backend_fops = {
+ 	.open = xenbus_backend_open,
+-	.mmap = xenbus_backend_mmap,
++	.mmap_prepare = xenbus_backend_mmap_prepare,
+ 	.unlocked_ioctl = xenbus_backend_ioctl,
+ };
+ 
+diff --git a/drivers/xen/xenfs/xenstored.c b/drivers/xen/xenfs/xenstored.c
+index f59235f9f8a2..0cf57c286adb 100644
+--- a/drivers/xen/xenfs/xenstored.c
++++ b/drivers/xen/xenfs/xenstored.c
+@@ -31,24 +31,22 @@ static int xsd_kva_open(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
+-static int xsd_kva_mmap(struct file *file, struct vm_area_struct *vma)
++static int xsd_kva_mmap_prepare(struct vm_area_desc *desc)
+ {
+-	size_t size = vma->vm_end - vma->vm_start;
++	size_t size = vma_desc_size(desc);
+ 
+-	if ((size > PAGE_SIZE) || (vma->vm_pgoff != 0))
++	if ((size > PAGE_SIZE) || (desc->pgoff != 0))
+ 		return -EINVAL;
+ 
+-	if (remap_pfn_range(vma, vma->vm_start,
+-			    virt_to_pfn(xen_store_interface),
+-			    size, vma->vm_page_prot))
+-		return -EAGAIN;
++	mmap_action_remap_full(desc, virt_to_pfn(xen_store_interface));
++	desc->action.error_override = -EAGAIN;
+ 
+ 	return 0;
+ }
+ 
+ const struct file_operations xsd_kva_file_ops = {
+ 	.open = xsd_kva_open,
+-	.mmap = xsd_kva_mmap,
++	.mmap_prepare = xsd_kva_mmap_prepare,
+ 	.read = xsd_read,
+ 	.release = xsd_release,
  };
 
 -- 
