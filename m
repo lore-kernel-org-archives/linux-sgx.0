@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795529177;
-	b=qZf8RbwWMOEWO5ueFON7KiBMx0YxDpoiH32hc14LzUnq897vlztlEcnYDYlPIJslyJ28
-	 65pLwfY8wET6mKpDuJeh4GLtFBkmw97kaLx0YHCuLzU1JG5QlWkUwLWBjb3wh6jfV7+UB
-	 T3oV83L6q9U38WpGmBZ6izizfrVZJg2SMIHTcp4Y7LlZBEoLQfYq+tn9y7y+UEjuLVdrr
-	 lfnjts+hqcM33usaFL7bMHiSs9ij8tIE027i+swI58/5uhq4an2zn/Pnk5FSthWhgMC0L
-	 kzgtwPqa+9h9zIEudyf+OxedvjiPXuh6Jzu8vv8X1R6v4g3MPZUCrbOES4H74r4Krkw==
+	t=1795529193;
+	b=GCstuRpTfLKTsDCzQPIOCm1C92uAimCOiiKgD+XhNleMzM4nq3ctT5hO3jp8v/FoSTm9
+	 6PH04tdwS2M0xNJPu9H2T4g1DCIG2WbbOdRQ6rJSbWWn/S3gGX6Zjqh57t9fNJIsZeH5i
+	 B8lgs3cJr2UAjBYbkMTmVe+3f6Z9qKfRJBLrVEv3eTbEnzV2YkX/I7Fm/+QKRHeXTTzqC
+	 6xi64gxrAHz7I7Z4GEIQP9kzNeGc7lB28O1+qYGmJFo2NHaMPUmOn4FbYFn2qZ7NdYGTh
+	 Se0QuFACYbabUxrIFiJ3ec9mfWoHiy8DGoSu6rnY/6k5QPGWsHu0tcqaxKFN8RPyvrQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795529177;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795529193;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=7FUmabyr4uQL+774Pvtn0Hclc0nu9L2r9AtaFETc/GA=;
-	b=5AS3zPxkaznlCfH2CAmEA+DgofauWmx7CAE2922pENInz1utzvNaa91nPD8IoF0GRqMh
-	 KI/r/llgK11X5Y2uTjBgH/LRZwscWz7OrPU7Yk1RhppIBE2zDd4Ox5FpS2ICJOvdtsWQ8
-	 +33WC5+8G7y9lDOAEeCm1dTYkV1KxNGRl4+K6UI89qVaCyG2rpOuUBL4+AlYq9sYrQWs3
-	 lRhM5VY26Qx+VELW0iksHccpAPosigYxBsdbm/etY9A43vpEimxBVEufoHqG/xf2f6x+k
-	 7byaazbPgIuIlq939nopUY+KBbhBtq0vMzX8oALnZ0jJORhQg0FWyJ3JgNTi8ERtz1w==
+	bh=hiMN3N/C7dD03jnJATzFgmGeR7RslpdlQJN0uDpFXN4=;
+	b=JAxdeC/B43VqGSEJb5zFwIpEJPD/kDUhFbFVhxW8X6Q3nGMGQsmMXu+V6hslQPhTtqOf
+	 l3P1APWPwwLPg9GO0z7P8qpvwzNPl12/ZZlJsLHajZpnjZKSQ+vqwibVKkKL+Us50FWW0
+	 7seW+gORxMAl5VLSgJhYmVLozrk8eGaoDVpTBtlV3moj1jzZMABjXlzxMQLVNRAmVa/26
+	 dH6Go+qKwge637JvfEtM3BD2vVpi2nVSKtWdUJQ8x1eFF0a6XUM/hCDu+bHaOa1CqZxH/
+	 1Tuq61VSqzuGXBu5TMD+6ZmoF86Hb4J27wn0XhkLu/VyC3BWUYqT9okcRdzurowlJkA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PNip109e;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MQjYxltb;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97FD606A6B7;
-	Tue, 24 Nov 2026 14:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAE8606A339;
+	Tue, 24 Nov 2026 14:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PNip109e
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C24F1F000F0;
-	Tue, 24 Nov 2026 14:06:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MQjYxltb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 108161F000D8;
+	Tue, 24 Nov 2026 14:06:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795529177;
-	bh=7FUmabyr4uQL+774Pvtn0Hclc0nu9L2r9AtaFETc/GA=;
+	s=k20260515; t=1795529193;
+	bh=hiMN3N/C7dD03jnJATzFgmGeR7RslpdlQJN0uDpFXN4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=PNip109e1v8AW41xU7g1LBDLiTkaFRP8f4lZPkWTaQTZjRjFkQGMj8SHSlPBNZ2hH
-	 laeFtadOphJlM/Zu0+Ptde0v4sw3DIojGjlR2m3Qeu4CzKMRUAYso+tGP3tNzqdpUU
-	 3sU6lzTKuQWYqrxkL5hORf1O/+Hd+Wm4c8OvqIXcRd+ed0pWiVLiUh9729Yx9jx6Fi
-	 dgXnxqAfIA8dZQ6o3EwPJ+IUCAlYnXIx9hj5ELXrFUEkSnPqlONUQf1SpQ6qeJt9wO
-	 D7Z8L5+AC0tRE+/U+WmavqRwYF54su3iDaH7Xb22dOtX1vDC/N8NGim9zMmqD/7g1W
-	 xIohsVS5dOzsw==
+	b=MQjYxltb9Lfnf6aDL5OYh7Tos6dJojDYdjybWJGWVNjJ6hrbfTJ8ZPZVPi5MfppI5
+	 pdUQnhlSUzUdj9WwvNDPmbRseMIDLkEdFaRFtoVatla5/Fuct+95HTLcdwq0RgK5Iz
+	 lSsu0hFGoicau84trJRRHIYubGhANzW+wKee32pMvpdmDLHzDYkAv+Y+RDzUir64io
+	 phFuvBt5hilAeyamBQdkPJtFH3lrISngr5HW4k0UvMVP3HH3PL1ngrc6X66Vnf4wu6
+	 OIFJJXbthFCqR6CzeLnrWA1f90gLOeQTTF8hFzd8U/xnGyYmPicXDtHsxEyFNM3Xca
+	 hXGpkJf0v9gPA==
 From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-Date: Tue, 24 Nov 2026 14:02:54 +0000
-Subject: [PATCH v2 11/13] misc: bcm-vk: convert mmap hook to mmap_prepare
+Date: Tue, 24 Nov 2026 14:02:55 +0000
+Subject: [PATCH v2 12/13] ptp: vmclock: convert mmap hook to mmap_prepare
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Post: <mailto:linux-sgx@vger.kernel.org>
@@ -54,7 +54,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261124-late-2026-mmap_prepare-v2-11-0b0d99d655f9@kernel.org>
+Message-Id: <20261124-late-2026-mmap_prepare-v2-12-0b0d99d655f9@kernel.org>
 References: <20261124-late-2026-mmap_prepare-v2-0-0b0d99d655f9@kernel.org>
 In-Reply-To: <20261124-late-2026-mmap_prepare-v2-0-0b0d99d655f9@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>, 
@@ -99,74 +99,76 @@ Cc: ljs@kernel.org, xen-devel@lists.xenproject.org,
  selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-aspeed@lists.ozlabs.org, linux-arm-msm@vger.kernel.org, 
  op-tee@lists.trustedfirmware.org, netdev@vger.kernel.org, 
- linux-mm@kvack.org
+ linux-mm@kvack.org, David Woodhouse <dwmw@amazon.co.uk>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2129; i=ljs@kernel.org;
- h=from:subject:message-id; bh=dRLES62L0oNx/h8n7oOxCXbdn7WuTRK+ZkJqntS+Ejg=;
- b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLJZZ0rUZakxBThbH2CZem92EdvkV4oicReY36/xvsBfp
- jlz6+lPHaUsDGJcDLJiiizPv4jvDxIJm9d5wd8NZg4rE8gQBi5OAZjI0nBGho3CNY3Z605Z/zPu
- KRDaKl1vlbg8hjs3tHkrV62rTZVdHSPDdePvS9YekA+OrkzRyBNLVHkfcy3a4bNpv8ypohR7gQP
- sAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2115; i=ljs@kernel.org;
+ h=from:subject:message-id; bh=cW06dufDxxurFECoGUtsKanmgN5mVh9JU1n9DwUlF+c=;
+ b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLJZZ0rUB1lesPbqmbJgNvPOB1avtaw+P/x3Y3Hccft6P
+ pYlE/YpdpSyMIhxMciKKbI8/yK+P0gkbF7nBX83mDmsTCBDGLg4BWAiJ7cx/FO8oGkyMUCeZdmO
+ yW/19f9I/BF48NiouMQ8yLmwfZrEbkeGX8xe9be/bRf592j1j6f9U3c+nsYq1X3k/u9VLzZ8avR
+ lb+cGAA==
 X-Developer-Key: i=ljs@kernel.org; a=openpgp;
  fpr=E7F417BF5214569E89D04F46CF9DCD8A81E27F14
 
 Move from the deprecated mmap hook to the new mmap_prepare hook, using the
-I/O PFN remap mmap action to map the BAR.
+I/O PFN remap mmap action to map the clock page and retaining the -EAGAIN
+error on failure via the action error override.
 
+Acked-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 ---
- drivers/misc/bcm-vk/bcm_vk_dev.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/ptp/ptp_vmclock.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/misc/bcm-vk/bcm_vk_dev.c b/drivers/misc/bcm-vk/bcm_vk_dev.c
-index 88ee3a417616..25a2b46ebad9 100644
---- a/drivers/misc/bcm-vk/bcm_vk_dev.c
-+++ b/drivers/misc/bcm-vk/bcm_vk_dev.c
-@@ -1201,9 +1201,9 @@ static long bcm_vk_reset(struct bcm_vk *vk, struct vk_reset __user *arg)
- 	return ret;
- }
- 
--static int bcm_vk_mmap(struct file *file, struct vm_area_struct *vma)
-+static int bcm_vk_mmap_prepare(struct vm_area_desc *desc)
- {
--	struct bcm_vk_ctx *ctx = file->private_data;
-+	struct bcm_vk_ctx *ctx = desc->file->private_data;
- 	struct bcm_vk *vk = container_of(ctx->miscdev, struct bcm_vk, miscdev);
- 	unsigned long pg_size;
- 
-@@ -1212,16 +1212,16 @@ static int bcm_vk_mmap(struct file *file, struct vm_area_struct *vma)
- 
- 	pg_size = ((pci_resource_len(vk->pdev, VK_MMAPABLE_BAR) - 1)
- 		    >> PAGE_SHIFT) + 1;
--	if (vma->vm_pgoff + vma_pages(vma) > pg_size)
-+	if (desc->pgoff + vma_desc_pages(desc) > pg_size)
- 		return -EINVAL;
- 
--	vma->vm_pgoff += (pci_resource_start(vk->pdev, VK_MMAPABLE_BAR)
--			  >> PAGE_SHIFT);
--	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-+	desc->pgoff += (pci_resource_start(vk->pdev, VK_MMAPABLE_BAR)
-+			>> PAGE_SHIFT);
-+	desc->page_prot = pgprot_noncached(desc->page_prot);
-+
-+	mmap_action_ioremap_full(desc, desc->pgoff);
- 
--	return io_remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
--				  vma->vm_end - vma->vm_start,
--				  vma->vm_page_prot);
-+	return 0;
- }
- 
- static long bcm_vk_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-@@ -1262,7 +1262,7 @@ static const struct file_operations bcm_vk_fops = {
- 	.write = bcm_vk_write,
- 	.poll = bcm_vk_poll,
- 	.release = bcm_vk_release,
--	.mmap = bcm_vk_mmap,
-+	.mmap_prepare = bcm_vk_mmap_prepare,
- 	.unlocked_ioctl = bcm_vk_ioctl,
+diff --git a/drivers/ptp/ptp_vmclock.c b/drivers/ptp/ptp_vmclock.c
+index 7f25fe6c2ce2..6a1d5f40a566 100644
+--- a/drivers/ptp/ptp_vmclock.c
++++ b/drivers/ptp/ptp_vmclock.c
+@@ -364,27 +364,26 @@ struct vmclock_file_state {
+ 	atomic_t seq;
  };
  
+-static int vmclock_miscdev_mmap(struct file *fp, struct vm_area_struct *vma)
++static int vmclock_miscdev_mmap_prepare(struct vm_area_desc *desc)
+ {
+-	struct vmclock_file_state *fst = fp->private_data;
++	struct vmclock_file_state *fst = desc->file->private_data;
+ 	struct vmclock_state *st = fst->st;
+ 
+-	if ((vma->vm_flags & (VM_READ|VM_WRITE)) != VM_READ)
++	if (!vma_desc_test(desc, VMA_READ_BIT) ||
++	    vma_desc_test(desc, VMA_WRITE_BIT))
+ 		return -EROFS;
+ 
+ 	/*
+ 	 * Restrict the read-only mapping so it cannot be upgraded to
+ 	 * writable later with mprotect().
+ 	 */
+-	vm_flags_clear(vma, VM_MAYWRITE);
++	vma_desc_clear_flags(desc, VMA_MAYWRITE_BIT);
+ 
+-	if (vma->vm_end - vma->vm_start != PAGE_SIZE || vma->vm_pgoff)
++	if (vma_desc_size(desc) != PAGE_SIZE || desc->pgoff)
+ 		return -EINVAL;
+ 
+-	if (io_remap_pfn_range(vma, vma->vm_start,
+-			       st->res.start >> PAGE_SHIFT, PAGE_SIZE,
+-			       vma->vm_page_prot))
+-		return -EAGAIN;
++	mmap_action_ioremap_full(desc, st->res.start >> PAGE_SHIFT);
++	desc->action.error_override = -EAGAIN;
+ 
+ 	return 0;
+ }
+@@ -484,7 +483,7 @@ static const struct file_operations vmclock_miscdev_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = vmclock_miscdev_open,
+ 	.release = vmclock_miscdev_release,
+-	.mmap = vmclock_miscdev_mmap,
++	.mmap_prepare = vmclock_miscdev_mmap_prepare,
+ 	.read = vmclock_miscdev_read,
+ 	.poll = vmclock_miscdev_poll,
+ };
 
 -- 
 2.56.1
