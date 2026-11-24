@@ -1,48 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795529017;
-	b=m6TebOSYZ8Y3aCl/vA4BgdDhuDWAfdofnFVThPLvz7DGE3T+Psd16UBKYM22sT2sqN86
-	 njUVWqikfDywipUainOadTFGjTTWxbMncIiWm6mNQFwwQMxf5NzPI3cQkYw0pnJ3BHamb
-	 tnISsR8eypP9GkoEwpeNLsbA6h8eXKslpnq1Yj7Qisgw423zSiFevB7NK0OdFvTEVORBw
-	 ppsyuVJVEP0RvA/vyzTL0mT+lB47mbpUt/UO78McudOlanpCcwzXxAI+phMqVkVdsO3Q4
-	 ySfyesJUQvhlI3N2A/utfWjpc3/71unwKnM+l1bflWjQ7emKWRJ1lDOmA6PXlQmzL9g==
+	t=1795529033;
+	b=bAnnjPAiQaUwu3mk+pCiuJdInPQbji6IhYVWsZXgVUFFY2iuWvxYclE0p6/CijZMrlnQ
+	 99T2zO56j7tL4qGuxaq5MdHZG7f0id5kEa/VSBeqM98WgJYshPB8f6dNZ7NrhjPbhx3QV
+	 0OSPurW9cqWRdf7qAgqdH6tNleke+IpykPkLNc2KfL9PjxM8+ePjSybil62AiGYPwHr2J
+	 23VSpcdPmb7RMgQQQEGVZKiNFl2R6BsZHCu9l/rfDedPfEBEkxGPivp08VfYx4XNsMvrU
+	 68u8BpM5lDCitNtL91zHzvfgFKc5Z4B/nHmbUWov1vKpp14JeecrYNQ+rgyIBdouQ4Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795529017;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795529033;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=QEgT8LA0rRCf6QNXkIxcU8G4AwB3CCCB3Sy/g9Ov95E=;
-	b=H2sTMj0SEkvtsaDlQERQlS0Wf9Nsjqve2zB0H5dHRhFmOvdH15T87Kb1g849xEStFlOw
-	 NbmBlKiXIWN0xJrojVc6oltgtJHj20U2zkKMhGlRtNx6nuwvvgPLFZdHJBXtGbSTfN81l
-	 AoUITs8tbXxvHd4F6jm9sB1AyeSU8ksZL9WsxhJlE4LZJPAYQdbkRMRZpt9C7YeGeGXN0
-	 d5nDQuq6saL4MmXJ+vzg2a6dYFSfj+a+TPm5+2y3AzCB9v7edsT1i3Gswo+oTft18Tkrh
-	 MQA1r7sssCaDxq427FiUDuYMQcgqtkt9jh9gDoUk2WlFvUYxq1HU0zHRmnuKvFz08JQ==
+	bh=vJUBuFI/X4ybR5TQJo0mpuZGpnhQ+Y28O/2YwIAeUl0=;
+	b=Bd4i7h8xyJPLtnBr9OFYsicaUBfo6pL+YPwngkIOFzeZ90ts5JJN9xV4Bflb3Gs2gLQs
+	 U66k6t9SWdvE8lurDrj+ltnd+x+nFW2TuocDwagloM1KKGEqbFe2fhum7g47zNJ+xTp8G
+	 d9IRBIqDQ094H0PKV6TjvkHved9u6i/Cvn9PKxf06BPMChWdr0Tjx1xemz5sJVQDSSEEr
+	 l0dLnO3fORNd2kDg28wQQvwkpv6Zgt/toywiN0Cc9jdWidgRAKAtrwnUqMfeVQnyzakYe
+	 ph/VBMtsfjoXmYQrFfrDolGSsmKkY+/6SGfKwhmqbJvqXBMYJDMUYi04wcrnSj6155A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lgnIva9K;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iHtmG7Cj;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0EC606A6B1;
-	Tue, 24 Nov 2026 14:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6837606A6A9;
+	Tue, 24 Nov 2026 14:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lgnIva9K
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EC9E1F000D2;
-	Tue, 24 Nov 2026 14:03:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iHtmG7Cj
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 388EC1F00AE3;
+	Tue, 24 Nov 2026 14:03:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795529017;
-	bh=QEgT8LA0rRCf6QNXkIxcU8G4AwB3CCCB3Sy/g9Ov95E=;
+	s=k20260515; t=1795529033;
+	bh=vJUBuFI/X4ybR5TQJo0mpuZGpnhQ+Y28O/2YwIAeUl0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=lgnIva9KLMkUPJObpQOKYtz3otyVdfSMFpdn1jQwIpMlk520FFqMXVbw/h5rCk5aM
-	 ZcATjbGD+6/HreWcTYCyu4RHpZTCUrX6vOFINRYB7hegedAzZv3N3ozJ5fa11z9eaM
-	 gXXQWOhj64Q7pR47HsOyK6FGHG0uHoSfwTM6XiHuVS7myaCNjsnAuuXHUj/wq9U3p2
-	 lQW5/BHNg2s211IbQIjkhHQHG7z2O6su3Yfa2ykLBzNZFs2cu9h189uUCdMinPY7Ev
-	 uwAcxEkv+7zGOnE/QurKfUrnjuQWC6+1VYW3BugMR6VXffjfIIPgcP/WlsULN+XnOo
-	 BLi/c3ZTzPxGw==
+	b=iHtmG7CjTvXPz3lA7PVVVfcohJ6emKtmjQ2NVdO2YLbIRwOCJfD95zg5jaPopSYaS
+	 gj5YZqmFSdMCB9FUDQv5kkAhrEJtfG0JXoItpXFghN79meSem8VIAhQgIUFZSzsgAY
+	 r4LSrjk7SnXCqTh4BUkrSrsjPXB067ziolwbz+SPR2Ltp0YGJdQcNB/fTa+3srse0H
+	 /GlPyBuULOvYPhH5W1j1efHQ11GpECImbgYnAOTpdtXBpeseeeo4Fqv9cOfTrOTpvy
+	 kwrbQFsHkQGnl4n4jy0umpUo8SNKV+PrXpeTfoo5qbg7WgAkB1/06qMvPYru+IuxNi
+	 f+p2tfqpbV87w==
 From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-Date: Tue, 24 Nov 2026 14:02:44 +0000
-Subject: [PATCH v2 01/13] xen/privcmd: convert mmap hook to mmap_prepare
+Date: Tue, 24 Nov 2026 14:02:45 +0000
+Subject: [PATCH v2 02/13] KVM: PPC: Book3S: convert spapr TCE mmap hook to
+ mmap_prepare
 X-Mailing-List: linux-sgx@vger.kernel.org
 List-Id: <linux-sgx.vger.kernel.org>
 List-Post: <mailto:linux-sgx@vger.kernel.org>
@@ -54,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261124-late-2026-mmap_prepare-v2-1-0b0d99d655f9@kernel.org>
+Message-Id: <20261124-late-2026-mmap_prepare-v2-2-0b0d99d655f9@kernel.org>
 References: <20261124-late-2026-mmap_prepare-v2-0-0b0d99d655f9@kernel.org>
 In-Reply-To: <20261124-late-2026-mmap_prepare-v2-0-0b0d99d655f9@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>, 
@@ -101,56 +102,47 @@ Cc: ljs@kernel.org, xen-devel@lists.xenproject.org,
  op-tee@lists.trustedfirmware.org, netdev@vger.kernel.org, 
  linux-mm@kvack.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1514; i=ljs@kernel.org;
- h=from:subject:message-id; bh=vbEx7oZObK1/uvpt+gmlwGGN8AqsAvHpQ+6B/bIbWLc=;
- b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLJZZ4p9KnSRk7EO3//5aBbT8vkXtm3ydLgmlDTdz4Xh/
- 51DR51rO0pZGMS4GGTFFFmefxHfHyQSNq/zgr8bzBxWJpAhDFycAjCR/xmMDDNFecLfebbckfi4
- vE7/m/LcK2sOZZ1nm8rxbKGpph2foA/Df18VkyVbq9Zv5zmv/2rbIZaiJdcOXiqa8Xh3xbur6dX
- d2awA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1158; i=ljs@kernel.org;
+ h=from:subject:message-id; bh=gtiaF6eQ5l4kQG69nvAkqE3NZUUEizPFbGQry23tGvI=;
+ b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLJZZ4oFbmu5VXls3dYr8f7eMuEO344nPNsfMWXNVf7Dq
+ qZ7i657dpSyMIhxMciKKbI8/yK+P0gkbF7nBX83mDmsTCBDGLg4BWAiU0IYGTbVO6rNXJEyv+mV
+ +9vcNeFPj7t/YJz3RnHNZ8l9hdoHV+1h+O8ze3Ji1SVFpXAe612GQm+U5O/yPeIyeLxitpextfz
+ t+xwA
 X-Developer-Key: i=ljs@kernel.org; a=openpgp;
  fpr=E7F417BF5214569E89D04F46CF9DCD8A81E27F14
 
-Move from the deprecated mmap hook to the new mmap_prepare hook.
-
-The hook only sets VMA flags and operations. The VMA private data is
-already NULL at this point, so we no longer explicitly clear it.
+Move from the deprecated mmap hook to the new mmap_prepare hook. The hook
+only sets the VMA operations.
 
 Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 ---
- drivers/xen/privcmd.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ arch/powerpc/kvm/book3s_64_vio.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-index 221b31611343..6d9e1fe03337 100644
---- a/drivers/xen/privcmd.c
-+++ b/drivers/xen/privcmd.c
-@@ -1645,14 +1645,13 @@ static const struct vm_operations_struct privcmd_vm_ops = {
- 	.fault = privcmd_fault
+diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
+index c5f3f5b29d89..05f6f2c9a432 100644
+--- a/arch/powerpc/kvm/book3s_64_vio.c
++++ b/arch/powerpc/kvm/book3s_64_vio.c
+@@ -247,9 +247,9 @@ static const struct vm_operations_struct kvm_spapr_tce_vm_ops = {
+ 	.fault = kvm_spapr_tce_fault,
  };
  
--static int privcmd_mmap(struct file *file, struct vm_area_struct *vma)
-+static int privcmd_mmap_prepare(struct vm_area_desc *desc)
+-static int kvm_spapr_tce_mmap(struct file *file, struct vm_area_struct *vma)
++static int kvm_spapr_tce_mmap_prepare(struct vm_area_desc *desc)
  {
- 	/* DONTCOPY is essential for Xen because copy_page_range doesn't know
- 	 * how to recreate these mappings */
--	vm_flags_set(vma, VM_IO | VM_PFNMAP | VM_DONTCOPY |
--			 VM_DONTEXPAND | VM_DONTDUMP);
--	vma->vm_ops = &privcmd_vm_ops;
--	vma->vm_private_data = NULL;
-+	vma_desc_set_flags(desc, VMA_IO_BIT, VMA_PFNMAP_BIT, VMA_DONTCOPY_BIT,
-+			   VMA_DONTEXPAND_BIT, VMA_DONTDUMP_BIT);
-+	desc->vm_ops = &privcmd_vm_ops;
- 
+-	vma->vm_ops = &kvm_spapr_tce_vm_ops;
++	desc->vm_ops = &kvm_spapr_tce_vm_ops;
  	return 0;
  }
-@@ -1681,7 +1680,7 @@ const struct file_operations xen_privcmd_fops = {
- 	.unlocked_ioctl = privcmd_ioctl,
- 	.open = privcmd_open,
- 	.release = privcmd_release,
--	.mmap = privcmd_mmap,
-+	.mmap_prepare = privcmd_mmap_prepare,
+ 
+@@ -282,7 +282,7 @@ static int kvm_spapr_tce_release(struct inode *inode, struct file *filp)
+ }
+ 
+ static const struct file_operations kvm_spapr_tce_fops = {
+-	.mmap           = kvm_spapr_tce_mmap,
++	.mmap_prepare	= kvm_spapr_tce_mmap_prepare,
+ 	.release	= kvm_spapr_tce_release,
  };
- EXPORT_SYMBOL_GPL(xen_privcmd_fops);
  
 
 -- 
